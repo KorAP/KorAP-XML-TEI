@@ -12,7 +12,9 @@ WriteMakefile(
   LICENSE      => 'freebsd',
   BUILD_REQUIRES => {
     'Test::More' => 0,
-    'Test::Output' => 0
+    'Test::Output' => 0,
+    'Test::XML::Simple' => 0,
+    'IO::Compress::Unzip' => '2.091',
   },
   PREREQ_PM => {
     'XML::CompactTree::XS'     => '0.03',
