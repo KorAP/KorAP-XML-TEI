@@ -37,7 +37,7 @@ my $outh = *STDOUT;
 my $_CORR_POS_FOR_EMPTY_S_TAGS = 1;        # this should only be deactivated for test purposes (empty s-tags produce an additional blank (look for '  ' in data.xml)
 my $_CORR_BYTE_POS_FOR_P_TAGS  = 1;
 
-my $_GEN_TOK_BAS               = 1;
+my $_GEN_TOK_BAS               = 0;
 my $_GEN_TOK_DUMMY             = 0;        # not needed for drukola or cmc
 
 my $_COMPRESSION_METHOD = ZIP_CM_DEFLATE;
@@ -236,7 +236,7 @@ while(<STDIN>){
       if ($first_write){
         $first_write=0;
         ### 1st time: create instance
-        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_data_file"
+        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0, Name => "$_root_dir$dir/$_data_file"
           or die "ERROR ('$_root_dir$dir/$_data_file'): zip failed: $ZipError\n"
       }else{
         ### close previous stream and open new one
@@ -312,7 +312,7 @@ while(<STDIN>){
       # create zip buffer
       if ($first_write){
         $first_write=0;
-        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_header_file"
+        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0, Name => "$_root_dir$dir/$_header_file"
           or die "ERROR ('$_root_dir$dir/$_header_file'): zip failed: $ZipError\n"
       }else{
         $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_header_file" )
@@ -348,7 +348,7 @@ while(<STDIN>){
       print STDERR "DEBUG ($0): Writing file $_root_dir$dir_doc/$_header_file\n" if $_DEBUG;
       if ($first_write){
         $first_write=0;
-        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir_doc/$_header_file"
+        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0, Name => "$_root_dir$dir_doc/$_header_file"
           or die "ERROR ('$_root_dir$dir_doc/$_header_file'): zip failed: $ZipError\n"
       }else{
         $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir_doc/$_header_file" )
@@ -392,7 +392,7 @@ while(<STDIN>){
       print STDERR "DEBUG ($0): Writing file $_root_dir$dir_crp/$_header_file\n" if $_DEBUG;
       if ($first_write){
         $first_write=0;
-        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir_crp/$_header_file"
+        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0, Name => "$_root_dir$dir_crp/$_header_file"
           or die "ERROR ('$_root_dir$dir_crp/$_header_file'): zip failed: $ZipError\n"
       }else{
         $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir_crp/$_header_file" )
