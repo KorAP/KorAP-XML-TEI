@@ -17,4 +17,22 @@ stderr_is(
 );
 
 
+my $file = catfile($f, 'data', 'goe_sample.i5.xml');
+stdout_is(
+  sub {
+    open(DATE, "cat $file|perl $script|");
+    my $theDate = <DATE>;
+    close(DATE);
+
+    print $theDate;
+    
+    #    system('cat', $file, '|', 'perl', $script)
+  },
+  "This program is called from inside another script.\n",
+  'Help'
+);
+
+
+
+
 done_testing;
