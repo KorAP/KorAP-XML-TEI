@@ -25,6 +25,7 @@ use IO::Select;
 use open qw(:std :utf8); # assume utf-8 encoding
 use Encode qw(encode_utf8 decode_utf8);
 
+use Pod::Usage;
 use Getopt::Long;
 use XML::CompactTree::XS;
 use XML::LibXML::Reader;
@@ -33,6 +34,9 @@ use IPC::Open2; # open2
 
 my $zip; my $first_write=1;
 my $outh = *STDOUT;
+
+our $VERSION = '0.01';
+our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
 my $_CORR_POS_FOR_EMPTY_S_TAGS = 1;        # this should only be deactivated for test purposes (empty s-tags produce an additional blank (look for '  ' in data.xml)
 my $_CORR_BYTE_POS_FOR_P_TAGS  = 1;
@@ -127,14 +131,24 @@ my (@annot, @oti2);
 my $inside_annot_tag = -1;
 ##
 
-my $help;
-
 GetOptions(
-  "base=s" => \$_root_dir,
-  "help"   => \$help
+  'base|b=s' => \$_root_dir,
+  'help|h'   => sub {
+    pod2usage(
+      -verbose => 99,
+      -sections => 'NAME|DESCRIPTION|SYNOPSIS|ARGUMENTS|OPTIONS',
+      -msg => $VERSION_MSG,
+      -output => '-'
+    )
+  },
+  'version|v' => sub {
+    pod2usage(
+      -verbose => 0,
+      -msg => $VERSION_MSG,
+      -output => '-'
+    )
+  }
 );
-
-printhelp() if $help;
 
 ######
 ###### MAIN
@@ -977,15 +991,78 @@ sub write_annot { # called from MAIN
 
 } # end: sub write_annot
 
-sub printhelp {
-    print STDERR <<EOHELP;
-This program is called from inside another script.
-EOHELP
-    exit();
-}
 
 sub startTokenizer {
   $pid = open2($chld_out, $chld_in, 'java  -cp '. join(":", ".", glob(&dirname(__FILE__)."/../target/*.jar"))." de.ids_mannheim.korap.tokenizer.KorAPTokenizerImpl");
   $select = IO::Select->new();
   $select->add(*$chld_out);
 }
+
+__END__
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+tei2korapxml - Conversion of TEI P5 based formats to KorAP-XML
+
+=head1 SYNOPSIS
+
+  cat corpus.i5.xml | tei2korapxml > corpus.korapxml.zip
+
+=head1 DESCRIPTION
+
+C<tei2korapxml> is a script to convert TEI P5 and I5 based documents
+to the KorAP-XML format. If no specific input is defined, C<STDIN>
+is used. If no specific output is defined, C<STDOUT> is used.
+This program is usually called from inside another script.
+
+=head1 INSTALLATION
+
+C<tei2korapxml> requires L<libxml2-dev> bindings to build. When
+these bindings are available, the preferred way to install the script is
+to use L<cpanm|App::cpanminus>.
+
+  $ cpanm https://github.com/KorAP/KorAP-XML-TEI.git
+
+In case everything went well, the C<tei2korapxml> tool will
+be available on your command line immediately.
+Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
+
+=head1 OPTIONS
+
+=over 2
+
+
+=item B<--base|-b>
+
+The base directory for output. Defaults to C<.>.
+
+=item B<--help|-h>
+
+Print help information.
+
+=item B<--version|-v>
+
+Print version information.
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2015-2020, L<IDS Mannheim|https://www.ids-mannheim.de/>
+
+Author: Peter Harders
+
+L<KorAP::XML::TEI> is developed as part of the L<KorAP|https://korap.ids-mannheim.de/>
+Corpus Analysis Platform at the
+L<Leibniz Institute for the German Language (IDS)|http://ids-mannheim.de/>,
+member of the
+L<Leibniz-Gemeinschaft|http://www.leibniz-gemeinschaft.de/>.
+
+This program is free software published under the
+L<BSD-2 License|https://raw.githubusercontent.com/KorAP/KorAP-XML-Krill/master/LICENSE>.
+
+=cut
