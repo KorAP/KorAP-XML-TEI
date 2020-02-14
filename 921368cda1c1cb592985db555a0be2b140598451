@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c5175cd8_195471dd",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-02-14T11:28:05Z",
+      "side": 1,
+      "message": "As there is already a \"base_dir\u0027 directory, it may be better to give a more concise parameter name here like \"outdir\".",
+      "range": {
+        "startLine": 135,
+        "startChar": 18,
+        "endLine": 135,
+        "endChar": 27
+      },
+      "revId": "921368cda1c1cb592985db555a0be2b140598451",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
