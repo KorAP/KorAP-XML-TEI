@@ -17,11 +17,18 @@ my $f = dirname(__FILE__);
 my $script = catfile($f, '..', 'script', 'tei2korapxml');
 ok(-f $script, 'Script found');
 
-stderr_is(
+stdout_like(
   sub { system('perl', $script, '--help') },
-  "This program is called from inside another script.\n",
+  qr!This\s*program\s*is\s*usually\s*called\s*from\s*inside\s*another\s*script\.!,
   'Help'
 );
+
+stdout_like(
+  sub { system('perl', $script, '--version') },
+  qr!tei2korapxml - v\d+?\.\d+?!,
+  'Version'
+);
+
 
 # Load example file
 my $file = catfile($f, 'data', 'goe_sample.i5.xml');
@@ -104,7 +111,5 @@ $struct_xml .= $zip->getline while !$zip->eof;
 ok($zip->close, 'Closed');
 
 xml_is($struct_xml, '//*[name()="span" and @id="s3"]//*[@name="type"]', 'Autobiographie', 'text content');
-
-
 
 done_testing;

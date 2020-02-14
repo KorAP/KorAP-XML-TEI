@@ -8,13 +8,14 @@ WriteMakefile(
   NAME         => 'tei2korapxml',
   AUTHOR       => 'Peter Harders',
   ABSTRACT     => 'Conversion of TEI P5 based formats to KorAP-XML',
-  VERSION      => '0.1',
+  VERSION_FROM => 'script/tei2korapxml',
   LICENSE      => 'freebsd',
   BUILD_REQUIRES => {
     'Test::More' => 0,
     'Test::Output' => 0,
     'Test::XML::Simple' => 0,
     'IO::Uncompress::Unzip' => '2.091',
+    'Pod::Usage'      => 0,
   },
   PREREQ_PM => {
     'XML::CompactTree::XS'     => '0.03',
@@ -22,5 +23,5 @@ WriteMakefile(
     'IO::Compress::Zip' => '2.091',
   },
   MIN_PERL_VERSION => '5.016',
-  EXE_FILES => ['./script/tei2korapxml']
+  EXE_FILES => ['script/tei2korapxml']
 );
