@@ -1,5 +1,4 @@
-##!/usr/local/bin/perl -w
-##!/usr/local/bin/perl -w -C 7 # STDIN, STDOUT and STDERR will be in UTF-8 (see 'man perlrun')
+#!/usr/bin/env perl
 
 ## see TODOs
 
@@ -12,7 +11,6 @@
 ###  2. Let 'data.xml' only be used/referred by 'sentences.xml', 'paragraphs.xml' and 'structure.xml', since it can contain double blanks ('  ' - see comment to '<s/>' in func.
 ###    retr_info) and TODO: also contains not only text inside s-tags (e.g.: <label><hi rend="it bo">Ludwig Pietsch (1824-1911):</hi></label><item><s>Journalist ...)
 ###
-
 
 use 5.012;
 
