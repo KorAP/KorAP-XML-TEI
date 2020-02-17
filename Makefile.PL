@@ -13,7 +13,7 @@ WriteMakefile(
   BUILD_REQUIRES => {
     'Test::More' => 0,
     'Test::Output' => 0,
-    'Test::XML::Simple' => 0,
+    'XML::Loy' => 0.49,
     'IO::Compress::Unzip' => '2.091',
   },
   PREREQ_PM => {
