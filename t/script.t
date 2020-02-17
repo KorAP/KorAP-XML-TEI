@@ -8,10 +8,7 @@ use IO::Uncompress::Unzip qw(unzip $UnzipError);
 use Test::More;
 use Test::Output;
 
-# TODO:
-#   This is nearly unusable slow and due to namespaces extremely verbose
-#   - probably better switch to something based on Test::Mojo
-use Test::XML::Simple;
+use Test::XML::Loy;
 
 my $f = dirname(__FILE__);
 my $script = catfile($f, '..', 'script', 'tei2korapxml');
@@ -44,11 +41,12 @@ my $header_xml = '';
 $header_xml .= $zip->getline while !$zip->eof;
 ok($zip->close, 'Closed');
 
-xml_is($header_xml, '//korpusSigle', 'GOE', 'korpusSigle');
-xml_is($header_xml, '//h.title[@type="main"]', 'Goethes Werke', 'h.title');
-xml_is($header_xml, '//h.author', 'Goethe, Johann Wolfgang von', 'h.author');
-xml_is($header_xml, '//pubDate[@type="year"]', '1982', 'pubDate');
+my $t = Test::XML::Loy->new($header_xml);
 
+$t->text_is('korpusSigle', 'GOE', 'korpusSigle')
+  ->text_is('h\.title[type=main]', 'Goethes Werke', 'h.title')
+  ->text_is('h\.author', 'Goethe, Johann Wolfgang von', 'h.author')
+  ->text_is('pubDate[type=year]', '1982', 'pubDate');
 
 # Uncompress GOE/AGA/header.xml from zip file
 $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/header.xml');
@@ -60,10 +58,11 @@ $header_xml = '';
 $header_xml .= $zip->getline while !$zip->eof;
 ok($zip->close, 'Closed');
 
-xml_is($header_xml, '//dokumentSigle', 'GOE/AGA', 'dokumentSigle');
-xml_is($header_xml, '//d.title', 'Goethe: Autobiographische Schriften II, (1817-1825, 1832)', 'd.title');
-xml_is($header_xml, '//creatDate', '1820-1822', 'creatDate');
+$t = Test::XML::Loy->new($header_xml);
 
+$t->text_is('dokumentSigle', 'GOE/AGA', 'dokumentSigle')
+  ->text_is('d\.title', 'Goethe: Autobiographische Schriften II, (1817-1825, 1832)', 'd.title')
+  ->text_is('creatDate', '1820-1822', 'creatDate');
 
 # Uncompress GOE/AGA/00000/header.xml from zip file
 $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/header.xml');
@@ -75,10 +74,9 @@ $header_xml = '';
 $header_xml .= $zip->getline while !$zip->eof;
 ok($zip->close, 'Closed');
 
-# This is slow - should be improved for more tests
-xml_is($header_xml, '//textSigle', 'GOE/AGA.00000', 'textSigle');
-xml_is($header_xml, '//analytic/h.title[@type="main"]', 'Campagne in Frankreich', 'h.title');
-
+$t = Test::XML::Loy->new($header_xml);
+$t->text_is('textSigle', 'GOE/AGA.00000', 'textSigle')
+  ->text_is('analytic > h\.title[type=main]', 'Campagne in Frankreich', 'h.title');
 
 # Uncompress GOE/AGA/00000/data.xml from zip file
 $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/data.xml');
@@ -90,8 +88,9 @@ my $data_xml = '';
 $data_xml .= $zip->getline while !$zip->eof;
 ok($zip->close, 'Closed');
 
-xml_node($data_xml, '/*[name()="raw_text" and @docid="GOE_AGA.00000"]', 'text id');
-xml_like($data_xml, '/*[local-name()="raw_text"]/*[local-name()="text"]', qr!^Campagne in Frankreich 1792.*?uns allein begl.cke\.$!, 'text content');
+$t = Test::XML::Loy->new($data_xml);
+$t->attr_is('raw_text', 'docid', 'GOE_AGA.00000', 'text id')
+  ->text_like('raw_text > text', qr!^Campagne in Frankreich 1792.*?uns allein begl.*cke\.$!, 'text content');
 
 # Uncompress GOE/AGA/00000/struct/structure.xml from zip file
 $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/struct/structure.xml');
@@ -103,8 +102,7 @@ my $struct_xml = '';
 $struct_xml .= $zip->getline while !$zip->eof;
 ok($zip->close, 'Closed');
 
-xml_is($struct_xml, '//*[name()="span" and @id="s3"]//*[@name="type"]', 'Autobiographie', 'text content');
-
-
+$t = Test::XML::Loy->new($struct_xml);
+$t->text_is('span[id=s3] *[name=type]', 'Autobiographie', 'text content');
 
 done_testing;
