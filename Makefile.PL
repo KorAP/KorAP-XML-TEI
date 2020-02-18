@@ -16,6 +16,8 @@ WriteMakefile(
     'XML::Loy' => 0.49,
     'IO::Uncompress::Unzip' => '2.091',
     'Pod::Usage'      => 0,
+    'Dumbbench' => '0.111',
+    'DateTime' => '1.51'
   },
   PREREQ_PM => {
     'XML::CompactTree::XS'     => '0.03',
