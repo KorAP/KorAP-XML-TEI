@@ -22,6 +22,30 @@
       "revId": "921368cda1c1cb592985db555a0be2b140598451",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5cc26c7c_0066fd87",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-06-25T14:09:07Z",
+      "side": 1,
+      "message": "Thank you for your note! I changed it already in my local version from \u0027base\u0027 to \u0027root\u0027 (because it\u0027s the root directory inside the zip files). It will be merged with my other changes into the main branch.",
+      "parentUuid": "c5175cd8_195471dd",
+      "range": {
+        "startLine": 135,
+        "startChar": 18,
+        "endLine": 135,
+        "endChar": 27
+      },
+      "revId": "921368cda1c1cb592985db555a0be2b140598451",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }
