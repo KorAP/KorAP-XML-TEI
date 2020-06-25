@@ -14,11 +14,18 @@ my $f = dirname(__FILE__);
 my $script = catfile($f, '..', 'script', 'tei2korapxml');
 ok(-f $script, 'Script found');
 
-stderr_is(
+stdout_like(
   sub { system('perl', $script, '--help') },
-  "This program is called from inside another script.\n",
+  qr!This\s*program\s*is\s*usually\s*called\s*from\s*inside\s*another\s*script\.!,
   'Help'
 );
+
+stdout_like(
+  sub { system('perl', $script, '--version') },
+  qr!tei2korapxml - v\d+?\.\d+?!,
+  'Version'
+);
+
 
 # Load example file
 my $file = catfile($f, 'data', 'goe_sample.i5.xml');
@@ -47,6 +54,7 @@ $t->text_is('korpusSigle', 'GOE', 'korpusSigle')
   ->text_is('h\.title[type=main]', 'Goethes Werke', 'h.title')
   ->text_is('h\.author', 'Goethe, Johann Wolfgang von', 'h.author')
   ->text_is('pubDate[type=year]', '1982', 'pubDate');
+
 
 # Uncompress GOE/AGA/header.xml from zip file
 $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/header.xml');
