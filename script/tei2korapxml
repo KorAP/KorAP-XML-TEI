@@ -1,136 +1,59 @@
 #!/usr/bin/env perl
 
-## see TODOs
-
-### NOTES:
 ###
-###  1. The input for this file has to be UTF8-encoded _without_ SGML-Entites (except the escaped ones -> &amp;amp;, &lt;lt;, &gt;gt;, &apos;apos;, &quot;quot;
-###        - XML::LibXML::Reader translates them back to their origin - e.g.: &amp;amp; -> &amp; (because '&amp;' translates to '&').
-###    SGML-Entities cannot be processed, because of the first 2 missing lines in the input document (see xces2korap.sh).
+### converts input in TEI P5 format (https://www1.ids-mannheim.de/kl/projekte/korpora/textmodell.html)
+###  into output in KorAP-XML format (https://github.com/KorAP/KorAP-XML-Krill -> 'KorAP-XML document')
 ###
-###  2. Let 'data.xml' only be used/referred by 'sentences.xml', 'paragraphs.xml' and 'structure.xml', since it can contain double blanks ('  ' - see comment to '<s/>' in func.
-###    retr_info) and TODO: also contains not only text inside s-tags (e.g.: <label><hi rend="it bo">Ludwig Pietsch (1824-1911):</hi></label><item><s>Journalist ...)
+### input restrictions:
 ###
-
-use 5.012;
+###  . utf8 encoded
+###  . TEI P5 formatted input with certain restrictions:
+###    . mandatory: text-header with integrated textsigle, text-body
+###    . optional:  corp-header with integrated corpsigle, doc-header with integrated docsigle
+###
+###  . all tokens inside the primary text (inside $data) may not be newline seperated, because newlines
+###    are removed (see below: 'inside text body') and a conversion of newlines into blanks between 2 tokens
+###    could lead to additional blanks, where there should be none (e.g.: punctuation characters like ',' or
+###    '.' should not be seperated from their predecessor token).
+###    - see also '~ whitespace handling ~'
+###
+###  . POS and MSD inline annotations handling (see below: expected format)
+###  ...
+###
+### notes on the output:
+###
+###  . zip file output (default on stdout) with utf8 encoded entries (which together form the KorAP-XML format)
+###  ...
+###
 
 use strict;
 use warnings;
-use File::Basename; # dirname
-use IO::Handle qw( );
+
+use Pod::Usage;
+use Getopt::Long qw(GetOptions :config no_auto_abbrev);
+
+use File::Basename qw(dirname);
+use IO::Handle;
 use IO::Select;
 
 use open qw(:std :utf8); # assume utf-8 encoding
 use Encode qw(encode_utf8 decode_utf8);
 
-use Pod::Usage;
-use Getopt::Long;
 use XML::CompactTree::XS;
 use XML::LibXML::Reader;
 use IO::Compress::Zip qw(zip $ZipError :constants);
-use IPC::Open2; # open2
+use IPC::Open2 qw(open2);
 
-my $zip; my $first_write=1;
-my $outh = *STDOUT;
 
 our $VERSION = '0.01';
+
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
-my $_CORR_POS_FOR_EMPTY_S_TAGS = 1;        # this should only be deactivated for test purposes (empty s-tags produce an additional blank (look for '  ' in data.xml)
-my $_CORR_BYTE_POS_FOR_P_TAGS  = 1;
 
-my $_GEN_TOK_BAS               = 0;
-my $_GEN_TOK_DUMMY             = 0;        # not needed for drukola or cmc
-
-my $_COMPRESSION_METHOD = ZIP_CM_DEFLATE;
-
-my $_DEBUG          = 0;
-
-my $_root_dir       = ".";                           # output base directory
-my $_header_file    = "header.xml";                  # filename to save text header in (in Latin1 format -> needed for ... ?) # TODO: why 'Latin1'?
-my $_data_file      = "data.xml";                    # filename to save text data in   (in UTF-8  format -> needed for ... ?)
-my $_base_dir       = "base";                        # directory to store sentence and paragraph file and ...
-my $_structure_dir  = "struct";
-my $_structure_file = "structure.xml";
-my ($text_id, $text_id_esc);                         # '$text_id_esc' = escaped version of $text_id - see %ent (needed e.g. for 'Corola-PublishingHouse/Editura "Cronica"/260_a_608')
-my $dir             = "";                            # text     directory (on top of base)
-my $dir_crp         = "";                            # corpus   directory (on top of base)
-my $dir_doc         = "";                            # document directory (on top of base)
-my $data            = "";                            # $data is written to '$_data_file'
-my %ent=('"', '&quot;', '&','&amp;','<','&lt;','>','&gt;'); # convert '&', '<' and '>' to their corresp. sgml-entities for compat. with KorAP
-                                                     # NOTE: the index still refers to the above char-versions, which are counted as 1
-                                                     #   (search for '&' in data.xml and see corresp. indices in structure.xml, lemma.xml, ana.xml ...)
-my $header_crp      = "";
-my $header_doc      = "";
-my $header_txt      = "";                            # $header_* are written to '$_header_file'
-
-my ($header_fl_crp, $header_fl_doc, $header_fl_txt, $data_fl, $header_prfx, $data_prfx1, $data_prfx2, $data_sfx);
-  $header_prfx = $data_prfx1 = $data_prfx2 = $data_sfx = "";
-
-my ($i, $c);
-
-### needed for sub retr_info
-my $_XCT_LN=0; # remember line numbers (set to 1 if debugging)
-my ($reader, $tree_data, $rl, $_IDX, $n, $e, $dl, @oti);
-  # 'dl' stands for 'data length', 'oti' stands for 'open tags index'
-($_XCT_LN)?($_IDX=5):($_IDX=4);
-###
-### needed in func. write_structures
-my ($ref, $idx, $att_idx);
-
-my $buf_in = "";
-my $output;
-
-### needed for tokenization
-my $_tok_file_bas = "tokens.xml";
-
-#my @sentences;   # sentence  character offsets (start, end, start, end, ...)
-#my @paragraphs;  # paragraph character offsets (start, end, start, end, ...)
-my @structures;  # list of hashes, each hash representing an XML element
-
-## whitespace-related issue (see retr_info()): needed to correct from-offset for some tags
-my $add_one;
-my %hws; # hash for indices of whitespace nodes (needed to recorrect from-value)
-         # idea: when closing element, check if it's from-index minus 1 refers to a whitespace node (means: 'from-index - 1' is a key in %hws).
-         #       if this is _not_ the case, then the from-value is one to high => correct it by substracting 1
-my ($fval, $fval2);
-$fval=$fval2=0; # init.
-##
-
-## needed if $_GEN_TOK_DUMMY is set
-my $_tok_file_con = "tokens_conservative.xml";
-my $_tok_file_agg = "tokens_aggr.xml";
-my (@tok_tokens_con, @tok_tokens_agg);
-my ($m1, $m2, $m3, $m4, $tmp, $p1, $p2, $pr, $offset, $txt);
-$offset=0;
-##
-
-# do this to prevent error message 'Global symbol "..." requires explicit package name at ...'
-my ($_ANNOT_ATT_ANNOT_NAME_RD, $_ANNOT_ATT_LEM_NAME_RD, $_ANNOT_ATT_POS_NAME_WR, $_ANNOT_ATT_MSD_NAME_WR) = ('','','','');
-
-## needed for handling some inline annotations
-my $_ANNOT_GEN               = 0;            # turn processing of inline annotations on/off
-#my $_ANNOT_DIR_NAME         = "connexor";   # name of path/foundry to write information to
-my $_ANNOT_DIR_NAME         = "drukola";    # name of path/foundry to write information to
-#my $_ANNOT_DIR_NAME          = "cmc";        # name of path/foundry to write information to # cmc = computer mediated communication - needed for dck corpus
-my $_ANNOT_FILE_NAME         = "morpho.xml"; # file to write annotations to
-my $_ANNOT_TAG_NAME_RD       = "w";          # from which tag to fetch the below attributes
-$_ANNOT_ATT_ANNOT_NAME_RD   = "ana";        # from which attribute to fetch the msd and pos information
-#$_ANNOT_ATT_ANNOT_NAME_RD    = "type";       # from which attribute to fetch the msd and pos information # must be 'type' for dck corpus
-                                             #   new: comment out, if not needed
-$_ANNOT_ATT_LEM_NAME_RD      = "lemma";      # from which attribute to fetch the lemma information
-                                             #   new: comment out, if not needed
-$_ANNOT_ATT_POS_NAME_WR      = "pos";        # see e.g.: GIT/KorAP-XML-Krill/t/annotation/corpus/doc/0001/mate/morpho.xml
-                                             #   new: comment out, if not needed
-$_ANNOT_ATT_MSD_NAME_WR     = "msd";        # not needed for dck corpus
-                                             #   new: comment out, if not needed
-my $_ANNOT_ATT_LEM_NAME_WR   = "lemma";      # s.a.
-my (@annot, @oti2);
-my $inside_annot_tag = -1;
-##
-
+# Parse options from the command line
 GetOptions(
-  'base|b=s' => \$_root_dir,
+  "root|r=s"  => \(my $_root_dir = '.'),  # name of root directory inside zip file
+  "input|i=s" => \(my $input_fname = ''), # input file (yet only TEI I5 Format accepted)
   'help|h'   => sub {
     pod2usage(
       -verbose => 99,
@@ -148,652 +71,1178 @@ GetOptions(
   }
 );
 
-######
-###### MAIN
-######
-$_root_dir.='/'; # must always end with a slash at this point
-$_root_dir=~s/^\.?\///; # remove leading / (only relative paths allowed in IO::Compress::Zip) and ./
+#
+# ~~~ parameter (mandatory) ~~~
+#
 
-my $lc=0; my $tc=0; my ($pfx, $sfx);
-$header_fl_txt=0;
+ # optional
+my $_CORP_SIGLE       = "korpusSigle";                 # opening and closing tags (without attributes) have to be in one line
+                                                       #  (e.g.: <korpusSigle>GOE</korpusSigle>)
+ # optional
+my $_DOC_SIGLE        = "dokumentSigle";               # analog
+ # mandatory
+my $_TEXT_SIGLE       = "textSigle";                   # analog
+ # mandatory
+my $_TEXT_BODY        = "text";                        # tag (without attributes), which contains the primary text
+ # optional
+my $_CORP_HEADER_BEG  = "idsHeader type=\"corpus\"";   # just keep the correct order of the attributes and evtl. add an '.*' between them
+ # optional
+my $_DOC_HEADER_BEG   = "idsHeader type=\"document\""; # analog
+ # mandatory
+my $_TEXT_HEADER_BEG  = "idsHeader type=\"text\"";     # analog
+  
+#
+# ~~~ constants ~~~
+#
 
-# header_prfx
+## DEPRECATED (only IDS-intern - the tokenization is normally done by external tools)
+my $_GEN_TOK_BAS               = 0;      # IDS internal tokenization
+  my( $chld_out, $chld_in, $pid, $select );
+##
+
+## dummy tokenization (only for testing)
+my $_GEN_TOK_DUMMY             = 0;      # use dummy base tokenization for testing (base tokenization is normally done by external tools)
+  my $_tok_file_con            = "tokens_conservative.xml";
+  my $_tok_file_agg            = "tokens_aggressive.xml";
+  my ( @tok_tokens_con, @tok_tokens_agg, $m1, $m2, $m3, $m4, $tmp, $p1, $p2, $pr, $txt, $offset );
+my $_base_tokenization_dir     = "base"; # name of directory for storing files of dummy tokenization (only used in func. select_tokenization)
+
+# man IO::Compress::Zip
+# At present three compression methods are supported by IO::Compress::Zip, namely
+# Store (no compression at all), Deflate, Bzip2 and LZMA.
+# Note that to create Bzip2 content, the module "IO::Compress::Bzip2" must be installed.
+# Note that to create LZMA content, the module "IO::Compress::Lzma" must be installed.
+my $_COMPRESSION_METHOD = ZIP_CM_DEFLATE; # The symbols, ZIP_CM_STORE, ZIP_CM_DEFLATE, ZIP_CM_BZIP2 and ZIP_CM_LZMA are used to select the compression method.
+
+my $_DEBUG           = 0;                            # set to 1 for minimal more debug output (no need to be parametrized)
+my $_XCT_LN          = 0;                            # only for debugging: include line numbers in elements of $tree_data
+                                                     #  (see also manpage of XML::CompactTree::XS)
+
+my $_header_file     = "header.xml";                 # name of files      containing the  text, document and corpus header
+my $_data_file       = "data.xml";                   # name of file       containing the  primary text data (tokens)
+my $_structure_dir   = "struct";                     # name of directory  containing the  $_structure_file
+my $_structure_file  = "structure.xml";              # name of file       containing all  tags (except ${_TOKEN_TAG}'s) related information
+                                                     #                                     (= their names and byte offsets in $_data)
+## TODO: optional (different annotation tools can produce more zip-files for feeding into KorAP-XML-Krill)
+my $_TOKENS_PROC     = 1;                            # on/off: processing of ${_TOKEN_TAG}'s (default: 1)
+my $_tokens_dir      = "tokens";                     # name of directory  containing the  $_tokens_file
+my $_tokens_file     = "morpho.xml";                 # name of file       containing all  ${_TOKEN_TAG}'s related information (=their byte offsets in $_data)
+                                                     #                                     - evtl. with additional inline annotations
+my $_TOKENS_TAG      = "w";                          # name of tag        containing all  information stored in $_tokens_file
+
+## TODO: optional
+# handling inline annotations (inside $_TOKENS_TAG)
+my $_INLINE_ANNOT    = 0;                            # on/off: set to 1 if inline annotations are present and should be processed (default: 0)
+my $_INLINE_LEM_RD   = "lemma";                      # from which attribute to read LEMMA information
+my $_INLINE_ATT_RD   = "ana";                        # from which attribute to read POS information (and evtl. additional MSD - Morphosyntactic Descriptions)
+                                                     # TODO: The format for the POS and MSD information has to suffice the regular expression ([^ ]+)( (.+))?
+                                                     #  - which means, that the POS information can be followed by an optional blank with additional
+                                                     #     MSD information; unlike the MSD part, the POS part may not contain any blanks.
+my $_INLINE_POS_WR   = "pos";                        # name (inside $_tokens_file) referring to POS   information
+my $_INLINE_MSD_WR   = "msd";                        # name (inside $_tokens_file) referring to MSD   information
+my $_INLINE_LEM_WR   = "lemma";                      # name (inside $_tokens_file) referring to LEMMA information
+##
+
+
+#
+# ~~~ variables ~~~
+#
+
+my $zip;                                             # IO::Compress::Zip object
+my $zip_outh;                                        # handle for zip file output (stdout)
+my $first_write;                                     # needed to decide wether to call '$zip->newStream' (for appending to zip file)
+my $input_fh;                                        # input file handle (default: stdin)
+
+my $buf_in;                                          # text body data extracted from input document ($input_fh), further processed by XML::LibXML::Reader
+my $data;                                            # contains the primary text (created by func. 'retr_info' from $buf_in), which is written to '$data_file'
+
+my $dir;                                             # text     directory (below $_root_dir)
+my $dir_crp;                                         # corpus   directory (below $_root_dir)
+my $dir_doc;                                         # document directory (below $_root_dir)
+
+my ( $text_id, $text_id_esc );                       # '$text_id_esc' = escaped version of $text_id (see %ent)
+
+my %ent = ('"', '&quot;', '&','&amp;',               # convert '&', '<' and '>' into their corresponding sgml-entities
+           '<','&lt;','>','&gt;');
+                                                     # note: the index still refers to the 'single character'-versions, which are counted as 1
+                                                     #  (search for '&amp;' in data.xml and see corresponding indices in $_tokens_file)
+
+my $header_txt;                                      # raw text     header (written to '$_root_dir$dir/$_header_file')
+my $header_doc;                                      # raw document header (written to '$_root_dir$dir_doc/$_header_file')
+my $header_crp;                                      # raw corpus   header (written to '$_root_dir$dir_crp/$_header_file')
+
+my ( $header_fl_crp, $header_fl_doc,                 # flags for tracking where we are in the input document
+     $header_fl_txt, $data_fl );
+
+my ( $header_prfx, $data_prfx1,                      # $header_prfx is written to $_header_file, $data_* are written to $_data_file
+     $data_prfx2, $data_sfx );
+
+my @structures;                                      # list of arrays, where each array represents a TEI I5 tag (except $_TOKENS_TAG) from the input document
+                                                     #  - the input of this array is written in func. 'write_structures' into the file '$_structure_file'
+
+my @tokens;                                          # list of arrays, where each array represents a $_TOKENS_TAG from the input document
+                                                     #  - the input of this array is written in func. 'write_tokens' into the file '$_tokens_file'
+
+my ( $ref, $idx, $att_idx );                         # needed in func. 'write_structures' and 'write_tokens'
+
+my ( $reader,                                        # instance of 'XML::LibXML::Reader->new' (on input '$buf_in')
+     $tree_data );                                   # instance of 'XML::CompactTree::XS::readSubtreeToPerl' (on input '$reader')
+
+# these are only used inside recursive function 'retr_info'
+my ( $_IDX,                                          # value is set dependent on $_XCT_LN - for extracting array of child elements from element in $tree_data
+     $e,                                             # element from $tree_data
+     $n,                                             # tag name of actual processed element $e
+     $rl,                                            # recursion level
+     $dl,                                            # actual length of string $data
+     @oti,                                           # oti='open tags indizes' - a stack of indizes into @structures, where the top index in @oti
+                                                     #                            represents the actual processed element from @structures
+     @oti2,                                          # analogously to @oti, but with reference to array @tokens
+     $inside_tokens_tag,                             # flag is set, when inside $_TOKENS_TAG
+     ## variables for handling ~ whitespace related issue ~ (it is sometimes necessary, to correct the from-values for some tags)
+     $add_one,                                       # ...
+     $fval, $fval2,                                  # ...
+     %ws);                                           # hash for indices of whitespace nodes (needed to recorrect from-values)
+                                                     # idea: when closing element, check if it's from-index minus 1 refers to a whitespace node
+                                                     #  (means: 'from-index - 1' is a key in %ws).
+                                                     # if this is _not_ the case, then the from-value is one to high => correct it by substracting 1
+
+my $output;                                          # temporary variable needed in 'write_*'-functions for writing output to zip-stream $zip)
+
+my ( $i, $c );                                       # index variables used in loops
+
+## DEPRECATED (only IDS-intern)
+my $_tok_file_bas = "tokens.xml";
+##
+
+my ( $_CORP_HEADER_END, $_DOC_HEADER_END, $_TEXT_HEADER_END );
+
+
+#
+# ~~~ main ~~~
+#
+
+# ~ initializations ~
+
+($_XCT_LN)?($_IDX=5):($_IDX=4);
+
+$header_prfx = $data_prfx1 = $data_prfx2 = $data_sfx = "";
+
+$header_fl_txt = $header_fl_doc = $header_fl_crp = 0;
+
+$inside_tokens_tag = -1;
+
+$fval = $fval2 = 0;
+
+$_root_dir .= '/'; # base dir must always end with a slash
+$_root_dir =~ s/^\.?\///; # remove leading / (only relative paths allowed in IO::Compress::Zip) and redundant ./
+
+$_CORP_HEADER_BEG =~ s#^([^\s]+)(.*)$#$1\[\^>\]*$2#; $_CORP_HEADER_END  = $1;
+$_DOC_HEADER_BEG  =~ s#^([^\s]+)(.*)$#$1\[\^>\]*$2#; $_DOC_HEADER_END   = $1;
+$_TEXT_HEADER_BEG =~ s#^([^\s]+)(.*)$#$1\[\^>\]*$2#; $_TEXT_HEADER_END  = $1;
+
+## TODO: remove this, because it's IDS-specific
 $header_prfx  = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 $header_prfx .= "<?xml-model href=\"header.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n";
 $header_prfx .= "<!DOCTYPE idsCorpus PUBLIC \"-//IDS//DTD IDS-XCES 1.0//EN\" \"http://corpora.ids-mannheim.de/idsxces1/DTD/ids.xcesdoc.dtd\">\n";
+##
 
 $data_prfx1   = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 $data_prfx1  .= "<?xml-model href=\"text.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n";
 $data_prfx1  .= "<raw_text docid=\"";
 $data_prfx2  .= "\" xmlns=\"http://ids-mannheim.de/ns/KorAP\">\n";
+## TODO: can 'metadata.xml' change or is it constant?
 $data_prfx2  .= "  <metadata file=\"metadata.xml\" />\n";
+##
 $data_prfx2  .= "  <text>";
 $data_sfx     = "</text>\n</raw_text>";
 
-my($chld_out, $chld_in, $pid, $select);
-if( $_GEN_TOK_BAS ){
-  startTokenizer();
-}
 
-while(<STDIN>){
+## DEPRECATED (only IDS-intern)
+startTokenizer() if $_GEN_TOK_BAS;
+##
 
-  $lc++; # line counter
+# ~ read input and write output (text by text) ~
+process(); # TODO: BUGFIX -> with sub, we get a Segfault (see SEGFAULT_TESTING)
 
-  if( $data_fl && m/^(.+)?<\/text>(.+)?$/ ){ # end of text body
-  ###
-  ### write data.xml, sentences.xml, paragraph.xml and structure.xml
-  ###
 
-    $pfx=$1; $sfx=$2;
-    die "ERROR ($0): main(): input line number $lc: line with closing tag for 'text' contains additional information ... => Aborting\n\tline=$_"
-      if (defined $pfx && $pfx !~ /^\s*$/) || (defined $sfx && $sfx !~ /^\s*$/);
+#
+# ~~~ subs ~~~
+#
 
-    if( $dir ne "" ){
 
-### NOTE: needed for debugging (e.g. whitespace issues)
-#if( $text_id eq "GOE_AGA.00000" )
-#if( $text_id eq "GOE_AGI.04846" )
-#{
-#open H1, ">/tmp/t123";
-#print H1 "$buf_in";
-#close H1;
-#}
-####
+sub process {
 
-      $reader = XML::LibXML::Reader->new(string => "<text>$buf_in</text>", huge => 1);
+  my ( $pfx, $sfx );
 
-      if( $_XCT_LN ){ # _XCT_LINE_NUMBERS is only for debugging
-        #$tree_data = XML::CompactTree::XS::readSubtreeToPerl($reader, XCT_DOCUMENT_ROOT|XCT_IGNORE_WS|XCT_IGNORE_SIGNIFICANT_WS|XCT_IGNORE_COMMENTS|XCT_ATTRIBUTE_ARRAY|XCT_LINE_NUMBERS);
-        # remove 'XCT_IGNORE_WS', because whitespace (in form of one blank) between tags is needed for separation of 'text-nodes' in data.xml
-        # TODO: check out the meanings/differences of 'XCT_IGNORE_WS' and 'XCT_IGNORE_SIGNIFICANT_WS': seems like, 'XCT_IGNORE_SIGNIFICANT_WS' is the one we need
-        $tree_data = XML::CompactTree::XS::readSubtreeToPerl($reader, XCT_DOCUMENT_ROOT|XCT_IGNORE_COMMENTS|XCT_ATTRIBUTE_ARRAY|XCT_LINE_NUMBERS);
-#        $tree_data = XML::CompactTree::XS::readSubtreeToPerl($reader, XCT_DOCUMENT_ROOT|XCT_IGNORE_COMMENTS|XCT_ATTRIBUTE_ARRAY|XCT_IGNORE_WS|XCT_IGNORE_SIGNIFICANT_WS|XCT_LINE_NUMBERS);
-      }else{
-        $tree_data = XML::CompactTree::XS::readSubtreeToPerl($reader, XCT_DOCUMENT_ROOT|XCT_IGNORE_COMMENTS|XCT_ATTRIBUTE_ARRAY);
-#        $tree_data = XML::CompactTree::XS::readSubtreeToPerl($reader, XCT_DOCUMENT_ROOT|XCT_IGNORE_COMMENTS|XCT_ATTRIBUTE_ARRAY|XCT_IGNORE_WS|XCT_IGNORE_SIGNIFICANT_WS);
+  my $lc = 0; # line counter
+
+  my $tc = 0; # text counter
+
+  $input_fh = *STDIN;  # input file handle (default: stdin)
+
+  $zip_outh = *STDOUT; # output file handle (default: stdout)
+
+  $data_fl = 0; $first_write = 1;
+
+  $buf_in = $data = $dir = $dir_doc = $dir_crp = "";
+  $header_txt = $header_doc = $header_crp = "";
+
+
+  if ( $input_fname ne '' ){
+
+    open ( $input_fh, "<", "$input_fname") || die "File \'$input_fname\' could not be opened.\n";
+
+  }
+
+
+  # ~ loop (reading input document) ~
+
+  while ( <$input_fh> ){
+
+    $lc++; # line counter
+
+    # TODO: yet not tested fo big amounts of data
+    # must-have, otherwise comments in input could be fatal (e.g.: ...<!--\n<idsHeader...\n-->...)
+    delHTMLcom ( $_ ); # remove HTML comments (<!--...-->)
+
+    if ( $data_fl && m#^(.*)</${_TEXT_BODY}>(.*)$# ){
+
+
+      # ~ end of text body ~
+
+
+      # write data.xml, structure.xml and evtl. morpho.xml and/or the dummy tokenization files (s.a.: $_tok_file_con and $_tok_file_agg)
+
+      $pfx = $1; $sfx = $2;
+
+      die "ERROR ($0): main(): input line number $lc: line with closing text-body tag '${_TEXT_BODY}'"
+        ." contains additional information ... => Aborting\n\tline=$_"
+          if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
+
+      if ( $dir ne "" ){
+
+#SEGFAULT_TESTING
+#print STDERR "\nbuf_in=$buf_in";
+#$_="test"; $buf_in=$_; # when doing this, we get no segfault at 'XML::LibXML::Reader->new'
+##open H, ">/tmp/buf_in.txt"; print H "$buf_in"; close H;
+        $reader = XML::LibXML::Reader->new( string => "<text>$buf_in</text>", huge => 1 );
+#exit(0);
+
+        if ( $_XCT_LN ){ # _XCT_LINE_NUMBERS is only for debugging
+          $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY | XCT_LINE_NUMBERS );
+        } else {
+          $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY );
+        }
+
+        @structures = (); @oti = ();
+
+        if ( $_TOKENS_PROC ){
+          @tokens = (); @oti2 = ()
+        }
+
+        $dl = $rl = 0;
+
+        # ~ whitespace related issue ~
+        $add_one = 0;
+        %ws = ();
+
+
+        # ~ recursion ~
+
+        retr_info( \$tree_data->[2] ); # parse input data
+
+        $rl--;
+
+
+        # ~ write data.xml ~
+
+        $data =~ tr/\n\r/  /; # note: 2 blanks - otherwise offset data would become corrupt
+
+        $data = encode_utf8( $data );
+
+        ## DEPRECATED (only IDS-intern)
+        # first write it to tokenization pipe to give it some time
+        if ( $_GEN_TOK_BAS ){
+          print $chld_in "$data\n\x03\n";
+        }
+        ##
+      
+        print STDERR "DEBUG ($0): main(): Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file\n" if $_DEBUG;
+
+        if ( $first_write ){
+
+          $first_write = 0;
+
+          # 1st time: create instance
+          $zip = new IO::Compress::Zip $zip_outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0, Name => "$_root_dir$dir/$_data_file"
+            or die "ERROR ('$_root_dir$dir/$_data_file'): zip failed: $ZipError\n"
+
+        } else {
+
+          # closes the current compressed data stream and starts a new one.
+          $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_data_file" )
+            or die "ERROR ('$_root_dir$dir/$_data_file'): zip failed: $ZipError\n"
+        }
+
+        $data =~ s/(&|<|>)/$ent{$1}/g;
+
+        $zip->print( "$data_prfx1$text_id_esc$data_prfx2$data$data_sfx" );
+
+
+        # ~ write structures ~
+
+        write_structures() if @structures;
+
+
+        # ~ write tokens ~
+
+        write_tokens() if $_TOKENS_PROC && @tokens;
+
+
+        # ~ dummy tokenization ~
+
+        if ( $_GEN_TOK_BAS || $_GEN_TOK_DUMMY ){ ## DEPRECATED ($_GEN_TOK_BAS: only IDS-intern)
+
+          select_tokenization();
+
+          if ( $_GEN_TOK_DUMMY ){
+            $offset = 0; @tok_tokens_con=(); @tok_tokens_agg=();
+          }
+        }
+
+        $data_fl = 0; $buf_in = $data = $dir = ""; # reinit.
+
+      } else { # $dir eq ""
+
+        print STDERR "WARNING ($0): main(): maybe empty textSigle => skipping this text ...\n";
+        print STDERR "WARNING ($0): main(): text header=$header_txt\n";
+        print STDERR "WARNING ($0): main(): data=$data\n";
       }
 
-      @structures=(); @oti=();
+    } elsif ( $data_fl ){
 
-      if( $_ANNOT_GEN ){
-        @annot=(); @oti2=()
-      }
 
-      $dl = 0;
+      # ~ inside text body ~
 
-      $rl = 0; # recursion level
 
-      # whitespace related issue
-      $add_one = 0;
-      %hws=();
+      #print STDERR "inside text body (\$data_fl set)\n";
+
+      # ~ whitespace handling ~
+
+      # remove consecutive whitespace at beginning and end (mostly one newline)
+      # to let 'XML::CompactTree::XS' recognize these blanks as 'text-nodes', the option 'XCT_IGNORE_WS' may not be used (see above).
+      s/^\s+//; s/\s+$//;
+
+      # There's nothing wrong with inserting an additional blank at the start of the 2nd and all consecutive lines (which contain at least one tag),
+      #  because it helps for better readability of the text in the '$_data_file' (e.g.: assure blanks between sentences).
+      # Furthermore, the input lines should avoid primary text tokens, which span across several lines, unless the line breaks doesn't lead
+      #  to a situation which produces unwanted blanks - e.g.: '...<w>end</w>\n<w>.</w>...' would lead to '...<w>end</w> <w>.</w>...', or
+      #  '...<w>,</w>\n<w>this</w>\n<w>is</w>\n<w>it</w>\n<w>!</w>...' to '<w>,<w> <w>this</w> <w>is</w> <w>it</w> <w>!</w>'. Even when considering
+      #  to correct those unwanted effects, there would be lots of examples aside punctuation, where there would not exist an easy way or unarbitrary
+      #  solution regarding the elimination of the false blanks.
       #
+      # So, the best way to avoid having false blanks in the output, is to assure that linebreaks between word-tags doesn't occur in the input
+      #  (see also comments on 'input restrictions' at the top of this script).
 
-###
-### recursion
-      retr_info( \$tree_data->[2] ); # parse input data
-###
-###
-      $rl--;
+      if ( m/<[^>]+>[^<]/ ){ # line contains at least one tag with at least one character contents
 
-      # write data.xml
-      $data=~tr/\n\r/  /; # NOTE: 2 blanks - otherwise offset data would become corrupt
-      $data=encode_utf8($data);
+        $tc++; # text counter
 
-      # first write it to tokenization pipe to give it some time
-      if( $_GEN_TOK_BAS ){
-        print $chld_in "$data\n\x03\n";
+        s/^(.)/ $1/ if $tc > 1; # add blank before 1st character for 2nd line and consecutive lines (which contain at least one tag)
       }
 
-      print STDERR "DEBUG ($0): main(): Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file\n" if $_DEBUG;
-      if ($first_write){
-        $first_write=0;
-        ### 1st time: create instance
-        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0, Name => "$_root_dir$dir/$_data_file"
-          or die "ERROR ('$_root_dir$dir/$_data_file'): zip failed: $ZipError\n"
-      }else{
-        ### close previous stream and open new one
-        $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_data_file" )
-          or die "ERROR ('$_root_dir$dir/$_data_file'): zip failed: $ZipError\n"
+      # add line to buffer
+      $buf_in .= $_;
+
+    } elsif ( $header_fl_txt && m#^(.*</${_TEXT_HEADER_END}>)(.*)$# ){
+
+
+      # ~ end of text header ~
+
+
+      #print STDERR "end of text header\n";
+
+      # write it to header.xml
+
+      $sfx = $2;
+
+      $header_txt .= $1; $header_fl_txt = 0;
+
+
+      die "ERROR ($0): main(): input line number $lc: line with closing text-header tag '${_TEXT_HEADER_END}'"
+       ." contains additional information ... => Aborting\n\tline=$_"
+         if $sfx !~ /^\s*$/;
+
+      if ( $dir eq "" ){
+
+        print STDERR "WARNING ($0): main(): input line number $lc: empty textSigle in text header => nothing to do ...\ntext header=$header_txt\n";
+
+      } else {
+
+        print STDERR "DEBUG ($0): Writing file $_root_dir$dir/$_header_file\n" if $_DEBUG;
+
+        if ( $first_write ){
+
+          $first_write = 0;
+
+          $zip = new IO::Compress::Zip $zip_outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD,
+                 Append => 0, Name => "$_root_dir$dir/$_header_file"
+            or die "ERROR ('$_root_dir$dir/$_header_file'): zip failed: $ZipError\n"
+
+        } else {
+
+          $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_header_file" )
+            or die "ERROR ('$_root_dir$dir/$_header_file'): zip failed: $ZipError\n"
+        }
+
+        $header_txt = encode_utf8( $header_txt );
+
+        $zip->print( "$header_prfx$header_txt" );
+
+        $header_txt = "";
       }
-      $data =~ s/(&|<|>)/$ent{$1}/g;
-      $zip->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
 
-      # write structures
-      write_structures() if @structures;
+    } elsif ( $header_fl_txt ){
 
-      # write annotations
-      write_annot() if $_ANNOT_GEN && @annot;
+      # ~ inside text header ~
 
-      # tokenization
-      if( $_GEN_TOK_BAS || $_GEN_TOK_DUMMY )
-      {
-        write_tok();
-        if( $_GEN_TOK_DUMMY ){
-          $offset = 0; @tok_tokens_con=(); @tok_tokens_agg=();
+
+      #print STDERR "inside text header\n";
+
+      if( m#^(.*)<${_TEXT_SIGLE}(?: [^>]*)?>([^<]*)(.*)$# ){
+
+        $pfx = $1; $sfx = $3;
+
+        $dir = $2; $text_id = $dir;
+
+        $text_id =~ tr/\//_/; $dir =~ s/("|&|<|>)/$ent{$1}/g;
+
+        $text_id = encode_utf8( $text_id );
+
+        die "ERROR ($0): main(): input line number $lc: line with text-sigle tag '$_TEXT_SIGLE' is not in expected format ... => Aborting\n\tline=$_"
+          if $pfx !~ /^\s*$/  || $sfx !~ m#^</${_TEXT_SIGLE}>\s*$# || $dir =~ /^\s*$/;
+
+        # log output for seeing progression
+        print STDERR "$0: main(): text_id=".decode_utf8( $text_id )."\n";
+
+        $text_id_esc = $text_id;
+
+        s#(<${_TEXT_SIGLE}(?: [^>]*)?>)[^<]+(</${_TEXT_SIGLE}>)#$1$dir$2# # to be consistent with escaping, escape also textSigle in text-header
+          if $text_id_esc =~ s/("|&|<|>)/$ent{$1}/g;
+
+        $dir =~ tr/\./\//;
+      }
+
+      $header_txt .= $_;
+
+    } elsif ( $header_fl_doc && m#^(.*</${_DOC_HEADER_END}>)(.*)$# ){
+
+
+      # ~ end of document header ~
+
+
+      #print STDERR "end of doc header\n";
+
+      # write it to header.xml
+
+      $sfx = $2;
+
+      $header_doc .= $1; $header_fl_doc = 0;
+
+      die "ERROR ($0): main(): input line number $lc: line with closing document-header tag '${_DOC_HEADER_END}'"
+       ." contains additional information ... => Aborting\n\tline=$_"
+         if $sfx !~ /^\s*$/;
+
+      if( $dir_doc eq "" ){
+
+        print STDERR "WARNING ($0): main(): input line number $lc: empty document sigle in document header"
+          ." => nothing to do ...\ndocument header=$header_doc\n";
+
+      } else {
+
+        print STDERR "DEBUG ($0): Writing file $_root_dir$dir_doc/$_header_file\n" if $_DEBUG;
+
+        if ( $first_write ){
+
+          $first_write = 0;
+
+          $zip = new IO::Compress::Zip $zip_outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0,
+            Name => "$_root_dir$dir_doc/$_header_file"
+              or die "ERROR ('$_root_dir$dir_doc/$_header_file'): zip failed: $ZipError\n"
+
+        } else {
+
+          $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir_doc/$_header_file" )
+            or die "ERROR ('$_root_dir$dir_doc/$_header_file'): zip failed: $ZipError\n"
+        }
+
+        $header_doc = encode_utf8( $header_doc );
+
+        $zip->print( "$header_prfx$header_doc" );
+
+        $header_doc = $dir_doc = "";
+      }
+
+    } elsif ( $header_fl_doc ){
+
+
+      # ~ inside document header ~
+
+
+      #print STDERR "inside doc header\n";
+
+      if ( m#^(.*)<${_DOC_SIGLE}(?: [^>]*)?>([^<]*)(.*)$# ){
+
+        $pfx = $1; $sfx = $3;
+
+        $dir_doc = $2;
+
+        die "ERROR ($0): main(): input line number $lc: line with document-sigle tag '$_DOC_SIGLE' is not in expected format ... => Aborting\n\tline=$_"
+          if $pfx !~ /^\s*$/  || $sfx !~ m#^</${_DOC_SIGLE}>\s*$# || $dir_doc =~ /^\s*$/;
+
+        s#(<${_DOC_SIGLE}(?: [^>]*)?>)[^<]+(</${_DOC_SIGLE}>)#$1$dir_doc$2# # to be consistent with escaping, escape also textSigle in Document-Header
+          if $dir_doc =~ s/("|&|<|>)/$ent{$1}/g;
+      }
+
+      $header_doc .= $_;
+
+    } elsif ( m#^(.*)(<${_TEXT_HEADER_BEG}.*)$# ){
+
+      # ~ start of text header ~
+
+
+      #print STDERR "begin of text header\n";
+
+      $header_txt = $_; $header_fl_txt = 1; $pfx = $1;
+
+      $tc = 0; # reset (needed for ~ whitespace handling ~)
+
+      die "ERROR ($0): main(): input line number $lc: line with opening text-header tag '${_TEXT_HEADER_BEG}'"
+        ." is not in expected format ... => Aborting\n\tline=$_"
+          if $pfx !~ /^\s*$/;
+
+    } elsif ( m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$# ){
+
+
+      # ~ start of text body ~
+
+
+      #print STDERR "inside text body\n";
+
+      $pfx = $1; $sfx = $2;
+
+      $data_fl = 1;
+
+      die "ERROR ($0): main(): input line number $lc: line with opening text-body tag '${_TEXT_BODY}'"
+        ." contains additional information ... => Aborting\n\tline=$_"
+          if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
+
+    } elsif ( m#^(.*)(<${_DOC_HEADER_BEG}.*)$# ){
+
+
+      # ~ start of document header ~
+
+
+      #print STDERR "begin of doc header\n";
+
+      $header_doc = "$2\n"; $header_fl_doc = 1; $pfx = $1;
+
+      die "ERROR ($0): main(): input line number $lc: line with opening document-header tag '${_DOC_HEADER_BEG}'"
+        ."is not in expected format ... => Aborting\n\tline=$_"
+          if $pfx !~ /^\s*$/;
+
+    } elsif ( $header_fl_crp && m#^(.*</${_CORP_HEADER_END}>)(.*)$# ){
+
+
+      # ~ end of corpus header ~
+
+
+      #print STDERR "end of corp header\n";
+
+      $sfx = $2;
+
+      $header_crp .= $1; $header_fl_crp = 0;
+
+      die "ERROR ($0): main(): input line number $lc: line with closing corpus-header tag '${_CORP_HEADER_END}'"
+        ." contains additional information ... => Aborting\n\tline=$_"
+          if $sfx !~ /^\s*$/;
+
+      if ( $dir_crp eq "" ){
+
+        print STDERR "WARNING ($0): main(): input line number $lc: empty corpus sigle in corpus header => nothing to do ...\ncorpus header=$header_crp\n";
+
+      } else {
+
+        print STDERR "DEBUG ($0): Writing file $_root_dir$dir_crp/$_header_file\n" if $_DEBUG;
+
+        if ( $first_write ){
+
+          $first_write = 0;
+
+#SEGFAULT_TESTING (when allowing the next statement to execute, we get a segfault at 'XML::LibXML::Reader->new' - see above)
+#$dir="1"; next;
+          $zip = new IO::Compress::Zip $zip_outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD,
+            Append => 0, Name => "$_root_dir$dir_crp/$_header_file"
+               or die "ERROR ('$_root_dir$dir_crp/$_header_file'): zip failed: $ZipError\n";
+#$dir="1"; next;
+
+        } else {
+
+          $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir_crp/$_header_file" )
+            or die "ERROR ('$_root_dir$dir_crp/$_header_file'): zip failed: $ZipError\n"
+        }
+
+        $header_crp = encode_utf8( $header_crp );
+
+        $zip->print( "$header_prfx$header_crp" );
+
+        $header_crp = $dir_crp = "";
+      }
+
+    } elsif ( $header_fl_crp ){
+
+
+      # ~ inside corpus header ~
+
+
+      #print STDERR "inside corp header\n";
+
+      if ( m#^(.*)<${_CORP_SIGLE}(?: [^>]*)?>([^<]*)(.*)$# ){
+
+        $pfx = $1; $sfx = $3;
+
+        $dir_crp = $2;
+
+        die "ERROR ($0): main(): input line number $lc: line with korpusSigle-tag is not in expected format ... => Aborting\n\tline=$_"
+          if $pfx !~ /^\s*$/  || $sfx !~ m#^</${_CORP_SIGLE}>\s*$# || $dir_crp =~ /^\s*$/;
+
+        if ( $dir_crp =~ s/("|&|<|>)/$ent{$1}/g ){
+
+          s#(<${_CORP_SIGLE}(?: [^>]*)?>)[^<]+(</${_CORP_SIGLE}>)#$1$dir_crp$2# # to be consistent with escaping, escape also textSigle in Corpus-Header
         }
       }
 
-      $data_fl=0; $data = $dir = $buf_in = ""; # reinit.
+      $header_crp .= $_;
 
-    }else{ # $dir eq ""
+    } elsif ( m#^(.*)(<${_CORP_HEADER_BEG}.*)$# ){
 
-      print STDERR "WARNING ($0): main(): maybe empty textSigle => skipping this text ...\n";
-      print STDERR "WARNING ($0): main(): text header=$header_txt\n";
-      print STDERR "WARNING ($0): main(): data=$data\n";
-    }
-  }elsif( $data_fl ){ # inside text body
-    #print STDERR "inside text body (\$data_fl set)\n";
 
-    ### whitespace handling
-    # remove consecutive whitespace at beginning and end (mostly one newline)
-    # to let 'XML::CompactTree::XS' recognize these blanks as 'text-nodes', the option 'XCT_IGNORE_WS' may not be used (see above).
-    s/^\s+//; s/\s+$//;
+      # ~ start of corpus header ~
 
-    # important!: search for '>[^<][^<]*<' e.g. in 'vim goe_tagged.i5.xml.bz2' => insert a blank before every _first_ tag in a line, that contains text
-    # NOTE: the input text should avoid structures like below (which could also happen to other tags like '<pb ... />' or '<abbr>' etc.):
-    #  negative example for '<w>' (see dck corpus in 'DeReKo-2016-II' - H.L. will fix this in 'DeReKo-2017-I'):
-    #      <s>
-    #      ...
-    #      <w id="f1306078.m10.t9" lemma="zu" type="APPRART">zur</w>
-    #      <w id="f1306078.m10.t10" lemma="Kenntnis" type="NN">Kenntnis</w>
-    #      <w id="f1306078.m10.t11" lemma="nehmen" type="VVINF">nehmen</w>
-    #      <w id="f1306078.m10.t12" lemma="," type="$,">,</w>
-    #      <w id="f1306078.m10.t13" lemma="dass" type="KOUS">dass</w>
-    #      ...
-    #  In the above example, the whitespace/blank information between the words is lost. The below perl subst. expression does not recognize, that there may not be a blank before a comma.
-    if(m/<[^>]+>[^<]/){
-      $tc++; # text counter
-      s/^(.)/ $1/ if $tc>1; # only add a blank, if this is not the first text in the whole text
+
+      #print STDERR "begin of corp header\n";
+
+      $header_crp = $2; $header_fl_crp = 1; $pfx = $1;
+
+      die "ERROR ($0): main(): input line number $lc: line with opening corpus-header tag '${_CORP_HEADER_BEG}'"
+        ." is not in expected format ... => Aborting\n\tline=$_"
+          if $pfx !~ /^\s*$/;
     }
 
-    # add line to buffer
-    $buf_in .= $_;
+  } #end: while
 
-  }elsif( $header_fl_txt && m/^(.*<\/idsHeader>)(.+)?$/ ){ # end of text header
-    #print STDERR "end of text header\n";
-  ###
-  ### write header.xml
-  ###
-    $header_txt .= $1; $header_fl_txt = 0; $sfx=$2;
-    die "ERROR ($0): main(): input line number $lc: line with closing tag for 'idsHeader type=\"text\"' contains additional information ... => Aborting\n\tline=$_"
-      if defined $sfx && $sfx !~ /^\s*$/;
-    if( $dir eq "" ){
-      print STDERR "WARNING ($0): main(): input line number $lc: empty textSigle in text header => nothing to do ...\ntext header=$header_txt\n";
-    }else{
-      print STDERR "DEBUG ($0): Writing file $_root_dir$dir/$_header_file\n" if $_DEBUG;
-      # create zip buffer
-      if ($first_write){
-        $first_write=0;
-        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0, Name => "$_root_dir$dir/$_header_file"
-          or die "ERROR ('$_root_dir$dir/$_header_file'): zip failed: $ZipError\n"
-      }else{
-        $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_header_file" )
-          or die "ERROR ('$_root_dir$dir/$_header_file'): zip failed: $ZipError\n"
-      }
-      $header_txt=encode_utf8($header_txt);
-      $zip->print("$header_prfx$header_txt");
-    }
-  }elsif( $header_fl_txt ){ # inside text header
-    #print STDERR "inside text header\n";
-    if( m/^(.+)?<textSigle>([^<]+)(.+)$/ ){
-      $pfx=$1; $sfx=$3; $dir=$2; $text_id = $dir; $text_id =~ tr/\//_/; $dir =~ s/("|&|<|>)/$ent{$1}/g;
-      $text_id=encode_utf8($text_id); # otherwise problems with "wide character" where $text_id is printed (see e.g.: http://ahinea.com/en/tech/perl-unicode-struggle.html)
-                                      # see e.g.: Drukola-Project
-      die "ERROR ($0): main(): input line number $lc: line with textSigle-tag is not in expected format ... => Aborting\n\tline=$_"
-        if (defined $pfx && $pfx !~ /^\s*$/) || $sfx !~ /^<\/textSigle>\s*$/;
-      print STDERR "$0: main(): text_id=".decode_utf8($text_id)."\n"; # some output to see progression
-      $text_id_esc = $text_id;
-      if( $text_id_esc =~ s/("|&|<|>)/$ent{$1}/g ){
-        $_ =~ s/(<textSigle>)[^<]+(<\/textSigle>)/$1$dir$2/; # do be consistent with escaping, escape also textSigle in Text-Header
-      }
-      $dir =~ tr/\./\//;
-    }
-    $header_txt .= $_;
-  }elsif( $header_fl_doc && m/^(.*<\/idsHeader>)(.+)?$/ ){ # end of document header
-    #print STDERR "end of doc header\n";
-    $header_doc .= $1; $header_fl_doc = 0; $sfx=$2;
-    die "ERROR ($0): main(): input line number $lc: line with closing tag for 'idsHeader type=\"document\"' contains additional information ... => Aborting\n\tline=$_"
-      if defined $sfx && $sfx !~ /^\s*$/;
-    if( $dir_doc eq "" ){
-      print STDERR "WARNING ($0): main(): input line number $lc: empty document sigle in document header => nothing to do ...\ndocument header=$header_doc\n";
-    }else{
-      print STDERR "DEBUG ($0): Writing file $_root_dir$dir_doc/$_header_file\n" if $_DEBUG;
-      if ($first_write){
-        $first_write=0;
-        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0, Name => "$_root_dir$dir_doc/$_header_file"
-          or die "ERROR ('$_root_dir$dir_doc/$_header_file'): zip failed: $ZipError\n"
-      }else{
-        $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir_doc/$_header_file" )
-          or die "ERROR ('$_root_dir$dir_doc/$_header_file'): zip failed: $ZipError\n"
-      }
-      $header_doc=encode_utf8($header_doc);
-      $zip->print("$header_prfx$header_doc");
-    }
-  }elsif( $header_fl_doc ){ # inside document header
-    #print STDERR "inside doc header\n";
-    if( m/^(.+)?<dokumentSigle>([^<]+)(.+)$/ ){
-      $pfx=$1; $sfx=$3; $dir_doc=$2;
-      die "ERROR ($0): main(): input line number $lc: line with dokumentSigle-tag is not in expected format ... => Aborting\n\tline=$_"
-        if (defined $pfx && $pfx !~ /^\s*$/) || $sfx !~ /^<\/dokumentSigle>\s*$/;
-      if( $dir_doc =~ s/("|&|<|>)/$ent{$1}/g ){
-        $_ =~ s/(<dokumentSigle>)[^<]+(<\/dokumentSigle>)/$1$dir_doc$2/; # do be consistent with escaping, escape also textSigle in Document-Header
-      }
-    }
-    $header_doc .= $_;
-  }elsif ( m/^.*(<idsHeader[^>]*type=\"text\".*)$/ ){ # begin of text header
-    #print STDERR "begin of text header\n";
-    $tc=0; ### reset (needed for whitespace-handling)
-    $header_txt = "$1\n"; $header_fl_txt = 1;
-  }elsif( m/^(.+)?<text(?: [^>]*)?>(.+)?$/ ){ # begin of text body
-    #print STDERR "inside text body\n";
-    $pfx=$1; $sfx=$2;
-    die "ERROR ($0): main(): input line number $lc: line with opening tag for 'text' contains additional information ... => Aborting\n\tline=$_"
-      if (defined $pfx && $pfx !~ /^\s*$/) || (defined $sfx && $sfx !~ /^\s*$/);
-    $data_fl=1;
-  }elsif ( m/^.*(<idsHeader[^>]*type=\"document\".*)$/ ){ # begin of document header
-    #print STDERR "begin of doc header\n";
-    $header_doc = "$1\n"; $header_fl_doc = 1;
-  }elsif( $header_fl_crp && m/^(.*<\/idsHeader>)(.+)?$/ ){ # end of corpus header
-    #print STDERR "end of corp header\n";
-    $header_crp .= $1; $header_fl_crp = 0; $sfx=$2;
-    die "ERROR ($0): main(): input line number $lc: line with closing tag for 'idsHeader type=\"corpus\"' contains additional information ... => Aborting\n\tline=$_"
-      if defined $sfx && $sfx !~ /^\s*$/;
-    if( $dir_crp eq "" ){
-      print STDERR "WARNING ($0): main(): input line number $lc: empty corpus sigle in corpus header => nothing to do ...\ncorpus header=$header_crp\n";
-    }else{
-      print STDERR "DEBUG ($0): Writing file $_root_dir$dir_crp/$_header_file\n" if $_DEBUG;
-      if ($first_write){
-        $first_write=0;
-        $zip = new IO::Compress::Zip $outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0, Name => "$_root_dir$dir_crp/$_header_file"
-          or die "ERROR ('$_root_dir$dir_crp/$_header_file'): zip failed: $ZipError\n"
-      }else{
-        $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir_crp/$_header_file" )
-          or die "ERROR ('$_root_dir$dir_crp/$_header_file'): zip failed: $ZipError\n"
-      }
-      $header_crp=encode_utf8($header_crp);
-      $zip->print("$header_prfx$header_crp");
-    }
-  }elsif( $header_fl_crp ){ # inside corpus header
-    #print STDERR "inside corp header\n";
-    if( m/^(.+)?<korpusSigle>([^<]+)(.+)$/ ){
-      $pfx=$1; $sfx=$3; $dir_crp=$2;
-      die "ERROR ($0): main(): input line number $lc: line with korpusSigle-tag is not in expected format ... => Aborting\n\tline=$_"
-        if (defined $pfx && $pfx !~ /^\s*$/) || $sfx !~ /^<\/korpusSigle>\s*$/;
-      if( $dir_crp =~ s/("|&|<|>)/$ent{$1}/g ){
-        $_ =~ s/(<korpusSigle>)[^<]+(<\/korpusSigle>)/$1$dir_crp$2/; # do be consistent with escaping, escape also textSigle in Corpus-Header
-      }
-    }
-    $header_crp .= $_;
-  }elsif ( m/^.*(<idsHeader[^>]*type=\"corpus\".*)$/ ){ # begin of corpus header
-    #print STDERR "begin of corp header\n";
-    $header_crp = "$1\n"; $header_fl_crp = 1;
+  $zip->close();
+
+  ## DEPRECATED (only IDS-intern)
+  if( $_GEN_TOK_BAS ){
+    close($chld_in);
+    close($chld_out);
   }
-  ###
+  ##
 
-}#end: while
+} # end: sub process
 
-if( $_GEN_TOK_BAS ){
-  close($chld_in);
-  close($chld_out);
-}
-$zip->close();
 
-######
-###### SUBS
-######
-#
-#  $reader = XML::LibXML::Reader->new(IO => STDIN);
-#  $data   = XML::CompactTree::XS::readSubtreeToPerl($reader, XCT_DOCUMENT_ROOT|XCT_IGNORE_WS|XCT_IGNORE_SIGNIFICANT_WS|XCT_IGNORE_COMMENTS);
-#
-#  example: <node a=\"v\"><node1>some <n/> text</node1><node2>more-text</node2></node>
-#
-#  ( print out values of above example: echo "<node a=\"v\"><node1>some <n/> text</node1><node2>more-text</node2></node>"|perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN);$data = XML::CompactTree::XS::readSubtreeToPerl($reader,XCT_DOCUMENT_ROOT|XCT_IGNORE_WS|XCT_IGNORE_SIGNIFICANT_WS|XCT_IGNORE_COMMENTS|XCT_LINE_NUMBERS);print $data->[2]->[0]->[5]->[1]->[1]' )
-#
-#  $data = reference to below array
-#
-#  [ 0: XML_READER_TYPE_DOCUMENT,
-#    1: ?
-#    2: [ 0: [ 0: XML_READER_TYPE_ELEMENT
-#              1: 'node'
-#              2: ?
-#              3: HASH (attributes)
-#              4: 1 (line number)
-#              5: [ 0: [ 0: XML_READER_TYPE_ELEMENT
-#                        1: 'node1'
-#                        2: ?
-#                        3: undefined (no attributes)
-#                        4: 1 (line number)
-#                        5: [ 0: [ 0: XML_READER_TYPE_TEXT
-#                                  1: 'some '
-#                                ]
-#                             1: [ 0: XML_READER_TYPE_ELEMENT
-#                                  1: 'n'
-#                                  2: ?
-#                                  3: undefined (no attributes)
-#                                  4: 1 (line number)
-#                                  5: undefined (no child nodes)
-#                                ]
-#                             2: [ 0: XML_READER_TYPE_TEXT
-#                                  1: ' text'
-#                                ]
-#                           ]
-#                      ]
-#                   1: [ 0: XML_READER_TYPE_ELEMENT
-#                        1: 'node2'
-#                        2: ?
-#                        3: undefined (not attributes)
-#                        4: 1 (line number)
-#                        5: [ 0: [ 0: XML_READER_TYPE_TEXT
-#                                  1: 'more-text'
-#                                ]
-#                           ]
-#                      ]
-#                 ]
-#            ]
-#       ]
-#  ]
-#
-#  $data->[0] = 9 (=> type == XML_READER_TYPE_DOCUMENT)
-#
-#  ref($data->[2])                                                         == ARRAY (with 1 element for 'node')
-#  ref($data->[2]->[0])                                                    == ARRAY (with 6 elements)
-#
-#  $data->[2]->[0]->[0]                                                    == 1 (=> type == XML_READER_TYPE_ELEMENT)
-#  $data->[2]->[0]->[1]                                                    == 'node'
-#  ref($data->[2]->[0]->[3])                                               == HASH  (=> ${$data->[2]->[0]->[3]}{a} == 'v')
-#  $data->[2]->[0]->[4]                                                    == 1 (line number)
-#  ref($data->[2]->[0]->[5])                                               == ARRAY (with 2 elements for 'node1' and 'node2')   NOTE: child nodes of actual node (see $_IDX)
-#
-#  ref($data->[2]->[0]->[5]->[0])                                          == ARRAY (with 6 elements)
-#  $data->[2]->[0]->[5]->[0]->[0]                                          == 1 (=> type == XML_READER_TYPE_ELEMENT)
-#  $data->[2]->[0]->[5]->[0]->[1]                                          == 'node1'
-#  $data->[2]->[0]->[5]->[0]->[3]                                          == undefined (=> no attribute)
-#  $data->[2]->[0]->[5]->[0]->[4]                                          == 1 (line number)
-#  ref($data->[2]->[0]->[5]->[0]->[5])                                     == ARRAY (with 3 elements for 'some ', '<n/>' and ' text')
-#
-#  ref($data->[2]->[0]->[5]->[0]->[5]->[0])                                == ARRAY (with 2 elements)
-#  $data->[2]->[0]->[5]->[0]->[5]->[0]->[0]                                == 3 (=> type ==  XML_READER_TYPE_TEXT)
-#  $data->[2]->[0]->[5]->[0]->[5]->[0]->[1]                                == 'some '
-#
-#  ref($data->[2]->[0]->[5]->[0]->[5]->[1])                                == ARRAY (with 5 elements)
-#  $data->[2]->[0]->[5]->[0]->[5]->[1]->[0]                                == 1 (=> type == XML_READER_TYPE_ELEMENT)
-#  $data->[2]->[0]->[5]->[0]->[5]->[1]->[1]                                == 'n'
-#  $data->[2]->[0]->[5]->[0]->[5]->[1]->[3]                                == undefined (=> no attribute)
-#  $data->[2]->[0]->[5]->[0]->[5]->[1]->[4]                                == 1 (line number)
-#  $data->[2]->[0]->[5]->[0]->[5]->[1]->[5]                                == undefined (=> no child nodes)
-#
-#  ref($data->[2]->[0]->[5]->[0]->[5]->[2])                                == ARRAY (with 2 elements)
-#  $data->[2]->[0]->[5]->[0]->[5]->[2]->[0]                                == 3 (=> type ==  XML_READER_TYPE_TEXT)
-#  $data->[2]->[0]->[5]->[0]->[5]->[2]->[1]                                == ' text'
-#
-#
-#  NOTE: the sub 'retr_info' starts with the array reference '${$_[0]}' (= '\$tree_data->[2]'), which corresponds to '${\$data->[2]}' in the above example.
-#    Hence, the expression '@{${$_[0]}}' corresponds to '@{${\$data->[2]}', '$e' to '${${\$data->[2]}}[0]' (='$data->[2]->[0]') and '$e->[0]' to '${${\$data->[2]}}[0]->[0]' (='$data->[2]->[0]->[0]'.
+sub retr_info { # called from process()
 
-sub retr_info{
+  #  EXAMPLE: <node a="v"><node1>some <n/> text</node1><node2>more-text</node2></node>
+  #
+  #  print out values of above example:
+  #  echo '<node a="v"><node1>some <n/> text</node1><node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print $data->[2]->[0]->[5]->[1]->[1]'
+  #
+  #  $data = reference to below array
+  #
+  #  [ 0: XML_READER_TYPE_DOCUMENT,
+  #    1: ?
+  #    2: [ 0: [ 0: XML_READER_TYPE_ELEMENT                     <- start recursion with array '$data->[2]' (see process(): retr_info( \$tree_data->[2] ))
+  #              1: 'node'
+  #              2: ?
+  #              3: HASH (attributes)
+  #              4: 1 (line number)
+  #              5: [ 0: [ 0: XML_READER_TYPE_ELEMENT
+  #                        1: 'node1'
+  #                        2: ?
+  #                        3: undefined (no attributes)
+  #                        4: 1 (line number)
+  #                        5: [ 0: [ 0: XML_READER_TYPE_TEXT
+  #                                  1: 'some '
+  #                                ]
+  #                             1: [ 0: XML_READER_TYPE_ELEMENT
+  #                                  1: 'n'
+  #                                  2: ?
+  #                                  3: undefined (no attributes)
+  #                                  4: 1 (line number)
+  #                                  5: undefined (no child nodes)
+  #                                ]
+  #                             2: [ 0: XML_READER_TYPE_TEXT
+  #                                  1: ' text'
+  #                                ]
+  #                           ]
+  #                      ]
+  #                   1: [ 0: XML_READER_TYPE_ELEMENT
+  #                        1: 'node2'
+  #                        2: ?
+  #                        3: undefined (not attributes)
+  #                        4: 1 (line number)
+  #                        5: [ 0: [ 0: XML_READER_TYPE_TEXT
+  #                                  1: 'more-text'
+  #                                ]
+  #                           ]
+  #                      ]
+  #                 ]
+  #            ]
+  #       ]
+  #  ]
+  #
+  #  $data->[0] = 9 (=> type == XML_READER_TYPE_DOCUMENT)
+  #
+  #  ref($data->[2])                                                         == ARRAY (with 1 element for 'node')
+  #  ref($data->[2]->[0])                                                    == ARRAY (with 6 elements)
+  #
+  #  $data->[2]->[0]->[0]                                                    == 1 (=> type == XML_READER_TYPE_ELEMENT)
+  #  $data->[2]->[0]->[1]                                                    == 'node'
+  #  ref($data->[2]->[0]->[3])                                               == HASH  (=> ${$data->[2]->[0]->[3]}{a} == 'v')
+  #  $data->[2]->[0]->[4]                                                    == 1 (line number)
+  #  ref($data->[2]->[0]->[5])                                               == ARRAY (with 2 elements for 'node1' and 'node2')
+  #                                                                                     # child nodes of actual node (see $_IDX)
+  #
+  #  ref($data->[2]->[0]->[5]->[0])                                          == ARRAY (with 6 elements)
+  #  $data->[2]->[0]->[5]->[0]->[0]                                          == 1 (=> type == XML_READER_TYPE_ELEMENT)
+  #  $data->[2]->[0]->[5]->[0]->[1]                                          == 'node1'
+  #  $data->[2]->[0]->[5]->[0]->[3]                                          == undefined (=> no attribute)
+  #  $data->[2]->[0]->[5]->[0]->[4]                                          == 1 (line number)
+  #  ref($data->[2]->[0]->[5]->[0]->[5])                                     == ARRAY (with 3 elements for 'some ', '<n/>' and ' text')
+  #
+  #  ref($data->[2]->[0]->[5]->[0]->[5]->[0])                                == ARRAY (with 2 elements)
+  #  $data->[2]->[0]->[5]->[0]->[5]->[0]->[0]                                == 3 (=> type ==  XML_READER_TYPE_TEXT)
+  #  $data->[2]->[0]->[5]->[0]->[5]->[0]->[1]                                == 'some '
+  #
+  #  ref($data->[2]->[0]->[5]->[0]->[5]->[1])                                == ARRAY (with 5 elements)
+  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[0]                                == 1 (=> type == XML_READER_TYPE_ELEMENT)
+  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[1]                                == 'n'
+  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[3]                                == undefined (=> no attribute)
+  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[4]                                == 1 (line number)
+  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[5]                                == undefined (=> no child nodes)
+  #
+  #  ref($data->[2]->[0]->[5]->[0]->[5]->[2])                                == ARRAY (with 2 elements)
+  #  $data->[2]->[0]->[5]->[0]->[5]->[2]->[0]                                == 3 (=> type ==  XML_READER_TYPE_TEXT)
+  #  $data->[2]->[0]->[5]->[0]->[5]->[2]->[1]                                == ' text'
+  # 
+  #
+  #  retr_info() starts with the array reference ${$_[0]} (= \$tree_data->[2]), which corresponds to ${\$data->[2]} in the above example.
+  #  Hence, the expression @{${$_[0]}} corresponds to @{${\$data->[2]}}, $e to ${${\$data->[2]}}[0] (= $data->[2]->[0]) and $e->[0] to
+  #  ${${\$data->[2]}}[0]->[0] (= $data->[2]->[0]->[0]).
 
- $rl++; # rec. level (2 = topmost level inside retr_info() = level for all elements directly under <text>)
+  $rl++; # recursion level (1 = topmost level inside retr_info() = should always be level of tag $_TEXT_BODY)
 
- # $_[0] is a reference to an array reference
- foreach $e( @{${$_[0]}} ){ # iteration through all array elements
 
-   ## http://search.cpan.org/~shlomif/XML-LibXML-2.0118/lib/XML/LibXML/Reader.pod#NODE_TYPES
-   if( $e->[0] == XML_READER_TYPE_ELEMENT ){ # element node
+  foreach $e ( @{${$_[0]}} ){ # iteration through all array elements ($_[0] is a reference to an array reference)
 
-     ### . insert new array (for new tag) into @structures with tag-name and (if present) tag-attributes
-     ### . update @oti (open tags indizes) with @structures highest index (=$#structures); e.g.: @a=(1,2,3) => $#a = 2
-     ###
-     $n = $e->[1]; # name of tag
 
-     $inside_annot_tag = $rl if $_ANNOT_GEN && $n eq "$_ANNOT_TAG_NAME_RD";
+    if ( $e->[0] == XML_READER_TYPE_ELEMENT ){ # element node (see 'NODE TYPES' in manpage of XML::LibXML::Reader)
 
-     my @array;
-     push @array, $n; # name of tag
-     push @structures, \@array;
 
-     push @oti, $#structures; # add highest index of @structures to @oti
+      #~~~~
+      # from here: opening tag
+      #~~~~
 
-     if( $_ANNOT_GEN && $inside_annot_tag == $rl ){
-       my @array2;
-       push @array2, $n;
-       push @annot, \@array2;
-       push @oti2, $#annot;
-     }
 
-     ### handle attributes
-     if( defined $e->[3] ){ # only go on if attributes exist
-       for( $c = 0; $c < @{$e->[3]}; $c += 2 ){ # with 'XCT_ATTRIBUTE_ARRAY', $node->[3] is an array reference of the form [ name1, value1, name2, value2, ....]
-                                                #  of attribute names and corresponding values. NOTE: arrays are faster! (see: http://makepp.sourceforge.net/2.0/perl_performance.html)
+      # insert new array (for new tag) into @structures with tag-name and tag-attributes (if present)
+      # update @oti (open tags indizes) with @structures highest index (= $#structures); e.g.: @a=(1,2,3) => $#a = 2
 
-         # '$c' references the 'key' and '$c+1' the 'value' (example: perl -e '@a=(X,Y);push @b,\@a;$ref=$b[$#b];push @{$ref},Z;print @{$ref}' => XYZ)
-         push @{$structures[$#structures]}, ${$e->[3]}[$c], ${$e->[3]}[$c+1];
+      # ~ tag name ~
 
-         if( $_ANNOT_GEN && $inside_annot_tag == $rl ){
-           push @{$annot[$#annot]}, ${$e->[3]}[$c], ${$e->[3]}[$c+1];
-         }
-       }
-     }
-     ###
+      $n = $e->[1];
 
-     push @{$structures[$#structures]}, ($dl+$add_one); # from-value
 
-     if( $_ANNOT_GEN && $inside_annot_tag == $rl ){
-       push @{$annot[$#annot]}, ($dl+$add_one);
-     }
+      # ~ handle structures ~
 
-     ######
-     # until here: opening tag-node
-     ######
+      my @array;
+      push @array, $n;
+      push @structures, \@array;
+      push @oti, $#structures; # add highest index of @structures to @oti
 
-     ### RECURSION
-     if(defined $e->[$_IDX]){ # if $e->[$_IDX] is not defined (=> no array of child nodes, e.g.: <pb id="bka.00001-643-pb643" n="643" TEIform="pb"/>), do no recursion
 
-       retr_info( \$e->[$_IDX] ); # recursion with array of child nodes
+      # ~ handle tokens ~
 
-       $rl--; # return from recursion
-     }
-     ###
+      $inside_tokens_tag = $rl if $_TOKENS_PROC && $n eq $_TOKENS_TAG; # wether to push entry also into @tokens array
 
-     ######
-     # from here: closing tag-node
-     ######
-#print STDERR "2: dl=$dl\n" if $text_id eq "BIH_BKA.00001";
-#
-     { my $ix  = pop @oti;
-       my $aix = @{$structures[$ix]};
-       $fval = ${$structures[$ix]}[$aix-1]; # from-value
+      if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
 
-       # whitespace related issue
-       if( $fval>0 && not exists $hws{$fval-1} ){
-         # previous node was a text-node
-         ${$structures[$ix]}[$aix-1] = $fval-1; # recorrect from-value
-       }
-       #
+        my @array2;
+        push @array2, $n;
+        push @tokens, \@array2;
+        push @oti2, $#tokens;
+      }
 
-       die "ERROR ($0, retr_info()): text_id='$text_id', processing of \@structures: from-value ($fval) is more than 1 greater than to-value ($dl) => please check. aborting ...\n" if ($fval-1) > $dl;
-       ${$structures[$ix]}[$aix-1] = $dl if $fval == $dl+1; # correct from-value
 
-       push @{$structures[$ix]}, $dl, $rl; # to-value and recursion-level
-       ### use $dl, because the offsets are _between_ the characters (e.g.: word = 'Hallo' => from = 0 (before 'H'), to = 5 (after 'o'))
-     }
+      # ~ handle attributes ~
 
-     if ( $_ANNOT_GEN && $inside_annot_tag == $rl ){
-       my $ix  = pop @oti2;
-       my $aix = @{$annot[$ix]};
-       $fval2  = ${$annot[$ix]}[$aix-1]; # from-value
+      if ( defined $e->[3] ){ # only if attributes exist
 
-       # whitespace related issue
-       if( $fval2>0 && not exists $hws{$fval2-1} ){
-         # previous node was a text-node
-         ${$annot[$ix]}[$aix-1] = $fval2-1; # recorrect from-value
-       }
-       #
+        for ( $c = 0; $c < @{$e->[3]}; $c += 2 ){ # with 'XCT_ATTRIBUTE_ARRAY', $node->[3] is an array reference of the form
+                                                  #  [ name1, value1, name2, value2, ....] of attribute names and corresponding values.
+                                                  # note: arrays are faster (see: http://makepp.sourceforge.net/2.0/perl_performance.html)
 
-       die "ERROR ($0, retr_info()): text_id='$text_id', processing of \@annot: from-value ($fval2) is more than 1 greater than to-value ($dl) => please check. aborting ...\n" if ($fval2-1) > $dl;
-       ${$annot[$ix]}[$aix-1] = $dl if $fval2 == $dl+1; # correct from-value
+          # '$c' references the 'key' and '$c+1' the 'value'
+          push @{$structures[$#structures]}, ${$e->[3]}[$c], ${$e->[3]}[$c+1];
 
-       push @{$annot[$ix]}, $dl, $rl; # to-value and recursion-level
-       $inside_annot_tag = -1; # reset
-     }
+          if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
 
-     # whitespace related issue
+            push @{$tokens[$#tokens]}, ${$e->[3]}[$c], ${$e->[3]}[$c+1];
+          }
+
+        }
+      }
+
+
+      # ~ index 'from' ~
+
+      # this is, where a normal tag or tokens-tag ($_TOKENS_TAG) starts
+
+      push @{$structures[$#structures]}, ( $dl + $add_one ); # see below (text and whitespace nodes) for explanation on '$add_one'
+
+      if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
+
+        push @{$tokens[$#tokens]}, ( $dl + $add_one );
+      }
+
+
+      #~~~~
+      # until here: opening tag
+      #~~~~
+
+
+      # ~~ RECURSION ~~
+
+      if ( defined $e->[$_IDX] ){  # do no recursion, if $e->[$_IDX] is not defined (because we have no array of child nodes, e.g.: <back/>)
+
+        retr_info( \$e->[$_IDX] ); # recursion with array of child nodes
+
+        $rl--; # return from recursion
+      }
+
+
+      #~~~~~
+      # from here: closing tag
+      #~~~~~
+
+
+      # ~ handle structures ~
+
+      {
+        my $ix  = pop @oti; # index of just closed tag
+
+        my $aix = $#{$structures[$ix]}; # determine highest index from 'array referring to last closed tag' ...
+
+        $fval = ${$structures[$ix]}[ $aix ]; # ... and get it's from-value
+
+        if ( $fval > 0 && not exists $ws{ $fval - 1 } ){ # ~ whitespace related issue ~
+
+          # previous node was a text-node
+
+          ${$structures[$ix]}[ $aix ] = $fval - 1; # recorrect from-value (see below: notes on ~ whitespace related issue ~)
+        }
+
+        # in case this fails, check input
+        die "ERROR ($0, retr_info()): text_id='$text_id', processing of \@structures: from-value ($fval) is 2 or more greater"
+          ." than to-value ($dl) => please check. aborting ...\n"
+            if ( $fval - 1 ) > $dl;
+
+        # TODO: construct example for which this case applies
+        #  maybe this is not necessary anymore, because the above recorrection of the from-value suffices
+        # TODO: check, if it's better to remove this line and change above check to 'if ( $fval - 1) >= $dl;
+        ${$structures[$ix]}[ $aix ] = $dl if $fval == $dl + 1; # correct from-value (same as ... if $fval-1 == $dl)
+
+        push @{$structures[$ix]}, $dl, $rl; # to-value and recursion-level
+
+        # note: use $dl, because the offsets are _between_ the characters (e.g.: word = 'Hello' => from = 0 (before 'H'), to = 5 (after 'o'))
+      }
+
+
+      # ~ handle tokens ~
+
+
+      if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
+
+        my $ix  = pop @oti2;
+
+        my $aix = $#{$tokens[$ix]};
+
+        $fval2  = ${$tokens[$ix]}[ $aix ]; # from-value
+
+        if( $fval2 > 0 && not exists $ws{ $fval2 - 1 } ){ # ~ whitespace related issue ~
+
+          # previous node was a text-node
+
+          ${$tokens[$ix]}[ $aix ] = $fval2 - 1; # recorrect from-value
+        }
+
+        # in case this fails, check input
+        die "ERROR ($0, retr_info()): text_id='$text_id', processing of \@tokens: from-value ($fval2) is 2 or more greater"
+          ." than to-value ($dl) => please check. aborting ...\n"
+            if ( $fval2 - 1 ) > $dl;
+
+        # TODO: construct example for which this case applies
+        #  maybe this is not necessary anymore, because the above recorrection of the from-value suffices
+        # TODO: check, if it's better to remove this line and change above check to 'if ( $fval2 - 1) >= $dl;
+        ${$tokens[$ix]}[ $aix ] = $dl if $fval2 == $dl + 1; # correct from-value (same as ... if $fval-1 == $dl)
+
+        push @{$tokens[$ix]}, $dl, $rl; # to-value and recursion-level
+
+        $inside_tokens_tag = -1; # reset
+      }
+
+      # ~ whitespace related issue ~
       # clean up
-      delete $hws{$fval-1}  if $fval>0  && exists $hws{$fval-1};
-      delete $hws{$fval2-1} if $_ANNOT_GEN && $fval2>0 && exists $hws{$fval2-1};
-     #
-
-   ######
-   # from here: text nodes
-   ######
-   }elsif( $e->[0] == XML_READER_TYPE_TEXT || $e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE ){ # see 'man XML::LibXML::Reader'
-
-       # set flag, to remember to add 1 to 'from'-$dl (see above), if this text-node was _not_ a whitespace-node
-       # NOTE: this is needed to address e.g. the following situation (see first text in goe-corpus):
-       # '... <head type="main"><s>Campagne in Frankreich</s></head><head type="sub"> <s>1792</s> ...': the from-index of the 2nd head-tag
-       # should be right before '1792' (which was produced by a text-node) and not before the ' ' (which was produced by a whitespace-node)
-       # by the way: '$add_one' is not set (resp. 're'-set) for whitespace-nodes, because they always (incidentally) set '$dl' to the right
-       # from-index of the next node (e.g.: '<w>fu</w> <w>bar</w>' or '<w>fu</w><w> </w><w>bar</w>) - this is actually not the case for
-       # text-nodes (see same previous 'fubar'-example), for which '$dl' points to the from-index of ' ', _IF_ there is alway a ' ' between
-       # two text-nodes.
-       # NOTE: A new problem arises with this approach, _IF_ there is _NOT_ a ' ' between two text-nodes
-       #  (see e.g. in romanian corpus 'corola-bucurenci': ... >Anului</w><w lemma="," ana="PUNCTUATION">,</w> <w ...).
-       # In this case, the from-index for the next node would be exactly 1 to high (see in approp. zip-file for above example:
-       #  '... <span id="s14" from="101" to="101" l="5"> ...' - the correct span should be: '... <span id="s14" from="100" to="101" l="5"> ...').
-       # NOTE: it's not possible to solve the above problem here, because the following case would not be covered:
-       #   ... <a><b><c><d/></c></b></a> ... (or see in goe-corpus 'GOE/AGI.04846': <div...><p/></div> ...)
-       #  Because, no text- and whitespace-nodes are present, the from-values for 'a', 'b' and 'c' can only be corrected, when closing these tags.
-       #  But this can be easily done by looking at the actual value of '$add_one' - if it's set, then there was no whitespace-node (and hence no ' ')
-       #  before '<a>' and hence the from-values must be corrected.
-       # NOTE: To realize, what's stated in the above note, another information is needed, by which can be checked, if a tag contains text/ws or not
-       #  (in the above 'abcd'-example, all tags are empty in the sense of that they don't contain any text/ws).
-       #  By saving the recursion level, the 'text containing'-info can be simply checked, by the condition '$last_text_or_ws_node > $rl'.
-       #  The condition is true, when there is text below the tag on level $rl.
-       ##$last_text_or_ws_node = $rl;
-       # NOTE: a much simpler solution, which should have the same effect, without following exactly the information-processing, is, to just set the
-       #  value of the 'from'-index to the value of the 'to'-index, if "to==from-1" holds and to die with an error, if "(from-1)>to" holds.
-
-       # whitespace related issue
-       if( $e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE ){
-         $add_one=0;
-         $hws{$dl}++; # '++' does not mean a thing here (could be used for consistency checking)
-       }else{ # text-node
-         $add_one=1;
-       }
-       #
-
-       $data .= $e->[1];
-       $dl += length($e->[1]);
-
-       ### needed only for dummy tokenization
-       if( $_GEN_TOK_DUMMY ){
-       $txt = $e->[1];
-       if( (substr($txt,0,1) ne ' ' || substr($txt,1,1) ne ' ') ){ # $txt has at least 2 chars, if it is not empty or equal to ' '
-
-         ### start: conservative tokenization
-         # '\p{Punct}' is equal to the character class '[-!"#%&'()*,./:;?@[\\\]_{}]'
-         while( $txt =~ /([\p{Punct}]*)([^\p{Punct} \x{9}\n]+(?:([\p{Punct}]+)[^\p{Punct} \x{9}\n]+)*)?([\p{Punct}]*)(?:[ \x{9}\n])?/g ){
-
-           $m1=$1; $m2=$2; $m3=$3; $m4=$4;
-
-#print STDERR "*** m1=$1, m2="; (defined $m2)?(print STDERR "$2"):(print STDERR "undef");print STDERR ", m3="; (defined $3)?(print STDERR "$3"):(print STDERR "undef"); print STDERR ", m4=$4\n";
-           if("$m1" ne ""){ # special chars before token
-             $p1=$-[1]; $p2=$+[1];
-             #print STDERR "A1: ".$m1." -> from $p1 to $p2\n";
-             if($p2==$p1+1){
-               if($p1!=0){$tmp=substr($txt,$p1-1,1);$pr=($tmp=~/^[^A-Za-z0-9]/)}else{$pr=0};
-               if(not $pr){$tmp=substr($txt,$p2,1);$pr=($tmp=~/^[^A-Za-z0-9]/)};
-               if($pr){push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset}; # from and to
-             }else{
-               for($i=0;$i<($p2-$p1);$i++){
-                 #print STDERR "A2: ".substr($m1,$i,1)." -> from $p1 to $p2\n";
-                 push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
-               }
-             }
-           }# "$m1" ne ""
-           #print STDERR "B: "."$m2 -> from ".($-[2]+$offset)." to ".($+[2]+$offset)."\n" if defined $m2;   # token (wordform)
-
-           if(defined $m2){push @tok_tokens_con, $-[2]+$offset; push @tok_tokens_con, $+[2]+$offset}; # from and to
-
-           if(defined $m3){
-             $p1=$-[3]; $p2=$+[3];
-             #print STDERR "C: ".$m3." -> from $p1 to $p2\n";
-             if($p2==$p1+1){
-               $tmp=substr($txt,$p2,1);$pr=($tmp=~/^$/);$pr=($tmp=~/^[^A-Za-z0-9]/) if not $pr; # char after match
-               if(not $pr){$tmp=substr($txt,$p1-1,1);$pr=($tmp=~/^[^A-Za-z0-9]/)}; # char before match
-               if($pr){push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset}; # from and to
-             }else{ # length($m3)>1 => print all chars
-               for($i=0; $i<($p2-$p1); $i++){
-                 #$tmp=substr($m3,$i,1);
-                 #print STDERR "C2: $tmp -> from $p1 to $p2\n";
-                 push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
-               }
-             }
-           }# defined $m3
-
-           if("$m4" ne ""){ # special chars after token
-             $p1=$-[4]; $p2=$+[4];
-             #print STDERR "D1: ".$m4." -> from ".($p1+$offset)." to ".($p2+$offset)."\n";
-             if($p2==$p1+1){
-               $tmp=substr($txt,$p2,1);$pr=($tmp=~/^$/);$pr=($tmp=~/^[^A-Za-z0-9]/) if not $pr; # char after match
-               if(not $pr){$tmp=substr($txt,$p1-1,1);$pr=($tmp=~/^[^A-Za-z0-9]/)}; # char before match
-               if($pr){push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset} # from and to
-             }else{
-               for($i=0;$i<($p2-$p1);$i++){
-                 #print STDERR "D2: ".substr($m4,$i,1)." -> from ".($p1+$i+$offset)." to ".($p1+$i+1+$offset)."\n";
-                 push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
-               }
-             }
-           }# "$m4" ne ""
-
-         }# end: while
-         ### end: conservative tokenization
-
-         ### start: aggressive tokenization
-         while( $txt =~ /([^\p{Punct} \x{9}\n]+)(?:([\p{Punct}])|(?:[ \x{9}\n])?)|([\p{Punct}])/g ){
-           if(defined $1){
-             push @tok_tokens_agg, $-[1]+$offset; push @tok_tokens_agg, $+[1]+$offset; # from and to
-             if(defined $2){push @tok_tokens_agg, $-[2]+$offset; push @tok_tokens_agg, $+[2]+$offset} # from and to
-           }else{ # defined $3
-             push @tok_tokens_agg, $-[3]+$offset; push @tok_tokens_agg, $+[3]+$offset # from and to
-           }
-         }# end: while
-         ### end: aggressive tokenization
-
-         #$offset = $dl+1;
-         $offset = $dl;
-       }
-       }
-       ###
-#     }#fi
-
-#print STDERR "1: dl=$dl\n" if $text_id eq "BIH_BKA.00001";
+      delete $ws{ $fval  - 1 } if $fval > 0 && exists $ws{ $fval - 1 };
+      delete $ws{ $fval2 - 1 } if $_TOKENS_PROC && $fval2 > 0 && exists $ws{ $fval2 - 1 };
 
 
-#   elsif( $e->[0] == XML_READER_TYPE_ATTRIBUTE ) # attribute node
-#     NOTE: attributes cannot be processed like this
-
-   ### from here: should not really happen
-
-   }else{ # not yet handled type
-
-     die "ERROR ($0): Not yet handled type (\$e->[0]=".$e->[0].") ... => Aborting\n";
-
-   }
-
- }#end: foreach iteration
-
-}#end: sub retr_info
+    #~~~~~
+    # from here: text (and whitespace) nodes
+    #~~~~~
 
 
-sub write_tok { # called from MAIN
+    # the 3rd form of nodes, next to text-nodes (XML_READER_TYPE_TEXT) and tag-nodes (XML_READER_TYPE_ELEMENT) are nodes
+    #  of the type 'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'
+    #
+    # when modifiying the above example (at the top of this sub) by inserting an additional blank between '</node1>' and '<node2>',
+    #  the output for '$data->[2]->[0]->[5]->[1]->[1]' becomes a blank (' ') and it's type is '14' (see manpage of XML::LibXML::Reader):
+    #
+    # echo '<node a="v"><node1>some <n/> text</node1> <node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print "node=".$data->[2]->[0]->[5]->[1]->[1].", type=".$data->[2]->[0]->[5]->[1]->[0]."\n"'
 
-  #print STDERR "$0: write_tok() ...\n";
+    } elsif ( $e->[0] == XML_READER_TYPE_TEXT || $e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE ){
 
+      # notes on ~ whitespace related issue ~ (see below source code)
+      #
+      # example: '... <head type="main"><s>Campagne in Frankreich</s></head><head type="sub"> <s>1792</s> ...'
+      #
+      # Two text-nodes should normally be separated by a blank. In the above example, that would be the 2 text-nodes
+      #  'Campagne in Frankreich' and '1792', which are separated by the whitespace-node ' '.
+      # 
+      # Assumed, that the above example marks the general case, then the text-node 'Campagne in Frankreich' leads to the
+      #  setting of '$add_one' to 1, so that when opening the 2nd 'head'-tag and setting it's from-index, it gets the right
+      #  offset, which is the start-index of '1792'.
+      #
+      # To check, that the above consideration holds, we save the from-index of a read whitespace-node into the hash %ws.
+      #  By this, it can be checked when closing a tag, if the 'non-tag'-node (text or whitespace) before the last 'non-tag'-
+      #  node was actually a whitespace-node ($ws{ $fval - 1 }).
+      #
+      # For whitespace-nodes, also $add_one has to be set to 0, so when opening the next tag (in the above example the 2nd
+      #  's'-tag), no additional 1 is added, because this was already done by the whitespace-node itself (by incrementing the
+      #  variable $dl).
+      #
+      # Now, what happens, when 2 text-nodes are not seperated by a whitespace-node (blank)? (e.g.: <w>Augen<c>,</c></w>)
+      #
+      # In this case, the falsely increased from-value has to be decreased again by 1 when closing the referring tag
+      #  (...$fval - 1; # recorrect).
+      #
+      # Comparing the 2 examples '<w>fu</w> <w>bar</w>' and '<w>fu</w><w> </w><w>bar</w>' (even though, the 2nd one makes less
+      #  sense, because of '<w> </w>'), in both the ' ' is handled as a whitespace-node (XML_READER_TYPE_SIGNIFICANT_WHITESPACE).
+      #
+      # So the from-index of the 2nd w-tag (in the second example) would refer to 'bar', which may not have been the intention
+      #  (even, if '<w> </w>' doesn't make a lot of sense). TODO: could this be a bug, which needs to be fixed?
+      #
+      # Empty tags also cling to the next text-token - e.g. in '...<w>tok1</w> <w>tok2</w><a><b/></a><w>tok3</w>...' the from-
+      #  and to-indizes for the tags 'a' and 'b' are both 9, which is the start-index of the token 'tok3'.
+
+      if( $e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE ){
+
+       # ~ whitespace related issue ~
+
+        $add_one = 0;
+
+        $ws{ $dl }++; # '++' does not mean a thing here (could be used for consistency checking)
+
+      }else{
+
+        # ~ text-node ~
+
+        $add_one = 1;
+      }
+
+
+      # ~ update $data and $dl ~
+
+      $data .= $e->[1];
+
+      $dl += length( $e->[1] ); # update length of $data
+
+
+
+      #~~~~~
+      # from here (until end): dummy tokenization
+      #~~~~~
+
+      if ( $_GEN_TOK_DUMMY ){
+
+        $txt = $e->[1];
+
+        if ( substr( $txt, 0, 1 ) ne ' ' || substr( $txt, 1, 1) ne ' ' ){ # $txt has at least 2 chars, if it's not empty or equal to ' '
+
+
+          # ~ start: conservative tokenization ~
+
+
+          # '\p{Punct}' is equal to the character class '[-!"#%&'()*,./:;?@[\\\]_{}]'
+          while ( $txt =~ /([\p{Punct}]*)([^\p{Punct} \x{9}\n]+(?:([\p{Punct}]+)[^\p{Punct} \x{9}\n]+)*)?([\p{Punct}]*)(?:[ \x{9}\n])?/g ){
+
+            $m1 = $1; $m2 = $2; $m3 = $3; $m4 = $4;
+
+            if ( "$m1" ne "" ){ # special chars before token
+
+              $p1 = $-[1]; $p2 = $+[1];
+
+              #print STDERR "A1: ".$m1." -> from $p1 to $p2\n";
+
+              if ( $p2 == $p1+1 ){
+
+                if ( $p1 != 0 ){ $tmp = substr( $txt, $p1-1, 1 ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) } else { $pr = 0 };
+
+                if ( not $pr ){ $tmp = substr( $txt, $p2, 1 ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) };
+
+                if ( $pr ){ push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset }; # from and to
+
+              } else {
+
+                for ( $i = 0; $i < ( $p2-$p1 ); $i++ ){
+
+                  #print STDERR "A2: ".substr($m1,$i,1)." -> from $p1 to $p2\n";
+
+                  push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
+                }
+              }
+
+            } # fi: "$m1" ne ""
+
+            #print STDERR "B: "."$m2 -> from ".($-[2]+$offset)." to ".($+[2]+$offset)."\n" if defined $m2;   # token (wordform)
+
+            if ( defined $m2 ){ push @tok_tokens_con, $-[2]+$offset; push @tok_tokens_con, $+[2]+$offset }; # from and to
+
+            if ( defined $m3 ){
+
+              $p1 = $-[3]; $p2 = $+[3];
+
+              #print STDERR "C: ".$m3." -> from $p1 to $p2\n";
+
+              if ( $p2 == $p1+1 ){
+
+                $tmp = substr( $txt, $p2, 1); $pr = ( $tmp =~ /^$/ ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) if not $pr; # char after match
+
+                if ( not $pr ){ $tmp = substr( $txt, $p1-1, 1 ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) }; # char before match
+
+                if ( $pr ){ push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset }; # from and to
+
+              } else { # length($m3)>1 => print all chars
+
+                for ( $i = 0; $i < ( $p2-$p1 ); $i++ ){
+
+                  #$tmp=substr($m3,$i,1);
+                  #print STDERR "C2: $tmp -> from $p1 to $p2\n";
+
+                  push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
+                }
+
+              }
+
+            } # fi: defined $m3
+
+            if ( "$m4" ne "" ){ # special chars after token
+
+              $p1 = $-[4]; $p2 = $+[4];
+
+              #print STDERR "D1: ".$m4." -> from ".($p1+$offset)." to ".($p2+$offset)."\n";
+
+              if ( $p2 == $p1+1 ){
+
+                $tmp = substr( $txt, $p2, 1 ); $pr = ( $tmp =~ /^$/ ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) if not $pr; # char after match
+
+                if ( not $pr ){ $tmp = substr ( $txt, $p1-1, 1 ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) }; # char before match
+
+                if ( $pr ){ push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset } # from and to
+
+              }else{
+
+                for ( $i = 0; $i < ( $p2-$p1 ); $i++ ){
+
+                  #print STDERR "D2: ".substr($m4,$i,1)." -> from ".($p1+$i+$offset)." to ".($p1+$i+1+$offset)."\n";
+
+                  push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
+                }
+              }
+
+            }# fi: "$m4" ne ""
+
+          }# end: while
+
+
+          # ~ end: conservative tokenization ~
+
+
+          # ~ start: aggressive tokenization ~
+
+
+          while ( $txt =~ /([^\p{Punct} \x{9}\n]+)(?:([\p{Punct}])|(?:[ \x{9}\n])?)|([\p{Punct}])/g ){
+
+            if ( defined $1 ){
+
+              push @tok_tokens_agg, $-[1]+$offset; push @tok_tokens_agg, $+[1]+$offset; # from and to
+
+              if ( defined $2 ){ push @tok_tokens_agg, $-[2]+$offset; push @tok_tokens_agg, $+[2]+$offset } # from and to
+
+            }else{ # defined $3
+
+              push @tok_tokens_agg, $-[3]+$offset; push @tok_tokens_agg, $+[3]+$offset # from and to
+            }
+
+          } # end: while
+
+          # ~ end: aggressive tokenization ~
+
+          ##$offset = $dl+1;
+
+          $offset = $dl;
+
+        } # fi
+
+      } # fi: $_GEN_TOK_DUMMY
+
+
+    #elsif ( $e->[0] == XML_READER_TYPE_ATTRIBUTE ) # attribute node
+    #   note: attributes cannot be processed like this ( => use 'XCT_ATTRIBUTE_ARRAY' - see above )
+
+
+    }else{ # not yet handled type
+
+      die "ERROR ($0): Not yet handled type (\$e->[0]=".$e->[0].") ... => Aborting\n";
+    }
+
+  } # end: foreach iteration
+
+} # end: sub retr_info
+
+
+sub select_tokenization { # called from process()
+
+  #print STDERR "$0: select_tokenization() ...\n";
+
+  ## DEPRECATED (only IDS-intern)
   if( $_GEN_TOK_BAS ) {
     if( $select->can_read(3600) ){ # wait 60m for external tokenizer
       $_ = <$chld_out>;
       my @bounds = split;
-      write_tokenization("$_root_dir$dir/$_base_dir/$_tok_file_bas", $text_id_esc, \@bounds);
+      write_tokenization("$_root_dir$dir/$_base_tokenization_dir/$_tok_file_bas", $text_id_esc, \@bounds);
       while($select->can_read(0)) {
         $_ = <$chld_out>;
         if (defined $_ && $_ ne '') {
@@ -807,194 +1256,266 @@ sub write_tok { # called from MAIN
       $zip->close();
       die "ERROR ($0): cannot retrieve token bounds from external tokenizer for text '$text_id' => Aborting ...\n";
     }
+  ## 
   }elsif( $_GEN_TOK_DUMMY ){
-    write_tokenization("$_root_dir$dir/$_base_dir/$_tok_file_con", $text_id_esc, \@tok_tokens_con);
-    write_tokenization("$_root_dir$dir/$_base_dir/$_tok_file_agg", $text_id_esc, \@tok_tokens_agg);
+    write_tokenization("$_root_dir$dir/$_base_tokenization_dir/$_tok_file_con", $text_id_esc, \@tok_tokens_con);
+    write_tokenization("$_root_dir$dir/$_base_tokenization_dir/$_tok_file_agg", $text_id_esc, \@tok_tokens_agg);
   }
-  #print STDERR "$0: write_tok(): DONE\n";
-} # end: write_tok
 
-sub write_tokenization {
-  my ($fname, $textid_esc, $bounds) = @_;
+  #print STDERR "$0: write_tokenization(): DONE\n";
+
+} # end: select_tokenization
+
+sub write_tokenization { # called from select_tokenization()
+
+  my ( $fname, $textid_esc, $bounds ) = @_;
 
   $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => $fname)
     or die "ERROR ('$fname'): zip failed: $ZipError\n";
-  $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\"$text_id_esc\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n";
-  $c=0; for( $i=0; $i < ($#$bounds + 1); $i+=2 ){
+
+  $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
+    ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\"$text_id_esc\" xmlns=\"http://ids-mannheim.de/ns/KorAP\""
+    ." version=\"KorAP-0.4\">\n  <spanList>\n";
+
+  $c = 0;
+
+  for( $i = 0; $i < ($#$bounds + 1); $i +=  2 ){
+
     $output .= "    <span id=\"t_$c\" from=\"".$bounds->[$i]."\" to=\"".$bounds->[$i+1]."\" />\n";
+
     $c++;
   }
-  $output .= "  </spanList>\n</layer>";
-  $zip->print("$output");
-}
 
-# write structure file
-sub write_structures { # called from MAIN
+  $output .= "  </spanList>\n</layer>";
+
+  $zip->print ( "$output" );
+
+} # end: sub write_tokenization
+
+
+sub write_structures { # called from process()
+
+  # ~ write @structures ~
 
   #print STDERR "$0: write_structures(): ...\n";
 
-  if( $dir eq "" ){
-    print STDERR "WARNING ($0): write_structures(): empty textSigle => nothing to do ...\n";
+  if ( $dir eq "" ){
+ 
+   print STDERR "WARNING ($0): write_structures(): empty textSigle => nothing to do ...\n";
     return;
   }
 
   $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_structure_dir/$_structure_file" )
       or die "ERROR ('$_root_dir$dir/$_structure_dir/$_structure_file'): zip failed: $ZipError\n";
 
-  $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\"".decode_utf8($text_id_esc)."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n";
+  $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
+           ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\""
+           .decode_utf8($text_id_esc)."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n";
 
   $c = 0;
 
-  foreach $ref (@structures){
+  foreach $ref ( @structures ){
 
-    (@{$ref}==4)?($idx=1):($idx=@{$ref}-3); # if array '@{$ref}' doesn't contain attributes, then the number of elements in this array is 4 (name, from, to, rec_level), otherwise >4
+    ( @{$ref} == 4 )?( $idx = 1 ):( $idx = @{$ref}-3 ); # if array '@{$ref}' doesn't contain attributes, then the number of elements in this array is 4
+                                                        #  (name, from, to, rec_level), otherwise >4
 
-    ### correct last from-value (if the 'second to last' from-value refers to an s-tag, then the last from-value is one to big - see retr_info)
-    if( $#structures == $c && ${$ref}[$idx] == ${$ref}[$idx+1] + 1 ){
-      ${$ref}[$idx] = ${$ref}[$idx+1];
+    # correct last from-value ( if the 'second to last' from-value refers to an s-tag, then the last from-value is one to big - see retr_info )
+
+    if( $#structures == $c && ${$ref}[ $idx ] == ${$ref}[ $idx+1 ] + 1 ){
+
+      ${$ref}[$idx] = ${$ref}[ $idx+1 ];
     }
-    ## this consistency check is already done in 'retr_info()'
-    ##elsif( ${$ref}[$idx] > ${$ref}[$idx+1] ){ # consistency check: abort, if this doesn't hold
-    ##  #die "ERROR ($0: write_structures(): \$text_id=$text_id, \$c=$c, tag-name=${$ref}[0]): 'from-index=${$ref}[$idx]' > 'to-index=${$ref}[$idx+1]' => please check! aborting ...\n";
-    ##  die "ERROR ($0: write_structures(): \$text_id=$text_id, \$c=$c, tag-name=${$ref}[0]): 'from-index=${$ref}[$idx]' > 'to-index=${$ref}[$idx+1]' => please check! aborting ...\n\n$output";
-    ##}
-    ###
 
-    ### at least 'POS' should always be there => remove constraint '$_ANNOT_GEN'
-    #if( $_ANNOT_GEN && ${$ref}[0] ne "$_ANNOT_TAG_NAME_RD" ){ # this is already written in 'write_annot', so don't do it twice
-    if( ${$ref}[0] ne "$_ANNOT_TAG_NAME_RD" ){ # this is already written in 'write_annot', so don't do it twice
+    # this consistency check is already done in 'retr_info()'
+    #elsif( ${$ref}[$idx] > ${$ref}[$idx+1] ){ # consistency check: abort, if this doesn't hold
+    #  die "ERROR ($0: write_structures(): \$text_id=$text_id, \$c=$c, tag-name=${$ref}[0]):"
+    #     ." 'from-index=${$ref}[$idx]' > 'to-index=${$ref}[$idx+1]' => please check! aborting ...\n";
+    #  die "ERROR ($0: write_structures(): \$text_id=$text_id, \$c=$c, tag-name=${$ref}[0]):"
+    #     ." 'from-index=${$ref}[$idx]' > 'to-index=${$ref}[$idx+1]' => please check! aborting ...\n\n$output" }
 
-    $output .= "    <span id=\"s$c\" from=\"${$ref}[$idx]\" to=\"${$ref}[$idx+1]\" l=\"${$ref}[$idx+2]\">\n"; # l (level): insert information about depth of element in XML-tree (top element = level 1)
-    $output .= "      <fs type=\"struct\" xmlns=\"http://www.tei-c.org/ns/1.0\">\n";
-    $output .= "        <f name=\"name\">${$ref}[0]</f>\n";
+    # at least 'POS' should always be there => remove constraint '$_TOKENS_PROC'
+    #if( $_TOKENS_PROC && ${$ref}[0] ne $_TOKENS_TAG )
 
-    if ( $idx > 2 ) # attributes
-    {
-      $output .= "        <f name=\"attr\">\n          <fs type=\"attr\">\n";
+    if( ${$ref}[0] ne $_TOKENS_TAG ){ # $_TOKENS_TAG is already written in 'write_tokens'
 
-      for ( $att_idx=1; $att_idx < $idx; $att_idx+=2 ){
-        ${$ref}[$att_idx+1] =~ s/(&|<|>)/$ent{$1}/g; # see explanation in func. 'write_annot'
-        $output .= "            <f name=\"${$ref}[$att_idx]\">${$ref}[$att_idx+1]</f>\n"; # attribute (at index $att_idx) with value (at index $att_idx+1)
+      # l (level): insert information about depth of element in XML-tree (top element = level 1)
+      $output .=  "    <span id=\"s$c\" from=\"${$ref}[ $idx ]\" to=\"${$ref}[ $idx+1 ]\" l=\"${$ref}[ $idx+2 ]\">\n"
+                 ."      <fs type=\"struct\" xmlns=\"http://www.tei-c.org/ns/1.0\">\n"
+                 ."        <f name=\"name\">${$ref}[ 0 ]</f>\n";
+
+      if ( $idx > 2 ) # attributes
+      {
+        $output .= "        <f name=\"attr\">\n          <fs type=\"attr\">\n";
+
+        for ( $att_idx = 1; $att_idx < $idx; $att_idx += 2 ){
+
+          ${$ref}[ $att_idx+1 ] =~ s/(&|<|>)/$ent{$1}/g; # see explanation in func. 'write_tokens'
+
+          # attribute (at index $att_idx) with value (at index $att_idx+1)
+          $output .= "            <f name=\"${$ref}[ $att_idx ]\">${$ref}[ $att_idx+1 ]</f>\n";
+        }
+
+        $output .= "          </fs>\n        </f>\n";
       }
 
-      $output .= "          </fs>\n        </f>\n";
-    }
+      $output .= "      </fs>\n    </span>\n";
 
-    $output .= "      </fs>\n    </span>\n";
-
-    }
+    } # fi: ... ne $_TOKENS_TAG
 
     $c++;
 
-  }# end: foreach
+  } # end: foreach
 
   $output .= "  </spanList>\n</layer>";
 
-  $output=encode_utf8($output);
+  $output = encode_utf8( $output );
 
-  $zip->print("$output");
+  $zip->print( "$output" );
 
   #print STDERR "$0: write_structures(): DONE\n";
+
 } # end: sub write_structures
 
 
-sub write_annot { # called from MAIN
-  #print STDERR "$0: write_annot(): ...\n";
+sub write_tokens { # called from process()
+
+  # ~ write @tokens ~
+
+  #print STDERR "$0: write_tokens(): ...\n";
 
   if( $dir eq "" ){
-    print STDERR "WARNING ($0): write_annot(): empty textSigle => nothing to do ...\n";
+
+    print STDERR "WARNING ($0): write_tokens(): empty textSigle => nothing to do ...\n";
     return;
   }
 
-  $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_ANNOT_DIR_NAME/$_ANNOT_FILE_NAME" )
-      or die "ERROR ('$_root_dir$dir/$_ANNOT_DIR_NAME/$_ANNOT_FILE_NAME'): zip failed: $ZipError\n";
+  $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_tokens_dir/$_tokens_file" )
+      or die "ERROR ('$_root_dir$dir/$_tokens_dir/$_tokens_file'): zip failed: $ZipError\n";
 
-  $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\"".decode_utf8($text_id_esc)."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n";
+  $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
+           ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\""
+           .decode_utf8($text_id_esc)."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n";
 
   $c = 0;
 
-#open H1, ">/tmp/t456" if $text_id eq "GOE_AGA.00000";
-  foreach $ref (@annot){
+  foreach $ref ( @tokens ){
 
-#if($text_id eq "GOE_AGA.00000"){
-#foreach my $key(@{$ref}){print H1 " $c:$key"};
-#print H1 "\n";
-#}
-    (@{$ref}==4)?($idx=1):($idx=@{$ref}-3); # if array '@{$ref}' doesn't contain attributes, then the number of elements in this array is 4 (name, from, to, rec_level), otherwise >4
+    # if array '@{$ref}' doesn't contain attributes, then the number of elements in this array is 4 (name, from, to, rec_level), otherwise >4
+    ( @{$ref} == 4 )?( $idx = 1 ):( $idx = @{$ref}-3 );
 
-    ### correct last from-value (if the 'second to last' from-value refers to a s-tag, then the last from-value is one to big - see retr_info)
-    if( $#annot == $c && ${$ref}[$idx] == ${$ref}[$idx+1] + 1 ){
-      ${$ref}[$idx] = ${$ref}[$idx+1];
+    # correct last from-value (if the 'second to last' from-value refers to an s-tag, then the last from-value is one to big - see retr_info())
+    if ( $#tokens == $c && ${$ref}[ $idx ] == ${$ref}[ $idx+1 ] + 1 ){
+
+      ${$ref}[ $idx ] = ${$ref}[ $idx+1 ]; # TODO: check
     }
-    ###
 
-    $output .= "    <span id=\"s$c\" from=\"${$ref}[$idx]\" to=\"${$ref}[$idx+1]\" l=\"${$ref}[$idx+2]\">\n"; # l (level): insert information about depth of element in XML-tree (top element = level 1)
-    $output .= "      <fs type=\"lex\" xmlns=\"http://www.tei-c.org/ns/1.0\">\n";
-    ##$output .= "        <f name=\"${$ref}[0]\">\n";
-    $output .= "        <f name=\"lex\">\n";
+    # l (level): insert information about depth of element in XML-tree (top element = level 1)
+    $output .= "    <span id=\"s$c\" from=\"${$ref}[ $idx ]\" to=\"${$ref}[ $idx+1 ]\" l=\"${$ref}[ $idx+2 ]\">\n"
+              ."      <fs type=\"lex\" xmlns=\"http://www.tei-c.org/ns/1.0\">\n"
+              ."        <f name=\"lex\">\n";
 
-    if ( $idx > 2 ) # attributes
-    {
+    if ( $idx > 2 ){ # attributes
+
       $output .= "          <fs>\n";
 
-      for ( $att_idx=1; $att_idx < $idx; $att_idx+=2 ){
+      for ( $att_idx = 1; $att_idx < $idx; $att_idx += 2 ){
 
-        ${$ref}[$att_idx+1] =~ s/(&|<|>)/$ent{$1}/g; # e.g.: look for 4th occurence of '…' in '84030_a_82705' in Drukola-Korpus 'corola-bucurenci':
-                                                     #   ... <w lemma="&gt;" ana="PUNCTUATION">&gt;</w> ...
-                                                     # - the '&gt;' is translated to '>' and hence the result would be '<f name="lemma">></f>'
+        ${$ref}[ $att_idx+1 ] =~ s/(&|<|>)/$ent{$1}/g; # ... <w lemma="&gt;" ana="PUNCTUATION">&gt;</w> ...
+                                                       # the '&gt;' is translated to '>' and hence the result would be '<f name="lemma">></f>'
 
-        if( "$_ANNOT_ATT_ANNOT_NAME_RD" && ${$ref}[$att_idx] eq "$_ANNOT_ATT_ANNOT_NAME_RD" ){
+        if ( $_INLINE_ANNOT && ${$ref}[ $att_idx ] eq "$_INLINE_ATT_RD" ){
 
-          ${$ref}[$att_idx+1] =~ /^([^ ]+)(?: (.+))?$/;
-          die "ERROR (write_annot()): unexpected format! => Aborting ... (att: ${$ref}[$att_idx+1])\n" if ($_ANNOT_ATT_POS_NAME_WR && not defined $1) || ($_ANNOT_ATT_MSD_NAME_WR && not defined $2);
-          if( "$_ANNOT_ATT_POS_NAME_WR" ){
-            $output .= "            <f name=\"$_ANNOT_ATT_POS_NAME_WR\">";
+          ${$ref}[ $att_idx+1 ] =~ /^([^ ]+)(?: (.+))?$/;
+
+          die "ERROR (write_tokens()): unexpected format! => Aborting ... (att: ${$ref}[ $att_idx+1 ])\n"
+            if ( $_INLINE_POS_WR && not defined $1 ) || ( $_INLINE_MSD_WR && not defined $2 );
+
+          if ( "$_INLINE_POS_WR" ){
+
+            $output .= "            <f name=\"$_INLINE_POS_WR\">";
             $output .= "$1" if defined $1;
             $output .= "</f>\n";
           }
-          if( "$_ANNOT_ATT_MSD_NAME_WR" ){
-            $output .= "            <f name=\"$_ANNOT_ATT_MSD_NAME_WR\">";
+
+          if ( "$_INLINE_MSD_WR" ){
+
+            $output .= "            <f name=\"$_INLINE_MSD_WR\">";
             $output .= "$2" if defined $2;
             $output .= "</f>\n";
           }
 
-        }elsif( "$_ANNOT_ATT_LEM_NAME_RD" && ${$ref}[$att_idx] eq "$_ANNOT_ATT_LEM_NAME_RD" ){
+        } elsif ( $_INLINE_ANNOT && "$_INLINE_LEM_RD" && ${$ref}[ $att_idx ] eq "$_INLINE_LEM_RD" ){
 
-          $output .= "            <f name=\"$_ANNOT_ATT_LEM_NAME_WR\">${$ref}[$att_idx+1]</f>\n";
+          $output .= "            <f name=\"$_INLINE_LEM_WR\">${$ref}[ $att_idx+1 ]</f>\n";
 
-        }else{ # all other attributes
+        } else { # all other attributes
 
-          $output .= "            <f name=\"${$ref}[$att_idx]\">${$ref}[$att_idx+1]</f>\n"; # attribute (at index $att_idx) with value (at index $att_idx+1)
+          $output .= "            <f name=\"${$ref}[$att_idx]\">${$ref}[ $att_idx+1 ]</f>\n"; # attribute (at index $att_idx) with value (at index $att_idx+1)
         }
 
-      } # end:for
+      } # end: for
 
       $output .= "          </fs>\n";
-    } # fi
+
+    } # fi: attributes
 
     $output .= "        </f>\n      </fs>\n    </span>\n";
 
     $c++;
 
-  }# end: foreach
-#close H1 if $text_id eq "GOE_AGA.00000";
+  } # end: foreach
 
   $output .= "  </spanList>\n</layer>";
 
-  $output=encode_utf8($output);
+  $output = encode_utf8( $output );
 
-  $zip->print("$output");
+  $zip->print( "$output" );
 
-  #print STDERR "$0: write_annot(): DONE\n";
+  #print STDERR "$0: write_tokens(): DONE\n";
 
-} # end: sub write_annot
+} # end: sub write_tokens
 
 
+sub delHTMLcom { # remove HTML comments
+
+  # the source code part where $tc is used, leads to the situation, that comments can produce an additional blank, which
+  # sometimes is not desirable (e.g.: '...<!-- comment -->\n<w>token</w>...' would lead to '... <w>token</w>...' in $buf_in).
+  # removing comments before processing the line, prevents this situation.
+
+  my ( $pfx, $sfx );
+
+  while ( $_[0] =~ s/<!--.*?-->//g ){}; # remove all comments in actual line
+
+  if ( $_[0] =~ /^(.*)<!--/ && $_[0] !~ /-->/ ){ # remove comment spanning over several lines
+
+    $pfx = $1;
+
+    while ( $_[0] = <> ){
+
+      if ( $_[0] =~ /-->(.*)$/ ){
+        $sfx = $1; last
+      }
+
+    }
+
+    $_[0] = "$pfx$sfx";
+
+  }
+
+  if ( $_[0] =~ s/^\s*$// ){ # get next line and feed it also to this sub, if actual line is empty or only contains whitespace
+
+    $_[0] = <>; delHTMLcom ( $_[0] );
+  }
+}
+
+
+## DEPRECATED ($_GEN_TOK_BAS: only IDS-intern)
 sub startTokenizer {
   $pid = open2($chld_out, $chld_in, 'java  -cp '. join(":", ".", glob(&dirname(__FILE__)."/../target/*.jar"))." de.ids_mannheim.korap.tokenizer.KorAPTokenizerImpl");
   $select = IO::Select->new();
   $select->add(*$chld_out);
 }
+##
 
 __END__
 
@@ -1013,21 +1534,29 @@ tei2korapxml - Conversion of TEI P5 based formats to KorAP-XML
 =head1 DESCRIPTION
 
 C<tei2korapxml> is a script to convert TEI P5 and I5 based documents
+
 to the KorAP-XML format. If no specific input is defined, data is
+
 read from C<STDIN>. If no specific output is defined, data is written
+
 to C<STDOUT>.
+
 This program is usually called from inside another script.
 
 =head1 INSTALLATION
 
 C<tei2korapxml> requires L<libxml2-dev> bindings to build. When
+
 these bindings are available, the preferred way to install the script is
+
 to use L<cpanm|App::cpanminus>.
 
   $ cpanm https://github.com/KorAP/KorAP-XML-TEI.git
 
 In case everything went well, the C<tei2korapxml> tool will
+
 be available on your command line immediately.
+
 Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
 
 =head1 OPTIONS
@@ -1057,12 +1586,17 @@ Author: Peter Harders
 Contributors: Marc Kupietz, Carsten Schnober, Nils Diewald
 
 L<KorAP::XML::TEI> is developed as part of the L<KorAP|https://korap.ids-mannheim.de/>
+
 Corpus Analysis Platform at the
+
 L<Leibniz Institute for the German Language (IDS)|http://ids-mannheim.de/>,
+
 member of the
+
 L<Leibniz-Gemeinschaft|http://www.leibniz-gemeinschaft.de/>.
 
 This program is free software published under the
+
 L<BSD-2 License|https://raw.githubusercontent.com/KorAP/KorAP-XML-TEI/master/LICENSE>.
 
 =cut
