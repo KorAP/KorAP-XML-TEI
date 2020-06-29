@@ -29,6 +29,7 @@
 use strict;
 use warnings;
 
+use Pod::Usage;
 use Getopt::Long qw(GetOptions :config no_auto_abbrev);
 
 use File::Basename qw(dirname);
@@ -1500,3 +1501,87 @@ sub startTokenizer {
   $select->add(*$chld_out);
 }
 ##
+
+__END__
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+tei2korapxml - Conversion of TEI P5 based formats to KorAP-XML
+
+=head1 SYNOPSIS
+
+  cat corpus.i5.xml | tei2korapxml > corpus.korapxml.zip
+
+=head1 DESCRIPTION
+
+C<tei2korapxml> is a script to convert TEI P5 and I5 based documents
+
+to the KorAP-XML format. If no specific input is defined, data is
+
+read from C<STDIN>. If no specific output is defined, data is written
+
+to C<STDOUT>.
+
+This program is usually called from inside another script.
+
+=head1 INSTALLATION
+
+C<tei2korapxml> requires L<libxml2-dev> bindings to build. When
+
+these bindings are available, the preferred way to install the script is
+
+to use L<cpanm|App::cpanminus>.
+
+  $ cpanm https://github.com/KorAP/KorAP-XML-TEI.git
+
+In case everything went well, the C<tei2korapxml> tool will
+
+be available on your command line immediately.
+
+Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
+
+=head1 OPTIONS
+
+=over 2
+
+=item B<--base|-b>
+
+The base directory for output. Defaults to C<.>.
+
+=item B<--help|-h>
+
+Print help information.
+
+=item B<--version|-v>
+
+Print version information.
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2020, L<IDS Mannheim|https://www.ids-mannheim.de/>
+
+Author: Peter Harders
+
+Contributors: Marc Kupietz, Carsten Schnober, Nils Diewald
+
+L<KorAP::XML::TEI> is developed as part of the L<KorAP|https://korap.ids-mannheim.de/>
+
+Corpus Analysis Platform at the
+
+L<Leibniz Institute for the German Language (IDS)|http://ids-mannheim.de/>,
+
+member of the
+
+L<Leibniz-Gemeinschaft|http://www.leibniz-gemeinschaft.de/>.
+
+This program is free software published under the
+
+L<BSD-2 License|https://raw.githubusercontent.com/KorAP/KorAP-XML-TEI/master/LICENSE>.
+
+=cut
