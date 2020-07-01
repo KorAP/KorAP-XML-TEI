@@ -262,7 +262,7 @@ startTokenizer() if $_GEN_TOK_BAS;
 ##
 
 # ~ read input and write output (text by text) ~
-#process(); # TODO: BUGFIX -> with sub, we get a Segfault (see SEGFAULT_TESTING)
+process();
 
 
 #
@@ -270,7 +270,7 @@ startTokenizer() if $_GEN_TOK_BAS;
 #
 
 
-#sub process {
+sub process {
 
   my ( $pfx, $sfx );
 
@@ -293,6 +293,11 @@ startTokenizer() if $_GEN_TOK_BAS;
     open ( $input_fh, "<", "$input_fname") || die "File \'$input_fname\' could not be opened.\n";
 
   }
+
+
+  # prevents segfaulting of 'XML::LibXML::Reader' inside 'process()' - see notes on 'PerlIO layers' in  'man XML::LibXML')
+  # removing 'use open qw(:std :utf8)' would fix this problem too, but using binmode on input is more granular
+  binmode $input_fh;
 
 
   # ~ loop (reading input document) ~
@@ -321,12 +326,7 @@ startTokenizer() if $_GEN_TOK_BAS;
 
       if ( $dir ne "" ){
 
-#SEGFAULT_TESTING
-#print STDERR "\nbuf_in=$buf_in";
-#$_="test"; $buf_in=$_; # when doing this, we get no segfault at 'XML::LibXML::Reader->new'
-##open H, ">/tmp/buf_in.txt"; print H "$buf_in"; close H;
         $reader = XML::LibXML::Reader->new( string => "<text>$buf_in</text>", huge => 1 );
-#exit(0);
 
         if ( $_XCT_LN ){ # _XCT_LINE_NUMBERS is only for debugging
           $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY | XCT_LINE_NUMBERS );
@@ -679,12 +679,9 @@ startTokenizer() if $_GEN_TOK_BAS;
 
           $first_write = 0;
 
-#SEGFAULT_TESTING (when allowing the next statement to execute, we get a segfault at 'XML::LibXML::Reader->new' - see above)
-#$dir="1"; next;
           $zip = new IO::Compress::Zip $zip_outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD,
             Append => 0, Name => "$_root_dir$dir_crp/$_header_file"
                or die "ERROR ('$_root_dir$dir_crp/$_header_file'): zip failed: $ZipError\n";
-#$dir="1"; next;
 
         } else {
 
@@ -750,7 +747,7 @@ startTokenizer() if $_GEN_TOK_BAS;
   }
   ##
 
-#} # end: sub process
+} # end: sub process
 
 
 sub retr_info { # called from process()
