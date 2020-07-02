@@ -44,6 +44,12 @@ use XML::LibXML::Reader;
 use IO::Compress::Zip qw(zip $ZipError :constants);
 use IPC::Open2 qw(open2);
 
+use FindBin;
+BEGIN {
+  unshift @INC, "$FindBin::Bin/../lib";
+};
+
+use KorAP::XML::TEI;
 
 our $VERSION = '0.01';
 
@@ -308,7 +314,7 @@ sub process {
 
     # TODO: yet not tested fo big amounts of data
     # must-have, otherwise comments in input could be fatal (e.g.: ...<!--\n<idsHeader...\n-->...)
-    delHTMLcom ( $_ ); # remove HTML comments (<!--...-->)
+    KorAP::XML::TEI::delHTMLcom ( $_ ); # remove HTML comments (<!--...-->)
 
     if ( $data_fl && m#^(.*)</${_TEXT_BODY}>(.*)$# ){
 
@@ -1471,39 +1477,6 @@ sub write_tokens { # called from process()
   #print STDERR "$0: write_tokens(): DONE\n";
 
 } # end: sub write_tokens
-
-
-sub delHTMLcom { # remove HTML comments
-
-  # the source code part where $tc is used, leads to the situation, that comments can produce an additional blank, which
-  # sometimes is not desirable (e.g.: '...<!-- comment -->\n<w>token</w>...' would lead to '... <w>token</w>...' in $buf_in).
-  # removing comments before processing the line, prevents this situation.
-
-  my ( $pfx, $sfx );
-
-  while ( $_[0] =~ s/<!--.*?-->//g ){}; # remove all comments in actual line
-
-  if ( $_[0] =~ /^(.*)<!--/ && $_[0] !~ /-->/ ){ # remove comment spanning over several lines
-
-    $pfx = $1;
-
-    while ( $_[0] = <> ){
-
-      if ( $_[0] =~ /-->(.*)$/ ){
-        $sfx = $1; last
-      }
-
-    }
-
-    $_[0] = "$pfx$sfx";
-
-  }
-
-  if ( $_[0] =~ s/^\s*$// ){ # get next line and feed it also to this sub, if actual line is empty or only contains whitespace
-
-    $_[0] = <>; delHTMLcom ( $_[0] );
-  }
-}
 
 
 ## DEPRECATED ($_GEN_TOK_BAS: only IDS-intern)
