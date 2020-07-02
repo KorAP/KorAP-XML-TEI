@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE idsCorpus  PUBLIC "-//IDS//DTD IDS-I5 1.0//EN" "http://corpora.ids-mannheim.de/I5/DTD/i5.dtd">
+<idsCorpus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" TEIform="teiCorpus.2">
+ <idsHeader type="corpus" pattern="allesaußerZtg/Zschr" status="new" version="1.1" TEIform="teiHeader">
+  <fileDesc>
+   <titleStmt>
+    <korpusSigle>GOE</korpusSigle>
+    <c.title>Goethe-Korpus</c.title>
+   </titleStmt>
+   <publicationStmt>
+    <distributor>		Institut für Deutsche Sprache		</distributor>
+    <pubAddress>		Postfach 10 16 21, D-68016 Mannheim	</pubAddress>
+    <telephone>		+49 (0)621 1581 0			</telephone>
+    <availability region="world">QAO-NC</availability>
+    <pubDate/>
+   </publicationStmt>
+   <sourceDesc>
+    <biblFull>
+     <titleStmt>
+      <x.title/>
+     </titleStmt>
+     <editionStmt/>
+     <publicationStmt>
+      <distributor/>
+      <pubAddress/>
+      <availability region="world">QAO-NC</availability>
+      <pubDate/>
+     </publicationStmt>
+    </biblFull>
+    <biblStruct>
+     <monogr>
+      <h.title type="main">Goethes Werke</h.title>
+      <h.title type="sub"/>
+      <h.author>Goethe, Johann Wolfgang von</h.author>
+      <editor>Trunz, Erich</editor>
+      <edition>
+       <further/>
+       <kind>Hamburger Ausgabe in 14 Bänden</kind>
+       <appearance/>
+      </edition>
+      <imprint>
+       <publisher>Verlag C. H. Beck</publisher>
+       <pubDate type="year">1982</pubDate>
+       <pubDate type="month"/>
+       <pubDate type="day"/>
+       <pubPlace key="DE">München</pubPlace>
+      </imprint>
+     </monogr>
+    </biblStruct>
+    <reference type="super" assemblage="non-automatic">GOE Goethe, Johann Wolfgang von: Goethes Werke, Hamburger Ausgabe in 14 Bänden, Bde. 6 - 14, Hrsg.: Trunz, Erich. - München: Verlag C. H. Beck, Auflagen von 1982</reference>
+   </sourceDesc>
+  </fileDesc>
+  <encodingDesc>
+   <projectDesc/>
+   <samplingDecl>		In der BOT-Vorlage Abrückung aller Satzzeichen vom vorhergehenden oder nachfolgenden Wort,
+		was bei der anschließenden Konvertierung so weit wie möglich beseitigt wurde.
+		Kleinschreibung von Wörtern am Satzanfang, wenn sie auch im Satzinnern kleingeschrieben werden.
+		Expansion bzw. Alternativschreibung bei Wörtern mit Klammerung im Wortinnern (sog. Sparschreibung).
+		Alternativschreibung bei Wörtern mit klammernden Apostrophen/Anführungszeichen im Wortinnern.
+		Erweitertes Markup ohne Verwendung der gedruckten Vorlage:
+		- Umfangreiche Korrekturen am Markup der BOT-Vorlage
+		- Markierung von Listen, Tabellen, Quellen- und Verfasserangaben, Gesprächssequenzen
+		- Markierung von Textkomponenten, die den Textfluss unterbrechen, wie Fußnoten, Anmerkungen, Randtexte, Captions, Bildunterschriften
+		- Expansion der Ergänzungen durch Unterstrich bei Wortgruppen mit Ergänzungsbindestrich
+		- Markierung von Kardinal- und Ordinalzahlen in römischen Ziffern</samplingDecl>
+   <editorialDecl>
+    <transduction>		TraDuCES - Korpus-Transformationscompiler, Version 3.6.3,
+		Eric Seubert, IDS Mannheim, 5. Mai 2010
+		Optionen bei der Konvertierung:
+		- Dubletten-Modus:
+		  Entfernung aller als Dubletten klassifizierten Texte.
+		- Indexierungsmodus für COSMAS II:
+		  Erzeugung von übergeordneten Dokument-Referenzen, falls die
+		  jeweiligen Dokumente nur einen einzigen selbstständigen Text enthalten.
+		  Entfernung aller Deklarationen für Dubletten.
+		  Entfernung von Texten mit Sperrvermerken.
+		  Entfernung von Texten mit minimalem Inhalt.</transduction>
+    <transduction>$Id: fixPreXCES.l 1194 2008-04-30 14:16:53Z kupietz $</transduction>
+    <transduction>$Id: idsces2idsxces 1843 2011-09-13 14:52:21Z kupietz $</transduction>
+    <pagination type="yes"/>
+   </editorialDecl>
+   <tagsDecl>
+    <tagUsage gi="pb"/>
+    <tagUsage gi="date"/>
+    <tagUsage gi="measure"/>
+    <tagUsage gi="num"/>
+    <tagUsage gi="orig"/>
+    <tagUsage gi="time"/>
+   </tagsDecl>
+   <classDecl>
+    <taxonomy id="topic">
+     <h.bibl>Thementaxonomie (siehe http://www.ids-mannheim.de/kl/projekte/methoden/te.html)</h.bibl>
+     <category id="topic.fiktion">
+      <catDesc>Fiktion</catDesc>
+      <category id="topic.fiktion.vermischtes">
+       <catDesc>Fiktion:Vermischtes</catDesc>
+      </category>
+     </category>
+     <category id="topic.freizeit-unterhaltung">
+      <catDesc>Freizeit_Unterhaltung</catDesc>
+      <category id="topic.freizeit-unterhaltung.reisen">
+       <catDesc>Freizeit_Unterhaltung:Reisen</catDesc>
+      </category>
+      <category id="topic.freizeit-unterhaltung.rundfunk">
+       <catDesc>Freizeit_Unterhaltung:Rundfunk</catDesc>
+      </category>
+      <category id="topic.freizeit-unterhaltung.vereine-veranstaltungen">
+       <catDesc>Freizeit_Unterhaltung:Vereine_Veranstaltungen</catDesc>
+      </category>
+     </category>
+     <category id="topic.gesundheit-ernaehrung">
+      <catDesc>Gesundheit_Ernaehrung</catDesc>
+      <category id="topic.gesundheit-ernaehrung.ernaehrung">
+       <catDesc>Gesundheit_Ernaehrung:Ernaehrung</catDesc>
+      </category>
+      <category id="topic.gesundheit-ernaehrung.gesundheit">
+       <catDesc>Gesundheit_Ernaehrung:Gesundheit</catDesc>
+      </category>
+     </category>
+     <category id="topic.kultur">
+      <catDesc>Kultur</catDesc>
+      <category id="topic.kultur.bildende-kunst">
+       <catDesc>Kultur:Bildende Kunst</catDesc>
+      </category>
+      <category id="topic.kultur.darstellende-kunst">
+       <catDesc>Kultur:Darstellende Kunst</catDesc>
+      </category>
+      <category id="topic.kultur.film">
+       <catDesc>Kultur:Film</catDesc>
+      </category>
+      <category id="topic.kultur.literatur">
+       <catDesc>Kultur:Literatur</catDesc>
+      </category>
+      <category id="topic.kultur.mode">
+       <catDesc>Kultur:Mode</catDesc>
+      </category>
+      <category id="topic.kultur.musik">
+       <catDesc>Kultur:Musik</catDesc>
+      </category>
+     </category>
+     <category id="topic.natur-umwelt">
+      <catDesc>Natur_Umwelt</catDesc>
+      <category id="topic.natur-umwelt.garten">
+       <catDesc>Natur_Umwelt:Garten</catDesc>
+      </category>
+      <category id="topic.natur-umwelt.tiere">
+       <catDesc>Natur_Umwelt:Tiere</catDesc>
+      </category>
+      <category id="topic.natur-umwelt.wetter-klima">
+       <catDesc>Natur_Umwelt:Wetter_Klima</catDesc>
+      </category>
+     </category>
+     <category id="topic.politik">
+      <catDesc>Politik</catDesc>
+      <category id="topic.politik.ausland">
+       <catDesc>Politik:Ausland</catDesc>
+      </category>
+      <category id="topic.politik.inland">
+       <catDesc>Politik:Inland</catDesc>
+      </category>
+      <category id="topic.politik.kommunalpolitik">
+       <catDesc>Politik:Kommunalpolitik</catDesc>
+      </category>
+     </category>
+     <category id="topic.rest">
+      <catDesc>Rest</catDesc>
+      <category id="topic.rest.boersenkurse">
+       <catDesc>Rest:boersenkurse</catDesc>
+      </category>
+      <category id="topic.rest.geburt-tod-heirat">
+       <catDesc>Rest:geburt_tod_heirat</catDesc>
+      </category>
+      <category id="topic.rest.impressum">
+       <catDesc>Rest:impressum</catDesc>
+      </category>
+      <category id="topic.rest.inhaltsverzeichnisse">
+       <catDesc>Rest:inhaltsverzeichnisse</catDesc>
+      </category>
+      <category id="topic.rest.ligatabellen">
+       <catDesc>Rest:ligatabellen</catDesc>
+      </category>
+      <category id="topic.rest.tabellen">
+       <catDesc>Rest:tabellen</catDesc>
+      </category>
+      <category id="topic.rest.veranstaltungshinweise">
+       <catDesc>Rest:veranstaltungshinweise</catDesc>
+      </category>
+     </category>
+     <category id="topic.sport">
+      <catDesc>Sport</catDesc>
+      <category id="topic.sport.ballsport">
+       <catDesc>Sport:Ballsport</catDesc>
+      </category>
+      <category id="topic.sport.fussball">
+       <catDesc>Sport:Fussball</catDesc>
+      </category>
+      <category id="topic.sport.motorsport">
+       <catDesc>Sport:Motorsport</catDesc>
+      </category>
+      <category id="topic.sport.radsport">
+       <catDesc>Sport:Radsport</catDesc>
+      </category>
+      <category id="topic.sport.tennis">
+       <catDesc>Sport:Tennis</catDesc>
+      </category>
+      <category id="topic.sport.vermischtes">
+       <catDesc>Sport:Vermischtes</catDesc>
+      </category>
+      <category id="topic.sport.wintersport">
+       <catDesc>Sport:Wintersport</catDesc>
+      </category>
+     </category>
+     <category id="topic.staat-gesellschaft">
+      <catDesc>Staat_Gesellschaft</catDesc>
+      <category id="topic.staat-gesellschaft.arbeit-und-beruf">
+       <catDesc>Staat_Gesellschaft:Arbeit_und_Beruf</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.bildung">
+       <catDesc>Staat_Gesellschaft:Bildung</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.biographien-interviews">
+       <catDesc>Staat_Gesellschaft:Biographien_Interviews</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.drittes-reich-rechtsextremismus">
+       <catDesc>Staat_Gesellschaft:Drittes_Reich_Rechtsextremismus</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.familie-geschlecht">
+       <catDesc>Staat_Gesellschaft:Familie_Geschlecht</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.kirche">
+       <catDesc>Staat_Gesellschaft:Kirche</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.recht">
+       <catDesc>Staat_Gesellschaft:Recht</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.tod">
+       <catDesc>Staat_Gesellschaft:Tod</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.verbrechen">
+       <catDesc>Staat_Gesellschaft:Verbrechen</catDesc>
+      </category>
+     </category>
+     <category id="topic.technik-industrie">
+      <catDesc>Technik_Industrie</catDesc>
+      <category id="topic.technik-industrie.edv-elektronik">
+       <catDesc>Technik_Industrie:EDV_Elektronik</catDesc>
+      </category>
+      <category id="topic.technik-industrie.kfz">
+       <catDesc>Technik_Industrie:Kfz</catDesc>
+      </category>
+      <category id="topic.technik-industrie.transport-verkehr">
+       <catDesc>Technik_Industrie:Transport_Verkehr</catDesc>
+      </category>
+      <category id="topic.technik-industrie.umweltschutz">
+       <catDesc>Technik_Industrie:Umweltschutz</catDesc>
+      </category>
+      <category id="topic.technik-industrie.unfaelle">
+       <catDesc>Technik_Industrie:Unfaelle</catDesc>
+      </category>
+     </category>
+     <category id="topic.wirtschaft-finanzen">
+      <catDesc>Wirtschaft_Finanzen</catDesc>
+      <category id="topic.wirtschaft-finanzen.banken">
+       <catDesc>Wirtschaft_Finanzen:Banken</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.bilanzen">
+       <catDesc>Wirtschaft_Finanzen:Bilanzen</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.oeffentliche-finanzen">
+       <catDesc>Wirtschaft_Finanzen:Oeffentliche_Finanzen</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.sozialprodukt">
+       <catDesc>Wirtschaft_Finanzen:Sozialprodukt</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.waehrung">
+       <catDesc>Wirtschaft_Finanzen:Waehrung</catDesc>
+      </category>
+     </category>
+     <category id="topic.wissenschaft">
+      <catDesc>Wissenschaft</catDesc>
+      <category id="topic.wissenschaft.populaerwissenschaft">
+       <catDesc>Wissenschaft:Populaerwissenschaft</catDesc>
+      </category>
+     </category>
+     <category id="topic.unklassifizierbar">
+      <catDesc>Text ist thematisch nicht klassifizierbar.</catDesc>
+     </category>
+    </taxonomy>
+   </classDecl>
+  </encodingDesc>
+  <profileDesc>
+   <langUsage>
+    <language id="de" usage="100">Deutsch</language>
+   </langUsage>
+   <textDesc/>
+  </profileDesc>
+ </idsHeader>
+ <idsDoc type="text" version="1.0" TEIform="TEI.2">
+  <idsHeader type="document" pattern="text" status="new" version="1.1" TEIform="teiHeader">
+   <fileDesc>
+    <titleStmt>
+     <dokumentSigle>GOE/AGA</dokumentSigle>
+     <d.title>Goethe: Autobiographische Schriften II, (1817-1825, 1832)</d.title>
+    </titleStmt>
+    <publicationStmt>
+     <distributor/>
+     <pubAddress/>
+     <availability region="world">QAO-NC</availability>
+     <pubDate/>
+    </publicationStmt>
+    <sourceDesc>
+     <biblStruct>
+      <monogr>
+       <h.title type="main"/>
+       <edition>
+        <further/>
+        <kind/>
+        <appearance/>
+       </edition>
+       <imprint/>
+       <biblNote n="1">Zur Entstehungszeit siehe Bd. 9, Nachwort, S. 621</biblNote>
+      </monogr>
+     </biblStruct>
+    </sourceDesc>
+   </fileDesc>
+   <profileDesc>
+    <creation>
+     <creatDate>1820-1822</creatDate>
+     <creatRef>(Geschrieben: 1820-1822)</creatRef>
+     <creatRefShort>(Geschr. 1820-1822)</creatRefShort>
+    </creation>
+    <textDesc>
+     <textType>Autobiographie</textType>
+     <textTypeRef/>
+    </textDesc>
+   </profileDesc>
+  </idsHeader>
+  <idsText version="1.0">
+   <idsHeader type="text" pattern="text" status="new" version="1.1" TEIform="teiHeader">
+    <fileDesc>
+     <titleStmt>
+      <textSigle>GOE/AGA.00000</textSigle>
+      <t.title assemblage="regular">GOE/AGA.00000 Goethe: Campagne in Frankreich, [Autobiographie], (Geschr. 1820-1822), In: Goethes Werke, Bd. 10. - München, 1982</t.title>
+     </titleStmt>
+     <publicationStmt>
+      <distributor/>
+      <pubAddress/>
+      <availability region="world">QAO-NC</availability>
+      <pubDate/>
+     </publicationStmt>
+     <sourceDesc>
+      <biblStruct>
+       <analytic>
+        <h.title type="main">Campagne in Frankreich</h.title>
+        <h.title type="sub">1792</h.title>
+        <h.title type="abbr" level="m">Goethe, Werke; Campagne</h.title>
+        <h.title type="abbr" level="a">Goethe: Campagne in Frankreich, [Autobiographie], (Geschr. 1820-1822)</h.title>
+        <h.author>Goethe, Johann Wolfgang von</h.author>
+        <editor/>
+        <imprint/>
+        <biblScope type="subsume"/>
+        <biblScope type="pp">S. 188-363</biblScope>
+       </analytic>
+       <monogr>
+        <h.title type="main"/>
+        <imprint/>
+       </monogr>
+      </biblStruct>
+      <reference type="complete" assemblage="regular">GOE/AGA.00000 Goethe, Johann Wolfgang von: Campagne in Frankreich. 1792, (Geschrieben: 1820-1822), In: Goethe, Johann Wolfgang von: Goethes Werke, Bd. 10, Autobiographische Schriften II, Hrsg.: Trunz, Erich. München: Verlag C. H. Beck, 1982, S. 188-363</reference>
+      <reference type="short" assemblage="regular">GOE/AGA.00000 Goethe, Werke; Campagne, (Geschr. 1820-1822), 1982, Bd. 10</reference>
+     </sourceDesc>
+    </fileDesc>
+    <encodingDesc>
+     <samplingDecl/>
+     <tagsDecl>
+      <tagUsage gi="pb" occurs="176"/>
+      <tagUsage gi="vers" occurs="3"/>
+      <tagUsage gi="quote" occurs="1"/>
+      <tagUsage gi="p" occurs="13"/>
+      <tagUsage gi="s" occurs="1770"/>
+      <tagUsage gi="num" occurs="6"/>
+      <tagUsage gi="orig" occurs="75"/>
+     </tagsDecl>
+    </encodingDesc>
+    <profileDesc>
+     <textClass/>
+     <textDesc>
+      <textDomain/>
+     </textDesc>
+    </profileDesc>
+   </idsHeader>
+   <text>
+    <front/>
+    <body>
+     <div n="0" complete="y" type="Autobiographie">
+      <pb id="aga.00000-188-pb188" n="188" TEIform="pb"/>
+      <head type="main">
+              <s>Campagne in Frankreich</s>
+            </head>
+      <head type="sub">
+              <s>1792</s>
+            </head>
+      <quote>
+              <s type="manual">auch ich in der Champagne!</s>
+            </quote>
+      <div n="1" complete="y" type="section">
+       <opener type="unspecified">
+                <dateline>den 23. August 1792</dateline>
+              </opener>
+              <p><s type="manual"><w ana="A @NH">gleich</w> <w ana="PREP @POSTMOD">nach</w> <w ana="PRON @PREMOD">meiner</w> <w ana="N @NH">Ankunft</w> <w ana="PREP @POSTMOD">in</w> <w ana="N Prop @NH">Mainz</w> <w ana="V IND PAST @MAIN">besuchte</w> <w ana="PRON @NH">ich</w> <w ana="N @NH">Herrn</w> <w ana="PREP @POSTMOD">von</w> <w ana="N @NH">Stein</w> <w ana="DET @PREMOD">den</w> <w ana="A CMP @PREMOD">älteren<c>,</c></w> <w ana="A @PREMOD">königlich</w> <w ana="A @PREMOD">preußischen</w> <w ana="N @NH">Kammerherrn</w> <w ana="CC @CC">und</w> <w ana="N @NH">Oberforstmeister<c>,</c></w> <w ana="PRON @NH">der</w> <w ana="DET @PREMOD">eine</w> <w ana="N @PREMOD">Art</w> <w ana="N @NH">Residentenstelle</w> <w ana="ADV @ADVL">daselbst</w> <w ana="V IND PAST @MAIN">versah</w> <w ana="CC @CC">und</w> <w ana="PRON @NH">sich</w> <w ana="PREP @PREMARK">i</w><w ana="DET @PREMOD">m</w> <w ana="N @NH">Haß</w> <w ana="PREP @POSTMOD">gegen</w> <w ana="PRON @PREMOD">alles</w> <w ana="N PL @NH">Revolutionäre</w> <w ana="A @NH">gewaltsam</w> <w ana="V IND PAST @MAIN">auszeichnete<c>.</c></w></s>
+<s type="manual"><w ana="PRON @NH">er</w> <w ana="V IND PAST @MAIN">schilderte</w> <w ana="PRON @NH">mir</w> <w ana="PREP @PREMARK">mit</w> <w ana="A @PREMOD">flüchtigen</w> <w ana="N PL @NH">Zügen</w> <w ana="DET @PREMOD">die</w> <w ana="A @PREMOD">bisherigen</w> <w ana="N PL @NH">Fortschritte</w> <w ana="DET @PREMOD">der</w> <w ana="A @PREMOD">verbündeten</w> <w ana="N PL @NH">Heere<c>,</c></w> <w ana="CC @CC">und</w> <w ana="V IND PAST @MAIN">versah</w> <w ana="PRON @NH">mich</w> <w ana="PREP @PREMARK">mit</w> <w ana="DET @PREMOD">einem</w> <w ana="N @NH">Auszug</w> <w ana="DET @PREMOD">des</w> <w ana="A @PREMOD">topographischen</w> <w ana="N Prop @NH">Atlas</w> <w ana="PREP @POSTMOD">von</w> <w ana="N Prop @NH">Deutschland<c>,</c></w> <w ana="PRON @PREMOD">welchen</w> <w ana="N @NH">Jäger</w> <w ana="ADV @ADVL">zu</w> <w ana="N Prop @NH">Frankfurt<c>,</c></w> <w ana="PREP @PREMARK">unter</w> <w ana="DET @PREMOD">dem</w> <w ana="N @NH">Titel</w> <w ana="N PL @NH">&quot;Kriegstheater&quot;<c>,</c></w> <w ana="V IND PRES @MAIN">veranstaltet<c>.</c></w></s>
+<s type="manual"><w ana="ADV @ADVL">mittags</w> <w ana="PREP @PREMARK">bei</w> <w ana="PRON @NH">ihm</w> <w ana="PREP @PREMARK">zu</w><w ana="DET @PREMOD">r</w> <w ana="N @NH">Tafel</w> <w ana="V IND PAST @MAIN">fand</w> <w ana="PRON @NH">ich</w> <w ana="PRON @PREMOD">mehrere</w> <w ana="A @PREMOD">französische</w> <w ana="N PL @NH">Frauenzimmer<c>,</c></w> <w ana="PRON @NH">die</w> <w ana="PRON @NH">ich</w> <w ana="PREP @PREMARK">mit</w> <w ana="N @NH">Aufmerksamkeit</w> <w ana="PREP @PREMARK">zu</w> <w ana="V INF @MAIN">betrachten</w> <w ana="N @NH">Ursache</w> <w ana="V IND PAST @MAIN">hatte<c>;</c></w> <w ana="PRON @NH">die</w> <w ana="PRON @NH">eine</w> (<w ana="PRON @NH">man</w> <w ana="V IND PAST @MAIN">sagte<c>,</c></w> <w ana="PRON @NH">es</w> <w ana="V SUB PRES @MAIN">sei</w> <w ana="DET @PREMOD">die</w> <w ana="N @NH">Geliebte</w> <w ana="DET @PREMOD">des</w> <w ana="N @NH">Herzogs</w> <w ana="PREP @POSTMOD">von</w> <w ana="N Prop @NH">Orleans</w>) <w ana="DET @PREMOD">eine</w> <w ana="A @PREMOD">stattliche</w> <w ana="N @NH">Frau<c>,</c></w> <w ana="A @PREMOD">stolzen</w> <w ana="N @NH">Betragens</w> <w ana="CC @CC">und</w> <w ana="ADV @ADVL">schon</w> <w ana="PREP @PREMARK">von</w> <w ana="A @PREMOD">gewissen</w> <w ana="N PL @NH">Jahren<c>,</c></w> <w ana="PREP @PREMARK">mit</w> <w ana="A @PREMOD">rabenschwarzen</w> <w ana="N PL @NH">Augen<c>,</c></w> <w ana="N @NH">Augenbraunen</w> <w ana="CC @CC">und</w> <w ana="N @NH">Haar<c>;</c></w> <w ana="ADV @ADVL">übrigens</w> <w ana="PREP @PREMARK">i</w><w ana="DET @PREMOD">m</w> <w ana="N @NH">Gespräch</w> <w ana="PREP @POSTMOD">mit</w> <w ana="N @NH">Schicklichkeit</w> <w ana="A @NH">freundlich<c>.</c></w></s>
+       </p>
+       <poem>
+        <lg part="u">
+         <l part="u">
+                    <s>hier sind wir denn vorerst ganz still zu Haus ,</s>
+                  </l>
+         <l part="u">
+                    <s>von Tür' zu Türe sieht es lieblich aus ;</s>
+                  </l>
+         <l part="u">
+                    <s>der Küstler froh die stillen Blicke hegt ,</s>
+                  </l>
+         <l part="u">
+                    <s type="manual">wo Leben sich zum Leben freundlich regt.</s>
+                  </l>
+        </lg>
+        <pb id="aga.00000-363-pb363" n="363" TEIform="pb"/>
+        <lg part="u">
+         <l part="u">
+                    <s>und wie wir auch durch ferne Lande ziehn ,</s>
+                  </l>
+         <l part="u">
+                    <s>da kommt es her, da kehrt es wieder hin ;</s>
+                  </l>
+         <l part="u">
+                    <s>wir wenden uns, wie auch die Welt entzücke ,</s>
+                  </l>
+         <l part="u">
+                    <s type="manual">der Enge zu, die uns allein beglücke.</s>
+                  </l>
+        </lg>
+       </poem>
+      </div>
+     </div>
+    </body>
+    <back/>
+   </text>
+  </idsText>
+ </idsDoc>
+</idsCorpus>
