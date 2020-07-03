@@ -12,6 +12,8 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
+use KorAP::XML::TEI;
+
 my $columns = 0;
 my $no_header = 0;
 GetOptions(
@@ -38,6 +40,8 @@ my $bench = Dumbbench->new(
   verbosity => 0
 );
 
+my $result;
+
 # Add benchmark instances
 $bench->add_instances(
   Dumbbench::Instance::PerlSub->new(
@@ -45,7 +49,18 @@ $bench->add_instances(
     code => sub {
       `cat '$file' | perl '$script' > /dev/null 2>&1`
     }
-  )
+  ),
+  Dumbbench::Instance::PerlSub->new(
+    name => 'delHTMLcom',
+    code => sub {
+      for (1..100_000) {
+        $result = KorAP::XML::TEI::delHTMLcom(
+          \*STDIN,
+          "This <!-- comment --> is a test " . $_
+        );
+      };
+    }
+  ),
 );
 
 # Run benchmarks
