@@ -38,7 +38,7 @@ HTML
 
 seek($fh, 0, 0);
 
-is(KorAP::XML::TEI::delHTMLcom($fh, 'Dies <!--'), "Dies ist  ein Test");
+is(KorAP::XML::TEI::delHTMLcom($fh, 'Dies <!--'), "Dies ist  ein Test\n");
 
 close($fh);
 
