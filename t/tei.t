@@ -27,4 +27,18 @@ seek($fh, 0, 0);
 
 is(KorAP::XML::TEI::delHTMLcom($fh, '<!--'), "Test\n");
 
+seek($fh, 0, 0);
+
+print $fh <<'HTML';
+mehrzeiliger
+Kommentar
+  --><!-- Versuch
+-->ist <!-- a --><!-- b --> ein Test
+HTML
+
+seek($fh, 0, 0);
+
+is(KorAP::XML::TEI::delHTMLcom($fh, 'Dies <!--'), "Dies ist  ein Test");
+
+
 done_testing;

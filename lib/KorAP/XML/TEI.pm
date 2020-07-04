@@ -9,7 +9,9 @@ sub delHTMLcom { # remove HTML comments
   # sometimes is not desirable (e.g.: '...<!-- comment -->\n<w>token</w>...' would lead to '... <w>token</w>...' in $buf_in).
   # removing comments before processing the line, prevents this situation.
 
-  my ( $pfx, $sfx );
+  my ( $pfx, $sfx ) = ('','');
+
+ CHECK:
 
   while ( $html =~ s/<!--.*?-->//g ){}; # remove all comments in actual line
 
@@ -26,7 +28,7 @@ sub delHTMLcom { # remove HTML comments
     }
 
     $html = "$pfx$sfx";
-
+    goto CHECK;
   }
 
   if ( $html =~ s/^\s*$// ){ # get next line and feed it also to this sub, if actual line is empty or only contains whitespace
