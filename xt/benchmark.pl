@@ -4,7 +4,7 @@ use warnings;
 use Dumbbench;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile rel2abs/;
-use File::Temp ':POSIX';
+use File::Temp 'tempfile';
 use FindBin;
 use Getopt::Long;
 
@@ -41,6 +41,15 @@ my $bench = Dumbbench->new(
 );
 
 my $result;
+my ($fh, $filename) = tempfile();
+
+print $fh <<'HTML';
+mehrzeiliger
+Kommentar
+  --><!-- Versuch
+-->ist <!-- a --><!-- b --> ein Test
+HTML
+
 
 # Add benchmark instances
 $bench->add_instances(
@@ -61,10 +70,25 @@ $bench->add_instances(
       };
     }
   ),
+  Dumbbench::Instance::PerlSub->new(
+    name => 'delHTMLcom-long',
+    code => sub {
+      for (1..10_000) {
+        $result = KorAP::XML::TEI::delHTMLcom(
+          $fh,
+          "This <!--" . $_
+        );
+        seek($fh, 0, 0);
+      };
+    }
+  ),
 );
 
 # Run benchmarks
 $bench->run;
+
+# Clean up
+close($fh);
 
 # Output in a single row
 if ($columns) {
