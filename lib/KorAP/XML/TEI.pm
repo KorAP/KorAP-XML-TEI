@@ -9,31 +9,42 @@ sub delHTMLcom { # remove HTML comments
   # sometimes is not desirable (e.g.: '...<!-- comment -->\n<w>token</w>...' would lead to '... <w>token</w>...' in $buf_in).
   # removing comments before processing the line, prevents this situation.
 
-  my ( $pfx, $sfx ) = ('','');
+  my $pfx = '';
+  my $i = 0;
 
  CHECK:
 
-  while ( $html =~ s/<!--.*?-->//g ){}; # remove all comments in actual line
+  $html =~ s/<!--.*?-->//g; # remove all comments in actual line
 
-  if ( $html =~ /^(.*)<!--/ && $html !~ /-->/ ){ # remove comment spanning over several lines
+  # Remove comment spanning over several lines
+  # No closing comment found
+  if ( index($html, '-->') == -1) {
 
-    $pfx = $1;
+    # Opening comment found
+    $i = index($html, '<!--');
+    if ($i != -1) {
+      $pfx = substr($html, 0, $i);
 
-    while ( $html = <$fh> ){
+      # Consume all lines until the closing comment is found
+      while ( $html = <$fh> ){
 
-      if ( $html =~ /-->(.*)$/ ){
-        $sfx = $1; last
+        $i = index($html, '-->');
+        if ($i != -1){
+          $html = substr($html, $i + 3);
+          last;
+        }
+
       }
 
+      $html = $pfx . ($html // '');
+      goto CHECK;
     }
-
-    $html = "$pfx$sfx";
-    goto CHECK;
   }
 
-  if ( $html =~ s/^\s*$// ){ # get next line and feed it also to this sub, if actual line is empty or only contains whitespace
+  if ( $html =~ /^\s*$/ ){ # get next line and feed it also to this sub, if actual line is empty or only contains whitespace
 
-    $html = <$fh>; delHTMLcom ( $fh, $html );
+    $html = <$fh>;
+    goto CHECK;
   }
 
   return $html
