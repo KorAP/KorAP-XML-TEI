@@ -113,4 +113,50 @@ ok($zip->close, 'Closed');
 $t = Test::XML::Loy->new($struct_xml);
 $t->text_is('span[id=s3] *[name=type]', 'Autobiographie', 'text content');
 
+
+# Uncompress GOE/AGA/00000/base/tokens_aggressive.xml from zip file
+$zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens_aggressive.xml');
+
+# Read GOE/AGA/00000/base/tok.xml
+my $tokens_xml = '';
+$tokens_xml .= $zip->getline while !$zip->eof;
+ok($zip->close, 'Closed');
+
+$t = Test::XML::Loy->new($tokens_xml);
+$t->attr_is('spanList span:nth-child(1)', 'to', 8);
+
+$t->attr_is('spanList span#t_1', 'from', 9);
+$t->attr_is('spanList span#t_1', 'to', 11);
+
+$t->attr_is('spanList span#t_67', 'from', 427);
+$t->attr_is('spanList span#t_67', 'to', 430);
+
+$t->attr_is('spanList span#t_214', 'from', 1209);
+$t->attr_is('spanList span#t_214', 'to', 1212);
+
+$t->element_count_is('spanList span', 227);
+
+
+# Uncompress GOE/AGA/00000/base/tokens_conservative.xml from zip file
+$zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens_conservative.xml');
+
+# Read GOE/AGA/00000/base/tok.xml
+$tokens_xml = '';
+$tokens_xml .= $zip->getline while !$zip->eof;
+ok($zip->close, 'Closed');
+
+$t = Test::XML::Loy->new($tokens_xml);
+$t->attr_is('spanList span:nth-child(1)', 'to', 8);
+
+$t->attr_is('spanList span#t_1', 'from', 9);
+$t->attr_is('spanList span#t_1', 'to', 11);
+
+$t->attr_is('spanList span#t_67', 'from', 427);
+$t->attr_is('spanList span#t_67', 'to', 430);
+
+$t->attr_is('spanList span#t_214', 'from', 1209);
+$t->attr_is('spanList span#t_214', 'to', 1212);
+
+$t->element_count_is('spanList span', 227);
+
 done_testing;
