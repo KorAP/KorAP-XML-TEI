@@ -111,7 +111,7 @@ my $_GEN_TOK_BAS               = 0;      # IDS internal tokenization
 my $_GEN_TOK_DUMMY             = 1;      # use dummy base tokenization for testing (base tokenization is normally done by external tools)
   my $_tok_file_con            = "tokens_conservative.xml";
   my $_tok_file_agg            = "tokens_aggressive.xml";
-  my ( @tok_tokens_con, @tok_tokens_agg, $m1, $m2, $m3, $m4, $tmp, $p1, $p2, $pr, $txt, $offset );
+  my ( @tok_tokens_con, @tok_tokens_agg, $txt, $offset );
 my $_base_tokenization_dir     = "base"; # name of directory for storing files of dummy tokenization (only used in func. select_tokenization)
 
 # man IO::Compress::Zip

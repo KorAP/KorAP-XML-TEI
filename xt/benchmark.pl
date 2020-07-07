@@ -13,6 +13,7 @@ BEGIN {
 };
 
 use KorAP::XML::TEI;
+use KorAP::XML::TEI::Tokenization;
 
 my $columns = 0;
 my $no_header = 0;
@@ -41,6 +42,8 @@ my $bench = Dumbbench->new(
 );
 
 my $result;
+
+# Data for delHTMLcom-long
 my ($fh, $filename) = tempfile();
 
 print $fh <<'HTML';
@@ -49,6 +52,20 @@ Kommentar
   --><!-- Versuch
 -->ist <!-- a --><!-- b --> ein Test
 HTML
+
+# Data for Tokenization
+# Test data
+my $t_dataf = catfile(dirname(__FILE__), '..', 't', 'data', 'wikipedia.txt');
+my $t_data = '';
+if ((open(FH, '<' . $t_dataf))) {
+  while (!eof(FH)) {
+    $t_data .= <FH>
+  };
+  close(FH);
+}
+else {
+  die "Unable to load $t_dataf";
+}
 
 
 # Add benchmark instances
@@ -80,6 +97,20 @@ $bench->add_instances(
         );
         seek($fh, 0, 0);
       };
+    }
+  ),
+  Dumbbench::Instance::PerlSub->new(
+    name => 'Tokenization-conservative',
+    code => sub {
+      $result = KorAP::XML::TEI::Tokenization::conservative($t_data, 0);
+      $result = 0;
+    }
+  ),
+  Dumbbench::Instance::PerlSub->new(
+    name => 'Tokenization-aggressive',
+    code => sub {
+      $result = KorAP::XML::TEI::Tokenization::aggressive($t_data, 0);
+      $result = 0;
     }
   ),
 );

@@ -2,150 +2,167 @@ package KorAP::XML::TEI::Tokenization;
 use strict;
 use warnings;
 
-#~~~~~
-# from here (until end): dummy tokenization
-#~~~~~
+# This tokenizer was originally written by cschnober.
+# '\p{Punct}' is equal to the character class '[-!"#%&'()*,./:;?@[\\\]_{}]'
 
+# Tokenize string "aggressively" and return an array
+# with character boundaries.
 sub aggressive {
   my ($txt, $offset) = @_;
 
   $offset //= 0;
-  my @tok_tokens_agg;
+  my @tokens;
 
-  while ( $txt =~ /([^\p{Punct} \x{9}\n]+)(?:([\p{Punct}])|(?:[ \x{9}\n])?)|([\p{Punct}])/g ){
+  # Iterate over the whole string
+  while ($txt =~ /([^\p{Punct} \x{9}\n]+)
+                  (?:(\p{Punct})|(?:[ \x{9}\n])?)|
+                  (\p{Punct})/gx){
 
-    if ( defined $1 ){
+    # Starts with a character sequence
+    if (defined $1){
+      push @tokens, $-[1]+$offset, $+[1]+$offset; # from and to
 
-      push @tok_tokens_agg, $-[1]+$offset; push @tok_tokens_agg, $+[1]+$offset; # from and to
-
-      if ( defined $2 ){ push @tok_tokens_agg, $-[2]+$offset; push @tok_tokens_agg, $+[2]+$offset } # from and to
-
-    } else{ # defined $3
-
-      push @tok_tokens_agg, $-[3]+$offset; push @tok_tokens_agg, $+[3]+$offset # from and to
+      # Followed by a punctuation
+      if ($2){
+        push @tokens, $-[2]+$offset, $+[2]+$offset # from and to
+      }
     }
 
-  } # end: while
+    # Starts with a punctuation
+    else {
+      push @tokens, $-[3]+$offset, $+[3]+$offset # from and to
+    };
+  };
 
-  return \@tok_tokens_agg;
+  return \@tokens;
 };
 
 
+# Tokenize string "conservatively" and return an array
+# with character boundaries.
 sub conservative {
   my ($txt, $offset) = @_;
   $offset //= 0;
 
-  my @tok_tokens_con;
-  my ($m1, $m2, $m3, $m4);
+  my @tokens;
   my ($tmp, $p1, $p2, $pr);
 
-  my $dl; # ???
   my $i;
 
-  # ~ start: conservative tokenization ~
+  # Iterate over the whole string
+  while ($txt =~ /(\p{Punct}*)
+                  ([^\p{Punct} \x{9}\n]+(?:(\p{Punct}+)[^\p{Punct} \x{9}\n]+)*)?
+                  (\p{Punct}*)
+                  (?:[ \x{9}\n])?/gx) {
 
-  # '\p{Punct}' is equal to the character class '[-!"#%&'()*,./:;?@[\\\]_{}]'
-  while ( $txt =~ /([\p{Punct}]*)([^\p{Punct} \x{9}\n]+(?:([\p{Punct}]+)[^\p{Punct} \x{9}\n]+)*)?([\p{Punct}]*)(?:[ \x{9}\n])?/g ){
+    # Punctuation preceding a token
+    if ($1) {
+      ($p1,$p2) = ($-[1], $+[1]);
 
-    $m1 = $1; $m2 = $2; $m3 = $3; $m4 = $4;
+      # Only a single character
+      if ($p2 == $p1+1) {
 
-    if ( "$m1" ne "" ){ # special chars before token
+        # Character doesn't start and first position
+        if ($p1 != 0) {
 
-      $p1 = $-[1]; $p2 = $+[1];
+          # Check if the prefix is a character
+          $pr = ( substr( $txt, $p1-1, 1 ) =~ /^[^A-Za-z0-9]$/ );
+        }
 
-      #print STDERR "A1: ".$m1." -> from $p1 to $p2\n";
+        # Prefix is empty
+        else {
+          $pr = 0
+        };
 
-      if ( $p2 == $p1+1 ){
+        # There is no prefix
+        unless ($pr){
 
-        if ( $p1 != 0 ){ $tmp = substr( $txt, $p1-1, 1 ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) } else { $pr = 0 };
+          # Check, if the first character following the special char is a character?
+          $pr = ( substr( $txt, $p2, 1 ) =~ /^[^A-Za-z0-9]$/ );
+        };
 
-        if ( not $pr ){ $tmp = substr( $txt, $p2, 1 ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) };
-
-        if ( $pr ){ push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset }; # from and to
+        if ($pr){
+          push @tokens, $p1+$offset, $p2+$offset; # from and to
+        };
 
       } else {
 
-        for ( $i = 0; $i < ( $p2-$p1 ); $i++ ){
-
-          #print STDERR "A2: ".substr($m1,$i,1)." -> from $p1 to $p2\n";
-
-          push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
+        # Iterate over all single punctuation symbols
+        for ($i = $p1; $i < $p2; $i++) {
+          push @tokens, $i+$offset, $i+1+$offset; # from and to
         }
       }
+    };
 
-    } # fi: "$m1" ne ""
+    # Token sequence
+    if ($2){
+      push @tokens, $-[2]+$offset, $+[2]+$offset; # from and to
+    };
 
-    #print STDERR "B: "."$m2 -> from ".($-[2]+$offset)." to ".($+[2]+$offset)."\n" if defined $m2;   # token (wordform)
+    # Punctuation following a token
+    if ($3){
+      ($p1,$p2) = ($-[3], $+[3]);
 
-    if ( defined $m2 ){ push @tok_tokens_con, $-[2]+$offset; push @tok_tokens_con, $+[2]+$offset }; # from and to
+      # Only a single character
+      if ($p2 == $p1+1){
 
-    if ( defined $m3 ){
+        # Check the char after the match
+        $pr = ( substr( $txt, $p2, 1 ) =~ /^[^A-Za-z0-9]?$/ );
 
-      $p1 = $-[3]; $p2 = $+[3];
+        # Check the char before the match
+        unless ($pr){
+          $pr = ( substr( $txt, $p1-1, 1 ) =~ /^[^A-Za-z0-9]/ );
+        };
 
-      #print STDERR "C: ".$m3." -> from $p1 to $p2\n";
-
-      if ( $p2 == $p1+1 ){
-
-        $tmp = substr( $txt, $p2, 1); $pr = ( $tmp =~ /^$/ ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) if not $pr; # char after match
-
-        if ( not $pr ){ $tmp = substr( $txt, $p1-1, 1 ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) }; # char before match
-
-        if ( $pr ){ push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset }; # from and to
-
-      } else { # length($m3)>1 => print all chars
-
-        for ( $i = 0; $i < ( $p2-$p1 ); $i++ ){
-
-          #$tmp=substr($m3,$i,1);
-          #print STDERR "C2: $tmp -> from $p1 to $p2\n";
-
-          push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
-        }
+        # Either before or after the char there is a token
+        if ($pr) {
+          push @tokens, $p1+$offset, $p2+$offset; # from and to
+        };
 
       }
 
-    } # fi: defined $m3
+      else {
 
-    if ( "$m4" ne "" ){ # special chars after token
+        # Iterate over all single punctuation symbols
+        for ( $i = $p1; $i < $p2; $i++) {
+          push @tokens, $i+$offset, $i+1+$offset; # from and to
+        };
+      };
+    };
 
-      $p1 = $-[4]; $p2 = $+[4];
+    if ($4) { # special chars after token
 
-      #print STDERR "D1: ".$m4." -> from ".($p1+$offset)." to ".($p2+$offset)."\n";
+      ($p1,$p2) = ($-[4], $+[4]);
 
-      if ( $p2 == $p1+1 ){
+      if ($p2 == $p1+1) {
 
-        $tmp = substr( $txt, $p2, 1 ); $pr = ( $tmp =~ /^$/ ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) if not $pr; # char after match
+        # Check the char after the match
+        $pr = ( substr( $txt, $p2, 1 ) =~ /^[^A-Za-z0-9]?$/ );
 
-        if ( not $pr ){ $tmp = substr ( $txt, $p1-1, 1 ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) }; # char before match
+        # Check the char before the match
+        unless ($pr) {
+          $pr = ( substr ( $txt, $p1-1, 1 ) =~ /^[^A-Za-z0-9]/ );
+        };
 
-        if ( $pr ){ push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset } # from and to
+        # Either before or after the char there is a token
+        if ($pr){
+          push @tokens, $p1+$offset, $p2+$offset;  # from and to
+        };
 
-      }else{
-
-        for ( $i = 0; $i < ( $p2-$p1 ); $i++ ){
-
-          #print STDERR "D2: ".substr($m4,$i,1)." -> from ".($p1+$i+$offset)." to ".($p1+$i+1+$offset)."\n";
-
-          push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
-        }
       }
 
-    }# fi: "$m4" ne ""
+      else {
 
-  }# end: while
+        # Iterate over all single punctuation symbols
+        for ( $i = $p1; $i < $p2; $i++ ){
+          push @tokens, $i+$offset, $i+1+$offset; # from and to
+        };
+      };
+    };
+  };
 
+  return \@tokens
+};
 
-  # ~ end: conservative tokenization ~
-
-
-  ##$offset = $dl+1;
-
-  # TEMP:
-  $dl = 4;
-  $offset = $dl;
-
-  return \@tok_tokens_con
-}; # fi: $_GEN_TOK_DUMMY
 
 1;
