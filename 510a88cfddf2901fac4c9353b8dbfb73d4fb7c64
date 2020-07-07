@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e99be45_21db2767",
+        "filename": "t/tokenization.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-07T13:36:07Z",
+      "side": 1,
+      "message": "In my opinion, this is weird (and complicated) behaviour. Single characters prepending a token character are not treated as a token (i.e. are not tokenized), while multiple characters prepending a token are. I would prefer to only rely on the second version and change the behaviour for the former. Is that a problem?",
+      "revId": "510a88cfddf2901fac4c9353b8dbfb73d4fb7c64",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
