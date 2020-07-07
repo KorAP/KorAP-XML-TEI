@@ -2,40 +2,47 @@ package KorAP::XML::TEI::Tokenization;
 use strict;
 use warnings;
 
-#~~~~~
-# from here (until end): dummy tokenization
-#~~~~~
+# This tokenizer was originally written by cschnober.
 
+# Tokenize string "aggressively" and return an array
+# with character boundaries.
 sub aggressive {
   my ($txt, $offset) = @_;
 
   $offset //= 0;
-  my @tok_tokens_agg;
+  my @tokens;
 
-  while ( $txt =~ /([^\p{Punct} \x{9}\n]+)(?:([\p{Punct}])|(?:[ \x{9}\n])?)|([\p{Punct}])/g ){
+  # Iterate over the whole string
+  while ($txt =~ /([^\p{Punct} \x{9}\n]+)(?:([\p{Punct}])|(?:[ \x{9}\n])?)|([\p{Punct}])/g){
 
-    if ( defined $1 ){
+    if (defined $1){
 
-      push @tok_tokens_agg, $-[1]+$offset; push @tok_tokens_agg, $+[1]+$offset; # from and to
+      push @tokens, $-[1]+$offset, $+[1]+$offset; # from and to
 
-      if ( defined $2 ){ push @tok_tokens_agg, $-[2]+$offset; push @tok_tokens_agg, $+[2]+$offset } # from and to
+      if (defined $2){
+        push @tokens, $-[2]+$offset, $+[2]+$offset # from and to
+      }
 
-    } else{ # defined $3
-
-      push @tok_tokens_agg, $-[3]+$offset; push @tok_tokens_agg, $+[3]+$offset # from and to
     }
 
-  } # end: while
+    # defined $3
+    else {
+      push @tokens, $-[3]+$offset, $+[3]+$offset # from and to
+    }
 
-  return \@tok_tokens_agg;
+  };
+
+  return \@tokens;
 };
 
 
+# Tokenize string "conservatively" and return an array
+# with character boundaries.
 sub conservative {
   my ($txt, $offset) = @_;
   $offset //= 0;
 
-  my @tok_tokens_con;
+  my @tokens;
   my ($m1, $m2, $m3, $m4);
   my ($tmp, $p1, $p2, $pr);
 
@@ -61,7 +68,9 @@ sub conservative {
 
         if ( not $pr ){ $tmp = substr( $txt, $p2, 1 ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) };
 
-        if ( $pr ){ push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset }; # from and to
+        if ( $pr ){
+          push @tokens, $p1+$offset, $p2+$offset; # from and to
+        };
 
       } else {
 
@@ -69,7 +78,7 @@ sub conservative {
 
           #print STDERR "A2: ".substr($m1,$i,1)." -> from $p1 to $p2\n";
 
-          push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
+          push @tokens, $p1+$i+$offset, $p1+$i+1+$offset; # from and to
         }
       }
 
@@ -77,7 +86,9 @@ sub conservative {
 
     #print STDERR "B: "."$m2 -> from ".($-[2]+$offset)." to ".($+[2]+$offset)."\n" if defined $m2;   # token (wordform)
 
-    if ( defined $m2 ){ push @tok_tokens_con, $-[2]+$offset; push @tok_tokens_con, $+[2]+$offset }; # from and to
+    if ( defined $m2 ){
+      push @tokens, $-[2]+$offset, $+[2]+$offset; # from and to
+    };
 
     if ( defined $m3 ){
 
@@ -91,7 +102,9 @@ sub conservative {
 
         if ( not $pr ){ $tmp = substr( $txt, $p1-1, 1 ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) }; # char before match
 
-        if ( $pr ){ push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset }; # from and to
+        if ( $pr ){
+          push @tokens, $p1+$offset, $p2+$offset; # from and to
+        };
 
       } else { # length($m3)>1 => print all chars
 
@@ -100,7 +113,7 @@ sub conservative {
           #$tmp=substr($m3,$i,1);
           #print STDERR "C2: $tmp -> from $p1 to $p2\n";
 
-          push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
+          push @tokens, $p1+$i+$offset, $p1+$i+1+$offset; # from and to
         }
 
       }
@@ -119,7 +132,9 @@ sub conservative {
 
         if ( not $pr ){ $tmp = substr ( $txt, $p1-1, 1 ); $pr = ( $tmp =~ /^[^A-Za-z0-9]/ ) }; # char before match
 
-        if ( $pr ){ push @tok_tokens_con, $p1+$offset; push @tok_tokens_con, $p2+$offset } # from and to
+        if ( $pr ){
+          push @tokens, $p1+$offset, $p2+$offset;  # from and to
+        }
 
       }else{
 
@@ -127,7 +142,7 @@ sub conservative {
 
           #print STDERR "D2: ".substr($m4,$i,1)." -> from ".($p1+$i+$offset)." to ".($p1+$i+1+$offset)."\n";
 
-          push @tok_tokens_con, $p1+$i+$offset; push @tok_tokens_con, $p1+$i+1+$offset; # from and to
+          push @tokens, $p1+$i+$offset, $p1+$i+1+$offset; # from and to
         }
       }
 
@@ -145,7 +160,7 @@ sub conservative {
   $dl = 4;
   $offset = $dl;
 
-  return \@tok_tokens_con
+  return \@tokens
 }; # fi: $_GEN_TOK_DUMMY
 
 1;
