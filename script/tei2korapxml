@@ -41,7 +41,6 @@ use Encode qw(encode_utf8 decode_utf8);
 
 use XML::CompactTree::XS;
 use XML::LibXML::Reader;
-use IO::Compress::Zip qw(zip $ZipError :constants);
 use IPC::Open2 qw(open2);
 
 use FindBin;
@@ -50,6 +49,7 @@ BEGIN {
 };
 
 use KorAP::XML::TEI;
+use KorAP::XML::TEI::Zipper;
 
 our $VERSION = '0.01';
 
@@ -113,13 +113,6 @@ my $_GEN_TOK_DUMMY             = 0;      # use dummy base tokenization for testi
   my ( @tok_tokens_con, @tok_tokens_agg, $m1, $m2, $m3, $m4, $tmp, $p1, $p2, $pr, $txt, $offset );
 my $_base_tokenization_dir     = "base"; # name of directory for storing files of dummy tokenization (only used in func. select_tokenization)
 
-# man IO::Compress::Zip
-# At present three compression methods are supported by IO::Compress::Zip, namely
-# Store (no compression at all), Deflate, Bzip2 and LZMA.
-# Note that to create Bzip2 content, the module "IO::Compress::Bzip2" must be installed.
-# Note that to create LZMA content, the module "IO::Compress::Lzma" must be installed.
-my $_COMPRESSION_METHOD = ZIP_CM_DEFLATE; # The symbols, ZIP_CM_STORE, ZIP_CM_DEFLATE, ZIP_CM_BZIP2 and ZIP_CM_LZMA are used to select the compression method.
-
 my $_DEBUG           = 0;                            # set to 1 for minimal more debug output (no need to be parametrized)
 my $_XCT_LN          = 0;                            # only for debugging: include line numbers in elements of $tree_data
                                                      #  (see also manpage of XML::CompactTree::XS)
@@ -154,9 +147,8 @@ my $_INLINE_LEM_WR   = "lemma";                      # name (inside $_tokens_fil
 # ~~~ variables ~~~
 #
 
-my $zip;                                             # IO::Compress::Zip object
-my $zip_outh;                                        # handle for zip file output (stdout)
-my $first_write;                                     # needed to decide wether to call '$zip->newStream' (for appending to zip file)
+# Initialize zipper
+my $zipper = KorAP::XML::TEI::Zipper->new;
 my $input_fh;                                        # input file handle (default: stdin)
 
 my $buf_in;                                          # text body data extracted from input document ($input_fh), further processed by XML::LibXML::Reader
@@ -286,9 +278,7 @@ sub process {
 
   $input_fh = *STDIN;  # input file handle (default: stdin)
 
-  $zip_outh = *STDOUT; # output file handle (default: stdout)
-
-  $data_fl = 0; $first_write = 1;
+  $data_fl = 0;
 
   $buf_in = $data = $dir = $dir_doc = $dir_crp = "";
   $header_txt = $header_doc = $header_crp = "";
@@ -375,25 +365,11 @@ sub process {
       
         print STDERR "DEBUG ($0): main(): Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file\n" if $_DEBUG;
 
-        if ( $first_write ){
-
-          $first_write = 0;
-
-          # 1st time: create instance
-          $zip = new IO::Compress::Zip $zip_outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0, Name => "$_root_dir$dir/$_data_file"
-            or die "ERROR ('$_root_dir$dir/$_data_file'): zip failed: $ZipError\n"
-
-        } else {
-
-          # closes the current compressed data stream and starts a new one.
-          $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_data_file" )
-            or die "ERROR ('$_root_dir$dir/$_data_file'): zip failed: $ZipError\n"
-        }
 
         $data =~ s/(&|<|>)/$ent{$1}/g;
 
-        $zip->print( "$data_prfx1$text_id_esc$data_prfx2$data$data_sfx" );
-
+        $zipper->new_stream("$_root_dir$dir/$_data_file")
+          ->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
 
         # ~ write structures ~
 
@@ -487,23 +463,10 @@ sub process {
 
         print STDERR "DEBUG ($0): Writing file $_root_dir$dir/$_header_file\n" if $_DEBUG;
 
-        if ( $first_write ){
-
-          $first_write = 0;
-
-          $zip = new IO::Compress::Zip $zip_outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD,
-                 Append => 0, Name => "$_root_dir$dir/$_header_file"
-            or die "ERROR ('$_root_dir$dir/$_header_file'): zip failed: $ZipError\n"
-
-        } else {
-
-          $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_header_file" )
-            or die "ERROR ('$_root_dir$dir/$_header_file'): zip failed: $ZipError\n"
-        }
-
         $header_txt = encode_utf8( $header_txt );
 
-        $zip->print( "$header_prfx$header_txt" );
+        $zipper->new_stream("$_root_dir$dir/$_header_file")
+          ->print("$header_prfx$header_txt");
 
         $header_txt = "";
       }
@@ -546,7 +509,6 @@ sub process {
 
       # ~ end of document header ~
 
-
       #print STDERR "end of doc header\n";
 
       # write it to header.xml
@@ -568,23 +530,10 @@ sub process {
 
         print STDERR "DEBUG ($0): Writing file $_root_dir$dir_doc/$_header_file\n" if $_DEBUG;
 
-        if ( $first_write ){
-
-          $first_write = 0;
-
-          $zip = new IO::Compress::Zip $zip_outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 0,
-            Name => "$_root_dir$dir_doc/$_header_file"
-              or die "ERROR ('$_root_dir$dir_doc/$_header_file'): zip failed: $ZipError\n"
-
-        } else {
-
-          $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir_doc/$_header_file" )
-            or die "ERROR ('$_root_dir$dir_doc/$_header_file'): zip failed: $ZipError\n"
-        }
-
         $header_doc = encode_utf8( $header_doc );
 
-        $zip->print( "$header_prfx$header_doc" );
+        $zipper->new_stream("$_root_dir$dir_doc/$_header_file")
+          ->print("$header_prfx$header_doc");
 
         $header_doc = $dir_doc = "";
       }
@@ -681,23 +630,10 @@ sub process {
 
         print STDERR "DEBUG ($0): Writing file $_root_dir$dir_crp/$_header_file\n" if $_DEBUG;
 
-        if ( $first_write ){
-
-          $first_write = 0;
-
-          $zip = new IO::Compress::Zip $zip_outh, Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD,
-            Append => 0, Name => "$_root_dir$dir_crp/$_header_file"
-               or die "ERROR ('$_root_dir$dir_crp/$_header_file'): zip failed: $ZipError\n";
-
-        } else {
-
-          $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir_crp/$_header_file" )
-            or die "ERROR ('$_root_dir$dir_crp/$_header_file'): zip failed: $ZipError\n"
-        }
-
         $header_crp = encode_utf8( $header_crp );
 
-        $zip->print( "$header_prfx$header_crp" );
+        $zipper->new_stream("$_root_dir$dir_crp/$_header_file")
+          ->print("$header_prfx$header_crp");
 
         $header_crp = $dir_crp = "";
       }
@@ -744,7 +680,7 @@ sub process {
 
   } #end: while
 
-  $zip->close();
+  $zipper->close;
 
   ## DEPRECATED (only IDS-intern)
   if( $_GEN_TOK_BAS ){
@@ -1256,7 +1192,7 @@ sub select_tokenization { # called from process()
         }
       }
     }else{
-      $zip->close();
+      $zipper->close;
       die "ERROR ($0): cannot retrieve token bounds from external tokenizer for text '$text_id' => Aborting ...\n";
     }
   ## 
@@ -1273,9 +1209,6 @@ sub write_tokenization { # called from select_tokenization()
 
   my ( $fname, $textid_esc, $bounds ) = @_;
 
-  $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => $fname)
-    or die "ERROR ('$fname'): zip failed: $ZipError\n";
-
   $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
     ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\"$text_id_esc\" xmlns=\"http://ids-mannheim.de/ns/KorAP\""
     ." version=\"KorAP-0.4\">\n  <spanList>\n";
@@ -1291,7 +1224,7 @@ sub write_tokenization { # called from select_tokenization()
 
   $output .= "  </spanList>\n</layer>";
 
-  $zip->print ( "$output" );
+  $zipper->new_stream($fname)->print($output);
 
 } # end: sub write_tokenization
 
@@ -1307,9 +1240,6 @@ sub write_structures { # called from process()
    print STDERR "WARNING ($0): write_structures(): empty textSigle => nothing to do ...\n";
     return;
   }
-
-  $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_structure_dir/$_structure_file" )
-      or die "ERROR ('$_root_dir$dir/$_structure_dir/$_structure_file'): zip failed: $ZipError\n";
 
   $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
            ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\""
@@ -1373,7 +1303,8 @@ sub write_structures { # called from process()
 
   $output = encode_utf8( $output );
 
-  $zip->print( "$output" );
+  $zipper->new_stream("$_root_dir$dir/$_structure_dir/$_structure_file")
+    ->print($output);
 
   #print STDERR "$0: write_structures(): DONE\n";
 
@@ -1391,9 +1322,6 @@ sub write_tokens { # called from process()
     print STDERR "WARNING ($0): write_tokens(): empty textSigle => nothing to do ...\n";
     return;
   }
-
-  $zip->newStream( Zip64 => 1, TextFlag => 1, Method => $_COMPRESSION_METHOD, Append => 1, Name => "$_root_dir$dir/$_tokens_dir/$_tokens_file" )
-      or die "ERROR ('$_root_dir$dir/$_tokens_dir/$_tokens_file'): zip failed: $ZipError\n";
 
   $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
            ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\""
@@ -1472,7 +1400,8 @@ sub write_tokens { # called from process()
 
   $output = encode_utf8( $output );
 
-  $zip->print( "$output" );
+  $zipper->new_stream("$_root_dir$dir/$_tokens_dir/$_tokens_file")
+    ->print($output);
 
   #print STDERR "$0: write_tokens(): DONE\n";
 

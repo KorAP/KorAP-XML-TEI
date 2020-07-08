@@ -38,6 +38,8 @@ stderr_like(
   'Processing'
 );
 
+ok(-e $outzip, "File $outzip exists");
+
 # Uncompress GOE/header.xml from zip file
 my $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/header.xml');
 
