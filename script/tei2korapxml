@@ -22,7 +22,8 @@ BEGIN {
 };
 
 use KorAP::XML::TEI;
-use KorAP::XML::TEI::Tokenization;
+use KorAP::XML::TEI::Tokenizer::Conservative;
+use KorAP::XML::TEI::Tokenizer::Aggressive;
 use KorAP::XML::TEI::Zipper;
 
 our $VERSION = '0.01';
@@ -84,7 +85,9 @@ my $_GEN_TOK_BAS               = 0;      # IDS internal tokenization
 my $_GEN_TOK_DUMMY             = 1;      # use dummy base tokenization for testing (base tokenization is normally done by external tools)
   my $_tok_file_con            = "tokens_conservative.xml";
   my $_tok_file_agg            = "tokens_aggressive.xml";
-  my ( @tok_tokens_con, @tok_tokens_agg, $txt, $offset );
+  my $aggr_tok = KorAP::XML::TEI::Tokenizer::Aggressive->new;
+  my $cons_tok = KorAP::XML::TEI::Tokenizer::Conservative->new;
+  my ( $txt, $offset );
 my $_base_tokenization_dir     = "base"; # name of directory for storing files of dummy tokenization (only used in func. select_tokenization)
 
 my $_DEBUG           = 0;                            # set to 1 for minimal more debug output (no need to be parametrized)
@@ -362,7 +365,9 @@ sub process {
           select_tokenization();
 
           if ( $_GEN_TOK_DUMMY ){
-            $offset = 0; @tok_tokens_con=(); @tok_tokens_agg=();
+            $offset = 0;
+            $aggr_tok->reset;
+            $cons_tok->reset;
           }
         }
 
@@ -1005,13 +1010,8 @@ sub retr_info { # called from process()
 
         if ( substr( $txt, 0, 1 ) ne ' ' || substr( $txt, 1, 1) ne ' ' ){ # $txt has at least 2 chars, if it's not empty or equal to ' '
 
-          my $tok = KorAP::XML::TEI::Tokenization::conservative($txt, $offset);
-          push @tok_tokens_con, @$tok;
-
-          $tok = KorAP::XML::TEI::Tokenization::aggressive($txt, $offset);
-          push @tok_tokens_agg, @$tok;
-
-          ##$offset = $dl+1;
+          $cons_tok->tokenize($txt, $offset);
+          $aggr_tok->tokenize($txt, $offset);
 
           $offset = $dl;
 
@@ -1059,13 +1059,22 @@ sub select_tokenization { # called from process()
     }
   ## 
   }elsif( $_GEN_TOK_DUMMY ){
-    write_tokenization("$_root_dir$dir/$_base_tokenization_dir/$_tok_file_con", $text_id_esc, \@tok_tokens_con);
-    write_tokenization("$_root_dir$dir/$_base_tokenization_dir/$_tok_file_agg", $text_id_esc, \@tok_tokens_agg);
+
+    # Output token streams to zip streams
+    $cons_tok->to_zip(
+      $zipper->new_stream("$_root_dir$dir/$_base_tokenization_dir/$_tok_file_con"),
+      $text_id_esc
+    );
+    $aggr_tok->to_zip(
+      $zipper->new_stream("$_root_dir$dir/$_base_tokenization_dir/$_tok_file_agg"),
+      $text_id_esc
+    );
   }
 
   #print STDERR "$0: write_tokenization(): DONE\n";
 
 } # end: select_tokenization
+
 
 sub write_tokenization { # called from select_tokenization()
 
