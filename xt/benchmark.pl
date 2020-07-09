@@ -13,7 +13,8 @@ BEGIN {
 };
 
 use KorAP::XML::TEI;
-use KorAP::XML::TEI::Tokenization;
+use KorAP::XML::TEI::Tokenizer::Aggressive;
+use KorAP::XML::TEI::Tokenizer::Conservative;
 
 my $columns = 0;
 my $no_header = 0;
@@ -65,7 +66,10 @@ if ((open(FH, '<' . $t_dataf))) {
 }
 else {
   die "Unable to load $t_dataf";
-}
+};
+
+my $cons_tok = KorAP::XML::TEI::Tokenizer::Conservative->new;
+my $aggr_tok = KorAP::XML::TEI::Tokenizer::Aggressive->new;
 
 
 # Add benchmark instances
@@ -100,16 +104,16 @@ $bench->add_instances(
     }
   ),
   Dumbbench::Instance::PerlSub->new(
-    name => 'Tokenization-conservative',
+    name => 'Tokenizer-conservative',
     code => sub {
-      $result = KorAP::XML::TEI::Tokenization::conservative($t_data, 0);
+      $result = $cons_tok->reset->tokenize($t_data, 0);
       $result = 0;
     }
   ),
   Dumbbench::Instance::PerlSub->new(
-    name => 'Tokenization-aggressive',
+    name => 'Tokenizer-aggressive',
     code => sub {
-      $result = KorAP::XML::TEI::Tokenization::aggressive($t_data, 0);
+      $result = $aggr_tok->reset->tokenize($t_data, 0);
       $result = 0;
     }
   ),
