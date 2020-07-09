@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "95a0cf16_5ee3f3cc",
+        "filename": "lib/KorAP/XML/TEI/Tokenization.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-09T10:56:06Z",
+      "side": 1,
+      "message": "$preceding",
+      "revId": "db827e881ccf6ea3dc11487e4a5cde173d948b97",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
