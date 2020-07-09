@@ -6,15 +6,12 @@ use Pod::Usage;
 use Getopt::Long qw(GetOptions :config no_auto_abbrev);
 
 use File::Basename qw(dirname);
-use IO::Handle;
-use IO::Select;
 
 use open qw(:std :utf8); # assume utf-8 encoding
 use Encode qw(encode_utf8 decode_utf8);
 
 use XML::CompactTree::XS;
 use XML::LibXML::Reader;
-use IPC::Open2 qw(open2);
 
 use FindBin;
 BEGIN {
@@ -22,6 +19,7 @@ BEGIN {
 };
 
 use KorAP::XML::TEI;
+use KorAP::XML::TEI::Tokenizer::External;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
 use KorAP::XML::TEI::Zipper;
@@ -35,7 +33,8 @@ our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 GetOptions(
   "root|r=s"  => \(my $_root_dir = '.'),  # name of root directory inside zip file
   "input|i=s" => \(my $input_fname = ''), # input file (yet only TEI I5 Format accepted)
-  'help|h'   => sub {
+  'tokenizer-call|tc=s' => \(my $tokenizer_call), # Temporary argument for testing purposes
+  'help|h'    => sub {
     pod2usage(
       -verbose => 99,
       -sections => 'NAME|DESCRIPTION|SYNOPSIS|ARGUMENTS|OPTIONS',
@@ -76,19 +75,26 @@ my $_TEXT_HEADER_BEG  = "idsHeader type=\"text\"";     # analog
 # ~~~ constants ~~~
 #
 
-## DEPRECATED (only IDS-intern - the tokenization is normally done by external tools)
-my $_GEN_TOK_BAS               = 0;      # IDS internal tokenization
-  my( $chld_out, $chld_in, $pid, $select );
+my $_GEN_TOK_EXT = $tokenizer_call ? 1 : 0;      # (used for IDS internal tokenization)
+
+  # TODO:
+  #   Read tokenizer call from configuration file.
+  #   was 'java  -cp '. join(":", ".", glob(&dirname(__FILE__)."/../target/*.jar")). " de.ids_mannheim.korap.tokenizer.KorAPTokenizerImpl";
+  my $ext_tok;
+  if ($tokenizer_call) {
+    $ext_tok = KorAP::XML::TEI::Tokenizer::External->new($tokenizer_call);
+  };
+  my $_tok_file_ext = "tokens.xml";
 ##
 
-## dummy tokenization (only for testing)
-my $_GEN_TOK_DUMMY             = 1;      # use dummy base tokenization for testing (base tokenization is normally done by external tools)
+## intern tokenization
+my $_GEN_TOK_INT               = 1;      # this simple tokenization can be used for testing (base tokenization is normally done by external tools)
   my $_tok_file_con            = "tokens_conservative.xml";
   my $_tok_file_agg            = "tokens_aggressive.xml";
   my $aggr_tok = KorAP::XML::TEI::Tokenizer::Aggressive->new;
   my $cons_tok = KorAP::XML::TEI::Tokenizer::Conservative->new;
   my ( $txt, $offset );
-my $_base_tokenization_dir     = "base"; # name of directory for storing files of dummy tokenization (only used in func. select_tokenization)
+my $_tok_dir         = "base"; # name of directory for storing tokenization files
 
 my $_DEBUG           = 0;                            # set to 1 for minimal more debug output (no need to be parametrized)
 my $_XCT_LN          = 0;                            # only for debugging: include line numbers in elements of $tree_data
@@ -185,10 +191,6 @@ my $output;                                          # temporary variable needed
 
 my ( $i, $c );                                       # index variables used in loops
 
-## DEPRECATED (only IDS-intern)
-my $_tok_file_bas = "tokens.xml";
-##
-
 my ( $_CORP_HEADER_END, $_DOC_HEADER_END, $_TEXT_HEADER_END );
 
 
@@ -231,10 +233,6 @@ $data_prfx2  .= "  <metadata file=\"metadata.xml\" />\n";
 $data_prfx2  .= "  <text>";
 $data_sfx     = "</text>\n</raw_text>";
 
-
-## DEPRECATED (only IDS-intern)
-startTokenizer() if $_GEN_TOK_BAS;
-##
 
 # ~ read input and write output (text by text) ~
 process();
@@ -289,7 +287,7 @@ sub process {
       # ~ end of text body ~
 
 
-      # write data.xml, structure.xml and evtl. morpho.xml and/or the dummy tokenization files (s.a.: $_tok_file_con and $_tok_file_agg)
+      # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files (s.a.: $_tok_file_ext, $_tok_file_con, $_tok_file_agg)
 
       $pfx = $1; $sfx = $2;
 
@@ -333,13 +331,11 @@ sub process {
 
         $data = encode_utf8( $data );
 
-        ## DEPRECATED (only IDS-intern)
-        # first write it to tokenization pipe to give it some time
-        if ( $_GEN_TOK_BAS ){
-          print $chld_in "$data\n\x03\n";
+        if ( $_GEN_TOK_EXT ){
+          # TODO: $offset is only necessary for $cons_tok and $aggr_tok and as long as they're part of 'retr_info'
+          $ext_tok->tokenize($data, $offset);
         }
-        ##
-      
+
         print STDERR "DEBUG ($0): main(): Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file\n" if $_DEBUG;
 
 
@@ -358,13 +354,13 @@ sub process {
         write_tokens() if $_TOKENS_PROC && @tokens;
 
 
-        # ~ dummy tokenization ~
+        # ~ tokenization ~
 
-        if ( $_GEN_TOK_BAS || $_GEN_TOK_DUMMY ){ ## DEPRECATED ($_GEN_TOK_BAS: only IDS-intern)
+        if ( $_GEN_TOK_EXT || $_GEN_TOK_INT ){
 
           select_tokenization();
 
-          if ( $_GEN_TOK_DUMMY ){
+          if ( $_GEN_TOK_INT ){
             $offset = 0;
             $aggr_tok->reset;
             $cons_tok->reset;
@@ -661,12 +657,9 @@ sub process {
 
   $zipper->close;
 
-  ## DEPRECATED (only IDS-intern)
-  if( $_GEN_TOK_BAS ){
-    close($chld_in);
-    close($chld_out);
+  if( $_GEN_TOK_EXT ){
+    $ext_tok->close;
   }
-  ##
 
 } # end: sub process
 
@@ -1000,16 +993,17 @@ sub retr_info { # called from process()
 
 
       #~~~~~
-      # from here (until end): dummy tokenization
+      # from here (until end): intern tokenization
       #~~~~~
 
-      if ( $_GEN_TOK_DUMMY ){
+      if ( $_GEN_TOK_INT ){
 
         $txt = $e->[1];
 
 
         if ( substr( $txt, 0, 1 ) ne ' ' || substr( $txt, 1, 1) ne ' ' ){ # $txt has at least 2 chars, if it's not empty or equal to ' '
 
+          # TODO: implement outside retr_info() (like $ext_tok) on whole $data, instead on every text-node (more efficient and $offset not needed anymore)
           $cons_tok->tokenize($txt, $offset);
           $aggr_tok->tokenize($txt, $offset);
 
@@ -1017,7 +1011,7 @@ sub retr_info { # called from process()
 
         } # fi
 
-      } # fi: $_GEN_TOK_DUMMY
+      } # fi: $_GEN_TOK_INT
 
 
     #elsif ( $e->[0] == XML_READER_TYPE_ATTRIBUTE ) # attribute node
@@ -1038,35 +1032,22 @@ sub select_tokenization { # called from process()
 
   #print STDERR "$0: select_tokenization() ...\n";
 
-  ## DEPRECATED (only IDS-intern)
-  if( $_GEN_TOK_BAS ) {
-    if( $select->can_read(3600) ){ # wait 60m for external tokenizer
-      $_ = <$chld_out>;
-      my @bounds = split;
-      write_tokenization("$_root_dir$dir/$_base_tokenization_dir/$_tok_file_bas", $text_id_esc, \@bounds);
-      while($select->can_read(0)) {
-        $_ = <$chld_out>;
-        if (defined $_ && $_ ne '') {
-          print STDERR "WARNING: extra output: $_\n"
-        } else {
-          print STDERR "WARNING: tokenizer seems to have crashed, restarting.\n";
-          startTokenizer();
-        }
-      }
-    }else{
-      $zipper->close;
-      die "ERROR ($0): cannot retrieve token bounds from external tokenizer for text '$text_id' => Aborting ...\n";
-    }
-  ## 
-  }elsif( $_GEN_TOK_DUMMY ){
+  if( $_GEN_TOK_EXT ) {
+
+    $ext_tok->to_zip(
+      $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
+      $text_id_esc
+    );
+
+  }elsif( $_GEN_TOK_INT ){
 
     # Output token streams to zip streams
     $cons_tok->to_zip(
-      $zipper->new_stream("$_root_dir$dir/$_base_tokenization_dir/$_tok_file_con"),
+      $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_con"),
       $text_id_esc
     );
     $aggr_tok->to_zip(
-      $zipper->new_stream("$_root_dir$dir/$_base_tokenization_dir/$_tok_file_agg"),
+      $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_agg"),
       $text_id_esc
     );
   }
@@ -1074,30 +1055,6 @@ sub select_tokenization { # called from process()
   #print STDERR "$0: write_tokenization(): DONE\n";
 
 } # end: select_tokenization
-
-
-sub write_tokenization { # called from select_tokenization()
-
-  my ( $fname, $textid_esc, $bounds ) = @_;
-
-  $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
-    ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\"$text_id_esc\" xmlns=\"http://ids-mannheim.de/ns/KorAP\""
-    ." version=\"KorAP-0.4\">\n  <spanList>\n";
-
-  $c = 0;
-
-  for( $i = 0; $i < ($#$bounds + 1); $i +=  2 ){
-
-    $output .= "    <span id=\"t_$c\" from=\"".$bounds->[$i]."\" to=\"".$bounds->[$i+1]."\" />\n";
-
-    $c++;
-  }
-
-  $output .= "  </spanList>\n</layer>";
-
-  $zipper->new_stream($fname)->print($output);
-
-} # end: sub write_tokenization
 
 
 sub write_structures { # called from process()
@@ -1278,14 +1235,6 @@ sub write_tokens { # called from process()
 
 } # end: sub write_tokens
 
-
-## DEPRECATED ($_GEN_TOK_BAS: only IDS-intern)
-sub startTokenizer {
-  $pid = open2($chld_out, $chld_in, 'java  -cp '. join(":", ".", glob(&dirname(__FILE__)."/../target/*.jar"))." de.ids_mannheim.korap.tokenizer.KorAPTokenizerImpl");
-  $select = IO::Select->new();
-  $select->add(*$chld_out);
-}
-##
 
 __END__
 
