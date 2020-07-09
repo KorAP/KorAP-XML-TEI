@@ -16,6 +16,24 @@
       "revId": "d962747a4ac7e02a6040fad736e4a8a45a6b4431",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67d7e459_742bf2f9",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-09T16:58:34Z",
+      "side": 1,
+      "message": "You are right - I used it in https://korap.ids-mannheim.de/gerrit/c/KorAP/KorAP-XML-TEI/+/3123/1/t/cmd/tokenizer.pl .",
+      "parentUuid": "73fdafa9_129bed61",
+      "revId": "d962747a4ac7e02a6040fad736e4a8a45a6b4431",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }
