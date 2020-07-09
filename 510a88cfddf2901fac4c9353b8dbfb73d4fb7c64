@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "69cf1019_957f5963",
+        "filename": "t/tokenization.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-09T11:43:00Z",
+      "side": 1,
+      "message": "You are right - I only used it to spit out the boundaries.",
+      "parentUuid": "651b6d65_414600af",
+      "range": {
+        "startLine": 5,
+        "startChar": 16,
+        "endLine": 5,
+        "endChar": 17
+      },
+      "revId": "510a88cfddf2901fac4c9353b8dbfb73d4fb7c64",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8e99be45_21db2767",
         "filename": "t/tokenization.t",
         "patchSetId": 4
@@ -54,6 +78,24 @@
       "side": 1,
       "message": "Yes, the code is somehow weird and also complicated.\nThe bug you found in your test should be fixed, but let me first check everything over before altering the behaviour of the code ...\n\n$pr is a shortcut for \u0027print\u0027 (not \u0027prefix\u0027)\n[^A-Za-z0-9] should be equivalent to the character class [$+\u003c\u003d\u003e^`|~] (Unicode splits what POSIX considers to be punctuation into two categories, Punctuation and Symbols - see \u0027man perlrecharclass\u0027).",
       "parentUuid": "8e99be45_21db2767",
+      "revId": "510a88cfddf2901fac4c9353b8dbfb73d4fb7c64",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f58799bf_b002b6f6",
+        "filename": "t/tokenization.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-09T11:43:00Z",
+      "side": 1,
+      "message": "I left it in. Thanks for the explanation! Regarding the character classes - we may want to improve that later, in case we need the tokenizers. For the moment we should leave the behaviour \"as it is\".",
+      "parentUuid": "c6926629_bc8e177b",
       "revId": "510a88cfddf2901fac4c9353b8dbfb73d4fb7c64",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
