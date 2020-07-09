@@ -32,6 +32,8 @@ my $file = catfile($f, 'data', 'goe_sample.i5.xml');
 my $outzip = tmpnam();
 
 # Generate zip file (unportable!)
+# TODO:
+#   Call with aggressive and conservative tokenizations!
 stderr_like(
   sub { `cat '$file' | perl '$script' > '$outzip'` },
   qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!,
@@ -142,7 +144,37 @@ $t->element_count_is('spanList span', 227);
 # Uncompress GOE/AGA/00000/base/tokens_conservative.xml from zip file
 $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens_conservative.xml');
 
-# Read GOE/AGA/00000/base/tok.xml
+$tokens_xml = '';
+$tokens_xml .= $zip->getline while !$zip->eof;
+ok($zip->close, 'Closed');
+
+$t = Test::XML::Loy->new($tokens_xml);
+$t->attr_is('spanList span:nth-child(1)', 'to', 8);
+
+$t->attr_is('spanList span#t_1', 'from', 9);
+$t->attr_is('spanList span#t_1', 'to', 11);
+
+$t->attr_is('spanList span#t_67', 'from', 427);
+$t->attr_is('spanList span#t_67', 'to', 430);
+
+$t->attr_is('spanList span#t_214', 'from', 1209);
+$t->attr_is('spanList span#t_214', 'to', 1212);
+
+$t->element_count_is('spanList span', 227);
+
+# Tokenize with external tokenizer
+my $cmd = catfile($f, 'cmd', 'tokenizer.pl');
+
+stderr_like(
+  sub { `cat '$file' | perl '$script' --tc='perl $cmd' > '$outzip'` },
+  qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!,
+  'Processing'
+);
+
+# Uncompress GOE/AGA/00000/base/tokens_conservative.xml from zip file
+$zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens.xml');
+
+# Read GOE/AGA/00000/base/tokens.xml
 $tokens_xml = '';
 $tokens_xml .= $zip->getline while !$zip->eof;
 ok($zip->close, 'Closed');
