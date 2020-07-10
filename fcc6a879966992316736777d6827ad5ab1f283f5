@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "477b1c24_666ca0c5",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/External.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-10T13:46:26Z",
+      "side": 1,
+      "message": "\u0027pid\u0027 key is missing (see _init)",
+      "revId": "fcc6a879966992316736777d6827ad5ab1f283f5",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
