@@ -16,6 +16,24 @@
       "revId": "fcc6a879966992316736777d6827ad5ab1f283f5",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42dc5d5e_6537d086",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/External.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-10T13:49:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "477b1c24_666ca0c5",
+      "revId": "fcc6a879966992316736777d6827ad5ab1f283f5",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }
