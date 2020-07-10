@@ -34,6 +34,24 @@
       "revId": "fcc6a879966992316736777d6827ad5ab1f283f5",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd68064c_e42d7655",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/External.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-10T14:52:02Z",
+      "side": 1,
+      "message": "You are right - it\u0027s cleaner that way.",
+      "parentUuid": "42dc5d5e_6537d086",
+      "revId": "fcc6a879966992316736777d6827ad5ab1f283f5",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }
