@@ -41,6 +41,8 @@ is_deeply($cons, [3,4,5,8]);
 $cons->reset->tokenize("... Der");
 is_deeply($cons, [0,1,1,2,2,3,4,7]);
 
+# TODO:
+#   bug: '.' is not tokenized
 $cons->reset->tokenize(".Der");
 is_deeply($cons, [1,4]);
 
