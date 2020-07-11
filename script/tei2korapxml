@@ -75,8 +75,8 @@ my $_TEXT_HEADER_BEG  = "idsHeader type=\"text\"";     # analog
 # ~~~ constants ~~~
 #
 
+## extern tokenization
 my $_GEN_TOK_EXT = $tokenizer_call ? 1 : 0;      # (used for IDS internal tokenization)
-
   # TODO:
   #   Read tokenizer call from configuration file.
   #   was 'java  -cp '. join(":", ".", glob(&dirname(__FILE__)."/../target/*.jar")). " de.ids_mannheim.korap.tokenizer.KorAPTokenizerImpl";
@@ -84,17 +84,19 @@ my $_GEN_TOK_EXT = $tokenizer_call ? 1 : 0;      # (used for IDS internal tokeni
   if ($tokenizer_call) {
     $ext_tok = KorAP::XML::TEI::Tokenizer::External->new($tokenizer_call);
   };
-  my $_tok_file_ext = "tokens.xml";
+  my $_tok_file_ext  = "tokens.xml";
 ##
 
 ## intern tokenization
-my $_GEN_TOK_INT               = 1;      # this simple tokenization can be used for testing (base tokenization is normally done by external tools)
-  my $_tok_file_con            = "tokens_conservative.xml";
-  my $_tok_file_agg            = "tokens_aggressive.xml";
-  my $aggr_tok = KorAP::XML::TEI::Tokenizer::Aggressive->new;
-  my $cons_tok = KorAP::XML::TEI::Tokenizer::Conservative->new;
+my $_GEN_TOK_INT     = 1;                            # simple tokenization, recommended for testing (for use of an external tokenizer see $_GEN_TOK_EXT)
+  my $_tok_file_con  = "tokens_conservative.xml";
+  my $_tok_file_agg  = "tokens_aggressive.xml";
+  my $aggr_tok       = KorAP::XML::TEI::Tokenizer::Aggressive->new;
+  my $cons_tok       = KorAP::XML::TEI::Tokenizer::Conservative->new;
   my ( $txt, $offset );
-my $_tok_dir         = "base"; # name of directory for storing tokenization files
+##
+
+my $_tok_dir         = "base";                       # name of directory for storing tokenization files
 
 my $_DEBUG           = 0;                            # set to 1 for minimal more debug output (no need to be parametrized)
 my $_XCT_LN          = 0;                            # only for debugging: include line numbers in elements of $tree_data
@@ -182,8 +184,8 @@ my ( $_IDX,                                          # value is set dependent on
      ## variables for handling ~ whitespace related issue ~ (it is sometimes necessary, to correct the from-values for some tags)
      $add_one,                                       # ...
      $fval, $fval2,                                  # ...
-     %ws);                                           # hash for indices of whitespace nodes (needed to recorrect from-values)
-                                                     # idea: when closing element, check if it's from-index minus 1 refers to a whitespace node
+     %ws);                                           # hash for indices of whitespace-nodes (needed to recorrect from-values)
+                                                     # idea: when closing element, check if it's from-index minus 1 refers to a whitespace-node
                                                      #  (means: 'from-index - 1' is a key in %ws).
                                                      # if this is _not_ the case, then the from-value is one to high => correct it by substracting 1
 
@@ -235,7 +237,7 @@ $data_sfx     = "</text>\n</raw_text>";
 
 
 # ~ read input and write output (text by text) ~
-process();
+main();
 
 
 #
@@ -243,7 +245,7 @@ process();
 #
 
 
-sub process {
+sub main {
 
   my ( $pfx, $sfx );
 
@@ -251,9 +253,9 @@ sub process {
   #   Replace all calls of $lc with $. or $input_fh->input_line_number,
   #   because otherwise remove_html_comments will
   #   move the lines forward without incrementing.
-  my $lc = 0; # line counter
+  my $lc = 0; # line counter (only for error handling and debugging)
 
-  my $tc = 0; # text counter
+  my $tl = 0; # text line (needed for whitespace handling)
 
   $input_fh = *STDIN;  # input file handle (default: stdin)
 
@@ -270,7 +272,7 @@ sub process {
   }
 
 
-  # prevents segfaulting of 'XML::LibXML::Reader' inside 'process()' - see notes on 'PerlIO layers' in  'man XML::LibXML')
+  # prevents segfaulting of 'XML::LibXML::Reader' inside 'main()' - see notes on 'PerlIO layers' in  'man XML::LibXML')
   # removing 'use open qw(:std :utf8)' would fix this problem too, but using binmode on input is more granular
   binmode $input_fh;
 
@@ -303,6 +305,18 @@ sub process {
 
         $reader = XML::LibXML::Reader->new( string => "<text>$buf_in</text>", huge => 1 );
 
+        #  ~ whitespace handling ~
+        #
+        #  Every whitespace inside the processed text is 'significant' and recognized as a node of type 'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'
+        #   (see function 'retr_info()').
+        #
+        #  Definition of significant and insignificant whitespace
+        #   (source: https://www.oracle.com/technical-resources/articles/wang-whitespace.html):
+        #
+        #   Significant whitespace is part of the document content and should be preserved.
+        #   Insignificant whitespace is used when editing XML documents for readability.
+        #    These whitespaces are typically not intended for inclusion in the delivery of the document.
+        #
         if ( $_XCT_LN ){ # _XCT_LINE_NUMBERS is only for debugging
           $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY | XCT_LINE_NUMBERS );
         } else {
@@ -407,27 +421,45 @@ sub process {
 
       # ~ whitespace handling ~
 
-      # remove consecutive whitespace at beginning and end (mostly one newline)
-      # to let 'XML::CompactTree::XS' recognize these blanks as 'text-nodes', the option 'XCT_IGNORE_WS' may not be used (see above).
-      s/^\s+//; s/\s+$//;
-
-      # There's nothing wrong with inserting an additional blank at the start of the 2nd and all consecutive lines (which contain at least one tag),
-      #  because it helps for better readability of the text in the '$_data_file' (e.g.: assure blanks between sentences).
-      # Furthermore, the input lines should avoid primary text tokens, which span across several lines, unless the line breaks doesn't lead
-      #  to a situation which produces unwanted blanks - e.g.: '...<w>end</w>\n<w>.</w>...' would lead to '...<w>end</w> <w>.</w>...', or
-      #  '...<w>,</w>\n<w>this</w>\n<w>is</w>\n<w>it</w>\n<w>!</w>...' to '<w>,<w> <w>this</w> <w>is</w> <w>it</w> <w>!</w>'. Even when considering
-      #  to correct those unwanted effects, there would be lots of examples aside punctuation, where there would not exist an easy way or unarbitrary
-      #  solution regarding the elimination of the false blanks.
+      # The idea for the below code fragment was to fix (recreate) missing whitespace in a poorly created corpus, in which linebreaks where inserted
+      #  into the text with the addition that maybe (or not) whitespace before those linebreaks was unintenionally stripped.
       #
-      # So, the best way to avoid having false blanks in the output, is to assure that linebreaks between word-tags doesn't occur in the input
-      #  (see also comments on 'input restrictions' at the top of this script).
+      # It soon turned out, that it was best to suggest considering just avoiding linebreaks and putting all primary text tokens into one line (see
+      #  example further down and notes on 'Input restrictions' in the manpage).
+      #
+      # Somehow an old first very poor approach remained, which is not stringent, but also doesn't affect one-line text.
+      #
+      # TODO: Maybe it's best, to keep the stripping of whitespace and to just remove the if-clause and to insert a blank by default (with possibly
+      #  an option on how newlines in primary text should be handled (stripped or replaced by a whitespace)).
+      #
+      # Examples (how primary text with linebreaks would be converted by below code):
+      #
+      #  '...<w>end</w>\n<w>.</w>...' -> '...<w>end</w> <w>.</w>...'
+      #  '...<w>,</w>\n<w>this</w>\n<w>is</w>\n<w>it</w>\n<w>!</w>...' -> '<w>,<w> <w>this</w> <w>is</w> <w>it</w> <w>!</w>'.
 
+      s/^\s+//; s/\s+$//; # remove consecutive whitespace at beginning and end (mostly one newline)
+
+      ### NOTE: this is only relevant, if a text consists of more than one line
+      ### TODO: find a better solution, or create a warning, if a text has more than one line ($tl > 1)
+      ###  do testing with 2 different corpora (one with only one-line texts, the other with several lines per text)
       if ( m/<[^>]+>[^<]/ ){ # line contains at least one tag with at least one character contents
 
-        $tc++; # text counter
+        # NOTE: not stringent ('...' stands for text):
+        #
+        #   beg1............................end1  => no blank before 'beg1'
+        #   beg2....<pb/>...................end2  => no blank before 'beg2'
+        #   beg3....<info attr1="val1"/>....end3  => no blank before 'beg3'
+        #   beg4....<test>ok</test>.........end4  =>    blank before 'beg4'
+        #
+        #     =>  beg1....end1beg2...<pb/>...end2beg3....<info attr1="val1"/>....end3 beg4...<test>ok</test>....end4
+        #                                                                            ^
+        #                                                                            |_blank between 'end3' and 'beg4'
 
-        s/^(.)/ $1/ if $tc > 1; # add blank before 1st character for 2nd line and consecutive lines (which contain at least one tag)
+        $tl++; # counter for text lines
+
+        s/^(.)/ $1/ if $tl > 1; # insert blank before 1st character (for 2nd line and consecutive lines)
       }
+      ###
 
       # add line to buffer
       $buf_in .= $_;
@@ -566,7 +598,7 @@ sub process {
 
       $header_txt = $_; $header_fl_txt = 1; $pfx = $1;
 
-      $tc = 0; # reset (needed for ~ whitespace handling ~)
+      $tl = 0; # reset (needed for ~ whitespace handling ~)
 
       die "ERROR ($0): main(): input line number $lc: line with opening text-header tag '${_TEXT_HEADER_BEG}'"
         ." is not in expected format ... => Aborting\n\tline=$_"
@@ -682,21 +714,24 @@ sub process {
     $ext_tok->close;
   }
 
-} # end: sub process
+} # end: sub main
 
 
-sub retr_info { # called from process()
+sub retr_info { # called from main()
 
-  #  EXAMPLE: <node a="v"><node1>some <n/> text</node1><node2>more-text</node2></node>
+  #  Notes on how 'XML::CompactTree::XS' works
   #
-  #  print out values of above example:
-  #  echo '<node a="v"><node1>some <n/> text</node1><node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print $data->[2]->[0]->[5]->[1]->[1]'
+  #  Example: <node a="v"><node1>some <n/> text</node1><node2>more-text</node2></node>
   #
-  #  $data = reference to below array
+  #  Print out name of 'node2' for the above example:
+  #
+  #  echo '<node a="v"><node1>some <n/> text</node1><node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print "\x27".$data->[2]->[0]->[5]->[1]->[1]."\x27\n"'
+  #
+  #  Exploring the structure of $data ( = reference to below array ):
   #
   #  [ 0: XML_READER_TYPE_DOCUMENT,
   #    1: ?
-  #    2: [ 0: [ 0: XML_READER_TYPE_ELEMENT                     <- start recursion with array '$data->[2]' (see process(): retr_info( \$tree_data->[2] ))
+  #    2: [ 0: [ 0: XML_READER_TYPE_ELEMENT                     <- start recursion with array '$data->[2]' (see main(): retr_info( \$tree_data->[2] ))
   #              1: 'node'
   #              2: ?
   #              3: HASH (attributes)
@@ -714,7 +749,7 @@ sub retr_info { # called from process()
   #                                  2: ?
   #                                  3: undefined (no attributes)
   #                                  4: 1 (line number)
-  #                                  5: undefined (no child nodes)
+  #                                  5: undefined (no child-nodes)
   #                                ]
   #                             2: [ 0: XML_READER_TYPE_TEXT
   #                                  1: ' text'
@@ -746,7 +781,7 @@ sub retr_info { # called from process()
   #  ref($data->[2]->[0]->[3])                                               == HASH  (=> ${$data->[2]->[0]->[3]}{a} == 'v')
   #  $data->[2]->[0]->[4]                                                    == 1 (line number)
   #  ref($data->[2]->[0]->[5])                                               == ARRAY (with 2 elements for 'node1' and 'node2')
-  #                                                                                     # child nodes of actual node (see $_IDX)
+  #                                                                                     # child-nodes of actual node (see $_IDX)
   #
   #  ref($data->[2]->[0]->[5]->[0])                                          == ARRAY (with 6 elements)
   #  $data->[2]->[0]->[5]->[0]->[0]                                          == 1 (=> type == XML_READER_TYPE_ELEMENT)
@@ -764,7 +799,7 @@ sub retr_info { # called from process()
   #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[1]                                == 'n'
   #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[3]                                == undefined (=> no attribute)
   #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[4]                                == 1 (line number)
-  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[5]                                == undefined (=> no child nodes)
+  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[5]                                == undefined (=> no child-nodes)
   #
   #  ref($data->[2]->[0]->[5]->[0]->[5]->[2])                                == ARRAY (with 2 elements)
   #  $data->[2]->[0]->[5]->[0]->[5]->[2]->[0]                                == 3 (=> type ==  XML_READER_TYPE_TEXT)
@@ -775,17 +810,18 @@ sub retr_info { # called from process()
   #  Hence, the expression @{${$_[0]}} corresponds to @{${\$data->[2]}}, $e to ${${\$data->[2]}}[0] (= $data->[2]->[0]) and $e->[0] to
   #  ${${\$data->[2]}}[0]->[0] (= $data->[2]->[0]->[0]).
 
+
   $rl++; # recursion level (1 = topmost level inside retr_info() = should always be level of tag $_TEXT_BODY)
 
 
   foreach $e ( @{${$_[0]}} ){ # iteration through all array elements ($_[0] is a reference to an array reference)
 
 
-    if ( $e->[0] == XML_READER_TYPE_ELEMENT ){ # element node (see 'NODE TYPES' in manpage of XML::LibXML::Reader)
+    if ( $e->[0] == XML_READER_TYPE_ELEMENT ){ # element-node (see 'NODE TYPES' in manpage of XML::LibXML::Reader)
 
 
       #~~~~
-      # from here: opening tag
+      # from here: tag-node (opening)
       #~~~~
 
 
@@ -842,7 +878,7 @@ sub retr_info { # called from process()
 
       # this is, where a normal tag or tokens-tag ($_TOKENS_TAG) starts
 
-      push @{$structures[$#structures]}, ( $dl + $add_one ); # see below (text and whitespace nodes) for explanation on '$add_one'
+      push @{$structures[$#structures]}, ( $dl + $add_one ); # see below (text- and whitespace-nodes) for explanation on '$add_one'
 
       if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
 
@@ -851,22 +887,22 @@ sub retr_info { # called from process()
 
 
       #~~~~
-      # until here: opening tag
+      # until here: tag-node (opening)
       #~~~~
 
 
       # ~~ RECURSION ~~
 
-      if ( defined $e->[$_IDX] ){  # do no recursion, if $e->[$_IDX] is not defined (because we have no array of child nodes, e.g.: <back/>)
+      if ( defined $e->[$_IDX] ){  # do no recursion, if $e->[$_IDX] is not defined (because we have no array of child-nodes, e.g.: <back/>)
 
-        retr_info( \$e->[$_IDX] ); # recursion with array of child nodes
+        retr_info( \$e->[$_IDX] ); # recursion with array of child-nodes
 
         $rl--; # return from recursion
       }
 
 
       #~~~~~
-      # from here: closing tag
+      # from here: tag-node (closing)
       #~~~~~
 
 
@@ -881,9 +917,9 @@ sub retr_info { # called from process()
 
         if ( $fval > 0 && not exists $ws{ $fval - 1 } ){ # ~ whitespace related issue ~
 
-          # previous node was a text-node
+          # ~ previous node was a text-node ~
 
-          ${$structures[$ix]}[ $aix ] = $fval - 1; # recorrect from-value (see below: notes on ~ whitespace related issue ~)
+          ${$structures[$ix]}[ $aix ] = $fval - 1; # recorrect from-value (see below: Notes on ~ whitespace related issue ~)
         }
 
         # in case this fails, check input
@@ -891,9 +927,10 @@ sub retr_info { # called from process()
           ." than to-value ($dl) => please check. aborting ...\n"
             if ( $fval - 1 ) > $dl;
 
-        # TODO: construct example for which this case applies
+        # TODO: find example for which this case applies
         #  maybe this is not necessary anymore, because the above recorrection of the from-value suffices
         # TODO: check, if it's better to remove this line and change above check to 'if ( $fval - 1) >= $dl;
+        #   do testing with bigger corpus excerpt (wikipedia?)
         ${$structures[$ix]}[ $aix ] = $dl if $fval == $dl + 1; # correct from-value (same as ... if $fval-1 == $dl)
 
         push @{$structures[$ix]}, $dl, $rl; # to-value and recursion-level
@@ -915,9 +952,9 @@ sub retr_info { # called from process()
 
         if( $fval2 > 0 && not exists $ws{ $fval2 - 1 } ){ # ~ whitespace related issue ~
 
-          # previous node was a text-node
+          # ~ previous node was a text-node ~
 
-          ${$tokens[$ix]}[ $aix ] = $fval2 - 1; # recorrect from-value
+          ${$tokens[$ix]}[ $aix ] = $fval2 - 1; # recorrect from-value (see below: Notes on ~ whitespace related issue ~)
         }
 
         # in case this fails, check input
@@ -925,9 +962,10 @@ sub retr_info { # called from process()
           ." than to-value ($dl) => please check. aborting ...\n"
             if ( $fval2 - 1 ) > $dl;
 
-        # TODO: construct example for which this case applies
+        # TODO: find example for which this case applies
         #  maybe this is not necessary anymore, because the above recorrection of the from-value suffices
         # TODO: check, if it's better to remove this line and change above check to 'if ( $fval2 - 1) >= $dl;
+        #   do testing with bigger corpus excerpt (wikipedia?)
         ${$tokens[$ix]}[ $aix ] = $dl if $fval2 == $dl + 1; # correct from-value (same as ... if $fval-1 == $dl)
 
         push @{$tokens[$ix]}, $dl, $rl; # to-value and recursion-level
@@ -941,61 +979,72 @@ sub retr_info { # called from process()
       delete $ws{ $fval2 - 1 } if $_TOKENS_PROC && $fval2 > 0 && exists $ws{ $fval2 - 1 };
 
 
-    #~~~~~
-    # from here: text (and whitespace) nodes
-    #~~~~~
+      #~~~~
+      # until here: tag-node (closing)
+      #~~~~
 
 
-    # the 3rd form of nodes, next to text-nodes (XML_READER_TYPE_TEXT) and tag-nodes (XML_READER_TYPE_ELEMENT) are nodes
-    #  of the type 'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'
+    #~~~~~
+    # from here: text- and whitespace-nodes
+    #~~~~~
+
+    # The 3rd form of nodes, besides text- (XML_READER_TYPE_TEXT) and tag-nodes (XML_READER_TYPE_ELEMENT) are nodes of the type
+    #  'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'.
     #
-    # when modifiying the above example (at the top of this sub) by inserting an additional blank between '</node1>' and '<node2>',
-    #  the output for '$data->[2]->[0]->[5]->[1]->[1]' becomes a blank (' ') and it's type is '14' (see manpage of XML::LibXML::Reader):
+    # When modifiying the previous example (see: Notes on how 'XML::CompactTree::XS' works) by inserting an additional blank between
+    #  '</node1>' and '<node2>', the output for '$data->[2]->[0]->[5]->[1]->[1]' is a blank (' ') and it's type is '14'
+    #  (XML_READER_TYPE_SIGNIFICANT_WHITESPACE, see 'man XML::LibXML::Reader'):
     #
-    # echo '<node a="v"><node1>some <n/> text</node1> <node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print "node=".$data->[2]->[0]->[5]->[1]->[1].", type=".$data->[2]->[0]->[5]->[1]->[0]."\n"'
+    # echo '<node a="v"><node1>some <n/> text</node1> <node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print "node=\x27".$data->[2]->[0]->[5]->[1]->[1]."\x27, type=".$data->[2]->[0]->[5]->[1]->[0]."\n"'
 
     } elsif ( $e->[0] == XML_READER_TYPE_TEXT || $e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE ){
 
-      # notes on ~ whitespace related issue ~ (see below source code)
+      # Notes on ~ whitespace related issue ~ (referred to the code fragment below)
       #
-      # example: '... <head type="main"><s>Campagne in Frankreich</s></head><head type="sub"> <s>1792</s> ...'
+      # Example: '... <head type="main"><s>Campagne in Frankreich</s></head><head type="sub"> <s>1792</s> ...'
       #
       # Two text-nodes should normally be separated by a blank. In the above example, that would be the 2 text-nodes
-      #  'Campagne in Frankreich' and '1792', which are separated by the whitespace-node ' '.
+      #  'Campagne in Frankreich' and '1792', which are separated by the whitespace-node ' ' (see [2]).
       # 
-      # Assumed, that the above example marks the general case, then the text-node 'Campagne in Frankreich' leads to the
-      #  setting of '$add_one' to 1, so that when opening the 2nd 'head'-tag and setting it's from-index, it gets the right
-      #  offset, which is the start-index of '1792'.
+      # The text-node 'Campagne in Frankreich' leads to the setting of '$add_one' to 1, so that when opening the 2nd 'head'-tag,
+      #  it's from-index gets set to the correct start-index of '1792' (and not to the start-index of the whitespace-node ' ').
       #
-      # To check, that the above consideration holds, we save the from-index of a read whitespace-node into the hash %ws.
-      #  By this, it can be checked when closing a tag, if the 'non-tag'-node (text or whitespace) before the last 'non-tag'-
-      #  node was actually a whitespace-node ($ws{ $fval - 1 }).
+      # The assumption here is, that in most cases there _is_ a whitespace node between 2 text-nodes. The below code fragment
+      #  enables a way, to check, if this really _was_ the case for the last 2 'non-tag'-nodes, when closing a tag:
       #
-      # For whitespace-nodes, also $add_one has to be set to 0, so when opening the next tag (in the above example the 2nd
-      #  's'-tag), no additional 1 is added, because this was already done by the whitespace-node itself (by incrementing the
-      #  variable $dl).
+      # When a whitespace-node is read, its from-index is stored as a hash-key (in %ws), to state that it belongs to a ws-node.
+      #  So when closing a tag, it can be checked, if the previous 'non-tag'-node (text or whitespace), which is the one before
+      #  the last read 'non-tag'-node, was a actually _not_ a ws-node, but instead a text-node. In that case, the from-value of
+      #  the last read 'non-tag'-node has to be corrected (see [1]),
       #
-      # Now, what happens, when 2 text-nodes are not seperated by a whitespace-node (blank)? (e.g.: <w>Augen<c>,</c></w>)
+      # For whitespace-nodes $add_one is set to 0, so when opening the next tag (in the above example the 2nd 's'-tag), no
+      #  additional 1 is added (because this was already done by the whitespace-node itself when incrementing the variable $dl).
       #
-      # In this case, the falsely increased from-value has to be decreased again by 1 when closing the referring tag
-      #  (...$fval - 1; # recorrect).
+      # [1]
+      # Now, what happens, when 2 text-nodes are _not_ seperated by a whitespace-node (e.g.: <w>Augen<c>,</c></w>)?
+      # In this case, the falsely increased from-value has to be decreased again by 1 when closing the enclosing tag
+      #  (see above code fragment '... not exists $ws{ $fval - 1 } ...').
       #
-      # Comparing the 2 examples '<w>fu</w> <w>bar</w>' and '<w>fu</w><w> </w><w>bar</w>' (even though, the 2nd one makes less
-      #  sense, because of '<w> </w>'), in both the ' ' is handled as a whitespace-node (XML_READER_TYPE_SIGNIFICANT_WHITESPACE).
+      # [2]
+      # Comparing the 2 examples '<w>fu</w> <w>bar</w>' and '<w>fu</w><w> </w><w>bar</w>', is ' ' in both cases handled as a
+      #  whitespace-node (XML_READER_TYPE_SIGNIFICANT_WHITESPACE).
       #
-      # So the from-index of the 2nd w-tag (in the second example) would refer to 'bar', which may not have been the intention
-      #  (even, if '<w> </w>' doesn't make a lot of sense). TODO: could this be a bug, which needs to be fixed?
+      # The from-index of the 2nd w-tag in the second example refers to 'bar', which may not have been the intention
+      #  (even though '<w> </w>' doesn't make a lot of sense). TODO: could this be a bug?
       #
-      # Empty tags also cling to the next text-token - e.g. in '...<w>tok1</w> <w>tok2</w><a><b/></a><w>tok3</w>...' the from-
-      #  and to-indizes for the tags 'a' and 'b' are both 9, which is the start-index of the token 'tok3'.
+      # Empty tags also cling to the next text-token - e.g. in '<w>tok1</w> <w>tok2</w><a><b/></a> <w>tok3</w>' are the from-
+      #  and to-indizes for the tags 'a' and 'b' both 12, which is the start-index of the token 'tok3'.
 
       if( $e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE ){
 
-       # ~ whitespace related issue ~
+        # ~ whitespace-node ~
+
+        # ~ whitespace related issue ~
 
         $add_one = 0;
 
-        $ws{ $dl }++; # '++' does not mean a thing here (could be used for consistency checking)
+        $ws{ $dl }++; # state, that this from-index belongs to a whitespace-node
+                      #  ('++' doesn't mean a thing here - maybe it could be used for a consistency check)
 
       }else{
 
@@ -1012,9 +1061,13 @@ sub retr_info { # called from process()
       $dl += length( $e->[1] ); # update length of $data
 
 
+      #~~~~~
+      # until here: text- and whitespace-nodes
+      #~~~~~
+
 
       #~~~~~
-      # from here (until end): intern tokenization
+      # from here: intern tokenization
       #~~~~~
 
       if ( $_GEN_TOK_INT ){
@@ -1030,12 +1083,16 @@ sub retr_info { # called from process()
 
           $offset = $dl;
 
-        } # fi
+        }
 
-      } # fi: $_GEN_TOK_INT
+      }
+
+      #~~~~~
+      # until here: intern tokenization
+      #~~~~~
 
 
-    #elsif ( $e->[0] == XML_READER_TYPE_ATTRIBUTE ) # attribute node
+    #elsif ( $e->[0] == XML_READER_TYPE_ATTRIBUTE ) # attribute-node
     #   note: attributes cannot be processed like this ( => use 'XCT_ATTRIBUTE_ARRAY' - see above )
 
 
@@ -1049,7 +1106,7 @@ sub retr_info { # called from process()
 } # end: sub retr_info
 
 
-sub write_structures { # called from process()
+sub write_structures { # called from main()
 
   # ~ write @structures ~
 
@@ -1131,7 +1188,7 @@ sub write_structures { # called from process()
 } # end: sub write_structures
 
 
-sub write_tokens { # called from process()
+sub write_tokens { # called from main()
 
   # ~ write @tokens ~
 
