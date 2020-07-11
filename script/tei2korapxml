@@ -358,13 +358,30 @@ sub process {
 
         if ( $_GEN_TOK_EXT || $_GEN_TOK_INT ){
 
-          select_tokenization();
+          if ( $_GEN_TOK_EXT ) {
 
-          if ( $_GEN_TOK_INT ){
+            $ext_tok->to_zip(
+              $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
+              $text_id_esc
+            );
+
+          } elsif ( $_GEN_TOK_INT ){
+
+            # Output token streams to zip streams
+            $cons_tok->to_zip(
+              $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_con"),
+              $text_id_esc
+            );
+            $aggr_tok->to_zip(
+              $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_agg"),
+              $text_id_esc
+            );
             $offset = 0;
             $aggr_tok->reset;
             $cons_tok->reset;
           }
+
+          #print STDERR "$0: write_tokenization(): DONE\n";
         }
 
         $data_fl = 0; $buf_in = $data = $dir = ""; # reinit.
@@ -1026,35 +1043,6 @@ sub retr_info { # called from process()
   } # end: foreach iteration
 
 } # end: sub retr_info
-
-
-sub select_tokenization { # called from process()
-
-  #print STDERR "$0: select_tokenization() ...\n";
-
-  if( $_GEN_TOK_EXT ) {
-
-    $ext_tok->to_zip(
-      $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
-      $text_id_esc
-    );
-
-  }elsif( $_GEN_TOK_INT ){
-
-    # Output token streams to zip streams
-    $cons_tok->to_zip(
-      $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_con"),
-      $text_id_esc
-    );
-    $aggr_tok->to_zip(
-      $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_agg"),
-      $text_id_esc
-    );
-  }
-
-  #print STDERR "$0: write_tokenization(): DONE\n";
-
-} # end: select_tokenization
 
 
 sub write_structures { # called from process()
