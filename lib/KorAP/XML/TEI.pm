@@ -2,7 +2,11 @@ package KorAP::XML::TEI;
 use strict;
 use warnings;
 
-sub delHTMLcom { # remove HTML comments
+use Exporter 'import';
+our @EXPORT_OK = qw(remove_xml_comments);
+
+# remove xml comments
+sub remove_xml_comments {
   my ($fh, $html) = @_;
 
   # the source code part where $tc is used, leads to the situation, that comments can produce an additional blank, which

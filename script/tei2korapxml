@@ -18,7 +18,7 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-use KorAP::XML::TEI;
+use KorAP::XML::TEI qw'remove_xml_comments';
 use KorAP::XML::TEI::Tokenizer::External;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
@@ -247,6 +247,10 @@ sub process {
 
   my ( $pfx, $sfx );
 
+  # TODO:
+  #   Replace all calls of $lc with $. or $input_fh->input_line_number,
+  #   because otherwise remove_html_comments will
+  #   move the lines forward without incrementing.
   my $lc = 0; # line counter
 
   my $tc = 0; # text counter
@@ -279,7 +283,7 @@ sub process {
 
     # TODO: yet not tested fo big amounts of data
     # must-have, otherwise comments in input could be fatal (e.g.: ...<!--\n<idsHeader...\n-->...)
-    KorAP::XML::TEI::delHTMLcom ( $input_fh, $_ ); # remove HTML comments (<!--...-->)
+    remove_xml_comments( $input_fh, $_ ); # remove HTML comments (<!--...-->)
 
     if ( $data_fl && m#^(.*)</${_TEXT_BODY}>(.*)$# ){
 

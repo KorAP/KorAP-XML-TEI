@@ -8,7 +8,7 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-require_ok('KorAP::XML::TEI');
+use_ok('KorAP::XML::TEI', 'remove_xml_comments');
 
 my ($fh, $filename) = tempfile();
 
@@ -19,13 +19,13 @@ Kommentar
 Test
 HTML
 
-is(KorAP::XML::TEI::delHTMLcom($fh, "hallo"),"hallo");
-is(KorAP::XML::TEI::delHTMLcom($fh, "hallo <!-- Test -->"),"hallo ");
-is(KorAP::XML::TEI::delHTMLcom($fh, "<!-- Test --> hallo")," hallo");
+is(remove_xml_comments($fh, "hallo"),"hallo");
+is(remove_xml_comments($fh, "hallo <!-- Test -->"),"hallo ");
+is(remove_xml_comments($fh, "<!-- Test --> hallo")," hallo");
 
 seek($fh, 0, 0);
 
-is(KorAP::XML::TEI::delHTMLcom($fh, '<!--'), "Test\n");
+is(remove_xml_comments($fh, '<!--'), "Test\n");
 
 seek($fh, 0, 0);
 
@@ -38,7 +38,7 @@ HTML
 
 seek($fh, 0, 0);
 
-is(KorAP::XML::TEI::delHTMLcom($fh, 'Dies <!--'), "Dies ist  ein Test\n");
+is(remove_xml_comments($fh, 'Dies <!--'), "Dies ist  ein Test\n");
 
 close($fh);
 

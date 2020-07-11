@@ -12,7 +12,7 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-use KorAP::XML::TEI;
+use KorAP::XML::TEI 'remove_xml_comments';
 use KorAP::XML::TEI::Tokenizer::Aggressive;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 
@@ -84,7 +84,7 @@ $bench->add_instances(
     name => 'delHTMLcom',
     code => sub {
       for (1..100_000) {
-        $result = KorAP::XML::TEI::delHTMLcom(
+        $result = remove_xml_comments(
           \*STDIN,
           "This <!-- comment --> is a test " . $_
         );
@@ -95,7 +95,7 @@ $bench->add_instances(
     name => 'delHTMLcom-long',
     code => sub {
       for (1..10_000) {
-        $result = KorAP::XML::TEI::delHTMLcom(
+        $result = remove_xml_comments(
           $fh,
           "This <!--" . $_
         );
