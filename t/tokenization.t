@@ -29,6 +29,9 @@ is_deeply($cons, [0,3,4,8,9,13]);
 $cons->reset->tokenize("Der alte bzw. der grau-melierte Mann");
 is_deeply($cons, [0,3,4,8,9,12,12,13,14,17,18,31,32,36]);
 
+$cons->reset->tokenize("  Der alte bzw. der grau-melierte Mann");
+is_deeply($cons, [2,5,6,10,11,14,14,15,16,19,20,33,34,38]);
+
 $cons->reset->tokenize(". Der");
 is_deeply($cons, [0,1,2,5]);
 

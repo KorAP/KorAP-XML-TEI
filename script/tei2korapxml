@@ -1073,15 +1073,11 @@ sub retr_info { # called from main()
 
         $txt = $e->[1];
 
-        if ( substr( $txt, 0, 1 ) ne ' ' || substr( $txt, 1, 1) ne ' ' ){ # $txt has at least 2 chars, if it's not empty or equal to ' '
+        # TODO: implement outside retr_info() (like $ext_tok) on whole $data, instead on every text-node (more efficient and $offset not needed anymore)
+        $cons_tok->tokenize($txt, $offset);
+        $aggr_tok->tokenize($txt, $offset);
 
-          # TODO: implement outside retr_info() (like $ext_tok) on whole $data, instead on every text-node (more efficient and $offset not needed anymore)
-          $cons_tok->tokenize($txt, $offset);
-          $aggr_tok->tokenize($txt, $offset);
-
-          $offset = $dl;
-
-        }
+        $offset = $dl;
 
 
         #~~~~~
