@@ -2,13 +2,18 @@ use strict;
 use warnings;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
-use File::Temp ':POSIX';
+use File::Temp qw/ tempfile :POSIX /;;
 use IO::Uncompress::Unzip qw(unzip $UnzipError);
 
 use Test::More;
 use Test::Output;
 
 use Test::XML::Loy;
+
+our %ENV;
+# default: remove temp. file created by func. tempfile
+#  to keep temp. files use e.g. 'KORAPXMLTEI_DONTUNLINK=1 prove -lr t/script.t'
+my $_UNLINK = $ENV{KORAPXMLTEI_DONTUNLINK}?0:1;
 
 my $f = dirname(__FILE__);
 my $script = catfile($f, '..', 'script', 'tei2korapxml');
@@ -29,11 +34,25 @@ stdout_like(
 
 # Load example file
 my $file = catfile($f, 'data', 'goe_sample.i5.xml');
-my $outzip = tmpnam();
+
+#TODO: use only $fh (with OO interface)
+(my $fh, my $outzip) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
 
 # Generate zip file (unportable!)
 stderr_like(
   sub { `cat '$file' | perl '$script' > '$outzip'` },
+# all below 3 approaches do also work for $fh
+#  sub { open STDOUT, '>&', $fh; system("cat '$file' | perl '$script'") },
+#  sub { open(my $pipe, "cat '$file' | perl '$script'|"); while(<$pipe>){$fh->print($_)}; $fh->close },
+#  sub {
+#    defined(my $pid = fork) or die "fork: $!";
+#    if (!$pid) {
+#      open STDOUT, '>&', $fh;
+#      exec "cat '$file' | perl '$script'"
+#    }
+#    waitpid $pid, 0;
+#    $fh->close;
+#  },
   qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!,
   'Processing'
 );
@@ -45,6 +64,7 @@ my $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/header.xml');
 
 ok($zip, 'Zip-File is created');
 
+# TODO: check wrong encoding in header-files (compare with input document)!
 # Read GOE/header.xml
 my $header_xml = '';
 $header_xml .= $zip->getline while !$zip->eof;
@@ -110,6 +130,7 @@ ok($zip, 'Zip-File is found');
 # Read GOE/AGA/00000/struct/structure.xml
 my $struct_xml = '';
 $struct_xml .= $zip->getline while !$zip->eof;
+
 ok($zip->close, 'Closed');
 
 $t = Test::XML::Loy->new($struct_xml);
