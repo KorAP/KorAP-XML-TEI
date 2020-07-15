@@ -1,9 +1,8 @@
 use strict;
 use warnings;
 use Test::More;
-use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
-use File::Temp ':POSIX';
+use File::Temp qw/tempfile/;
 use IO::Uncompress::Unzip;
 
 use FindBin;
@@ -11,12 +10,18 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
+our %ENV;
+# default: remove temp. file created by func. tempfile
+#  to keep temp. files use e.g. 'KORAPXMLTEI_DONTUNLINK=1 prove -lr t/script.t'
+my $_UNLINK = $ENV{KORAPXMLTEI_DONTUNLINK}?0:1;
+
 require_ok('KorAP::XML::TEI::Zipper');
 
 my $data;
-my $outzip = tmpnam();
+my ($fh, $outzip) = tempfile("KorAP-XML-TEI_zipper_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
 
 my $zip = KorAP::XML::TEI::Zipper->new($outzip);
+$fh->close;
 
 ok($zip, 'Zipper initialized');
 
