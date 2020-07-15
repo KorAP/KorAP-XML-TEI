@@ -2,9 +2,9 @@ use strict;
 use warnings;
 use Test::More;
 use File::Basename 'dirname';
-use Data::Dumper;
+#use Data::Dumper; # not needed yet
 use File::Spec::Functions qw/catfile/;
-use File::Temp 'tempfile';
+#use File::Temp 'tempfile'; # not needed yet
 use Test::XML::Loy;
 
 use FindBin;

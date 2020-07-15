@@ -2,13 +2,27 @@ use strict;
 use warnings;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
-use File::Temp ':POSIX';
+use File::Temp qw/ tempfile :POSIX /;;
 use IO::Uncompress::Unzip qw(unzip $UnzipError);
 
 use Test::More;
 use Test::Output;
 
 use Test::XML::Loy;
+
+
+my $_DEBUG  = 0; # set to 1 for debugging (see below)
+
+
+# ~ main ~
+
+my $_UNLINK = 1; # default (remove temp. file created by func. tempfile)
+
+if( $_DEBUG ){
+  $_UNLINK  = 0;              # keep file created by func. tempfile
+  #$File::Temp::KEEP_ALL = 1; # keep all temp. files
+  #$File::Temp::DEBUG    = 1; # more debug output
+}
 
 my $f = dirname(__FILE__);
 my $script = catfile($f, '..', 'script', 'tei2korapxml');
@@ -29,11 +43,27 @@ stdout_like(
 
 # Load example file
 my $file = catfile($f, 'data', 'goe_sample.i5.xml');
-my $outzip = tmpnam();
+
+# Use 'tempfile' for opening, as the file is automatically removed when the program exits: ($fh, $filename) = tempfile($template, UNLINK => 1).
+# It also has better security regarding race conditions.
+# If debugging, use '$File::Temp::KEEP_ALL = 1' and '$File::Temp::DEBUG = 1;' (both default to 0).
+# See 'man File::Temp': Default is for the file to be removed if a file handle is requested and to be kept if the filename is requested.
+#my $outzip = tmpnam();
+(my $fh, my $outzip) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
 
 # Generate zip file (unportable!)
 stderr_like(
-  sub { `cat '$file' | perl '$script' > '$outzip'` },
+#  sub { `cat '$file' | perl '$script' > '$outzip'` }, # here STDERR is also not redirected, but this version works
+#  sub { open(my $pipe, "cat '$file' | perl '$script'|"); while(<$pipe>){$fh->print} }, # NOTE: see DEBUG-output: produces empty $header_xml (see below)
+  sub {
+    defined(my $pid = fork) or die "fork: $!";
+    if (!$pid) {
+      open STDOUT, '>&', $fh; # works
+      #open STDOUT, '>', $fh; # NOTE: see DEBUG-output: same error as with above 'print'-version (here STDERR is not redirected)
+      exec "cat '$file' | perl '$script'"
+    }
+    waitpid $pid, 0;
+  },
   qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!,
   'Processing'
 );
@@ -45,10 +75,28 @@ my $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/header.xml');
 
 ok($zip, 'Zip-File is created');
 
+# NOTE: DEBUG-output
+#stderr_like(
+# sub {
+#    print STDERR "eof: ".$zip->eof."\n";
+#    print STDERR "tell: ".$zip->tell."\n";
+#    print STDERR "fileno: ".$zip->fileno."\n";
+#    print STDERR "header info:\n";
+#    if($zip->getHeaderInfo){foreach my $key ( sort keys %{ $zip->getHeaderInfo } ){ print STDERR "\tkey=$key\n" }}
+#      NOTE: '$zip->getHeaderInfo' returns empty hash, when zip-filehandle is opened the wrong way (see above comment 'empty $header_xml')
+# },
+# qr!bla!,
+# 'test output'
+#);
+
+# TODO: check wrong encoding in header-files (compare with input document)!
 # Read GOE/header.xml
 my $header_xml = '';
 $header_xml .= $zip->getline while !$zip->eof;
 ok($zip->close, 'Closed');
+
+# NOTE: DEBUG-output
+#print STDERR "header=$header_xml\n";
 
 my $t = Test::XML::Loy->new($header_xml);
 

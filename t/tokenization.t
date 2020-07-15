@@ -3,7 +3,7 @@ use warnings;
 use Test::More;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
-use File::Temp 'tempfile';
+#use File::Temp 'tempfile'; # not needed yet
 
 use FindBin;
 BEGIN {
