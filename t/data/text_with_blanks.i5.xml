@@ -1,0 +1,8 @@
+<idsCorpus>
+  <idsHeader type="text">
+    <textSigle>CORP/DOC.00001</textSigle>
+  </idsHeader>
+  <text>
+   <p>  This is a text, that starts with *2* (not "twenty-two" ;) blanks!</p>
+  </text>
+</idsCorpus>
