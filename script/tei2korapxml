@@ -1073,6 +1073,7 @@ sub retr_info { # called from main()
 
         $txt = $e->[1];
 
+        # TODO: fix this - remove line, because it leads to text starting with 2 blanks not beeing tokenized (see example below)
         if ( substr( $txt, 0, 1 ) ne ' ' || substr( $txt, 1, 1) ne ' ' ){ # $txt has at least 2 chars, if it's not empty or equal to ' '
 
           # TODO: implement outside retr_info() (like $ext_tok) on whole $data, instead on every text-node (more efficient and $offset not needed anymore)
@@ -1081,7 +1082,10 @@ sub retr_info { # called from main()
 
           $offset = $dl;
 
-        }
+        }#else{ # text, that starts with 2 blanks would _not_ be tokenized - example: '<p>  This is a text, that starts with 2 blanks!</p>'
+                # DONE: write tests before fixing (see t/script.t)
+        # die "DEBUG (TEST): txt:$txt\ndata:$data\n"
+        #}
 
 
         #~~~~~
