@@ -22,6 +22,30 @@
       "revId": "41c3562dc4086dbdd57bc17a53b827ee541723aa",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e18e0381_6a248f14",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 3
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-16T15:05:46Z",
+      "side": 1,
+      "message": "Yes, this is a leftover and should be removed (and will finally be done in the further course). \n\nIt originated from commit 6f526a3 in the context of a bug with was fixed in commit 9015734.",
+      "parentUuid": "852fa003_97fd15a5",
+      "range": {
+        "startLine": 240,
+        "startChar": 0,
+        "endLine": 240,
+        "endChar": 7
+      },
+      "revId": "41c3562dc4086dbdd57bc17a53b827ee541723aa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }
