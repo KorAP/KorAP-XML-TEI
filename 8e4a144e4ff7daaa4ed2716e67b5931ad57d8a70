@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8be25f50_7e6fc0ed",
+        "filename": "t/script.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-16T10:18:06Z",
+      "side": 1,
+      "message": "This is highly unusual. I wouldn\u0027t encourage to change test files, especially not for debugging. If these kind of environment variables are useful, it is more common to use ... environment variables. ;) Just like\n\n```\nour %ENV;\nmy $UNLINK \u003d $ENV{KORAPXMLTEI_DONTUNLINK};\n```\n\nso it can be used for testing with\n```\n$ KORAPXMLTEI_DONTUNLINK\u003d1 prove -lr t/script.t\n```\nin case it\u0027s needed.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 72
+      },
+      "revId": "8e4a144e4ff7daaa4ed2716e67b5931ad57d8a70",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79490a6d_c36da23c",
+        "filename": "t/script.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-16T10:18:06Z",
+      "side": 1,
+      "message": "Can you elaborate on this?",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 56
+      },
+      "revId": "8e4a144e4ff7daaa4ed2716e67b5931ad57d8a70",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d99661db_957d218e",
+        "filename": "t/script.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-16T10:18:06Z",
+      "side": 1,
+      "message": "I agree that it is more polite to remove temporary files per default.\nSo +2 for that.\nAlthough I don\u0027t care too much about my tempdir, there may be environments where this is important.",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 118
+      },
+      "revId": "8e4a144e4ff7daaa4ed2716e67b5931ad57d8a70",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec8ce2b2_7327cc61",
+        "filename": "t/script.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-16T10:18:06Z",
+      "side": 1,
+      "message": "I am not sure I understand the reason for changing this test call.\n\nIf you try to debug this call and the different STDERR breaks this,\nyou may want to add this script to `xt/` instead\nof modifying regression tests.\nIf you want to play with debug outputs, you may want to switch to a logging framework\nand define log levels either by arguments or by environment variables instead\nof printing to STDERR.\n\nIf the default non-debug STDERR is wrong in this test, the test output should be corrected.",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 54
+      },
+      "revId": "8e4a144e4ff7daaa4ed2716e67b5931ad57d8a70",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae0af1b0_403bbf0d",
+        "filename": "t/script.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-16T10:18:06Z",
+      "side": 1,
+      "message": "instead of print STDERR, use \"diag\" in Test::More if you need diagnostic output.",
+      "range": {
+        "startLine": 81,
+        "startChar": 5,
+        "endLine": 81,
+        "endChar": 41
+      },
+      "revId": "8e4a144e4ff7daaa4ed2716e67b5931ad57d8a70",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
