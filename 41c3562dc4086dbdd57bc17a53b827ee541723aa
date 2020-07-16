@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "852fa003_97fd15a5",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 3
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-16T10:23:04Z",
+      "side": 1,
+      "message": "May not be needed as a separate call.",
+      "range": {
+        "startLine": 240,
+        "startChar": 0,
+        "endLine": 240,
+        "endChar": 7
+      },
+      "revId": "41c3562dc4086dbdd57bc17a53b827ee541723aa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
