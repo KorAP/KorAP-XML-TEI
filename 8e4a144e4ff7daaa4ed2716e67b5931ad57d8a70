@@ -166,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "14274cb3_941ebae5",
+        "filename": "t/script.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-16T20:25:37Z",
+      "side": 1,
+      "message": "I see, xt/ would be the better place for debugging, which is not necessary anymore:\n\n1. When subst. \"$fh-\u003eprint\" with \"$fh-\u003eprint($_)\", the strange behaviour is gone (still there\u0027s another, but less unclear error).\n\n2. When I tried to use \u0027\u003e\u0027 - instead of \u0027\u003e\u0026\u0027 - (see stderr_like), I didn\u0027t really made clear the difference meaning, where the first one (\u0027\u003e\u0027) means redirection and the second one (\u0027\u003e\u0026\u0027) the filehandle-duplication. So \"open STDOUT, \u0027\u003e\u0026\u0027, $fh\" interpretes $fh, as it should (as a filehandle name).\n\nI\u0027ll present you an improved patch later :)",
+      "parentUuid": "ec8ce2b2_7327cc61",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 54
+      },
+      "revId": "8e4a144e4ff7daaa4ed2716e67b5931ad57d8a70",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ae0af1b0_403bbf0d",
         "filename": "t/script.t",
         "patchSetId": 2
