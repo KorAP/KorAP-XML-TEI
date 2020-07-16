@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "f1540fb9_6765f15b",
+        "filename": "t/script.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-16T22:27:54Z",
+      "side": 1,
+      "message": "Ah - I see. I guess tempfile() is always the preferred option then.",
+      "parentUuid": "83bc48f0_817dd35f",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 56
+      },
+      "revId": "8e4a144e4ff7daaa4ed2716e67b5931ad57d8a70",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d99661db_957d218e",
         "filename": "t/script.t",
         "patchSetId": 2
@@ -178,6 +202,30 @@
       "side": 1,
       "message": "I see, xt/ would be the better place for debugging, which is not necessary anymore:\n\n1. When subst. \"$fh-\u003eprint\" with \"$fh-\u003eprint($_)\", the strange behaviour is gone (still there\u0027s another, but less unclear error).\n\n2. When I tried to use \u0027\u003e\u0027 - instead of \u0027\u003e\u0026\u0027 - (see stderr_like), I didn\u0027t really made clear the difference meaning, where the first one (\u0027\u003e\u0027) means redirection and the second one (\u0027\u003e\u0026\u0027) the filehandle-duplication. So \"open STDOUT, \u0027\u003e\u0026\u0027, $fh\" interpretes $fh, as it should (as a filehandle name).\n\nI\u0027ll present you an improved patch later :)",
       "parentUuid": "ec8ce2b2_7327cc61",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 54
+      },
+      "revId": "8e4a144e4ff7daaa4ed2716e67b5931ad57d8a70",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9a089bd_27229b81",
+        "filename": "t/script.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-16T22:27:54Z",
+      "side": 1,
+      "message": "I guess Test::Output does some changes to $SIG{__WARN__} and standard filehandles, so it may not be a fair environment for debugging filehandles that way. But now I understand your motivation better.",
+      "parentUuid": "14274cb3_941ebae5",
       "range": {
         "startLine": 56,
         "startChar": 0,
