@@ -22,6 +22,30 @@
       "revId": "41c3562dc4086dbdd57bc17a53b827ee541723aa",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c9efc06_acd99273",
+        "filename": "t/script.t",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-20T20:36:04Z",
+      "side": 0,
+      "message": "I do that ... (?) - see line #199 ff.",
+      "parentUuid": "820ce557_3a65ff6f",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 56
+      },
+      "revId": "41c3562dc4086dbdd57bc17a53b827ee541723aa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }
