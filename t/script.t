@@ -38,8 +38,6 @@ my $file = catfile($f, 'data', 'goe_sample.i5.xml');
 my ($fh, $outzip) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
 
 # Generate zip file (unportable!)
-# TODO:
-#   Call with aggressive and conservative tokenizations!
 stderr_like(
   sub { `cat '$file' | perl '$script' > '$outzip'` },
 # approaches for working with $fh (also better use OO interface then)
@@ -191,7 +189,7 @@ stderr_like(
   'Processing'
 );
 
-# Uncompress GOE/AGA/00000/base/tokens_conservative.xml from zip file
+# Uncompress GOE/AGA/00000/base/tokens.xml from zip file
 $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens.xml');
 
 # Read GOE/AGA/00000/base/tokens.xml
@@ -212,5 +210,101 @@ $t->attr_is('spanList span#t_214', 'from', 1209);
 $t->attr_is('spanList span#t_214', 'to', 1212);
 
 $t->element_count_is('spanList span', 227);
+
+
+
+# TODO: call $script with approp. parameter for internal tokenization (actual: '$_GEN_TOK_INT = 1' hardcoded)
+
+
+# ~ test conservative tokenization ~
+
+$file = catfile($f, 'data', 'text_with_blanks.i5.xml');
+
+stderr_like(
+  sub { `cat '$file' | perl '$script' > '$outzip'` },
+  qr!tei2korapxml: .*? text_id=CORP_DOC.00001!,
+  'Processing'
+);
+
+ok(-e $outzip, "File $outzip exists");
+
+$zip = IO::Uncompress::Unzip->new($outzip, Name => 'CORP/DOC/00001/base/tokens_conservative.xml');
+
+ok($zip, 'Zip-File is created');
+
+my $cons = '';
+$cons .= $zip->getline while !$zip->eof;
+ok($zip->close, 'Closed');
+
+$t = Test::XML::Loy->new($cons);
+$t->attr_is('spanList span:nth-child(1)', 'to', 6);
+
+$t->attr_is('spanList span#t_1', 'from', 7);
+$t->attr_is('spanList span#t_1', 'to', 9);
+
+$t->attr_is('spanList span#t_3', 'from', 12);
+$t->attr_is('spanList span#t_3', 'to', 16);
+
+$t->attr_is('spanList span#t_9', 'from', 36);
+$t->attr_is('spanList span#t_9', 'to', 37);
+
+$t->attr_is('spanList span#t_13', 'from', 44);
+$t->attr_is('spanList span#t_13', 'to', 45);          # "
+
+$t->attr_is('spanList span#t_14', 'from', 45);        # twenty-two
+$t->attr_is('spanList span#t_14', 'to', 55);
+
+$t->attr_is('spanList span#t_15', 'from', 55);        # "
+$t->attr_is('spanList span#t_15', 'to', 56);
+
+$t->attr_is('spanList span#t_19', 'from', 66);
+$t->attr_is('spanList span#t_19', 'to', 67);
+
+$t->element_count_is('spanList span', 20);
+
+
+# ~ test aggressive tokenization ~
+
+$zip = IO::Uncompress::Unzip->new($outzip, Name => 'CORP/DOC/00001/base/tokens_aggressive.xml');
+
+ok($zip, 'Zip-File is created');
+
+my $aggr = '';
+$aggr .= $zip->getline while !$zip->eof;
+ok($zip->close, 'Closed');
+
+$t = Test::XML::Loy->new($aggr);
+
+$t->attr_is('spanList span:nth-child(1)', 'to', 6);
+
+$t->attr_is('spanList span#t_1', 'from', 7);
+$t->attr_is('spanList span#t_1', 'to', 9);
+
+$t->attr_is('spanList span#t_3', 'from', 12);
+$t->attr_is('spanList span#t_3', 'to', 16);
+
+$t->attr_is('spanList span#t_9', 'from', 36);
+$t->attr_is('spanList span#t_9', 'to', 37);
+
+$t->attr_is('spanList span#t_13', 'from', 44);
+$t->attr_is('spanList span#t_13', 'to', 45);          # "
+
+$t->attr_is('spanList span#t_14', 'from', 45);        # twenty
+$t->attr_is('spanList span#t_14', 'to', 51);
+
+$t->attr_is('spanList span#t_15', 'from', 51);        # -
+$t->attr_is('spanList span#t_15', 'to', 52);
+
+$t->attr_is('spanList span#t_16', 'from', 52);        # two
+$t->attr_is('spanList span#t_16', 'to', 55);
+
+$t->attr_is('spanList span#t_17', 'from', 55);        # "
+$t->attr_is('spanList span#t_17', 'to', 56);
+
+$t->attr_is('spanList span#t_21', 'from', 66);
+$t->attr_is('spanList span#t_21', 'to', 67);
+
+$t->element_count_is('spanList span', 22);
+
 
 done_testing;
