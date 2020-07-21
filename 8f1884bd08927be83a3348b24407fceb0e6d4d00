@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5c79e571_bb6b2182",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-21T17:35:05Z",
+      "side": 1,
+      "message": "Unnecessary redirection.",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 38
+      },
+      "revId": "8f1884bd08927be83a3348b24407fceb0e6d4d00",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d35a0415_e34ac228",
+        "filename": "xt/benchmark.pl",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-21T17:35:05Z",
+      "side": 1,
+      "message": "Otherwise not comparable anymore.",
+      "range": {
+        "startLine": 80,
+        "startChar": 31,
+        "endLine": 80,
+        "endChar": 40
+      },
+      "revId": "8f1884bd08927be83a3348b24407fceb0e6d4d00",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
