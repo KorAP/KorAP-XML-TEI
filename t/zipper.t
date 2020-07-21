@@ -36,7 +36,7 @@ ok($unzip->close, 'Closed');
 is($data, 'hello', 'Data correct');
 
 
-# Uncompress GOE/header.xml from zip file
+# Uncompress data/file2.txt from zip file
 $unzip = IO::Uncompress::Unzip->new($outzip, Name => 'data/file2.txt');
 
 $data = '';
