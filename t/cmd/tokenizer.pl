@@ -7,8 +7,6 @@ BEGIN {
 };
 use KorAP::XML::TEI::Tokenizer::Aggressive;
 
-use open qw(:std :utf8); # assume utf-8 encoding
-
 $| = 1;
 
 # Init tokenizer

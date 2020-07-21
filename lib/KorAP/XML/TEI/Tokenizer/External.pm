@@ -54,7 +54,7 @@ sub new {
 
 # Tokenize text in an external process
 sub tokenize {
-  my ($self, $txt, $offset) = @_;
+  my ($self, $txt) = @_;
   return unless $self->{pid};
   my $out = $self->{chld_in};
   print $out $txt . $self->{sep};

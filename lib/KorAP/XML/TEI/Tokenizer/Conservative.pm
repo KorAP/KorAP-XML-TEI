@@ -8,8 +8,7 @@ use warnings;
 # Tokenize string "conservatively" and return an array
 # with character boundaries.
 sub tokenize {
-  my ($self, $txt, $offset) = @_;
-  $offset //= 0;
+  my ($self, $txt) = @_;
 
   # Iterate over the whole string
   while ($txt =~ /(\p{Punct}*)
@@ -18,16 +17,16 @@ sub tokenize {
                   (?:[ \x{9}\n])?/gx) {
 
     # Punctuation preceding a token
-    $self->_add_surroundings($txt, $offset, $-[1], $+[1], 1) if $1;
+    $self->_add_surroundings($txt, $-[1], $+[1], 1) if $1;
 
     # Token sequence
-    push @$self, ($-[2]+$offset, $+[2]+$offset) if $2; # from and to
+    push @$self, ($-[2], $+[2]) if $2; # from and to
 
     # Punctuation following a token
-    $self->_add_surroundings($txt, $offset, $-[3], $+[3]) if $3;
+    $self->_add_surroundings($txt, $-[3], $+[3]) if $3;
 
     # Special chars after token
-    $self->_add_surroundings($txt, $offset, $-[4], $+[4]) if $4;
+    $self->_add_surroundings($txt, $-[4], $+[4]) if $4;
   };
 
   return
@@ -36,7 +35,7 @@ sub tokenize {
 
 # Check if surrounding characters are token-worthy
 sub _add_surroundings {
-  my ($self, $txt, $offset, $p1, $p2, $preceding) = @_;
+  my ($self, $txt, $p1, $p2, $preceding) = @_;
 
   my $pr;
 
@@ -70,13 +69,13 @@ sub _add_surroundings {
     };
 
     # Either before or after the char there is a token
-    push @$self, ($p1+$offset, $p2+$offset) if $pr;  # from and to
+    push @$self, ($p1, $p2) if $pr;  # from and to
     return;
   };
 
   # Iterate over all single punctuation symbols
   for (my $i = $p1; $i < $p2; $i++ ){
-    push @$self, $i+$offset, $i+1+$offset; # from and to
+    push @$self, $i, $i+1; # from and to
   };
 };
 
