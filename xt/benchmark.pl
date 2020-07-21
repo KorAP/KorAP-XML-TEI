@@ -106,14 +106,14 @@ $bench->add_instances(
   Dumbbench::Instance::PerlSub->new(
     name => 'Tokenizer-conservative',
     code => sub {
-      $result = $cons_tok->reset->tokenize($t_data, 0);
+      $result = $cons_tok->reset->tokenize($t_data);
       $result = 0;
     }
   ),
   Dumbbench::Instance::PerlSub->new(
     name => 'Tokenizer-aggressive',
     code => sub {
-      $result = $aggr_tok->reset->tokenize($t_data, 0);
+      $result = $aggr_tok->reset->tokenize($t_data);
       $result = 0;
     }
   ),

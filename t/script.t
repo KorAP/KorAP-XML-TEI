@@ -183,14 +183,16 @@ $t->element_count_is('spanList span', 227);
 # Tokenize with external tokenizer
 my $cmd = catfile($f, 'cmd', 'tokenizer.pl');
 
+my ($fh2, $outzip2) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
+
 stderr_like(
-  sub { `cat '$file' | perl '$script' --tc='perl $cmd' > '$outzip'` },
+  sub { `cat '$file' | perl '$script' --tc='perl $cmd' > '$outzip2'` },
   qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!,
   'Processing'
 );
 
 # Uncompress GOE/AGA/00000/base/tokens.xml from zip file
-$zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens.xml');
+$zip = IO::Uncompress::Unzip->new($outzip2, Name => 'GOE/AGA/00000/base/tokens.xml');
 
 # Read GOE/AGA/00000/base/tokens.xml
 $tokens_xml = '';
@@ -216,19 +218,22 @@ $t->element_count_is('spanList span', 227);
 # TODO: call $script with approp. parameter for internal tokenization (actual: '$_GEN_TOK_INT = 1' hardcoded)
 
 
+my ($fh3, $outzip3) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
+
+
 # ~ test conservative tokenization ~
 
 $file = catfile($f, 'data', 'text_with_blanks.i5.xml');
 
 stderr_like(
-  sub { `cat '$file' | perl '$script' > '$outzip'` },
+  sub { `cat '$file' | perl '$script' > '$outzip3'` },
   qr!tei2korapxml: .*? text_id=CORP_DOC.00001!,
   'Processing'
 );
 
-ok(-e $outzip, "File $outzip exists");
+ok(-e $outzip3, "File $outzip3 exists");
 
-$zip = IO::Uncompress::Unzip->new($outzip, Name => 'CORP/DOC/00001/base/tokens_conservative.xml');
+$zip = IO::Uncompress::Unzip->new($outzip3, Name => 'CORP/DOC/00001/base/tokens_conservative.xml');
 
 ok($zip, 'Zip-File is created');
 
@@ -265,7 +270,7 @@ $t->element_count_is('spanList span', 20);
 
 # ~ test aggressive tokenization ~
 
-$zip = IO::Uncompress::Unzip->new($outzip, Name => 'CORP/DOC/00001/base/tokens_aggressive.xml');
+$zip = IO::Uncompress::Unzip->new($outzip3, Name => 'CORP/DOC/00001/base/tokens_aggressive.xml');
 
 ok($zip, 'Zip-File is created');
 

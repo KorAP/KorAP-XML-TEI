@@ -8,9 +8,7 @@ use warnings;
 # Tokenize string "aggressively" and return an array
 # with character boundaries.
 sub tokenize {
-  my ($self, $txt, $offset) = @_;
-
-  $offset //= 0;
+  my ($self, $txt) = @_;
 
   # Iterate over the whole string
   while ($txt =~ /([^\p{Punct} \x{9}\n]+)
@@ -19,17 +17,17 @@ sub tokenize {
 
     # Starts with a character sequence
     if (defined $1){
-      push @$self, $-[1]+$offset, $+[1]+$offset; # from and to
+      push @$self, $-[1], $+[1]; # from and to
 
       # Followed by a punctuation
       if ($2){
-        push @$self, $-[2]+$offset, $+[2]+$offset # from and to
+        push @$self, $-[2], $+[2] # from and to
       }
     }
 
     # Starts with a punctuation
     else {
-      push @$self, $-[3]+$offset, $+[3]+$offset # from and to
+      push @$self, $-[3], $+[3] # from and to
     };
   };
 

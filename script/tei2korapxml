@@ -93,7 +93,6 @@ my $_GEN_TOK_INT     = 1;                            # simple tokenization, reco
   my $_tok_file_agg  = "tokens_aggressive.xml";
   my $aggr_tok       = KorAP::XML::TEI::Tokenizer::Aggressive->new;
   my $cons_tok       = KorAP::XML::TEI::Tokenizer::Conservative->new;
-  my ( $txt, $offset );
 ##
 
 my $_tok_dir         = "base";                       # name of directory for storing tokenization files
@@ -350,12 +349,18 @@ sub main {
         $data =~ tr/\n\r/  /; # note: 2 blanks - otherwise offset data would become corrupt
         #
 
-        $data = encode_utf8( $data );
 
         if ( $_GEN_TOK_EXT ){
-          # TODO: $offset is only necessary for $cons_tok and $aggr_tok and as long as they're part of 'retr_info'
-          $ext_tok->tokenize($data, $offset);
+
+          $ext_tok->tokenize($data);
+
+        } elsif ( $_GEN_TOK_INT ){
+
+          $cons_tok->tokenize($data);
+          $aggr_tok->tokenize($data);
         }
+
+        $data = encode_utf8( $data );
 
         print STDERR "DEBUG ($0): main(): Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file\n" if $_DEBUG;
 
@@ -377,33 +382,29 @@ sub main {
 
         # ~ tokenization ~
 
-        if ( $_GEN_TOK_EXT || $_GEN_TOK_INT ){
+        if ( $_GEN_TOK_EXT ) {
 
-          if ( $_GEN_TOK_EXT ) {
+          $ext_tok->to_zip(
+            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
+            $text_id_esc
+          )
 
-            $ext_tok->to_zip(
-              $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
-              $text_id_esc
-            );
+        } elsif ( $_GEN_TOK_INT ){
 
-          } elsif ( $_GEN_TOK_INT ){
-
-            # Output token streams to zip streams
-            $cons_tok->to_zip(
-              $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_con"),
-              $text_id_esc
-            );
-            $aggr_tok->to_zip(
-              $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_agg"),
-              $text_id_esc
-            );
-            $offset = 0;
-            $aggr_tok->reset;
-            $cons_tok->reset;
-          }
-
-          #print STDERR "$0: write_tokenization(): DONE\n";
+          # Output token streams to zip streams
+          $cons_tok->to_zip(
+            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_con"),
+            $text_id_esc
+          );
+          $aggr_tok->to_zip(
+            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_agg"),
+            $text_id_esc
+          );
+          $aggr_tok->reset;
+          $cons_tok->reset;
         }
+
+        #print STDERR "$0: write_tokenization(): DONE\n";
 
         $data_fl = 0; $buf_in = $data = $dir = ""; # reinit.
 
@@ -1062,29 +1063,6 @@ sub retr_info { # called from main()
       $data .= $e->[1];
 
       $dl += length( $e->[1] ); # update length of $data
-
-
-      if ( $_GEN_TOK_INT ){
-
-        #~~~~~
-        # from here: intern tokenization
-        #~~~~~
-
-
-        $txt = $e->[1];
-
-        # TODO: implement outside retr_info() (like $ext_tok) on whole $data, instead on every text-node (more efficient and $offset not needed anymore)
-        $cons_tok->tokenize($txt, $offset);
-        $aggr_tok->tokenize($txt, $offset);
-
-        $offset = $dl;
-
-
-        #~~~~~
-        # until here: intern tokenization
-        #~~~~~
-
-      }
 
 
       #~~~~~
