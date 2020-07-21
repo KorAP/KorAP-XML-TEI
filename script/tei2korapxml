@@ -355,7 +355,9 @@ sub main {
 
           $ext_tok->tokenize($data);
 
-        } elsif ( $_GEN_TOK_INT ){
+        }
+
+        if ( $_GEN_TOK_INT ){
 
           $cons_tok->tokenize($data);
           $aggr_tok->tokenize($data);
@@ -390,7 +392,9 @@ sub main {
             $text_id_esc
           )
 
-        } elsif ( $_GEN_TOK_INT ){
+        }
+
+        if ( $_GEN_TOK_INT ){
 
           # Output token streams to zip streams
           $cons_tok->to_zip(

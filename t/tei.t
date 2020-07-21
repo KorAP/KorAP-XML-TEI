@@ -1,12 +1,13 @@
 use strict;
 use warnings;
 use Test::More;
-use Test::KorAP::XML::TEI qw!korap_tempfile!;
 
 use FindBin;
 BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
+
+use Test::KorAP::XML::TEI qw!korap_tempfile!;
 
 use_ok('KorAP::XML::TEI', 'remove_xml_comments');
 

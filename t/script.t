@@ -7,6 +7,11 @@ use IO::Uncompress::Unzip qw(unzip $UnzipError);
 use Test::More;
 use Test::Output;
 use Test::XML::Loy;
+
+use FindBin;
+BEGIN {
+  unshift @INC, "$FindBin::Bin/../lib";
+};
 use Test::KorAP::XML::TEI qw!korap_tempfile!;
 
 my $f = dirname(__FILE__);
@@ -129,6 +134,8 @@ ok($zip->close, 'Closed');
 $t = Test::XML::Loy->new($struct_xml);
 $t->text_is('span[id=s3] *[name=type]', 'Autobiographie', 'text content');
 
+$zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens.xml');
+ok(!$zip, 'External not generated');
 
 # Uncompress GOE/AGA/00000/base/tokens_aggressive.xml from zip file
 $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens_aggressive.xml');
@@ -174,19 +181,22 @@ $t->attr_is('spanList span#t_214', 'to', 1212);
 
 $t->element_count_is('spanList span', 227);
 
+
 # Tokenize with external tokenizer
 my $cmd = catfile($f, 'cmd', 'tokenizer.pl');
 
 my ($fh2, $outzip2) = korap_tempfile('script_out2');
 
 stderr_like(
-  sub { `cat '$file' | perl '$script' --tc='perl $cmd' > '$outzip2'` },
+  sub { `cat '$file' | perl '$script' -tc='perl $cmd' > '$outzip2'` },
   qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!,
   'Processing'
 );
 
 # Uncompress GOE/AGA/00000/base/tokens.xml from zip file
 $zip = IO::Uncompress::Unzip->new($outzip2, Name => 'GOE/AGA/00000/base/tokens.xml');
+ok($zip, 'Found');
+ok(!$zip->eof, 'Readable');
 
 # Read GOE/AGA/00000/base/tokens.xml
 $tokens_xml = '';
@@ -206,10 +216,6 @@ $t->attr_is('spanList span#t_214', 'from', 1209);
 $t->attr_is('spanList span#t_214', 'to', 1212);
 
 $t->element_count_is('spanList span', 227);
-
-
-
-# TODO: call $script with approp. parameter for internal tokenization (actual: '$_GEN_TOK_INT = 1' hardcoded)
 
 
 my ($fh3, $outzip3) = korap_tempfile('script_out3');
@@ -305,5 +311,33 @@ $t->attr_is('spanList span#t_21', 'to', 67);
 
 $t->element_count_is('spanList span', 22);
 
+
+subtest 'Check Tokenization Flags' => sub {
+
+  # Get external tokenizer
+  my $f = dirname(__FILE__);
+  my $cmd = catfile($f, 'cmd', 'tokenizer.pl');
+
+  # Load example file
+  my $file = catfile($f, 'data', 'goe_sample.i5.xml');
+
+  my ($fh, $outzip) = korap_tempfile('script_tokflags');
+
+  # Generate zip file (unportable!)
+  stderr_like(
+    sub { `cat '$file' | perl '$script' -ti -tc 'perl $cmd' > '$outzip'` },
+    qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!,
+    'Processing'
+  );
+
+  ok(-e $outzip, "File $outzip exists");
+
+  $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens_aggressive.xml');
+  ok($zip, 'Aggressive generated');
+  $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens_conservative.xml');
+  ok($zip, 'Conservative generated');
+  $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens.xml');
+  ok($zip, 'External generated');
+};
 
 done_testing;

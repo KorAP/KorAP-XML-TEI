@@ -13,6 +13,7 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
+use Test::KorAP::XML::TEI qw!korap_tempfile!;
 use KorAP::XML::TEI 'remove_xml_comments';
 use KorAP::XML::TEI::Tokenizer::Aggressive;
 use KorAP::XML::TEI::Tokenizer::Conservative;
@@ -46,7 +47,7 @@ my $bench = Dumbbench->new(
 my $result;
 
 # Data for delHTMLcom-long
-my ($fh, $filename) = tempfile();
+my ($fh, $filename) = korap_tempfile('benchmark');
 
 print $fh <<'HTML';
 mehrzeiliger

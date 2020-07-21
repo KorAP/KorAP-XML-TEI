@@ -3,6 +3,7 @@ use warnings;
 use Test::More;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
+use IO::Uncompress::Unzip;
 use open qw(:std :utf8); # assume utf-8 encoding
 
 use FindBin;
@@ -10,8 +11,10 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
+use_ok('Test::KorAP::XML::TEI','korap_tempfile');
 require_ok('KorAP::XML::TEI::Tokenizer::Aggressive');
 require_ok('KorAP::XML::TEI::Tokenizer::Conservative');
+require_ok('KorAP::XML::TEI::Zipper');
 
 # Test aggressive
 my $aggr = KorAP::XML::TEI::Tokenizer::Aggressive->new;
@@ -109,6 +112,27 @@ is(366, scalar(@$aggr));
 $cons->reset->tokenize($data);
 is_deeply([@{$cons}[0..21]], [1,7,8,12,14,18,19,22,23,27,28,38,39,40,40,57,58,66,67,72,72,73]);
 is(302, scalar(@$cons));
+
+
+subtest 'Test Zipper' => sub {
+  # Test Zipper
+  my ($fh, $outzip) = korap_tempfile('tokenize_zipper');
+  my $zip = KorAP::XML::TEI::Zipper->new($outzip);
+  $fh->close;
+
+  my $aggr = KorAP::XML::TEI::Tokenizer::Aggressive->new;
+  $aggr->tokenize("Der alte Mann");
+  ok($aggr->to_zip(
+    $zip->new_stream('tokens.xml'),
+    'fun'
+  ), 'Written successfully');
+
+  $zip->close;
+
+  ok(-e $outzip, 'Zip exists');
+  my $unzip = IO::Uncompress::Unzip->new($outzip, Name => 'tokens.xml');
+  ok(!$unzip->eof, 'Unzip successful');
+};
 
 
 done_testing;
