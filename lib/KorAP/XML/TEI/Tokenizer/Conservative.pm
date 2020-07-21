@@ -12,9 +12,9 @@ sub tokenize {
 
   # Iterate over the whole string
   while ($txt =~ /(\p{Punct}*)
-                  ([^\p{Punct} \x{9}\n]+(?:(\p{Punct}+)[^\p{Punct} \x{9}\n]+)*)?
+                  ([^\p{Punct} \x{9}]+(?:(\p{Punct}+)[^\p{Punct} \x{9}]+)*)?
                   (\p{Punct}*)
-                  (?:[ \x{9}\n])?/gx) {
+                  (?:[ \x{9}]|^$)?/gx) {
 
     # Punctuation preceding a token
     $self->_add_surroundings($txt, $-[1], $+[1], 1) if $1;
@@ -35,6 +35,9 @@ sub tokenize {
 
 # Check if surrounding characters are token-worthy
 sub _add_surroundings {
+
+  # TODO (bug): subst. [^A-Za-z0-9] with [\p{Punct} \t] ...
+
   my ($self, $txt, $p1, $p2, $preceding) = @_;
 
   my $pr;
