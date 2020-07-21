@@ -2,13 +2,14 @@ use strict;
 use warnings;
 use Test::More;
 use File::Spec::Functions qw/catfile/;
-use Test::KorAP::XML::TEI qw!korap_tempfile!;
 use IO::Uncompress::Unzip;
 
 use FindBin;
 BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
+
+use Test::KorAP::XML::TEI qw!korap_tempfile!;
 
 require_ok('KorAP::XML::TEI::Zipper');
 
@@ -36,7 +37,7 @@ ok($unzip->close, 'Closed');
 is($data, 'hello', 'Data correct');
 
 
-# Uncompress GOE/header.xml from zip file
+# Uncompress data/file2.txt from zip file
 $unzip = IO::Uncompress::Unzip->new($outzip, Name => 'data/file2.txt');
 
 $data = '';
