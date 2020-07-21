@@ -39,7 +39,7 @@ my ($fh, $outzip) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tmp"
 
 # Generate zip file (unportable!)
 stderr_like(
-  sub { `cat '$file' | perl '$script' > '$outzip'` },
+  sub { `cat '$file' | perl '$script' -ti > '$outzip'` },
 # approaches for working with $fh (also better use OO interface then)
 #  sub { open STDOUT, '>&', $fh; system("cat '$file' | perl '$script'") },
 #  sub { open(my $pipe, "cat '$file' | perl '$script'|"); while(<$pipe>){$fh->print($_)}; $fh->close },
@@ -226,7 +226,7 @@ my ($fh3, $outzip3) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tm
 $file = catfile($f, 'data', 'text_with_blanks.i5.xml');
 
 stderr_like(
-  sub { `cat '$file' | perl '$script' > '$outzip3'` },
+  sub { `cat '$file' | perl '$script' --ti > '$outzip3'` },
   qr!tei2korapxml: .*? text_id=CORP_DOC.00001!,
   'Processing'
 );

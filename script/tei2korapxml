@@ -34,6 +34,7 @@ GetOptions(
   "root|r=s"  => \(my $_root_dir = '.'),  # name of root directory inside zip file
   "input|i=s" => \(my $input_fname = ''), # input file (yet only TEI I5 Format accepted)
   'tokenizer-call|tc=s' => \(my $tokenizer_call), # Temporary argument for testing purposes
+  'use-intern-tokenization|ti' => \(my $tokenizer_intern), # use intern tokenization (default = no)
   'help|h'    => sub {
     pod2usage(
       -verbose => 99,
@@ -76,7 +77,7 @@ my $_TEXT_HEADER_BEG  = "idsHeader type=\"text\"";     # analog
 #
 
 ## extern tokenization
-my $_GEN_TOK_EXT = $tokenizer_call ? 1 : 0;      # (used for IDS internal tokenization)
+my $_GEN_TOK_EXT = $tokenizer_call ? 1 : 0;
   # TODO:
   #   Read tokenizer call from configuration file.
   #   was 'java  -cp '. join(":", ".", glob(&dirname(__FILE__)."/../target/*.jar")). " de.ids_mannheim.korap.tokenizer.KorAPTokenizerImpl";
@@ -88,7 +89,7 @@ my $_GEN_TOK_EXT = $tokenizer_call ? 1 : 0;      # (used for IDS internal tokeni
 ##
 
 ## intern tokenization
-my $_GEN_TOK_INT     = 1;                            # simple tokenization, recommended for testing (for use of an external tokenizer see $_GEN_TOK_EXT)
+my $_GEN_TOK_INT = $tokenizer_intern;                  # simple tokenization (recommended for testing)
   my $_tok_file_con  = "tokens_conservative.xml";
   my $_tok_file_agg  = "tokens_aggressive.xml";
   my $aggr_tok       = KorAP::XML::TEI::Tokenizer::Aggressive->new;

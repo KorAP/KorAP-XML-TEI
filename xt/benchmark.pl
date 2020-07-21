@@ -77,7 +77,7 @@ $bench->add_instances(
   Dumbbench::Instance::PerlSub->new(
     name => 'SimpleConversion',
     code => sub {
-      `cat '$file' | perl '$script' > /dev/null 2>&1`
+      `cat '$file' | perl '$script' -ti > /dev/null 2>&1`
     }
   ),
   Dumbbench::Instance::PerlSub->new(
