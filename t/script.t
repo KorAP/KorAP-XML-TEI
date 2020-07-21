@@ -226,7 +226,7 @@ my ($fh3, $outzip3) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tm
 $file = catfile($f, 'data', 'text_with_blanks.i5.xml');
 
 stderr_like(
-  sub { `cat '$file' | perl '$script' > '$outzip3'` },
+  sub { `cat '$file' | perl '$script' --ti > '$outzip3'` },
   qr!tei2korapxml: .*? text_id=CORP_DOC.00001!,
   'Processing'
 );
