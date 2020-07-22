@@ -12,9 +12,9 @@ sub tokenize {
 
   # Iterate over the whole string
   while ($txt =~ /(\p{Punct}*)
-                  ([^\p{Punct} \x{9}\n]+(?:(\p{Punct}+)[^\p{Punct} \x{9}\n]+)*)?
+                  ([^\p{Punct} \t\n]+(?:\p{Punct}+[^\p{Punct} \t\n]+)*)?
                   (\p{Punct}*)
-                  (?:[ \x{9}\n])?/gx) {
+                  (?:[ \t\n])?/gx) {
 
     # Punctuation preceding a token
     $self->_add_surroundings($txt, $-[1], $+[1], 1) if $1;
@@ -24,52 +24,47 @@ sub tokenize {
 
     # Punctuation following a token
     $self->_add_surroundings($txt, $-[3], $+[3]) if $3;
-
-    # Special chars after token
-    $self->_add_surroundings($txt, $-[4], $+[4]) if $4;
   };
 
   return
 };
 
 
-# Check if surrounding characters are token-worthy
+# Check if surrounding characters justify tokenization of Punctuation
+#  (in that case $pr is set)
 sub _add_surroundings {
   my ($self, $txt, $p1, $p2, $preceding) = @_;
 
-  my $pr;
+  my $pr; # "print" (tokenize) punctuation character (if one of the below tests justified it)
 
-  if ($p2 == $p1+1) {
+  if ($p2 == $p1+1) { # single punctuation character
 
     # Variant for preceding characters
     if ($preceding) {
-      # Character doesn't start and first position
+
+      $pr = 1; # the first punctuation character should always be tokenized
+      # note: this also fixes the bug with '.Der', where '.' was not tokenized (see t/tokenization.t)
+
+      # Punctuation character doesn't start at first position
       if ($p1 != 0) {
-
-        # Check if there is something to print
-        $pr = ( substr( $txt, $p1-1, 1 ) =~ /^[^A-Za-z0-9]$/ );
-      };
-
-      # There is nothing to print
-      unless ($pr){
-
-        # Check, if the first character following the special char is a character?
-        $pr = ( substr( $txt, $p2, 1 ) =~ /^[^A-Za-z0-9]$/ );
-      };
+        # Check char before punctuation char
+        $pr = ( substr( $txt, $p1-1, 1 ) =~ /[\p{Punct} \t\n]/ );
+      }
     }
 
     else {
-      # Check the char after the match
-      $pr = ( substr( $txt, $p2, 1 ) =~ /^[^A-Za-z0-9]?$/ );
+      # Check char after punctuation char
+      $pr = ( substr( $txt, $p2, 1 ) =~ /[\p{Punct} \t\n]?/ ); # the last punctuation character should always be tokenized (signified by the ?)
 
-      # Check the char before the match
+      # Check char before punctuation char
       unless ($pr) {
-        $pr = ( substr ( $txt, $p1-1, 1 ) =~ /^[^A-Za-z0-9]/ );
+        $pr = ( substr ( $txt, $p1-1, 1 ) =~ /[\p{Punct} \t\n]/ );
       };
     };
 
-    # Either before or after the char there is a token
+    # tokenize punctuation char (because it was justified)
     push @$self, ($p1, $p2) if $pr;  # from and to
+
     return;
   };
 
