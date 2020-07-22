@@ -82,14 +82,22 @@ is(134996, length($data)); # mind that each UTF-8 character counts only once
 # No performance-issue, when piping 'wikipedia.txt' into a perl one-liner (also not, when using while-loop from Aggressive.pm):
 # cat t/data/wikipedia.txt | perl -ne 'use open qw(:std :utf8); chomp; for($i=0;$i<length;$i++){$c=substr $_,$i,1; print ">$c<\n" if $c=~/\p{Punct}/}' >/dev/null
 # cat t/data/wikipedia.txt | perl -ne 'use open qw(:std :utf8); chomp; while($_=~/([^\p{Punct} \x{9}\n]+)(?:(\p{Punct})|(?:[ \x{9}\n])?)|(\p{Punct})/gx){ print "$1\n" if $1}' >/dev/null
-diag("DEBUG: Tokenizing Wikipedia Text (134K). Because of an additional PerlIO layer (utf8) on the filehandle, this takes significant more time. Please wait ...\n");
+diag("DEBUG (aggr): Tokenizing Wikipedia Text (134K). Because of an additional PerlIO layer (utf8) on the filehandle, this takes significant more time. Please wait ...\n");
 $aggr->reset->tokenize($data);
 is_deeply([@{$aggr}[0..25]], [1,7,8,12,14,18,19,22,23,27,28,38,39,40,40,49,49,50,50,57,58,66,67,72,72,73]);
 is(47112, scalar(@$aggr));
 
-diag("DEBUG: Tokenizing Wikipedia Text (134K). Because of an additional PerlIO layer (utf8) on the filehandle, this takes significant more time. Please wait ...\n");
+diag("DEBUG (cons): Tokenizing Wikipedia Text (134K). Because of an additional PerlIO layer (utf8) on the filehandle, this takes significant more time. Please wait ...\n");
 $cons->reset->tokenize($data);
 is_deeply([@{$cons}[0..21]], [1,7,8,12,14,18,19,22,23,27,28,38,39,40,40,57,58,66,67,72,72,73]);
 is(43218, scalar(@$cons));
+
+# check tokenization of 'Community-Ämter'
+my @vals_exp=(66070,66085,66079,66080);
+#  from @{cons}[19956] (=66070) to @{cons}[19957] (=66085) => 'Community-Ämter'   # correct tokenization
+#  from @{cons}[19958] (=66079) to @{cons}[19959] (=66080) => '-'   # wrong tokenization (should be (?,?) for next word 'aufgestiegen' instead of (66079,66080) for '-')
+my @vals_got; push @vals_got, @{$cons}[$_] for(19956,19957,19958,19959);
+diag("DEBUG (cons): checking wrong tokenization ...\n");
+is_deeply([@vals_got], [@vals_exp]);
 
 done_testing;
