@@ -8,7 +8,7 @@ use Getopt::Long qw(GetOptions :config no_auto_abbrev);
 use File::Basename qw(dirname);
 
 use open qw(:std :utf8); # assume utf-8 encoding
-use Encode qw(encode_utf8 decode_utf8);
+use Encode qw(encode decode);
 
 use XML::CompactTree::XS;
 use XML::LibXML::Reader;
@@ -23,6 +23,7 @@ use KorAP::XML::TEI::Tokenizer::External;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
 use KorAP::XML::TEI::Zipper;
+
 
 our $VERSION = '0.01';
 
@@ -274,6 +275,8 @@ sub main {
 
   # prevents segfaulting of 'XML::LibXML::Reader' inside 'main()' - see notes on 'PerlIO layers' in  'man XML::LibXML')
   # removing 'use open qw(:std :utf8)' would fix this problem too, but using binmode on input is more granular
+  # see in perluniintro: You can switch encodings on an already opened stream by using "binmode()
+  # see in perlfunc: If LAYER is omitted or specified as ":raw" the filehandle is made suitable for passing binary data.
   binmode $input_fh;
 
 
@@ -363,12 +366,13 @@ sub main {
           $aggr_tok->tokenize($data);
         }
 
-        $data = encode_utf8( $data );
-
         print STDERR "DEBUG ($0): main(): Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file\n" if $_DEBUG;
 
-
         $data =~ s/(&|<|>)/$ent{$1}/g;
+
+        # convert text strings to binary strings
+        $data        = encode( "UTF-8", $data );
+        $text_id_esc = encode( "UTF-8", $text_id_esc );
 
         $zipper->new_stream("$_root_dir$dir/$_data_file")
           ->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
@@ -500,7 +504,7 @@ sub main {
 
         print STDERR "DEBUG ($0): Writing file $_root_dir$dir/$_header_file\n" if $_DEBUG;
 
-        $header_txt = encode_utf8( $header_txt );
+        $header_txt = encode( "UTF-8", $header_txt ); # convert text string to binary string
 
         $zipper->new_stream("$_root_dir$dir/$_header_file")
           ->print("$header_prfx$header_txt");
@@ -523,13 +527,11 @@ sub main {
 
         $text_id =~ tr/\//_/; $dir =~ s/("|&|<|>)/$ent{$1}/g;
 
-        $text_id = encode_utf8( $text_id );
-
         die "ERROR ($0): main(): input line number $lc: line with text-sigle tag '$_TEXT_SIGLE' is not in expected format ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/  || $sfx !~ m#^</${_TEXT_SIGLE}>\s*$# || $dir =~ /^\s*$/;
 
         # log output for seeing progression
-        print STDERR "$0: main(): text_id=".decode_utf8( $text_id )."\n";
+        print STDERR "$0: main(): text_id=$text_id\n";
 
         $text_id_esc = $text_id;
 
@@ -567,7 +569,7 @@ sub main {
 
         print STDERR "DEBUG ($0): Writing file $_root_dir$dir_doc/$_header_file\n" if $_DEBUG;
 
-        $header_doc = encode_utf8( $header_doc );
+        $header_doc = encode( "UTF-8", $header_doc ); # convert text string to binary string
 
         $zipper->new_stream("$_root_dir$dir_doc/$_header_file")
           ->print("$header_prfx$header_doc");
@@ -667,7 +669,7 @@ sub main {
 
         print STDERR "DEBUG ($0): Writing file $_root_dir$dir_crp/$_header_file\n" if $_DEBUG;
 
-        $header_crp = encode_utf8( $header_crp );
+        $header_crp = encode( "UTF-8", $header_crp ); # convert text string to binary string
 
         $zipper->new_stream("$_root_dir$dir_crp/$_header_file")
           ->print("$header_prfx$header_crp");
@@ -1103,7 +1105,7 @@ sub write_structures { # called from main()
 
   $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
            ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\""
-           .decode_utf8($text_id_esc)."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n";
+           .decode( "UTF-8", $text_id_esc )."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n"; # convert binary string to text string
 
   $c = 0;
 
@@ -1161,7 +1163,7 @@ sub write_structures { # called from main()
 
   $output .= "  </spanList>\n</layer>";
 
-  $output = encode_utf8( $output );
+  $output = encode( "UTF-8", $output ); # convert text string to binary string
 
   $zipper->new_stream("$_root_dir$dir/$_structure_dir/$_structure_file")
     ->print($output);
@@ -1185,7 +1187,7 @@ sub write_tokens { # called from main()
 
   $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
            ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\""
-           .decode_utf8($text_id_esc)."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n";
+           .decode( "UTF-8", $text_id_esc )."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n"; # convert binary string to text string
 
   $c = 0;
 
@@ -1258,7 +1260,7 @@ sub write_tokens { # called from main()
 
   $output .= "  </spanList>\n</layer>";
 
-  $output = encode_utf8( $output );
+  $output = encode( "UTF-8", $output ); # convert text string to binary string
 
   $zipper->new_stream("$_root_dir$dir/$_tokens_dir/$_tokens_file")
     ->print($output);
