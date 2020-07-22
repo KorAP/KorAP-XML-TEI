@@ -23,10 +23,10 @@ sub tokenize {
     push @$self, ($-[2], $+[2]) if $2; # from and to
 
     # Punctuation following a token
-    $self->_add_surroundings($txt, $-[3], $+[3]) if $3;
+    $self->_add_surroundings($txt, $-[3], $+[3], 2) if $3; # TODO: this line is wrong and has to be removed (see 'checking wrong tokenization' in t/tokenization.t)
 
     # Special chars after token
-    $self->_add_surroundings($txt, $-[4], $+[4]) if $4;
+    $self->_add_surroundings($txt, $-[4], $+[4], 0) if $4;
   };
 
   return
@@ -39,10 +39,10 @@ sub _add_surroundings {
 
   my $pr;
 
-  if ($p2 == $p1+1) {
+  if ($p2 == $p1+1) { # single character
 
     # Variant for preceding characters
-    if ($preceding) {
+    if ($preceding==1) {
       # Character doesn't start and first position
       if ($p1 != 0) {
 
@@ -70,6 +70,7 @@ sub _add_surroundings {
 
     # Either before or after the char there is a token
     push @$self, ($p1, $p2) if $pr;  # from and to
+#if($preceding==2 && $pr){print STDERR "DEBUG: p1=$p1, p2=$p2, no#=".(scalar(@$self)-2).", seq=".substr($txt, $p1-1, 1).">>>>>>>".substr($txt, $p1, $p2-$p1)."<<<<<<<".substr($txt, $p2, 1)."\n"};
     return;
   };
 
