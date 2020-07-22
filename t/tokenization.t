@@ -45,51 +45,90 @@ is_deeply($cons, [3,4,5,8]);
 $cons->reset->tokenize("... Der");
 is_deeply($cons, [0,1,1,2,2,3,4,7]);
 
-# TODO:
-#   bug: '.' is not tokenized
+# done: '.' is now tokenized
 $cons->reset->tokenize(".Der");
-is_deeply($cons, [1,4]);
+is_deeply($cons, [0,1,1,4]);
 
 $cons->reset->tokenize(".Der.... ");
-is_deeply($cons, [1,4,4,5,5,6,6,7,7,8]);
+is_deeply($cons, [0,1,1,4,4,5,5,6,6,7,7,8]);
 
 $cons->reset->tokenize("..Der.... ");
 is_deeply($cons, [0,1,1,2,2,5,5,6,6,7,7,8,8,9]);
 
-# Test data
-my $dataf = catfile(dirname(__FILE__), 'data', 'wikipedia.txt');
-my $data = '';
+$cons->reset->tokenize(". Der.... ");
+is_deeply($cons, [0,1,2,5,5,6,6,7,7,8,8,9]);
 
-ok(open(my $fh, '<' . $dataf), 'Open file');
+$cons->reset->tokenize(". .Der.... ");
+is_deeply($cons, [0,1,2,3,3,6,6,7,7,8,8,9,9,10]);
+
+$cons->reset->tokenize("Der\talte\nMann");
+is_deeply($cons, [0,3,4,8,9,13]);
+
+
+##### TODO: big wikipedia.txt leads to very slow processing => use smaller test file as temporary solution (see below)
+## Test data
+#my $dataf = catfile(dirname(__FILE__), 'data', 'wikipedia.txt');
+#my $data = '';
+#
+#ok(open(my $fh, '<' . $dataf), 'Open file wikipedia.txt');
+#while (!eof($fh)) {
+#  $data .= <$fh>
+#};
+#
+### DEBUG
+##my @layers = PerlIO::get_layers($fh); # see 'man PerlIO': Querying the layers of filehandles
+##foreach my $l(@layers){print STDERR "DEBUG (filehandle layer): $l\n"};
+#
+#ok(close($fh), 'Close file wikipedia.txt');
+#
+#is(134996, length($data)); # mind that each UTF-8 character counts only once
+#
+## TODO: With then necessary open-pragma (see above), this is extremely slow ... Where's the bottleneck?
+## No performance-issue, when piping 'wikipedia.txt' into a perl one-liner (also not, when using while-loop from Aggressive.pm):
+## cat t/data/wikipedia.txt | perl -ne 'use open qw(:std :utf8); chomp; for($i=0;$i<length;$i++){$c=substr $_,$i,1; print ">$c<\n" if $c=~/\p{Punct}/}' >/dev/null
+## cat t/data/wikipedia.txt | perl -ne 'use open qw(:std :utf8); chomp; while($_=~/([^\p{Punct} \x{9}\n]+)(?:(\p{Punct})|(?:[ \x{9}\n])?)|(\p{Punct})/gx){ print "$1\n" if $1}' >/dev/null
+## note
+## check different output with/without additional UTF-8 layer
+##  echo "„Wikipedia-Artikel brauchen Fotos“" | perl -ne 'chomp; for($i=0;$i<length;$i++){$c=substr $_,$i,1; print ">$c<\n" if $c=~/\p{Punct}/}'
+##  echo "„Wikipedia-Artikel brauchen Fotos“" | perl -ne 'use open qw(:std :utf8); chomp; for($i=0;$i<length;$i++){$c=substr $_,$i,1; print ">$c<\n" if $c=~/\p{Punct}/}'
+#
+#diag("DEBUG (aggr): Tokenizing Wikipedia Text (134K). Because of an additional PerlIO layer (utf8) on the filehandle, this takes significant more time. Please wait ...\n");
+#$aggr->reset->tokenize($data);
+#is_deeply([@{$aggr}[0..25]], [1,7,8,12,14,18,19,22,23,27,28,38,39,40,40,49,49,50,50,57,58,66,67,72,72,73]);
+#is(47112, scalar(@$aggr));
+#
+#diag("DEBUG (cons): Tokenizing Wikipedia Text (134K). Because of an additional PerlIO layer (utf8) on the filehandle, this takes significant more time. Please wait ...\n");
+#$cons->reset->tokenize($data);
+#is_deeply([@{$cons}[0..21]], [1,7,8,12,14,18,19,22,23,27,28,38,39,40,40,57,58,66,67,72,72,73]);
+#is(42412, scalar(@$cons));
+#
+## check tokenization of 'Community-Ämter aufgestiegen'
+##  from @{cons}[19518] (=66070) to @{cons}[19519] (=66085) => 'Community-Ämter'
+##  from @{cons}[19520] (=66086) to @{cons}[19521] (=66098) => 'aufgestiegen'
+#my @vals_got=(66070,66085,66086,66098);
+#my @vals_exp; push @vals_exp, @{$cons}[$_] for(19518,19519,19520,19521);
+#is_deeply([@vals_exp], [@vals_got]);
+##
+##### TODO: use smaller test file as temporary workaround (until problem solved)
+$cons->reset->tokenize("Community-\xc4mter aufgestiegen");
+is_deeply($cons, [0,15,16,28]);
+
+my $dataf = catfile(dirname(__FILE__), 'data', 'wikipedia_small.txt');
+my $data = '';
+ok(open(my $fh, '<' . $dataf), 'Open file wikipedia_small.txt');
 while (!eof($fh)) {
   $data .= <$fh>
 };
+ok(close($fh), 'Close file wikipedia_small.txt');
 
-## DEBUG
-#my @layers = PerlIO::get_layers($fh); # see 'man PerlIO': Querying the layers of filehandles
-#foreach my $l(@layers){print STDERR "DEBUG (filehandle layer): $l\n"};
-
-ok(close($fh), 'Close file');
-
-is(134996, length($data)); # mind that each UTF-8 character counts only once
-
-## note
-# check different output with/without additional UTF-8 layer
-#  echo "„Wikipedia-Artikel brauchen Fotos“" | perl -ne 'chomp; for($i=0;$i<length;$i++){$c=substr $_,$i,1; print ">$c<\n" if $c=~/\p{Punct}/}'
-#  echo "„Wikipedia-Artikel brauchen Fotos“" | perl -ne 'use open qw(:std :utf8); chomp; for($i=0;$i<length;$i++){$c=substr $_,$i,1; print ">$c<\n" if $c=~/\p{Punct}/}'
-
-# TODO: With then necessary open-pragma (see above), this is extremely slow ... Where's the bottleneck?
-# No performance-issue, when piping 'wikipedia.txt' into a perl one-liner (also not, when using while-loop from Aggressive.pm):
-# cat t/data/wikipedia.txt | perl -ne 'use open qw(:std :utf8); chomp; for($i=0;$i<length;$i++){$c=substr $_,$i,1; print ">$c<\n" if $c=~/\p{Punct}/}' >/dev/null
-# cat t/data/wikipedia.txt | perl -ne 'use open qw(:std :utf8); chomp; while($_=~/([^\p{Punct} \x{9}\n]+)(?:(\p{Punct})|(?:[ \x{9}\n])?)|(\p{Punct})/gx){ print "$1\n" if $1}' >/dev/null
-diag("DEBUG: Tokenizing Wikipedia Text (134K). Because of an additional PerlIO layer (utf8) on the filehandle, this takes significant more time. Please wait ...\n");
 $aggr->reset->tokenize($data);
 is_deeply([@{$aggr}[0..25]], [1,7,8,12,14,18,19,22,23,27,28,38,39,40,40,49,49,50,50,57,58,66,67,72,72,73]);
-is(47112, scalar(@$aggr));
+is(366, scalar(@$aggr));
 
-diag("DEBUG: Tokenizing Wikipedia Text (134K). Because of an additional PerlIO layer (utf8) on the filehandle, this takes significant more time. Please wait ...\n");
 $cons->reset->tokenize($data);
 is_deeply([@{$cons}[0..21]], [1,7,8,12,14,18,19,22,23,27,28,38,39,40,40,57,58,66,67,72,72,73]);
-is(43218, scalar(@$cons));
+is(302, scalar(@$cons));
+#####
+
 
 done_testing;
