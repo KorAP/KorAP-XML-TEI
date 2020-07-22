@@ -3,6 +3,7 @@ use warnings;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
 use File::Temp qw/tempfile/;
+use Encode qw!encode_utf8 decode_utf8 encode!;
 use IO::Uncompress::Unzip qw(unzip $UnzipError);
 
 use Test::More;
@@ -311,5 +312,52 @@ $t->attr_is('spanList span#t_21', 'to', 67);
 
 $t->element_count_is('spanList span', 22);
 
+
+subtest 'Test utf-8 handling' => sub {
+
+  # Load template file
+  $file = catfile($f, 'data', 'template.i5.xml');
+  my $tpl = '';
+  {
+    open($fh, $file);
+    $tpl .= <$fh> while !eof($fh);
+    close($fh);
+  }
+
+  # Introduce invalid utf-8 characters
+  my $text_sigle;
+  { no warnings;
+  # $text_sigle printed to file, without encoding: Aþ¿¿¿¿¿A_Bþ¿¿¿¿¿B.Cþ¿¿¿¿¿C
+  # the utf8-sequence 'þ¿¿¿¿¿' encodes 32 bit of data (see 0x7FFF_FFFF in perlunicode)
+  $text_sigle = "A\x{FFFF_FFFF}A_B\x{FFFF_FFFF}B.C\x{FFFF_FFFF}C" }
+  # If CHECK is 0, encoding and decoding replace any malformed character with a substitution character.
+  # � = substitution character
+  my $text_sigle_lax = encode_utf8($text_sigle);
+  my $text_sigle_esc = encode('UTF-8', $text_sigle);
+
+  is(length($text_sigle), 11);     # A�A_B�B.C�C (char string => length(�) = 1)
+  is(length($text_sigle_lax), 29); # Aþ¿¿¿¿¿A_Bþ¿¿¿¿¿B.Cþ¿¿¿¿¿C (byte string)
+  is(length($text_sigle_esc), 17); # A�A_B�B.C�C (byte string => length(�) = 3)
+
+  { no warnings;
+  $tpl =~ s!\[KORPUSSIGLE\]!A\x{FFFF_FFFF}A!;
+  $tpl =~ s!\[DOKUMENTSIGLE\]!A\x{FFFF_FFFF}A_B\x{FFFF_FFFF}B!;
+  $tpl =~ s!\[TEXT\]!<p>d\x{FFFF_FFFF}d e\x{FFFF_FFFF}e f\x{FFFF_FFFF}f</p>! }
+  $tpl =~ s!\[TEXTSIGLE\]!$text_sigle!;
+
+  my ($fh, $tplfile) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
+  binmode($fh);
+  print $fh encode_utf8($tpl); # => text_id=Aþ¿¿¿¿¿A_Bþ¿¿¿¿¿B.Cþ¿¿¿¿¿C
+  close($fh);
+
+  my (undef, $outzip) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
+
+  binmode STDERR, qw{ :encoding(UTF-8) }; # because output 'textid=...' goes to STDERR (see script/tei2korapxml)
+
+  stderr_like(
+    sub { `cat '$tplfile' | perl '$script' -ti > '$outzip'` },
+    qr!tei2korapxml: .*? text_id=$text_sigle_lax!, # see above: print $fh encode_utf8($tpl);
+  );
+};
 
 done_testing;

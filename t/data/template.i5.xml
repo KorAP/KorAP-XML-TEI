@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE idsCorpus  PUBLIC "-//IDS//DTD IDS-I5 1.0//EN" "http://corpora.ids-mannheim.de/I5/DTD/i5.dtd">
+<idsCorpus>
+  <idsHeader type="corpus">
+    <fileDesc>
+      <titleStmt>
+        <korpusSigle>[KORPUSSIGLE]</korpusSigle>
+      </titleStmt>
+    </fileDesc>
+  </idsHeader>
+  <idsDoc version="1.0">
+    <idsHeader type="document">
+      <fileDesc>
+        <titleStmt>
+          <dokumentSigle>[DOKUMENTSIGLE]</dokumentSigle>
+        </titleStmt>
+      </fileDesc>
+    </idsHeader>
+    <idsText version="1.0">
+      <idsHeader type="text">
+        <fileDesc>
+          <titleStmt>
+            <textSigle>[TEXTSIGLE]</textSigle>
+          </titleStmt>
+        </fileDesc>
+      </idsHeader>
+      <text>
+        [TEXT]
+      </text>
+    </idsText>
+  </idsDoc>
+</idsCorpus>
