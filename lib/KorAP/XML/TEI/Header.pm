@@ -1,7 +1,7 @@
 package KorAP::XML::TEI::Header;
 use strict;
 use warnings;
-use Encode qw(encode_utf8);
+use Encode qw(encode);
 
 # Parsing of i5 header files
 
@@ -98,7 +98,7 @@ sub parse {
       die "ERROR ($0): main(): input line number $.: line with sigle-tag is not in expected format ... => Aborting\n\tline=$_"
         if $pfx !~ /^\s*$/  || $sfx !~ m!^</$sig_type>\s*$! || $sig =~ /^\s*$/;
 
-      $self->[SIGLE] = encode_utf8($sig);
+      $self->[SIGLE] = encode('UTF-8' , $sig);
 
       # Escape sig
       my $sig_esc = $self->sigle_esc;
@@ -173,7 +173,7 @@ HEADER
 # Write data to zip stream
 sub to_zip {
   my ($self, $zip) = @_;
-  $zip->print(encode_utf8($self->to_string));
+  $zip->print(encode('UTF-8', $self->to_string));
 };
 
 
