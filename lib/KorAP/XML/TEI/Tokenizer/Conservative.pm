@@ -12,7 +12,7 @@ sub tokenize {
 
   # Iterate over the whole string
   while ($txt =~ /(\p{Punct}*)
-                  ([^\p{Punct} \x{9}\n]+(?:(\p{Punct}+)[^\p{Punct} \x{9}\n]+)*)?
+                  ([^\p{Punct} \x{9}\n]+(?:\p{Punct}+[^\p{Punct} \x{9}\n]+)*)?
                   (\p{Punct}*)
                   (?:[ \x{9}\n])?/gx) {
 
@@ -22,11 +22,13 @@ sub tokenize {
     # Token sequence
     push @$self, ($-[2], $+[2]) if $2; # from and to
 
-    # Punctuation following a token
-    $self->_add_surroundings($txt, $-[3], $+[3]) if $3;
+## this debug output was needed for getting the right offset (19518) from @$self, for correcting the test in t/tokenization.t
+#print STDERR "DEBUG: \$-[2]=$-[2], \$+[2]=$+[2], no#=".(scalar(@$self)-2)."\n" if $2 && $-[2]==66070; # no# is start of token 'Community-Ämter', when commenting out next line
+    ##$self->_add_surroundings($txt, $-[3], $+[3], 2) if $3; # without this line the test is now correct (see 'checking correct tokenization' in t/tokenization.t)
+    ##NOTE: as $2 is already tokenized (if defined), it makes no sense to also tokenize (as it is included in $2)
 
-    # Special chars after token
-    $self->_add_surroundings($txt, $-[4], $+[4]) if $4;
+    # Punctuation following a token
+    $self->_add_surroundings($txt, $-[3], $+[3], 0) if $3;
   };
 
   return
@@ -39,10 +41,10 @@ sub _add_surroundings {
 
   my $pr;
 
-  if ($p2 == $p1+1) {
+  if ($p2 == $p1+1) { # single character
 
     # Variant for preceding characters
-    if ($preceding) {
+    if ($preceding==1) {
       # Character doesn't start and first position
       if ($p1 != 0) {
 
@@ -70,6 +72,7 @@ sub _add_surroundings {
 
     # Either before or after the char there is a token
     push @$self, ($p1, $p2) if $pr;  # from and to
+#if($preceding==2 && $pr){print STDERR "DEBUG: p1=$p1, p2=$p2, no#=".(scalar(@$self)-2).", seq=".substr($txt, $p1-1, 1).">>>>>>>".substr($txt, $p1, $p2-$p1)."<<<<<<<".substr($txt, $p2, 1)."\n"};
     return;
   };
 
