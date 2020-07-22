@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "54501268_d9fa5aee",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-22T10:21:39Z",
+      "side": 1,
+      "message": "O.k., I misunderstood that the option variable is set to the value 1 just by the presence of the option - hence this line also didn\u0027t make sense ;)",
+      "parentUuid": "5c79e571_bb6b2182",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 38
+      },
+      "revId": "8f1884bd08927be83a3348b24407fceb0e6d4d00",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d35a0415_e34ac228",
         "filename": "xt/benchmark.pl",
         "patchSetId": 2
