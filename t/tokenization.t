@@ -1,5 +1,7 @@
 use strict;
 use warnings;
+#use open qw(:std :utf8); # see perlunifaq: What is the difference between ":encoding" and ":utf8"?
+use open qw(:std :encoding(UTF-8)); # assume utf-8 encoding (see utf8 in Test::More)
 use Test::More;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
@@ -58,20 +60,36 @@ is_deeply($cons, [0,1,1,2,2,5,5,6,6,7,7,8,8,9]);
 my $dataf = catfile(dirname(__FILE__), 'data', 'wikipedia.txt');
 my $data = '';
 
-ok(open(FH, '<' . $dataf), 'Open file');
-while (!eof(FH)) {
-  $data .= <FH>
+ok(open(my $fh, '<' . $dataf), 'Open file');
+while (!eof($fh)) {
+  $data .= <$fh>
 };
-close(FH);
 
-is(137166, length($data));
+## DEBUG
+#my @layers = PerlIO::get_layers($fh); # see 'man PerlIO': Querying the layers of filehandles
+#foreach my $l(@layers){print STDERR "DEBUG (filehandle layer): $l\n"};
 
+ok(close($fh), 'Close file');
+
+is(134996, length($data)); # mind that each UTF-8 character counts only once
+
+## note
+# check different output with/without additional UTF-8 layer
+#  echo "„Wikipedia-Artikel brauchen Fotos“" | perl -ne 'chomp; for($i=0;$i<length;$i++){$c=substr $_,$i,1; print ">$c<\n" if $c=~/\p{Punct}/}'
+#  echo "„Wikipedia-Artikel brauchen Fotos“" | perl -ne 'use open qw(:std :utf8); chomp; for($i=0;$i<length;$i++){$c=substr $_,$i,1; print ">$c<\n" if $c=~/\p{Punct}/}'
+
+# TODO: With then necessary open-pragma (see above), this is extremely slow ... Where's the bottleneck?
+# No performance-issue, when piping 'wikipedia.txt' into a perl one-liner (also not, when using while-loop from Aggressive.pm):
+# cat t/data/wikipedia.txt | perl -ne 'use open qw(:std :utf8); chomp; for($i=0;$i<length;$i++){$c=substr $_,$i,1; print ">$c<\n" if $c=~/\p{Punct}/}' >/dev/null
+# cat t/data/wikipedia.txt | perl -ne 'use open qw(:std :utf8); chomp; while($_=~/([^\p{Punct} \x{9}\n]+)(?:(\p{Punct})|(?:[ \x{9}\n])?)|(\p{Punct})/gx){ print "$1\n" if $1}' >/dev/null
+diag("DEBUG: Tokenizing Wikipedia Text (134K). Because of an additional PerlIO layer (utf8) on the filehandle, this takes significant more time. Please wait ...\n");
 $aggr->reset->tokenize($data);
-is_deeply([@{$aggr}[0..7]], [1,7,8,12,14,18,19,22]);
-is(47242, scalar(@$aggr));
+is_deeply([@{$aggr}[0..25]], [1,7,8,12,14,18,19,22,23,27,28,38,39,40,40,49,49,50,50,57,58,66,67,72,72,73]);
+is(47112, scalar(@$aggr));
 
+diag("DEBUG: Tokenizing Wikipedia Text (134K). Because of an additional PerlIO layer (utf8) on the filehandle, this takes significant more time. Please wait ...\n");
 $cons->reset->tokenize($data);
-is_deeply([@{$cons}[0..7]], [1,7,8,12,14,18,19,22]);
-is(43068, scalar(@$cons));
+is_deeply([@{$cons}[0..21]], [1,7,8,12,14,18,19,22,23,27,28,38,39,40,40,57,58,66,67,72,72,73]);
+is(43218, scalar(@$cons));
 
 done_testing;
