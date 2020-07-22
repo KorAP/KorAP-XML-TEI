@@ -11,8 +11,8 @@ sub tokenize {
   my ($self, $txt) = @_;
 
   # Iterate over the whole string
-  while ($txt =~ /([^\p{Punct} \x{9}\n]+)
-                  (?:(\p{Punct})|(?:[ \x{9}\n])?)|
+  while ($txt =~ /([^\p{Punct}\s]+)
+                  (?:(\p{Punct})|\s?)|
                   (\p{Punct})/gx){
 
     # Starts with a character sequence
