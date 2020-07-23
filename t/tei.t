@@ -1,21 +1,16 @@
 use strict;
 use warnings;
 use Test::More;
-use File::Temp 'tempfile';
+use Test::KorAP::XML::TEI qw!korap_tempfile!;
 
 use FindBin;
 BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-our %ENV;
-# default: remove temp. file created by func. tempfile
-#  to keep temp. files use e.g. 'KORAPXMLTEI_DONTUNLINK=1 prove -lr t/script.t'
-my $_UNLINK = $ENV{KORAPXMLTEI_DONTUNLINK}?0:1;
-
 use_ok('KorAP::XML::TEI', 'remove_xml_comments');
 
-my ($fh, $filename) = tempfile("KorAP-XML-TEI_tei_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
+my ($fh, $filename) = korap_tempfile('tei');
 
 print $fh <<'HTML';
 mehrzeiliger
