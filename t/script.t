@@ -2,18 +2,12 @@ use strict;
 use warnings;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
-use File::Temp qw/tempfile/;
 use IO::Uncompress::Unzip qw(unzip $UnzipError);
 
 use Test::More;
 use Test::Output;
-
 use Test::XML::Loy;
-
-our %ENV;
-# default: remove temp. file created by func. tempfile
-#  to keep temp. files use e.g. 'KORAPXMLTEI_DONTUNLINK=1 prove -lr t/script.t'
-my $_UNLINK = $ENV{KORAPXMLTEI_DONTUNLINK}?0:1;
+use Test::KorAP::XML::TEI qw!korap_tempfile!;
 
 my $f = dirname(__FILE__);
 my $script = catfile($f, '..', 'script', 'tei2korapxml');
@@ -35,7 +29,7 @@ stdout_like(
 # Load example file
 my $file = catfile($f, 'data', 'goe_sample.i5.xml');
 
-my ($fh, $outzip) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
+my ($fh, $outzip) = korap_tempfile('script');
 
 # Generate zip file (unportable!)
 stderr_like(
@@ -183,7 +177,7 @@ $t->element_count_is('spanList span', 227);
 # Tokenize with external tokenizer
 my $cmd = catfile($f, 'cmd', 'tokenizer.pl');
 
-my ($fh2, $outzip2) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
+my ($fh2, $outzip2) = korap_tempfile('script');
 
 stderr_like(
   sub { `cat '$file' | perl '$script' --tc='perl $cmd' > '$outzip2'` },
@@ -218,7 +212,7 @@ $t->element_count_is('spanList span', 227);
 # TODO: call $script with approp. parameter for internal tokenization (actual: '$_GEN_TOK_INT = 1' hardcoded)
 
 
-my ($fh3, $outzip3) = tempfile("KorAP-XML-TEI_script_XXXXXXXXXX", SUFFIX => ".tmp", TMPDIR => 1, UNLINK => $_UNLINK);
+my ($fh3, $outzip3) = korap_tempfile('script');
 
 
 # ~ test conservative tokenization ~
