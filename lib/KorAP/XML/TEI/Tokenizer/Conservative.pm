@@ -8,29 +8,19 @@ use warnings;
 # Tokenize string "conservatively" and return an array
 # with character boundaries.
 sub tokenize {
-  my ($self, $txt_utf8) = @_;
+  my ($self, $txt) = @_;
 
-  my $txt;
-
-  # faster processing of UTF8-chars
-  foreach my $char (split //, $txt_utf8) {
-    if ($char =~ /\p{Punct}/) {
-      $txt .= "p"
-    } elsif ($char =~ /[^\p{Punct}\s]/) {
-      $txt .= "P"
-    } elsif ($char =~ /\s/) {
-      $txt .= "s"
-    } else {
-      $txt .= "o" # other: should actually only happen for string end (0 byte)
-      # check could be 'ord($char)==0'
-    }
-  };
+  # Replace MBCs with single bytes
+  $txt =~ s/\p{Punct}/./g;
+  $txt =~ s/\s/~/g;
+  $txt =~ s/[^\.\~]/_/g;
+  utf8::downgrade($txt);
 
   # Iterate over the whole string
-  while ($txt =~ /(p*)
-                  (P+(?:p+P+)*)?
-                  (p*)
-                  s?/gx) {
+  while ($txt =~ /(\.*)
+                  (_+(?:\.+_+)*)?
+                  (\.*)
+                  \~?/gx) {
 
     # Punctuation preceding a token
     $self->_add_surroundings($txt, $-[1], $+[1], 1) if $1;
@@ -54,6 +44,7 @@ sub _add_surroundings {
   my $pr; # "print" (tokenize) punctuation character (if one of the below tests justified it)
 
   if ($p2 == $p1+1) { # single punctuation character
+    my $char;
 
     # Variant for preceding characters
     if ($preceding) {
@@ -62,18 +53,24 @@ sub _add_surroundings {
 
       # Punctuation character doesn't start at first position
       if ($p1 != 0) {
+
         # Check char before punctuation char
-        $pr = ( substr( $txt, $p1-1, 1 ) =~ /[ps]/ );
+        $char = substr( $txt, $p1-1, 1 );
+        $pr = ($char eq '.' || $char eq '~') ? 1 : 0;
       }
     }
 
     else {
       # Check char after punctuation char
-      $pr = ( substr( $txt, $p2, 1 ) =~ /[ps]?/ ); # the last punctuation character should always be tokenized (signified by the ?)
+      $char = substr( $txt, $p2, 1 );
+
+      # The last punctuation character should always be tokenized (signified by the ?)
+      $pr = (!$char || $char eq '.' || $char eq '~') ? 1 : 0;
 
       # Check char before punctuation char
       unless ($pr) {
-        $pr = ( substr ( $txt, $p1-1, 1 ) =~ /[ps]/ );
+        $char = substr ( $txt, $p1-1, 1);
+        $pr = ($char eq '.' || $char eq '~' ) ? 1 : 0;
       };
     };
 
