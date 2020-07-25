@@ -8,13 +8,29 @@ use warnings;
 # Tokenize string "conservatively" and return an array
 # with character boundaries.
 sub tokenize {
-  my ($self, $txt) = @_;
+  my ($self, $txt_utf8) = @_;
+
+  my $txt;
+
+  # faster processing of UTF8-chars
+  foreach my $char (split //, $txt_utf8) {
+    if ($char =~ /\p{Punct}/) {
+      $txt .= "p"
+    } elsif ($char =~ /[^\p{Punct}\s]/) {
+      $txt .= "P"
+    } elsif ($char =~ /\s/) {
+      $txt .= "s"
+    } else {
+      $txt .= "o" # other: should actually only happen for string end (0 byte)
+      # check could be 'ord($char)==0'
+    }
+  };
 
   # Iterate over the whole string
-  while ($txt =~ /(\p{Punct}*)
-                  ([^\p{Punct}\s]+(?:\p{Punct}+[^\p{Punct}\s]+)*)?
-                  (\p{Punct}*)
-                  \s?/gx) {
+  while ($txt =~ /(p*)
+                  (P+(?:p+P+)*)?
+                  (p*)
+                  s?/gx) {
 
     # Punctuation preceding a token
     $self->_add_surroundings($txt, $-[1], $+[1], 1) if $1;
@@ -43,22 +59,21 @@ sub _add_surroundings {
     if ($preceding) {
 
       $pr = 1; # the first punctuation character should always be tokenized
-      # note: this also fixes the bug with '.Der', where '.' was not tokenized (see t/tokenization.t)
 
       # Punctuation character doesn't start at first position
       if ($p1 != 0) {
         # Check char before punctuation char
-        $pr = ( substr( $txt, $p1-1, 1 ) =~ /[\p{Punct}\s]/ );
+        $pr = ( substr( $txt, $p1-1, 1 ) =~ /[ps]/ );
       }
     }
 
     else {
       # Check char after punctuation char
-      $pr = ( substr( $txt, $p2, 1 ) =~ /[\p{Punct}\s]?/ ); # the last punctuation character should always be tokenized (signified by the ?)
+      $pr = ( substr( $txt, $p2, 1 ) =~ /[ps]?/ ); # the last punctuation character should always be tokenized (signified by the ?)
 
       # Check char before punctuation char
       unless ($pr) {
-        $pr = ( substr ( $txt, $p1-1, 1 ) =~ /[\p{Punct}\s]/ );
+        $pr = ( substr ( $txt, $p1-1, 1 ) =~ /[ps]/ );
       };
     };
 
