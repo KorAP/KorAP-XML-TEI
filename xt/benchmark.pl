@@ -5,6 +5,7 @@ use Dumbbench;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile rel2abs/;
 use File::Temp 'tempfile';
+use Encode qw!decode!;
 use FindBin;
 use Getopt::Long;
 
@@ -59,6 +60,7 @@ HTML
 my $t_dataf = catfile(dirname(__FILE__), '..', 't', 'data', 'wikipedia.txt');
 my $t_data = '';
 if ((open(FH, '<' . $t_dataf))) {
+  binmode(FH);
   while (!eof(FH)) {
     $t_data .= <FH>
   };
@@ -67,6 +69,8 @@ if ((open(FH, '<' . $t_dataf))) {
 else {
   die "Unable to load $t_dataf";
 };
+
+my $t_data_utf_8 = decode('utf-8',$t_data);
 
 my $cons_tok = KorAP::XML::TEI::Tokenizer::Conservative->new;
 my $aggr_tok = KorAP::XML::TEI::Tokenizer::Aggressive->new;
@@ -111,12 +115,26 @@ $bench->add_instances(
     }
   ),
   Dumbbench::Instance::PerlSub->new(
+    name => 'Tokenizer-conservative-utf-8',
+    code => sub {
+      $result = $cons_tok->reset->tokenize($t_data_utf_8);
+      $result = 0;
+    }
+  ),
+  Dumbbench::Instance::PerlSub->new(
     name => 'Tokenizer-aggressive',
     code => sub {
       $result = $aggr_tok->reset->tokenize($t_data);
       $result = 0;
     }
   ),
+  Dumbbench::Instance::PerlSub->new(
+    name => 'Tokenizer-aggressive-utf-8',
+    code => sub {
+      $result = $aggr_tok->reset->tokenize($t_data_utf_8);
+      $result = 0;
+    }
+  )
 );
 
 # Run benchmarks
