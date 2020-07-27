@@ -2,6 +2,7 @@ package KorAP::XML::TEI::Header;
 use strict;
 use warnings;
 use Encode qw(encode_utf8);
+use KorAP::XML::TEI qw!escape_xml!;
 
 # Parsing of i5 header files
 
@@ -17,13 +18,6 @@ use constant {
   SIGLE     => 2
 };
 
-# convert '&', '<' and '>' into their corresponding sgml-entities
-our %ent = (
-  '"' => '&quot;',
-  '&' => '&amp;',
-  '<' => '&lt;',
-  '>' => '&gt;'
-);
 
 # convert header type to sigle type
 our %sig = (
@@ -138,13 +132,13 @@ sub id {
 
 # corpus/doc/text sigle escaped
 sub sigle_esc {
-  $_[0]->[SIGLE] =~ s/("|&|<|>)/$ent{$1}/gr;
+  escape_xml($_[0]->[SIGLE]);
 };
 
 
 # corpus/doc/text id escaped
 sub id_esc {
-  $_[0]->[SIGLE] =~ tr/\//_/r =~ s/("|&|<|>)/$ent{$1}/gr;
+  escape_xml($_[0]->[SIGLE] =~ tr/\//_/r);
 };
 
 
