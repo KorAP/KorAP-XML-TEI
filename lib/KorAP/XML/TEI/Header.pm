@@ -1,7 +1,8 @@
 package KorAP::XML::TEI::Header;
 use strict;
 use warnings;
-use Encode qw(encode_utf8);
+use Encode qw(encode decode);
+use KorAP::XML::TEI qw!escape_xml!;
 
 # Parsing of i5 header files
 
@@ -17,13 +18,6 @@ use constant {
   SIGLE     => 2
 };
 
-# convert '&', '<' and '>' into their corresponding sgml-entities
-our %ent = (
-  '"' => '&quot;',
-  '&' => '&amp;',
-  '<' => '&lt;',
-  '>' => '&gt;'
-);
 
 # convert header type to sigle type
 our %sig = (
@@ -98,10 +92,10 @@ sub parse {
       die "ERROR ($0): main(): input line number $.: line with sigle-tag is not in expected format ... => Aborting\n\tline=$_"
         if $pfx !~ /^\s*$/  || $sfx !~ m!^</$sig_type>\s*$! || $sig =~ /^\s*$/;
 
-      $self->[SIGLE] = encode_utf8($sig);
+      $self->[SIGLE] = encode('UTF-8' , $sig);
 
       # Escape sig
-      my $sig_esc = $self->sigle_esc;
+      my $sig_esc = decode('UTF-8', $self->sigle_esc);
 
       # replace sigle in header, if there's an escaped version that differs
       s!(<$sig_type(?: [^>]*)?>)[^<]+</$sig_type>!$1$sig_esc</$sig_type>! if $sig_esc ne $sig;
@@ -138,13 +132,13 @@ sub id {
 
 # corpus/doc/text sigle escaped
 sub sigle_esc {
-  $_[0]->[SIGLE] =~ s/("|&|<|>)/$ent{$1}/gr;
+  escape_xml($_[0]->[SIGLE]);
 };
 
 
 # corpus/doc/text id escaped
 sub id_esc {
-  $_[0]->[SIGLE] =~ tr/\//_/r =~ s/("|&|<|>)/$ent{$1}/gr;
+  escape_xml($_[0]->[SIGLE] =~ tr/\//_/r);
 };
 
 
@@ -173,7 +167,7 @@ HEADER
 # Write data to zip stream
 sub to_zip {
   my ($self, $zip) = @_;
-  $zip->print(encode_utf8($self->to_string));
+  $zip->print(encode('UTF-8', $self->to_string));
 };
 
 

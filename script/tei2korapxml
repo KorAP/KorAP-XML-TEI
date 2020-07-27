@@ -8,7 +8,7 @@ use Getopt::Long qw(GetOptions :config no_auto_abbrev);
 use File::Basename qw(dirname);
 
 use open qw(:std :utf8); # assume utf-8 encoding
-use Encode qw(encode_utf8 decode_utf8);
+use Encode qw(encode decode);
 
 use XML::CompactTree::XS;
 use XML::LibXML::Reader;
@@ -18,7 +18,7 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-use KorAP::XML::TEI qw'remove_xml_comments';
+use KorAP::XML::TEI qw!remove_xml_comments escape_xml!;
 use KorAP::XML::TEI::Tokenizer::External;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
@@ -135,11 +135,6 @@ my $dir;                                             # text     directory (below
 
 my ( $text_id, $text_id_esc );                       # '$text_id_esc' = escaped version of $text_id (see %ent)
 
-my %ent = ('"', '&quot;', '&','&amp;',               # convert '&', '<' and '>' into their corresponding sgml-entities
-           '<','&lt;','>','&gt;');
-                                                     # note: the index still refers to the 'single character'-versions, which are counted as 1
-                                                     #  (search for '&amp;' in data.xml and see corresponding indices in $_tokens_file)
-
 my ( $data_fl );
 
 my ( $data_prfx1, $data_prfx2, $data_sfx );          # $data_* are written to $_data_file
@@ -242,6 +237,8 @@ sub main {
 
   # prevents segfaulting of 'XML::LibXML::Reader' inside 'main()' - see notes on 'PerlIO layers' in  'man XML::LibXML')
   # removing 'use open qw(:std :utf8)' would fix this problem too, but using binmode on input is more granular
+  # see in perluniintro: You can switch encodings on an already opened stream by using "binmode()
+  # see in perlfunc: If LAYER is omitted or specified as ":raw" the filehandle is made suitable for passing binary data.
   binmode $input_fh;
 
 
@@ -345,12 +342,13 @@ sub main {
           $cons_tok->reset;
         }
 
-        $data = encode_utf8( $data );
+        # Encode and escape data
+        $data = escape_xml(encode( "UTF-8", $data ));
+        # note: the index still refers to the 'single character'-versions,
+        # which are counted as 1 (search for '&amp;' in data.xml and see
+        # corresponding indices in $_tokens_file)
 
         print STDERR "DEBUG ($0): main(): Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file\n" if $_DEBUG;
-
-
-        $data =~ s/(&|<|>)/$ent{$1}/g;
 
         $zipper->new_stream("$_root_dir$dir/$_data_file")
           ->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
@@ -474,7 +472,7 @@ sub main {
           $text_id_esc = $header->id_esc;
 
           # log output for seeing progression
-          print STDERR "$0: main(): text_id=".decode_utf8( $text_id )."\n";
+          print STDERR "$0: main(): text_id=".decode("UTF-8", $text_id )."\n";
 
           $tl = 0; # reset (needed for ~ whitespace handling ~)
         };
@@ -868,7 +866,7 @@ sub write_structures { # called from main()
 
   $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
            ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\""
-           .decode_utf8($text_id_esc)."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n";
+           .decode( "UTF-8", $text_id_esc )."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n"; # convert binary string to text string
 
   $c = 0;
 
@@ -907,7 +905,8 @@ sub write_structures { # called from main()
 
         for ( $att_idx = 1; $att_idx < $idx; $att_idx += 2 ){
 
-          ${$ref}[ $att_idx+1 ] =~ s/(&|<|>)/$ent{$1}/g; # see explanation in func. 'write_tokens'
+          # see explanation in func. 'write_tokens'
+          ${$ref}[ $att_idx+1 ] = escape_xml(${$ref}[ $att_idx+1 ]);
 
           # attribute (at index $att_idx) with value (at index $att_idx+1)
           $output .= "            <f name=\"${$ref}[ $att_idx ]\">${$ref}[ $att_idx+1 ]</f>\n";
@@ -926,7 +925,7 @@ sub write_structures { # called from main()
 
   $output .= "  </spanList>\n</layer>";
 
-  $output = encode_utf8( $output );
+  $output = encode( "UTF-8", $output ); # convert text string to binary string
 
   $zipper->new_stream("$_root_dir$dir/$_structure_dir/$_structure_file")
     ->print($output);
@@ -950,7 +949,7 @@ sub write_tokens { # called from main()
 
   $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
            ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\""
-           .decode_utf8($text_id_esc)."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n";
+           .decode( "UTF-8", $text_id_esc )."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n"; # convert binary string to text string
 
   $c = 0;
 
@@ -976,7 +975,7 @@ sub write_tokens { # called from main()
 
       for ( $att_idx = 1; $att_idx < $idx; $att_idx += 2 ){
 
-        ${$ref}[ $att_idx+1 ] =~ s/(&|<|>)/$ent{$1}/g; # ... <w lemma="&gt;" ana="PUNCTUATION">&gt;</w> ...
+        ${$ref}[ $att_idx+1 ] = escape_xml(${$ref}[ $att_idx+1 ]); # ... <w lemma="&gt;" ana="PUNCTUATION">&gt;</w> ...
                                                        # the '&gt;' is translated to '>' and hence the result would be '<f name="lemma">></f>'
 
         if ( $_INLINE_ANNOT && ${$ref}[ $att_idx ] eq "$_INLINE_ATT_RD" ){
@@ -1023,7 +1022,7 @@ sub write_tokens { # called from main()
 
   $output .= "  </spanList>\n</layer>";
 
-  $output = encode_utf8( $output );
+  $output = encode( "UTF-8", $output ); # convert text string to binary string
 
   $zipper->new_stream("$_root_dir$dir/$_tokens_dir/$_tokens_file")
     ->print($output);

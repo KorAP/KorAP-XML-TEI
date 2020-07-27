@@ -3,7 +3,15 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-our @EXPORT_OK = qw(remove_xml_comments);
+our @EXPORT_OK = qw(remove_xml_comments escape_xml);
+
+# convert '&', '<' and '>' into their corresponding sgml-entities
+my %ent = (
+  '"' => '&quot;',
+  '&' => '&amp;',
+  '<' => '&lt;',
+  '>' => '&gt;'
+);
 
 # remove xml comments
 sub remove_xml_comments {
@@ -49,9 +57,18 @@ sub remove_xml_comments {
 
     $html = <$fh>;
     goto CHECK;
-  }
+  };
 
   return $html
-}
+};
+
+
+# Escape strings using XML entities
+sub escape_xml {
+  my $data = shift // '';
+  $data =~ s/([&<>"])/$ent{$1}/ge;
+  return $data;
+};
+
 
 1;
