@@ -224,12 +224,6 @@ sub main {
 
   my ( $pfx, $sfx );
 
-  # TODO:
-  #   Replace all calls of $lc with $. or $input_fh->input_line_number,
-  #   because otherwise remove_html_comments will
-  #   move the lines forward without incrementing.
-  my $lc = 0; # line counter (only for error handling and debugging)
-
   my $tl = 0; # text line (needed for whitespace handling)
 
   $input_fh = *STDIN;  # input file handle (default: stdin)
@@ -255,8 +249,6 @@ sub main {
 
   while ( <$input_fh> ){
 
-    $lc++; # line counter
-
     # TODO: yet not tested fo big amounts of data
     # must-have, otherwise comments in input could be fatal (e.g.: ...<!--\n<idsHeader...\n-->...)
     remove_xml_comments( $input_fh, $_ ); # remove HTML comments (<!--...-->)
@@ -271,7 +263,7 @@ sub main {
 
       $pfx = $1; $sfx = $2;
 
-      die "ERROR ($0): main(): input line number $lc: line with closing text-body tag '${_TEXT_BODY}'"
+      die "ERROR ($0): main(): input line number $.: line with closing text-body tag '${_TEXT_BODY}'"
         ." contains additional information ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
 
@@ -457,7 +449,7 @@ sub main {
 
       $data_fl = 1;
 
-      die "ERROR ($0): main(): input line number $lc: line with opening text-body tag '${_TEXT_BODY}'"
+      die "ERROR ($0): main(): input line number $.: line with opening text-body tag '${_TEXT_BODY}'"
         ." contains additional information ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
 
@@ -467,7 +459,7 @@ sub main {
       $pfx = $1;
       my $content = "$2\n";
 
-      die "ERROR ($0): main(): input line number $lc: line with opening header tag"
+      die "ERROR ($0): main(): input line number $.: line with opening header tag"
         ." is not in expected format ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/;
 
