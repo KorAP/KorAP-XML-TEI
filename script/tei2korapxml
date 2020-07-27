@@ -23,6 +23,7 @@ use KorAP::XML::TEI::Tokenizer::External;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
 use KorAP::XML::TEI::Zipper;
+use KorAP::XML::TEI::Header;
 
 our $VERSION = '0.01';
 
@@ -55,15 +56,6 @@ GetOptions(
 #
 # ~~~ parameter (mandatory) ~~~
 #
-
- # optional
-my $_CORP_SIGLE       = "korpusSigle";                 # opening and closing tags (without attributes) have to be in one line
-                                                       #  (e.g.: <korpusSigle>GOE</korpusSigle>)
- # optional
-my $_DOC_SIGLE        = "dokumentSigle";               # analog
- # mandatory
-my $_TEXT_SIGLE       = "textSigle";                   # analog
- # mandatory
 my $_TEXT_BODY        = "text";                        # tag (without attributes), which contains the primary text
  # optional
 my $_CORP_HEADER_BEG  = "idsHeader type=\"corpus\"";   # just keep the correct order of the attributes and evtl. add an '.*' between them
@@ -140,8 +132,6 @@ my $buf_in;                                          # text body data extracted 
 my $data;                                            # contains the primary text (created by func. 'retr_info' from $buf_in), which is written to '$data_file'
 
 my $dir;                                             # text     directory (below $_root_dir)
-my $dir_crp;                                         # corpus   directory (below $_root_dir)
-my $dir_doc;                                         # document directory (below $_root_dir)
 
 my ( $text_id, $text_id_esc );                       # '$text_id_esc' = escaped version of $text_id (see %ent)
 
@@ -150,15 +140,10 @@ my %ent = ('"', '&quot;', '&','&amp;',               # convert '&', '<' and '>' 
                                                      # note: the index still refers to the 'single character'-versions, which are counted as 1
                                                      #  (search for '&amp;' in data.xml and see corresponding indices in $_tokens_file)
 
-my $header_txt;                                      # raw text     header (written to '$_root_dir$dir/$_header_file')
-my $header_doc;                                      # raw document header (written to '$_root_dir$dir_doc/$_header_file')
-my $header_crp;                                      # raw corpus   header (written to '$_root_dir$dir_crp/$_header_file')
+my ( $data_fl );
 
-my ( $header_fl_crp, $header_fl_doc,                 # flags for tracking where we are in the input document
-     $header_fl_txt, $data_fl );
+my ( $data_prfx1, $data_prfx2, $data_sfx );          # $data_* are written to $_data_file
 
-my ( $header_prfx, $data_prfx1,                      # $header_prfx is written to $_header_file, $data_* are written to $_data_file
-     $data_prfx2, $data_sfx );
 
 my @structures;                                      # list of arrays, where each array represents a TEI I5 tag (except $_TOKENS_TAG) from the input document
                                                      #  - the input of this array is written in func. 'write_structures' into the file '$_structure_file'
@@ -193,8 +178,6 @@ my $output;                                          # temporary variable needed
 
 my ( $i, $c );                                       # index variables used in loops
 
-my ( $_CORP_HEADER_END, $_DOC_HEADER_END, $_TEXT_HEADER_END );
-
 
 #
 # ~~~ main ~~~
@@ -204,9 +187,7 @@ my ( $_CORP_HEADER_END, $_DOC_HEADER_END, $_TEXT_HEADER_END );
 
 ($_XCT_LN)?($_IDX=5):($_IDX=4);
 
-$header_prfx = $data_prfx1 = $data_prfx2 = $data_sfx = "";
-
-$header_fl_txt = $header_fl_doc = $header_fl_crp = 0;
+$data_prfx1 = $data_prfx2 = $data_sfx = "";
 
 $inside_tokens_tag = -1;
 
@@ -214,16 +195,6 @@ $fval = $fval2 = 0;
 
 $_root_dir .= '/'; # base dir must always end with a slash
 $_root_dir =~ s/^\.?\///; # remove leading / (only relative paths allowed in IO::Compress::Zip) and redundant ./
-
-$_CORP_HEADER_BEG =~ s#^([^\s]+)(.*)$#$1\[\^>\]*$2#; $_CORP_HEADER_END  = $1;
-$_DOC_HEADER_BEG  =~ s#^([^\s]+)(.*)$#$1\[\^>\]*$2#; $_DOC_HEADER_END   = $1;
-$_TEXT_HEADER_BEG =~ s#^([^\s]+)(.*)$#$1\[\^>\]*$2#; $_TEXT_HEADER_END  = $1;
-
-## TODO: remove this, because it's IDS-specific
-$header_prfx  = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-$header_prfx .= "<?xml-model href=\"header.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n";
-$header_prfx .= "<!DOCTYPE idsCorpus PUBLIC \"-//IDS//DTD IDS-XCES 1.0//EN\" \"http://corpora.ids-mannheim.de/idsxces1/DTD/ids.xcesdoc.dtd\">\n";
-##
 
 $data_prfx1   = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 $data_prfx1  .= "<?xml-model href=\"text.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n";
@@ -261,8 +232,7 @@ sub main {
 
   $data_fl = 0;
 
-  $buf_in = $data = $dir = $dir_doc = $dir_crp = "";
-  $header_txt = $header_doc = $header_crp = "";
+  $buf_in = $data = $dir = "";
 
 
   if ( $input_fname ne '' ){
@@ -412,7 +382,7 @@ sub main {
       } else { # $dir eq ""
 
         print STDERR "WARNING ($0): main(): maybe empty textSigle => skipping this text ...\n";
-        print STDERR "WARNING ($0): main(): text header=$header_txt\n";
+        # print STDERR "WARNING ($0): main(): text header=$header_txt\n";
         print STDERR "WARNING ($0): main(): data=$data\n";
       }
 
@@ -469,151 +439,9 @@ sub main {
       # add line to buffer
       $buf_in .= $_;
 
-    } elsif ( $header_fl_txt && m#^(.*</${_TEXT_HEADER_END}>)(.*)$# ){
-
-
-      # ~ end of text header ~
-
-
-      #print STDERR "end of text header\n";
-
-      # write it to header.xml
-
-      $sfx = $2;
-
-      $header_txt .= $1; $header_fl_txt = 0;
-
-
-      die "ERROR ($0): main(): input line number $lc: line with closing text-header tag '${_TEXT_HEADER_END}'"
-       ." contains additional information ... => Aborting\n\tline=$_"
-         if $sfx !~ /^\s*$/;
-
-      if ( $dir eq "" ){
-
-        print STDERR "WARNING ($0): main(): input line number $lc: empty textSigle in text header => nothing to do ...\ntext header=$header_txt\n";
-
-      } else {
-
-        print STDERR "DEBUG ($0): Writing file $_root_dir$dir/$_header_file\n" if $_DEBUG;
-
-        $header_txt = encode_utf8( $header_txt );
-
-        $zipper->new_stream("$_root_dir$dir/$_header_file")
-          ->print("$header_prfx$header_txt");
-
-        $header_txt = "";
-      }
-
-    } elsif ( $header_fl_txt ){
-
-      # ~ inside text header ~
-
-
-      #print STDERR "inside text header\n";
-
-      if( m#^(.*)<${_TEXT_SIGLE}(?: [^>]*)?>([^<]*)(.*)$# ){
-
-        $pfx = $1; $sfx = $3;
-
-        $dir = $2; $text_id = $dir;
-
-        $text_id =~ tr/\//_/; $dir =~ s/("|&|<|>)/$ent{$1}/g;
-
-        $text_id = encode_utf8( $text_id );
-
-        die "ERROR ($0): main(): input line number $lc: line with text-sigle tag '$_TEXT_SIGLE' is not in expected format ... => Aborting\n\tline=$_"
-          if $pfx !~ /^\s*$/  || $sfx !~ m#^</${_TEXT_SIGLE}>\s*$# || $dir =~ /^\s*$/;
-
-        # log output for seeing progression
-        print STDERR "$0: main(): text_id=".decode_utf8( $text_id )."\n";
-
-        $text_id_esc = $text_id;
-
-        s#(<${_TEXT_SIGLE}(?: [^>]*)?>)[^<]+(</${_TEXT_SIGLE}>)#$1$dir$2# # to be consistent with escaping, escape also textSigle in text-header
-          if $text_id_esc =~ s/("|&|<|>)/$ent{$1}/g;
-
-        $dir =~ tr/\./\//;
-      }
-
-      $header_txt .= $_;
-
-    } elsif ( $header_fl_doc && m#^(.*</${_DOC_HEADER_END}>)(.*)$# ){
-
-
-      # ~ end of document header ~
-
-      #print STDERR "end of doc header\n";
-
-      # write it to header.xml
-
-      $sfx = $2;
-
-      $header_doc .= $1; $header_fl_doc = 0;
-
-      die "ERROR ($0): main(): input line number $lc: line with closing document-header tag '${_DOC_HEADER_END}'"
-       ." contains additional information ... => Aborting\n\tline=$_"
-         if $sfx !~ /^\s*$/;
-
-      if( $dir_doc eq "" ){
-
-        print STDERR "WARNING ($0): main(): input line number $lc: empty document sigle in document header"
-          ." => nothing to do ...\ndocument header=$header_doc\n";
-
-      } else {
-
-        print STDERR "DEBUG ($0): Writing file $_root_dir$dir_doc/$_header_file\n" if $_DEBUG;
-
-        $header_doc = encode_utf8( $header_doc );
-
-        $zipper->new_stream("$_root_dir$dir_doc/$_header_file")
-          ->print("$header_prfx$header_doc");
-
-        $header_doc = $dir_doc = "";
-      }
-
-    } elsif ( $header_fl_doc ){
-
-
-      # ~ inside document header ~
-
-
-      #print STDERR "inside doc header\n";
-
-      if ( m#^(.*)<${_DOC_SIGLE}(?: [^>]*)?>([^<]*)(.*)$# ){
-
-        $pfx = $1; $sfx = $3;
-
-        $dir_doc = $2;
-
-        die "ERROR ($0): main(): input line number $lc: line with document-sigle tag '$_DOC_SIGLE' is not in expected format ... => Aborting\n\tline=$_"
-          if $pfx !~ /^\s*$/  || $sfx !~ m#^</${_DOC_SIGLE}>\s*$# || $dir_doc =~ /^\s*$/;
-
-        s#(<${_DOC_SIGLE}(?: [^>]*)?>)[^<]+(</${_DOC_SIGLE}>)#$1$dir_doc$2# # to be consistent with escaping, escape also textSigle in Document-Header
-          if $dir_doc =~ s/("|&|<|>)/$ent{$1}/g;
-      }
-
-      $header_doc .= $_;
-
-    } elsif ( m#^(.*)(<${_TEXT_HEADER_BEG}.*)$# ){
-
-      # ~ start of text header ~
-
-
-      #print STDERR "begin of text header\n";
-
-      $header_txt = $_; $header_fl_txt = 1; $pfx = $1;
-
-      $tl = 0; # reset (needed for ~ whitespace handling ~)
-
-      die "ERROR ($0): main(): input line number $lc: line with opening text-header tag '${_TEXT_HEADER_BEG}'"
-        ." is not in expected format ... => Aborting\n\tline=$_"
-          if $pfx !~ /^\s*$/;
-
     } elsif ( m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$# ){
 
-
       # ~ start of text body ~
-
 
       #print STDERR "inside text body\n";
 
@@ -625,92 +453,44 @@ sub main {
         ." contains additional information ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
 
-    } elsif ( m#^(.*)(<${_DOC_HEADER_BEG}.*)$# ){
+    } elsif ( m#^(.*)(<(?:${_TEXT_HEADER_BEG}|${_DOC_HEADER_BEG}|${_CORP_HEADER_BEG}).*)$# ){
 
+      # ~ start of header ~
+      $pfx = $1;
+      my $content = "$2\n";
 
-      # ~ start of document header ~
-
-
-      #print STDERR "begin of doc header\n";
-
-      $header_doc = "$2\n"; $header_fl_doc = 1; $pfx = $1;
-
-      die "ERROR ($0): main(): input line number $lc: line with opening document-header tag '${_DOC_HEADER_BEG}'"
-        ."is not in expected format ... => Aborting\n\tline=$_"
-          if $pfx !~ /^\s*$/;
-
-    } elsif ( $header_fl_crp && m#^(.*</${_CORP_HEADER_END}>)(.*)$# ){
-
-
-      # ~ end of corpus header ~
-
-
-      #print STDERR "end of corp header\n";
-
-      $sfx = $2;
-
-      $header_crp .= $1; $header_fl_crp = 0;
-
-      die "ERROR ($0): main(): input line number $lc: line with closing corpus-header tag '${_CORP_HEADER_END}'"
-        ." contains additional information ... => Aborting\n\tline=$_"
-          if $sfx !~ /^\s*$/;
-
-      if ( $dir_crp eq "" ){
-
-        print STDERR "WARNING ($0): main(): input line number $lc: empty corpus sigle in corpus header => nothing to do ...\ncorpus header=$header_crp\n";
-
-      } else {
-
-        print STDERR "DEBUG ($0): Writing file $_root_dir$dir_crp/$_header_file\n" if $_DEBUG;
-
-        $header_crp = encode_utf8( $header_crp );
-
-        $zipper->new_stream("$_root_dir$dir_crp/$_header_file")
-          ->print("$header_prfx$header_crp");
-
-        $header_crp = $dir_crp = "";
-      }
-
-    } elsif ( $header_fl_crp ){
-
-
-      # ~ inside corpus header ~
-
-
-      #print STDERR "inside corp header\n";
-
-      if ( m#^(.*)<${_CORP_SIGLE}(?: [^>]*)?>([^<]*)(.*)$# ){
-
-        $pfx = $1; $sfx = $3;
-
-        $dir_crp = $2;
-
-        die "ERROR ($0): main(): input line number $lc: line with korpusSigle-tag is not in expected format ... => Aborting\n\tline=$_"
-          if $pfx !~ /^\s*$/  || $sfx !~ m#^</${_CORP_SIGLE}>\s*$# || $dir_crp =~ /^\s*$/;
-
-        if ( $dir_crp =~ s/("|&|<|>)/$ent{$1}/g ){
-
-          s#(<${_CORP_SIGLE}(?: [^>]*)?>)[^<]+(</${_CORP_SIGLE}>)#$1$dir_crp$2# # to be consistent with escaping, escape also textSigle in Corpus-Header
-        }
-      }
-
-      $header_crp .= $_;
-
-    } elsif ( m#^(.*)(<${_CORP_HEADER_BEG}.*)$# ){
-
-
-      # ~ start of corpus header ~
-
-
-      #print STDERR "begin of corp header\n";
-
-      $header_crp = $2; $header_fl_crp = 1; $pfx = $1;
-
-      die "ERROR ($0): main(): input line number $lc: line with opening corpus-header tag '${_CORP_HEADER_BEG}'"
+      die "ERROR ($0): main(): input line number $lc: line with opening header tag"
         ." is not in expected format ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/;
-    }
 
+      # Parse header
+      my $header = KorAP::XML::TEI::Header->new($content)->parse($input_fh);
+
+      # Header was parseable
+      if ($header) {
+
+        # Write header to zip
+        my $file = $_root_dir . $header->dir . '/' . $_header_file;
+
+        print STDERR "DEBUG ($0): Writing file $file\n" if $_DEBUG;
+
+        $header->to_zip($zipper->new_stream($file));
+
+        # Header is for text level
+        if ($header->type eq 'text') {
+
+          # Remember dir and sigles
+          $dir         = $header->dir;
+          $text_id     = $header->id;
+          $text_id_esc = $header->id_esc;
+
+          # log output for seeing progression
+          print STDERR "$0: main(): text_id=".decode_utf8( $text_id )."\n";
+
+          $tl = 0; # reset (needed for ~ whitespace handling ~)
+        };
+      }
+    }
   } #end: while
 
   $zipper->close;
