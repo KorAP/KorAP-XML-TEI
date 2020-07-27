@@ -249,12 +249,6 @@ sub main {
 
   my ( $pfx, $sfx );
 
-  # TODO:
-  #   Replace all calls of $lc with $. or $input_fh->input_line_number,
-  #   because otherwise remove_html_comments will
-  #   move the lines forward without incrementing.
-  my $lc = 0; # line counter (only for error handling and debugging)
-
   my $tl = 0; # text line (needed for whitespace handling)
 
   $input_fh = *STDIN;  # input file handle (default: stdin)
@@ -281,8 +275,6 @@ sub main {
 
   while ( <$input_fh> ){
 
-    $lc++; # line counter
-
     # TODO: yet not tested fo big amounts of data
     # must-have, otherwise comments in input could be fatal (e.g.: ...<!--\n<idsHeader...\n-->...)
     remove_xml_comments( $input_fh, $_ ); # remove HTML comments (<!--...-->)
@@ -297,7 +289,7 @@ sub main {
 
       $pfx = $1; $sfx = $2;
 
-      die "ERROR ($0): main(): input line number $lc: line with closing text-body tag '${_TEXT_BODY}'"
+      die "ERROR ($0): main(): input line number $.: line with closing text-body tag '${_TEXT_BODY}'"
         ." contains additional information ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
 
@@ -484,13 +476,13 @@ sub main {
       $header_txt .= $1; $header_fl_txt = 0;
 
 
-      die "ERROR ($0): main(): input line number $lc: line with closing text-header tag '${_TEXT_HEADER_END}'"
+      die "ERROR ($0): main(): input line number $.: line with closing text-header tag '${_TEXT_HEADER_END}'"
        ." contains additional information ... => Aborting\n\tline=$_"
          if $sfx !~ /^\s*$/;
 
       if ( $dir eq "" ){
 
-        print STDERR "WARNING ($0): main(): input line number $lc: empty textSigle in text header => nothing to do ...\ntext header=$header_txt\n";
+        print STDERR "WARNING ($0): main(): input line number $.: empty textSigle in text header => nothing to do ...\ntext header=$header_txt\n";
 
       } else {
 
@@ -521,7 +513,7 @@ sub main {
 
         $text_id = encode_utf8( $text_id );
 
-        die "ERROR ($0): main(): input line number $lc: line with text-sigle tag '$_TEXT_SIGLE' is not in expected format ... => Aborting\n\tline=$_"
+        die "ERROR ($0): main(): input line number $.: line with text-sigle tag '$_TEXT_SIGLE' is not in expected format ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/  || $sfx !~ m#^</${_TEXT_SIGLE}>\s*$# || $dir =~ /^\s*$/;
 
         # log output for seeing progression
@@ -550,13 +542,13 @@ sub main {
 
       $header_doc .= $1; $header_fl_doc = 0;
 
-      die "ERROR ($0): main(): input line number $lc: line with closing document-header tag '${_DOC_HEADER_END}'"
+      die "ERROR ($0): main(): input line number $.: line with closing document-header tag '${_DOC_HEADER_END}'"
        ." contains additional information ... => Aborting\n\tline=$_"
          if $sfx !~ /^\s*$/;
 
       if( $dir_doc eq "" ){
 
-        print STDERR "WARNING ($0): main(): input line number $lc: empty document sigle in document header"
+        print STDERR "WARNING ($0): main(): input line number $.: empty document sigle in document header"
           ." => nothing to do ...\ndocument header=$header_doc\n";
 
       } else {
@@ -585,7 +577,7 @@ sub main {
 
         $dir_doc = $2;
 
-        die "ERROR ($0): main(): input line number $lc: line with document-sigle tag '$_DOC_SIGLE' is not in expected format ... => Aborting\n\tline=$_"
+        die "ERROR ($0): main(): input line number $.: line with document-sigle tag '$_DOC_SIGLE' is not in expected format ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/  || $sfx !~ m#^</${_DOC_SIGLE}>\s*$# || $dir_doc =~ /^\s*$/;
 
         s#(<${_DOC_SIGLE}(?: [^>]*)?>)[^<]+(</${_DOC_SIGLE}>)#$1$dir_doc$2# # to be consistent with escaping, escape also textSigle in Document-Header
@@ -605,7 +597,7 @@ sub main {
 
       $tl = 0; # reset (needed for ~ whitespace handling ~)
 
-      die "ERROR ($0): main(): input line number $lc: line with opening text-header tag '${_TEXT_HEADER_BEG}'"
+      die "ERROR ($0): main(): input line number $.: line with opening text-header tag '${_TEXT_HEADER_BEG}'"
         ." is not in expected format ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/;
 
@@ -621,7 +613,7 @@ sub main {
 
       $data_fl = 1;
 
-      die "ERROR ($0): main(): input line number $lc: line with opening text-body tag '${_TEXT_BODY}'"
+      die "ERROR ($0): main(): input line number $.: line with opening text-body tag '${_TEXT_BODY}'"
         ." contains additional information ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
 
@@ -635,7 +627,7 @@ sub main {
 
       $header_doc = "$2\n"; $header_fl_doc = 1; $pfx = $1;
 
-      die "ERROR ($0): main(): input line number $lc: line with opening document-header tag '${_DOC_HEADER_BEG}'"
+      die "ERROR ($0): main(): input line number $.: line with opening document-header tag '${_DOC_HEADER_BEG}'"
         ."is not in expected format ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/;
 
@@ -651,13 +643,13 @@ sub main {
 
       $header_crp .= $1; $header_fl_crp = 0;
 
-      die "ERROR ($0): main(): input line number $lc: line with closing corpus-header tag '${_CORP_HEADER_END}'"
+      die "ERROR ($0): main(): input line number $.: line with closing corpus-header tag '${_CORP_HEADER_END}'"
         ." contains additional information ... => Aborting\n\tline=$_"
           if $sfx !~ /^\s*$/;
 
       if ( $dir_crp eq "" ){
 
-        print STDERR "WARNING ($0): main(): input line number $lc: empty corpus sigle in corpus header => nothing to do ...\ncorpus header=$header_crp\n";
+        print STDERR "WARNING ($0): main(): input line number $.: empty corpus sigle in corpus header => nothing to do ...\ncorpus header=$header_crp\n";
 
       } else {
 
@@ -685,7 +677,7 @@ sub main {
 
         $dir_crp = $2;
 
-        die "ERROR ($0): main(): input line number $lc: line with korpusSigle-tag is not in expected format ... => Aborting\n\tline=$_"
+        die "ERROR ($0): main(): input line number $.: line with korpusSigle-tag is not in expected format ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/  || $sfx !~ m#^</${_CORP_SIGLE}>\s*$# || $dir_crp =~ /^\s*$/;
 
         if ( $dir_crp =~ s/("|&|<|>)/$ent{$1}/g ){
@@ -706,7 +698,7 @@ sub main {
 
       $header_crp = $2; $header_fl_crp = 1; $pfx = $1;
 
-      die "ERROR ($0): main(): input line number $lc: line with opening corpus-header tag '${_CORP_HEADER_BEG}'"
+      die "ERROR ($0): main(): input line number $.: line with opening corpus-header tag '${_CORP_HEADER_BEG}'"
         ." is not in expected format ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/;
     }
