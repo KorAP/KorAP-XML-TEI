@@ -22,6 +22,30 @@
       "revId": "b0bc89b5b47a177259517c865fc467bcacfd53c0",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2383c396_5b8b962d",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 6
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-27T16:16:58Z",
+      "side": 1,
+      "message": "Where all 3 variables are first used/declared (see above), there\u0027s only one blank between \u0027idsHeader\u0027 and \u0027type\u0027.\nThe intention was, to let the user specify the necessary attributes in the correct order and use a single blank as seperator.\nAs there could be other attributes, which where not specified by the user (because they\u0027re not relevant), the expression \u0027[^\u003e]*\u0027 should be inserted, to take that into account.\nSo far, the 3 lines only work for one attribute (here: \u0027type\u0027), but without them \u0027type\u0027 would be forced, to be the first one.",
+      "parentUuid": "83a3a04b_6f84199d",
+      "range": {
+        "startLine": 199,
+        "startChar": 0,
+        "endLine": 201,
+        "endChar": 52
+      },
+      "revId": "b0bc89b5b47a177259517c865fc467bcacfd53c0",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
     }
   ]
 }
