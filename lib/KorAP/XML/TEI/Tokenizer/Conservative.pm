@@ -32,7 +32,7 @@ sub tokenize {
     $self->_add_surroundings($txt, $-[3], $+[3]) if $3;
   };
 
-  return
+  return $self;
 };
 
 

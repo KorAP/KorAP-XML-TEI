@@ -317,16 +317,32 @@ sub main {
         #
 
 
+        # ~ tokenization ~
+
         if ( $_GEN_TOK_EXT ){
 
-          $ext_tok->tokenize($data);
+          $ext_tok->tokenize($data)->to_zip(
+            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
+            $text_id_esc
+          );
 
         }
 
         if ( $_GEN_TOK_INT ){
 
-          $cons_tok->tokenize($data);
-          $aggr_tok->tokenize($data);
+          # Tokenize and output
+          $cons_tok->tokenize($data)->to_zip(
+            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_con"),
+            $text_id_esc
+          );
+
+          $aggr_tok->tokenize($data)->to_zip(
+            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_agg"),
+            $text_id_esc
+          );
+
+          $aggr_tok->reset;
+          $cons_tok->reset;
         }
 
         $data = encode_utf8( $data );
@@ -347,33 +363,6 @@ sub main {
         # ~ write tokens ~
 
         write_tokens() if $_TOKENS_PROC && @tokens;
-
-
-        # ~ tokenization ~
-
-        if ( $_GEN_TOK_EXT ) {
-
-          $ext_tok->to_zip(
-            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
-            $text_id_esc
-          )
-
-        }
-
-        if ( $_GEN_TOK_INT ){
-
-          # Output token streams to zip streams
-          $cons_tok->to_zip(
-            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_con"),
-            $text_id_esc
-          );
-          $aggr_tok->to_zip(
-            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_agg"),
-            $text_id_esc
-          );
-          $aggr_tok->reset;
-          $cons_tok->reset;
-        }
 
         #print STDERR "$0: write_tokenization(): DONE\n";
 
