@@ -58,6 +58,7 @@ sub tokenize {
   return unless $self->{pid};
   my $out = $self->{chld_in};
   print $out $txt . $self->{sep};
+  return $self;
 };
 
 

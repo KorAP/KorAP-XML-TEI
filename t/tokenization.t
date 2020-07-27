@@ -21,6 +21,12 @@ is_deeply($aggr, [0,3,4,8,9,13]);
 $aggr->reset->tokenize("Der alte bzw. der grau-melierte Mann");
 is_deeply($aggr, [0,3,4,8,9,12,12,13,14,17,18,22,22,23,23,31,32,36]);
 
+like(
+  $aggr->reset->tokenize("Der")->to_string('a'),
+  qr!id="t_0"!,
+  'Chainable'
+);
+
 # Test conservative
 my $cons = KorAP::XML::TEI::Tokenizer::Conservative->new;
 $cons->tokenize("Der alte Mann");
