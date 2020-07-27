@@ -46,6 +46,30 @@
       "revId": "b0bc89b5b47a177259517c865fc467bcacfd53c0",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37c7bdff_ce69043d",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 6
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-27T16:28:32Z",
+      "side": 1,
+      "message": "Ah - okay. 👍 I didn\u0027t consider the `$_*_HEADER_BEG` variables as user definable. I added a test to check for support of attributes between idsHeader and type.",
+      "parentUuid": "2383c396_5b8b962d",
+      "range": {
+        "startLine": 199,
+        "startChar": 0,
+        "endLine": 201,
+        "endChar": 52
+      },
+      "revId": "b0bc89b5b47a177259517c865fc467bcacfd53c0",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
     }
   ]
 }
