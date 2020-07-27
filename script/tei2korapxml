@@ -18,7 +18,7 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-use KorAP::XML::TEI qw'remove_xml_comments';
+use KorAP::XML::TEI qw!remove_xml_comments escape_xml!;
 use KorAP::XML::TEI::Tokenizer::External;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
@@ -135,11 +135,6 @@ my $data;                                            # contains the primary text
 my $dir;                                             # text     directory (below $_root_dir)
 
 my ( $text_id, $text_id_esc );                       # '$text_id_esc' = escaped version of $text_id (see %ent)
-
-my %ent = ('"', '&quot;', '&','&amp;',               # convert '&', '<' and '>' into their corresponding sgml-entities
-           '<','&lt;','>','&gt;');
-                                                     # note: the index still refers to the 'single character'-versions, which are counted as 1
-                                                     #  (search for '&amp;' in data.xml and see corresponding indices in $_tokens_file)
 
 my ( $data_fl );
 
@@ -348,12 +343,13 @@ sub main {
           $cons_tok->reset;
         }
 
+        # Encode and escape data
+        $data = escape_xml(encode( "UTF-8", $data ));
+        # note: the index still refers to the 'single character'-versions,
+        # which are counted as 1 (search for '&amp;' in data.xml and see
+        # corresponding indices in $_tokens_file)
+
         print STDERR "DEBUG ($0): main(): Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file\n" if $_DEBUG;
-
-        $data =~ s/(&|<|>)/$ent{$1}/g;
-
-        # convert text strings to binary strings
-        $data        = encode( "UTF-8", $data );
 
         $zipper->new_stream("$_root_dir$dir/$_data_file")
           ->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
@@ -910,7 +906,8 @@ sub write_structures { # called from main()
 
         for ( $att_idx = 1; $att_idx < $idx; $att_idx += 2 ){
 
-          ${$ref}[ $att_idx+1 ] =~ s/(&|<|>)/$ent{$1}/g; # see explanation in func. 'write_tokens'
+          # see explanation in func. 'write_tokens'
+          ${$ref}[ $att_idx+1 ] = escape_xml(${$ref}[ $att_idx+1 ]);
 
           # attribute (at index $att_idx) with value (at index $att_idx+1)
           $output .= "            <f name=\"${$ref}[ $att_idx ]\">${$ref}[ $att_idx+1 ]</f>\n";
@@ -979,7 +976,7 @@ sub write_tokens { # called from main()
 
       for ( $att_idx = 1; $att_idx < $idx; $att_idx += 2 ){
 
-        ${$ref}[ $att_idx+1 ] =~ s/(&|<|>)/$ent{$1}/g; # ... <w lemma="&gt;" ana="PUNCTUATION">&gt;</w> ...
+        ${$ref}[ $att_idx+1 ] = escape_xml(${$ref}[ $att_idx+1 ]); # ... <w lemma="&gt;" ana="PUNCTUATION">&gt;</w> ...
                                                        # the '&gt;' is translated to '>' and hence the result would be '<f name="lemma">></f>'
 
         if ( $_INLINE_ANNOT && ${$ref}[ $att_idx ] eq "$_INLINE_ATT_RD" ){
