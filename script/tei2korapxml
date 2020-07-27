@@ -1126,9 +1126,9 @@ Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
 
 =over 2
 
-=item B<--base|-b>
+=item B<--root|-r>
 
-The base directory for output. Defaults to C<.>.
+The root directory for output. Defaults to C<.>.
 
 =item B<--help|-h>
 
@@ -1137,6 +1137,17 @@ Print help information.
 =item B<--version|-v>
 
 Print version information.
+
+=item B<--tokenizer-call|-tc>
+
+Call an external tokenizer process, that will tokenize
+a single line from STDIN and outputs one token per line.
+
+=item B<--use-intern-tokenization|-ti>
+
+Tokenize the data using two embedded tokenizers,
+that will take an I<Aggressive> and a I<conservative>
+approach.
 
 =back
 
