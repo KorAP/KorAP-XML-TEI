@@ -37,7 +37,7 @@ sub tokenize {
     };
   };
 
-  return;
+  return $self;
 };
 
 
