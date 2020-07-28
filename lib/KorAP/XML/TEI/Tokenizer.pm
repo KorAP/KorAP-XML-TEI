@@ -24,6 +24,11 @@ sub boundaries {
 };
 
 
+# Check if no tokens are stored
+sub empty {
+  return @{$_[0]} > 0 ? 0 : 1
+};
+
 # Return data as a string
 sub to_string {
   my ($self, $text_id) = @_;
