@@ -459,5 +459,41 @@ subtest 'Check Inline annotations' => sub {
     ;
 };
 
+subtest 'Check Inline annotations with untagged file' => sub {
+
+  # Load example file
+  my $file = catfile($f, 'data', 'goe_sample.i5.xml');
+
+  my ($fh, $outzip) = korap_tempfile('script_untagged');
+
+  # Generate zip file (unportable!)
+  stderr_like(
+    sub { `cat '$file' | KORAPXMLTEI_INLINE=1 perl '$script' > '$outzip'` },
+    qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!,
+    'Processing 1'
+  );
+
+  # TODO: there should be a better way to test this
+  stderr_unlike(
+    sub { `cat '$file' | KORAPXMLTEI_INLINE=1 perl '$script' > '$outzip'` },
+    qr!.*undefined value.*!,
+    'Processing 2'
+  );
+  #
+
+  ok(-e $outzip, "File $outzip exists");
+
+  my $zip = IO::Uncompress::Unzip->new(
+    $outzip,
+    Name => 'GOE/AGA/00000/tokens/morpho.xml'
+  );
+  ok((not $zip), 'missing morpho.xml');
+
+  $zip = IO::Uncompress::Unzip->new(
+    $outzip,
+    Name => 'GOE/AGA/00000/struct/structure.xml'
+  );
+  ok($zip, 'found structure.xml');
+};
 
 done_testing;

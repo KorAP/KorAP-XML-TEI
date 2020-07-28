@@ -22,6 +22,7 @@ use KorAP::XML::TEI qw!remove_xml_comments escape_xml!;
 use KorAP::XML::TEI::Tokenizer::External;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
+use KorAP::XML::TEI::Tokenizer::Collector;
 use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
 
@@ -64,7 +65,7 @@ my $_CORP_HEADER_BEG  = "idsHeader type=\"corpus\"";   # just keep the correct o
 my $_DOC_HEADER_BEG   = "idsHeader type=\"document\""; # analog
  # mandatory
 my $_TEXT_HEADER_BEG  = "idsHeader type=\"text\"";     # analog
-  
+
 #
 # ~~~ constants ~~~
 #
@@ -110,6 +111,9 @@ my $_TOKENS_TAG      = "w";                          # name of tag        contai
 ## TODO: optional
 # handling inline annotations (inside $_TOKENS_TAG)
 my $_INLINE_ANNOT    = $ENV{KORAPXMLTEI_INLINE}?1:0; # on/off: set to 1 if inline annotations are present and should be processed (default: 0)
+
+# TODO:
+#   These parameters are now defunct and moved to Token.pm
 my $_INLINE_LEM_RD   = "lemma";                      # from which attribute to read LEMMA information
 my $_INLINE_ATT_RD   = "ana";                        # from which attribute to read POS information (and evtl. additional MSD - Morphosyntactic Descriptions)
                                                      # TODO: The format for the POS and MSD information has to suffice the regular expression ([^ ]+)( (.+))?
@@ -124,6 +128,10 @@ my $_INLINE_LEM_WR   = "lemma";                      # name (inside $_tokens_fil
 #
 # ~~~ variables ~~~
 #
+
+# Initialize Token-Collector
+my $tokens = KorAP::XML::TEI::Tokenizer::Collector->new;
+
 
 # Initialize zipper
 my $zipper = KorAP::XML::TEI::Zipper->new;
@@ -144,10 +152,7 @@ my ( $data_prfx1, $data_prfx2, $data_sfx );          # $data_* are written to $_
 my @structures;                                      # list of arrays, where each array represents a TEI I5 tag (except $_TOKENS_TAG) from the input document
                                                      #  - the input of this array is written in func. 'write_structures' into the file '$_structure_file'
 
-my @tokens;                                          # list of arrays, where each array represents a $_TOKENS_TAG from the input document
-                                                     #  - the input of this array is written in func. 'write_tokens' into the file '$_tokens_file'
-
-my ( $ref, $idx, $att_idx );                         # needed in func. 'write_structures' and 'write_tokens'
+my ( $ref, $idx, $att_idx );                         # needed in func. 'write_structures'
 
 my ( $reader,                                        # instance of 'XML::LibXML::Reader->new' (on input '$buf_in')
      $tree_data );                                   # instance of 'XML::CompactTree::XS::readSubtreeToPerl' (on input '$reader')
@@ -160,7 +165,6 @@ my ( $_IDX,                                          # value is set dependent on
      $dl,                                            # actual length of string $data
      @oti,                                           # oti='open tags indizes' - a stack of indizes into @structures, where the top index in @oti
                                                      #                            represents the actual processed element from @structures
-     @oti2,                                          # analogously to @oti, but with reference to array @tokens
      $inside_tokens_tag,                             # flag is set, when inside $_TOKENS_TAG
      ## variables for handling ~ whitespace related issue ~ (it is sometimes necessary, to correct the from-values for some tags)
      $add_one,                                       # ...
@@ -290,7 +294,7 @@ sub main {
         @structures = (); @oti = ();
 
         if ( $_TOKENS_PROC ){
-          @tokens = (); @oti2 = ()
+          $tokens->reset;
         }
 
         $dl = $rl = 0;
@@ -319,12 +323,12 @@ sub main {
 
         if ( $_GEN_TOK_EXT ){
 
+          # Tokenize and output
           $ext_tok->tokenize($data)->to_zip(
             $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
             $text_id_esc
           );
-
-        }
+        };
 
         if ( $_GEN_TOK_INT ){
 
@@ -341,7 +345,7 @@ sub main {
 
           $aggr_tok->reset;
           $cons_tok->reset;
-        }
+        };
 
         # Encode and escape data
         $data = escape_xml(encode( "UTF-8", $data ));
@@ -361,7 +365,13 @@ sub main {
 
         # ~ write tokens ~
 
-        write_tokens() if $_TOKENS_PROC && @tokens;
+        if ($_TOKENS_PROC && @$tokens) {
+          $tokens->to_zip(
+            $zipper->new_stream("$_root_dir$dir/$_tokens_dir/${_tokens_file}"),
+            $text_id_esc,
+            $_INLINE_ANNOT
+          );
+        };
 
         #print STDERR "$0: write_tokenization(): DONE\n";
 
@@ -483,9 +493,7 @@ sub main {
 
   $zipper->close;
 
-  if( $_GEN_TOK_EXT ){
-    $ext_tok->close;
-  }
+  $ext_tok->close if $_GEN_TOK_EXT;
 
 } # end: sub main
 
@@ -616,14 +624,14 @@ sub retr_info { # called from main()
 
       # ~ handle tokens ~
 
-      $inside_tokens_tag = $rl if $_TOKENS_PROC && $n eq $_TOKENS_TAG; # wether to push entry also into @tokens array
+      # Wether to push entry also into tokens
+      $inside_tokens_tag = $rl if $_TOKENS_PROC && $n eq $_TOKENS_TAG;
 
+      my $current_token;
+
+      # Add element to token list
       if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
-
-        my @array2;
-        push @array2, $n;
-        push @tokens, \@array2;
-        push @oti2, $#tokens;
+        $current_token = $tokens->add_token($n); # TODO: adding $n is of no use (redundant)
       }
 
 
@@ -640,9 +648,11 @@ sub retr_info { # called from main()
 
           if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
 
-            push @{$tokens[$#tokens]}, ${$e->[3]}[$c], ${$e->[3]}[$c+1];
+            # Add attributes to current token
+            $current_token->add_attribute(
+              @{$e->[3]}[$c, $c + 1]
+            );
           }
-
         }
       }
 
@@ -655,8 +665,9 @@ sub retr_info { # called from main()
 
       if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
 
-        push @{$tokens[$#tokens]}, ( $dl + $add_one );
-      }
+        # Set from value to tokens
+        $current_token->set_from($dl + $add_one);
+      };
 
 
       #~~~~
@@ -717,31 +728,38 @@ sub retr_info { # called from main()
 
       if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
 
-        my $ix  = pop @oti2;
+        # Check last added token
+        my $last_token = $tokens->last_token;
 
-        my $aix = $#{$tokens[$ix]};
-
-        $fval2  = ${$tokens[$ix]}[ $aix ]; # from-value
+        # Get from-value from last added token
+        my $fval2 = $last_token->from;
 
         if( $fval2 > 0 && not exists $ws{ $fval2 - 1 } ){ # ~ whitespace related issue ~
 
           # ~ previous node was a text-node ~
 
-          ${$tokens[$ix]}[ $aix ] = $fval2 - 1; # recorrect from-value (see below: Notes on ~ whitespace related issue ~)
+          # recorrect from-value
+          # (see below: Notes on ~ whitespace related issue ~)
+          $last_token->set_from($fval2 - 1);
         }
 
         # in case this fails, check input
-        die "ERROR ($0, retr_info()): text_id='$text_id', processing of \@tokens: from-value ($fval2) is 2 or more greater"
+        die "ERROR ($0, retr_info()): text_id='$text_id', processing of tokens: from-value ($fval2) is 2 or more greater"
           ." than to-value ($dl) => please check. aborting ...\n"
             if ( $fval2 - 1 ) > $dl;
 
-        # TODO: find example for which this case applies
-        #  maybe this is not necessary anymore, because the above recorrection of the from-value suffices
-        # TODO: check, if it's better to remove this line and change above check to 'if ( $fval2 - 1) >= $dl;
+        # TODO:
+        #   find example for which this case applies
+        #    maybe this is not necessary anymore, because the above recorrection of the from-value suffices
+        #
+        # TODO:
+        #   check, if it's better to remove this line and change above check to 'if ( $fval2 - 1) >= $dl;
         #   do testing with bigger corpus excerpt (wikipedia?)
-        ${$tokens[$ix]}[ $aix ] = $dl if $fval2 == $dl + 1; # correct from-value (same as ... if $fval-1 == $dl)
 
-        push @{$tokens[$ix]}, $dl, $rl; # to-value and recursion-level
+        # Correct from-value (same as ... if $fval-1 == $dl)
+        $last_token->set_from($dl) if $fval2 == $dl + 1;
+        $last_token->set_to($dl); # Here from == to?
+        $last_token->set_level($rl);
 
         $inside_tokens_tag = -1; # reset
       }
@@ -934,103 +952,6 @@ sub write_structures { # called from main()
   #print STDERR "$0: write_structures(): DONE\n";
 
 } # end: sub write_structures
-
-
-sub write_tokens { # called from main()
-
-  # ~ write @tokens ~
-
-  #print STDERR "$0: write_tokens(): ...\n";
-
-  if( $dir eq "" ){
-
-    print STDERR "WARNING ($0): write_tokens(): empty textSigle => nothing to do ...\n";
-    return;
-  }
-
-  $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
-           ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\""
-           .decode( "UTF-8", $text_id_esc )."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n"; # convert binary string to text string
-
-  $c = 0;
-
-  foreach $ref ( @tokens ){
-
-    # if array '@{$ref}' doesn't contain attributes, then the number of elements in this array is 4 (name, from, to, rec_level), otherwise >4
-    ( @{$ref} == 4 )?( $idx = 1 ):( $idx = @{$ref}-3 );
-
-    # correct last from-value (if the 'second to last' from-value refers to an s-tag, then the last from-value is one to big - see retr_info())
-    if ( $#tokens == $c && ${$ref}[ $idx ] == ${$ref}[ $idx+1 ] + 1 ){
-
-      ${$ref}[ $idx ] = ${$ref}[ $idx+1 ]; # TODO: check
-    }
-
-    # l (level): insert information about depth of element in XML-tree (top element = level 1)
-    $output .= "    <span id=\"s$c\" from=\"${$ref}[ $idx ]\" to=\"${$ref}[ $idx+1 ]\" l=\"${$ref}[ $idx+2 ]\">\n"
-              ."      <fs type=\"lex\" xmlns=\"http://www.tei-c.org/ns/1.0\">\n"
-              ."        <f name=\"lex\">\n";
-
-    if ( $idx > 2 ){ # attributes
-
-      $output .= "          <fs>\n";
-
-      for ( $att_idx = 1; $att_idx < $idx; $att_idx += 2 ){
-
-        ${$ref}[ $att_idx+1 ] = escape_xml(${$ref}[ $att_idx+1 ]); # ... <w lemma="&gt;" ana="PUNCTUATION">&gt;</w> ...
-                                                       # the '&gt;' is translated to '>' and hence the result would be '<f name="lemma">></f>'
-
-        if ( $_INLINE_ANNOT && ${$ref}[ $att_idx ] eq "$_INLINE_ATT_RD" ){
-
-          ${$ref}[ $att_idx+1 ] =~ /^([^ ]+)(?: (.+))?$/;
-
-          die "ERROR (write_tokens()): unexpected format! => Aborting ... (att: ${$ref}[ $att_idx+1 ])\n"
-            if ( $_INLINE_POS_WR && not defined $1 ) || ( $_INLINE_MSD_WR && not defined $2 );
-
-          if ( "$_INLINE_POS_WR" ){
-
-            $output .= "            <f name=\"$_INLINE_POS_WR\">";
-            $output .= "$1" if defined $1;
-            $output .= "</f>\n";
-          }
-
-          if ( "$_INLINE_MSD_WR" ){
-
-            $output .= "            <f name=\"$_INLINE_MSD_WR\">";
-            $output .= "$2" if defined $2;
-            $output .= "</f>\n";
-          }
-
-        } elsif ( $_INLINE_ANNOT && "$_INLINE_LEM_RD" && ${$ref}[ $att_idx ] eq "$_INLINE_LEM_RD" ){
-
-          $output .= "            <f name=\"$_INLINE_LEM_WR\">${$ref}[ $att_idx+1 ]</f>\n";
-
-        } else { # all other attributes
-
-          $output .= "            <f name=\"${$ref}[$att_idx]\">${$ref}[ $att_idx+1 ]</f>\n"; # attribute (at index $att_idx) with value (at index $att_idx+1)
-        }
-
-      } # end: for
-
-      $output .= "          </fs>\n";
-
-    } # fi: attributes
-
-    $output .= "        </f>\n      </fs>\n    </span>\n";
-
-    $c++;
-
-  } # end: foreach
-
-  $output .= "  </spanList>\n</layer>";
-
-  $output = encode( "UTF-8", $output ); # convert text string to binary string
-
-  $zipper->new_stream("$_root_dir$dir/$_tokens_dir/$_tokens_file")
-    ->print($output);
-
-  #print STDERR "$0: write_tokens(): DONE\n";
-
-} # end: sub write_tokens
 
 
 __END__
