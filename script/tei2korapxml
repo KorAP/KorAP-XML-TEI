@@ -109,7 +109,7 @@ my $_TOKENS_TAG      = "w";                          # name of tag        contai
 
 ## TODO: optional
 # handling inline annotations (inside $_TOKENS_TAG)
-my $_INLINE_ANNOT    = 0;                            # on/off: set to 1 if inline annotations are present and should be processed (default: 0)
+my $_INLINE_ANNOT    = $ENV{KORAPXMLTEI_INLINE}?1:0; # on/off: set to 1 if inline annotations are present and should be processed (default: 0)
 my $_INLINE_LEM_RD   = "lemma";                      # from which attribute to read LEMMA information
 my $_INLINE_ATT_RD   = "ana";                        # from which attribute to read POS information (and evtl. additional MSD - Morphosyntactic Descriptions)
                                                      # TODO: The format for the POS and MSD information has to suffice the regular expression ([^ ]+)( (.+))?

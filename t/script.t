@@ -390,4 +390,74 @@ subtest 'Test utf-8 handling' => sub {
   );
 };
 
+
+subtest 'Check Inline annotations' => sub {
+
+  # Load example file
+  my $file = catfile($f, 'data', 'goe_sample_tagged.i5.xml');
+
+  my ($fh, $outzip) = korap_tempfile('script_tagged');
+
+  # Generate zip file (unportable!)
+  stderr_like(
+    sub { `cat '$file' | KORAPXMLTEI_INLINE=1 perl '$script' > '$outzip'` },
+    qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!,
+    'Processing'
+  );
+
+  ok(-e $outzip, "File $outzip exists");
+
+  my $zip = IO::Uncompress::Unzip->new(
+    $outzip,
+    Name => 'GOE/AGA/00000/tokens/morpho.xml'
+  );
+  ok($zip, 'Inline annotations');
+
+  my $tokens;
+  $tokens .= $zip->getline while !$zip->eof;
+  ok($zip->close, 'Closed');
+
+  my $t = Test::XML::Loy->new($tokens);
+
+  $t->attr_is('layer', 'docid', 'GOE_AGA.00000')
+    ->attr_is('spanList span:nth-child(1)', 'id', 's0')
+    ->attr_is('spanList span:nth-child(1)', 'from', '75')
+    ->attr_is('spanList span:nth-child(1)', 'to', '81')
+    ->attr_is('spanList span:nth-child(1)', 'l', '7')
+
+    ->attr_is('span#s0 > fs', 'type', 'lex')
+    ->attr_is('span#s0 > fs', 'xmlns', 'http://www.tei-c.org/ns/1.0')
+    ->attr_is('span#s0 > fs > f > fs > f:nth-child(1)', 'name', 'pos')
+    ->text_is('span#s0 > fs > f > fs > f:nth-child(1)', 'A')
+    ->attr_is('span#s0 > fs > f > fs > f:nth-child(2)', 'name', 'msd')
+    ->text_is('span#s0 > fs > f > fs > f:nth-child(2)', '@NH')
+
+    ->attr_is('span#s25', 'from', '259')
+    ->attr_is('span#s25', 'to', '263')
+    ->attr_is('span#s25', 'l', '7')
+    ->attr_is('span#s25 > fs > f > fs > f:nth-child(1)', 'name', 'pos')
+    ->text_is('span#s25 > fs > f > fs > f:nth-child(1)', 'PRON')
+    ->attr_is('span#s25 > fs > f > fs > f:nth-child(2)', 'name', 'msd')
+    ->text_is('span#s25 > fs > f > fs > f:nth-child(2)', '@NH')
+
+    ->attr_is('span#s58', 'from', '495')
+    ->attr_is('span#s58', 'to', '500')
+    ->attr_is('span#s58', 'l', '7')
+    ->attr_is('span#s58 > fs > f > fs > f:nth-child(1)', 'name', 'pos')
+    ->text_is('span#s58 > fs > f > fs > f:nth-child(1)', 'N')
+    ->attr_is('span#s58 > fs > f > fs > f:nth-child(2)', 'name', 'msd')
+    ->text_is('span#s58 > fs > f > fs > f:nth-child(2)', '@NH')
+
+    ->attr_is('span#s119', 'from', '914')
+    ->attr_is('span#s119', 'to', '925')
+    ->attr_is('span#s119', 'l', '7')
+    ->attr_is('span#s119 > fs > f > fs > f:nth-child(1)', 'name', 'pos')
+    ->text_is('span#s119 > fs > f > fs > f:nth-child(1)', 'A')
+    ->attr_is('span#s119 > fs > f > fs > f:nth-child(2)', 'name', 'msd')
+    ->text_is('span#s119 > fs > f > fs > f:nth-child(2)', '@NH')
+    ->element_exists_not('span#s120')
+    ;
+};
+
+
 done_testing;
