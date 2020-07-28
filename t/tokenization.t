@@ -18,10 +18,15 @@ require_ok('KorAP::XML::TEI::Zipper');
 
 # Test aggressive
 my $aggr = KorAP::XML::TEI::Tokenizer::Aggressive->new;
+ok($aggr->empty, 'Empty');
 $aggr->tokenize("Der alte Mann");
+ok(!$aggr->empty, 'Not empty');
 is_deeply($aggr, [0,3,4,8,9,13]);
 
-$aggr->reset->tokenize("Der alte bzw. der grau-melierte Mann");
+$aggr->reset;
+ok($aggr->empty, 'Empty');
+
+$aggr->tokenize("Der alte bzw. der grau-melierte Mann");
 is_deeply($aggr, [0,3,4,8,9,12,12,13,14,17,18,22,22,23,23,31,32,36]);
 
 like(
