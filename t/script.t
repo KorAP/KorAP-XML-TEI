@@ -14,7 +14,7 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-use Test::KorAP::XML::TEI qw!korap_tempfile!;
+use Test::KorAP::XML::TEI qw!korap_tempfile i5_template!;
 
 my $f = dirname(__FILE__);
 my $script = catfile($f, '..', 'script', 'tei2korapxml');
@@ -344,23 +344,16 @@ subtest 'Check Tokenization Flags' => sub {
 
 
 subtest 'Test utf-8 handling' => sub {
-
-  # Load template file
-  $file = catfile($f, 'data', 'template.i5.xml');
-  my $tpl = '';
-  {
-    open($fh, $file);
-    $tpl .= <$fh> while !eof($fh);
-    close($fh);
-  }
-
   # Introduce invalid utf-8 characters
   my $text_sigle;
-  { no warnings;
-  # $text_sigle printed to file, without encoding: Aþ¿¿¿¿¿A_Bþ¿¿¿¿¿B.Cþ¿¿¿¿¿C
-  # the utf8-sequence 'þ¿¿¿¿¿' encodes 32 bit of data (see 0x7FFF_FFFF in perlunicode)
-  $text_sigle = "A\x{FFFF_FFFF}A_B\x{FFFF_FFFF}B.C\x{FFFF_FFFF}C" }
-  # If CHECK is 0, encoding and decoding replace any malformed character with a substitution character.
+  {
+    no warnings;
+    # $text_sigle printed to file, without encoding: Aþ¿¿¿¿¿A_Bþ¿¿¿¿¿B.Cþ¿¿¿¿¿C
+    # the utf8-sequence 'þ¿¿¿¿¿' encodes 32 bit of data (see 0x7FFF_FFFF in perlunicode)
+    $text_sigle = "A\x{FFFF_FFFF}A_B\x{FFFF_FFFF}B.C\x{FFFF_FFFF}C"
+  }
+  # If CHECK is 0, encoding and decoding replace any malformed character
+  # with a substitution character.
   # � = substitution character
   my $text_sigle_lax = encode_utf8($text_sigle);
   my $text_sigle_esc = encode('UTF-8', $text_sigle);
@@ -369,11 +362,17 @@ subtest 'Test utf-8 handling' => sub {
   is(length($text_sigle_lax), 29); # Aþ¿¿¿¿¿A_Bþ¿¿¿¿¿B.Cþ¿¿¿¿¿C (byte string)
   is(length($text_sigle_esc), 17); # A�A_B�B.C�C (byte string => length(�) = 3)
 
-  { no warnings;
-  $tpl =~ s!\[KORPUSSIGLE\]!A\x{FFFF_FFFF}A!;
-  $tpl =~ s!\[DOKUMENTSIGLE\]!A\x{FFFF_FFFF}A_B\x{FFFF_FFFF}B!;
-  $tpl =~ s!\[TEXT\]!<p>d\x{FFFF_FFFF}d e\x{FFFF_FFFF}e f\x{FFFF_FFFF}f</p>! }
-  $tpl =~ s!\[TEXTSIGLE\]!$text_sigle!;
+
+  my $tpl;
+  {
+    no warnings;
+    $tpl = i5_template(
+      korpusSigle => "A\x{FFFF_FFFF}A",
+      dokumentSigle => "A\x{FFFF_FFFF}A_B\x{FFFF_FFFF}B",
+      text => "<p>d\x{FFFF_FFFF}d e\x{FFFF_FFFF}e f\x{FFFF_FFFF}f</p>",
+      textSigle => $text_sigle
+    );
+  };
 
   my ($fh, $tplfile) = korap_tempfile('script_out4');
   binmode($fh);
@@ -382,7 +381,8 @@ subtest 'Test utf-8 handling' => sub {
 
   my (undef, $outzip) = korap_tempfile('script_out5');
 
-  binmode STDERR, qw{ :encoding(UTF-8) }; # because output 'textid=...' goes to STDERR (see script/tei2korapxml)
+  # because output 'textid=...' goes to STDERR (see script/tei2korapxml)
+  binmode STDERR, qw{ :encoding(UTF-8) };
 
   stderr_like(
     sub { `cat '$tplfile' | perl '$script' -ti > '$outzip'` },
