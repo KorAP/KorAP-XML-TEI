@@ -1,0 +1,280 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b29ec2c3_904a00de",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "That\u0027s not really a tokenizer - in a follow-up commit I would change the \"KorAP::XML::TEI::Tokenizer\" namespace to \"KorAP::XML::TEI::Tokens\".",
+      "range": {
+        "startLine": 2,
+        "startChar": 9,
+        "endLine": 2,
+        "endChar": 38
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2892c46_cafdf507",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "This is untested for lack of example data. The comment indicates, that it wasn\u0027t tested before either.",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 13
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45fae6e4_8371a134",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "Instead of testing for inline annotation serialization on every token in \"write_tokens\", this switches between two different serializations for performance reasons.",
+      "range": {
+        "startLine": 51,
+        "startChar": 6,
+        "endLine": 51,
+        "endChar": 30
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9589b121_ff6ef866",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "Necessary because in inherits \"boundaries\" from the base tokenizer.",
+      "range": {
+        "startLine": 71,
+        "startChar": 4,
+        "endLine": 71,
+        "endChar": 14
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "106dd77d_50dc14cb",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "That\u0027s the only difference between the base tokenizer and this one, that\u0027s why we need to overwrite it.",
+      "range": {
+        "startLine": 79,
+        "startChar": 14,
+        "endLine": 79,
+        "endChar": 28
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1234eb4_7aeab02c",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Token.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "These should be passed in the serialization phase, maybe in form of a more general transformation rule.",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 50
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34ea7356_496c90c9",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Token.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "I splitted getters and setters for naive performance reasons (so no \"if\"s are necessary to see, which interpretation is valid).",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 48,
+        "endChar": 12
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8eb57ab5_3e76e336",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "I am not sure, the @oti2 stack is necessary for Tokens. The last token in the list should always be current, right?",
+      "range": {
+        "startLine": 168,
+        "startChar": 7,
+        "endLine": 168,
+        "endChar": 12
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e598439f_76dd302c",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "Minor change in behavior: This will always write, even if no token annotations are available. This may need to be fixed.",
+      "range": {
+        "startLine": 370,
+        "startChar": 12,
+        "endLine": 370,
+        "endChar": 25
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be1a6c0c_3671fe20",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 636,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "The tagname seems to be of no use.",
+      "range": {
+        "startLine": 636,
+        "startChar": 25,
+        "endLine": 636,
+        "endChar": 48
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02c069b5_6372d2bd",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 730,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "This handling is untested because of lack of example data.",
+      "range": {
+        "startLine": 730,
+        "startChar": 10,
+        "endLine": 730,
+        "endChar": 23
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5afd98f_88d8f84e",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-29T07:45:12Z",
+      "side": 1,
+      "message": "I am not sure this is wanted.",
+      "range": {
+        "startLine": 766,
+        "startChar": 34,
+        "endLine": 766,
+        "endChar": 52
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
