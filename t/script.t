@@ -133,8 +133,41 @@ $struct_xml .= $zip->getline while !$zip->eof;
 
 ok($zip->close, 'Closed');
 
-$t = Test::XML::Loy->new($struct_xml);
-$t->text_is('span[id=s3] *[name=type]', 'Autobiographie', 'text content');
+$t = Test::XML::Loy->new($struct_xml)
+  ->text_is('span[id=s3] *[name=type]', 'Autobiographie', 'text content')
+  ->text_is('#s3 *[name=type]', 'Autobiographie', 'text content')
+  ->attr_is('#s0','to','1266')
+  ->attr_is('#s0','l','1')
+
+  ->attr_is('#s18','from','925')
+  ->attr_is('#s18','to','1266')
+  ->attr_is('#s18','l','5')
+  ->attr_is('#s18 > fs','type', 'struct')
+  ->attr_is('#s18 > fs > f','name','name')
+  ->text_is('#s18 > fs > f','poem')
+
+  ->attr_is('#s19','from','925')
+  ->attr_is('#s19','to','1098')
+  ->attr_is('#s19','l','6')
+  ->attr_is('#s19 > fs','type','struct')
+  ->text_is('#s19 > fs > f[name=name]','lg')
+  ->text_is('#s19 > fs > f[name=attr] > fs[type=attr] >f[name=part]','u')
+
+  ->attr_is('#s37','from','1229')
+  ->attr_is('#s37','to','1266')
+  ->attr_is('#s37','l','8')
+  ->attr_is('#s37 > fs','type','struct')
+  ->text_is('#s37 > fs > f[name=name]','s')
+  ->text_is('#s37 > fs > f[name=attr] > fs[type=attr] > f[name=type]','manual')
+
+  ->attr_is('#s38','from','1266')
+  ->attr_is('#s38','to','1266')
+  ->attr_is('#s38','l','2')
+  ->attr_is('#s38 > fs','type','struct')
+  ->text_is('#s38 > fs > f[name=name]','back')
+
+  ->element_count_is('', 196);
+
 
 $zip = IO::Uncompress::Unzip->new($outzip, Name => 'GOE/AGA/00000/base/tokens.xml');
 ok(!$zip, 'External not generated');
