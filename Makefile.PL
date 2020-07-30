@@ -17,12 +17,13 @@ WriteMakefile(
     'IO::Uncompress::Unzip' => '2.091',
     'Pod::Usage'      => 0,
     'Dumbbench' => '0.111',
-    'DateTime' => '1.51'
+    'DateTime' => '1.51',
+    'Capture::Tiny' => '0.48'
   },
   PREREQ_PM => {
     'XML::CompactTree::XS'     => '0.03',
     'XML::LibXML::Reader' => '2.0201',
-    'IO::Compress::Zip' => '2.091',
+    'IO::Compress::Zip' => '2.091'
   },
   MIN_PERL_VERSION => '5.016',
   EXE_FILES => ['script/tei2korapxml']
