@@ -164,7 +164,6 @@ my ( $_IDX,                                          # value is set dependent on
      $dl,                                            # actual length of string $data
      @oti,                                           # oti='open tags indizes' - a stack of indizes into @structures, where the top index in @oti
                                                      #                            represents the actual processed element from @structures
-     $inside_tokens_tag,                             # flag is set, when inside $_TOKENS_TAG
      ## variables for handling ~ whitespace related issue ~ (it is sometimes necessary, to correct the from-values for some tags)
      $add_one,                                       # ...
      $fval, $fval2,                                  # ...
@@ -187,8 +186,6 @@ my ( $i, $c );                                       # index variables used in l
 ($_XCT_LN)?($_IDX=5):($_IDX=4);
 
 $data_prfx1 = $data_prfx2 = $data_sfx = "";
-
-$inside_tokens_tag = -1;
 
 $fval = $fval2 = 0;
 
@@ -621,12 +618,12 @@ sub retr_info { # called from main()
       # ~ handle tokens ~
 
       # Wether to push entry also into tokens
-      $inside_tokens_tag = $rl if $_TOKENS_PROC && $n eq $_TOKENS_TAG;
+      my $inside_tokens_tag = 1 if $_TOKENS_PROC && $n eq $_TOKENS_TAG;
 
       my $current_token;
 
       # Add element to token list
-      if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
+      if ($inside_tokens_tag) {
         $current_token = $tokens->add_token($n); # TODO: adding $n is of no use (redundant)
       }
 
@@ -642,7 +639,7 @@ sub retr_info { # called from main()
           # '$c' references the 'key' and '$c+1' the 'value'
           push @{$structures[$#structures]}, ${$e->[3]}[$c], ${$e->[3]}[$c+1];
 
-          if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
+          if ($inside_tokens_tag) {
 
             # Add attributes to current token
             $current_token->add_attribute(
@@ -659,7 +656,7 @@ sub retr_info { # called from main()
 
       push @{$structures[$#structures]}, ( $dl + $add_one ); # see below (text- and whitespace-nodes) for explanation on '$add_one'
 
-      if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
+      if ($inside_tokens_tag) {
 
         # Set from value to tokens
         $current_token->set_from($dl + $add_one);
@@ -720,7 +717,7 @@ sub retr_info { # called from main()
       # ~ handle tokens ~
 
 
-      if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
+      if ($inside_tokens_tag) {
 
         # Check last added token
         my $last_token = $tokens->last_token;
@@ -754,8 +751,6 @@ sub retr_info { # called from main()
         $last_token->set_from($dl) if $fval2 == $dl + 1;
         $last_token->set_to($dl); # Here from == to?
         $last_token->set_level($rl);
-
-        $inside_tokens_tag = -1; # reset
       }
 
       # ~ whitespace related issue ~
