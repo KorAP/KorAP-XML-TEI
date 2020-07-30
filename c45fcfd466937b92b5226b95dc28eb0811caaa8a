@@ -186,6 +186,30 @@
     },
     {
       "key": {
+        "uuid": "5292b633_5f224135",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T10:14:38Z",
+      "side": 1,
+      "message": "No, it\u0027s not necessary, because token information is added all the time, so that former @tokens (now in Collector.pm and Tokens.pm) only needed to grow and its highest index was sufficient.\nFor @structures we have to keep @oti, because @structures cannot shrink (which would be needed when closing tags).",
+      "parentUuid": "8eb57ab5_3e76e336",
+      "range": {
+        "startLine": 168,
+        "startChar": 7,
+        "endLine": 168,
+        "endChar": 12
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e598439f_76dd302c",
         "filename": "script/tei2korapxml",
         "patchSetId": 1
