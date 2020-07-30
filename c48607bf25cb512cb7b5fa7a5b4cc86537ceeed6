@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf535e00_c2c01ad7",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 4
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-30T10:20:26Z",
+      "side": 1,
+      "message": "I added an emotyness check to the tokenizer to avoid accessing the datastructure from outside the class.",
+      "range": {
+        "startLine": 368,
+        "startChar": 29,
+        "endLine": 368,
+        "endChar": 45
+      },
+      "revId": "c48607bf25cb512cb7b5fa7a5b4cc86537ceeed6",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
