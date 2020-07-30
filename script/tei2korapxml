@@ -161,7 +161,6 @@ my ( $_IDX,                                          # value is set dependent on
      @oti,                                           # oti='open tags indizes' - a stack of indizes into @structures, where the top index in @oti
                                                      #                            represents the actual processed element from @structures
      @oti2,                                          # analogously to @oti, but with reference to array @tokens
-     $inside_tokens_tag,                             # flag is set, when inside $_TOKENS_TAG
      ## variables for handling ~ whitespace related issue ~ (it is sometimes necessary, to correct the from-values for some tags)
      $add_one,                                       # ...
      $fval, $fval2,                                  # ...
@@ -184,8 +183,6 @@ my ( $i, $c );                                       # index variables used in l
 ($_XCT_LN)?($_IDX=5):($_IDX=4);
 
 $data_prfx1 = $data_prfx2 = $data_sfx = "";
-
-$inside_tokens_tag = -1;
 
 $fval = $fval2 = 0;
 
@@ -616,9 +613,10 @@ sub retr_info { # called from main()
 
       # ~ handle tokens ~
 
-      $inside_tokens_tag = $rl if $_TOKENS_PROC && $n eq $_TOKENS_TAG; # wether to push entry also into @tokens array
+      # wether to push entry also into @tokens array
+      my $inside_tokens_tag = 1 if $_TOKENS_PROC && $n eq $_TOKENS_TAG;
 
-      if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
+      if ($inside_tokens_tag) {
 
         my @array2;
         push @array2, $n;
@@ -638,7 +636,7 @@ sub retr_info { # called from main()
           # '$c' references the 'key' and '$c+1' the 'value'
           push @{$structures[$#structures]}, ${$e->[3]}[$c], ${$e->[3]}[$c+1];
 
-          if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
+          if ($inside_tokens_tag) {
 
             push @{$tokens[$#tokens]}, ${$e->[3]}[$c], ${$e->[3]}[$c+1];
           }
@@ -653,7 +651,7 @@ sub retr_info { # called from main()
 
       push @{$structures[$#structures]}, ( $dl + $add_one ); # see below (text- and whitespace-nodes) for explanation on '$add_one'
 
-      if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
+      if ($inside_tokens_tag) {
 
         push @{$tokens[$#tokens]}, ( $dl + $add_one );
       }
@@ -715,7 +713,7 @@ sub retr_info { # called from main()
       # ~ handle tokens ~
 
 
-      if ( $_TOKENS_PROC && $inside_tokens_tag == $rl ){
+      if ($inside_tokens_tag) {
 
         my $ix  = pop @oti2;
 
@@ -742,8 +740,6 @@ sub retr_info { # called from main()
         ${$tokens[$ix]}[ $aix ] = $dl if $fval2 == $dl + 1; # correct from-value (same as ... if $fval-1 == $dl)
 
         push @{$tokens[$ix]}, $dl, $rl; # to-value and recursion-level
-
-        $inside_tokens_tag = -1; # reset
       }
 
       # ~ whitespace related issue ~
