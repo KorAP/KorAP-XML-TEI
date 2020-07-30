@@ -22,6 +22,30 @@
       "revId": "c48607bf25cb512cb7b5fa7a5b4cc86537ceeed6",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33ab79c2_d15b9a5a",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 4
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T11:24:19Z",
+      "side": 1,
+      "message": "Thank you, this is reusable and also more clearer.",
+      "parentUuid": "cf535e00_c2c01ad7",
+      "range": {
+        "startLine": 368,
+        "startChar": 29,
+        "endLine": 368,
+        "endChar": 45
+      },
+      "revId": "c48607bf25cb512cb7b5fa7a5b4cc86537ceeed6",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }
