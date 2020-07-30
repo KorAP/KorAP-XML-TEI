@@ -663,6 +663,30 @@
     },
     {
       "key": {
+        "uuid": "5b7fd72d_98a60b9d",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 730,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T11:59:41Z",
+      "side": 1,
+      "message": "So far we have only this small goe-Korpus.\nI wrote you an email regarding tagged sample data from Wikipedia.",
+      "parentUuid": "02c069b5_6372d2bd",
+      "range": {
+        "startLine": 730,
+        "startChar": 10,
+        "endLine": 730,
+        "endChar": 23
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e5afd98f_88d8f84e",
         "filename": "script/tei2korapxml",
         "patchSetId": 1
