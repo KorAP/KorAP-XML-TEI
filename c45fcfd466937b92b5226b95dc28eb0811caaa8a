@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "817d4b92_e66a1a87",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T10:49:27Z",
+      "side": 1,
+      "message": "Yes o.k. 😊\nThen we\u0027ll have it seperated.\nI didn\u0027t know how to call former @tokens, other than \"tokens\", because it\u0027s about their processing.\nThe intern tokenization doesn\u0027t work with these tokens, but create instead new ones (that is new indizes) ...",
+      "parentUuid": "b29ec2c3_904a00de",
+      "range": {
+        "startLine": 2,
+        "startChar": 9,
+        "endLine": 2,
+        "endChar": 38
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b2892c46_cafdf507",
         "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2020-07-29T07:45:12Z",
       "side": 1,
       "message": "This is untested for lack of example data. The comment indicates, that it wasn\u0027t tested before either.",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 13
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98e55518_8fea1491",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T10:49:27Z",
+      "side": 1,
+      "message": "You\u0027re right, I\u0027ll have to check, if this is still necessary (and eventually document the edge case(s)).",
+      "parentUuid": "b2892c46_cafdf507",
       "range": {
         "startLine": 45,
         "startChar": 8,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "27a0d358_e9e2a89e",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T10:49:27Z",
+      "side": 1,
+      "message": "o.k.",
+      "parentUuid": "45fae6e4_8371a134",
+      "range": {
+        "startLine": 51,
+        "startChar": 6,
+        "endLine": 51,
+        "endChar": 30
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9589b121_ff6ef866",
         "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
         "patchSetId": 1
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "da0ac71c_77e24847",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T10:49:27Z",
+      "side": 1,
+      "message": "o.k.",
+      "parentUuid": "9589b121_ff6ef866",
+      "range": {
+        "startLine": 71,
+        "startChar": 4,
+        "endLine": 71,
+        "endChar": 14
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "106dd77d_50dc14cb",
         "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
         "patchSetId": 1
@@ -114,6 +210,30 @@
       "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32072169_3385026d",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T10:49:27Z",
+      "side": 1,
+      "message": "When the utf8-related parts are revised for support of other encodings (e.g. latin[1,2]), this will change again, but for now it\u0027s good.",
+      "parentUuid": "106dd77d_50dc14cb",
+      "range": {
+        "startLine": 79,
+        "startChar": 14,
+        "endLine": 79,
+        "endChar": 28
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     },
     {
       "key": {
@@ -151,6 +271,30 @@
       "writtenOn": "2020-07-29T07:45:12Z",
       "side": 1,
       "message": "I splitted getters and setters for naive performance reasons (so no \"if\"s are necessary to see, which interpretation is valid).",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 48,
+        "endChar": 12
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "915cd149_eb38226d",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Token.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T10:49:27Z",
+      "side": 1,
+      "message": "Getters and Setters are welcome.\nCan you explain, what you mean by your parenthesized note?",
+      "parentUuid": "34ea7356_496c90c9",
       "range": {
         "startLine": 48,
         "startChar": 4,
@@ -257,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "a309dca4_aed39889",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T10:49:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e598439f_76dd302c",
+      "range": {
+        "startLine": 370,
+        "startChar": 12,
+        "endLine": 370,
+        "endChar": 25
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "be1a6c0c_3671fe20",
         "filename": "script/tei2korapxml",
         "patchSetId": 1
@@ -277,6 +445,30 @@
       "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4c3dfe9_f18ed9ec",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 636,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T10:49:27Z",
+      "side": 1,
+      "message": "Correct, this is of no use (like @oti2).",
+      "parentUuid": "be1a6c0c_3671fe20",
+      "range": {
+        "startLine": 636,
+        "startChar": 25,
+        "endLine": 636,
+        "endChar": 48
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     },
     {
       "key": {
@@ -314,6 +506,30 @@
       "writtenOn": "2020-07-29T07:45:12Z",
       "side": 1,
       "message": "I am not sure this is wanted.",
+      "range": {
+        "startLine": 766,
+        "startChar": 34,
+        "endLine": 766,
+        "endChar": 52
+      },
+      "revId": "c45fcfd466937b92b5226b95dc28eb0811caaa8a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7d8abb1_5d0ceae1",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-30T10:49:27Z",
+      "side": 1,
+      "message": "This should also be an edge case (like \"TODO: check\" in Collector.pm).\nThank you, I\u0027ll check this.",
+      "parentUuid": "e5afd98f_88d8f84e",
       "range": {
         "startLine": 766,
         "startChar": 34,
