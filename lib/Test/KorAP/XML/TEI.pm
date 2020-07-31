@@ -66,7 +66,7 @@ sub i5_template {
 #   of the test suite.
 sub test_tei2korapxml {
   my ($file, $script, $pattern);
-  my ($env, $param) = ('', '');
+  my ($env, $param, $fh) = ('', '');
 
   if (@_ == 1) {
     $file = shift;
@@ -79,6 +79,17 @@ sub test_tei2korapxml {
     $param   = $hash{param}  if $hash{param};
     $env     = $hash{env}    if $hash{env};
     $pattern = $hash{tmp}    if $hash{tmp};
+
+    # Handle template instead of hash
+    if ($hash{template} && !$file) {
+      my $pattern = delete $hash{template}->{pattern};
+      my $tmpl = i5_template(%{$hash{template}});
+
+      # Write template to file
+      ($fh, $file) = korap_tempfile($pattern);
+      print $fh $tmpl;
+      close($fh);
+    }
   };
 
   # Assume script in test environment
@@ -110,7 +121,7 @@ sub test_tei2korapxml {
 
   # Read from written file
   my $stdout = '';
-  if (open(my $fh, '<', $fn)) {
+  if (open($fh, '<', $fn)) {
     binmode($fh);
     $stdout .= <$fh> while !eof($fh);
     close($fh);
