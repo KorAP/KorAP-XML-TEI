@@ -52,6 +52,24 @@
       "revId": "91c03fb3c25fa9239220be58876ffb80edd80970",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e1adb121_0290b28f",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-31T19:47:14Z",
+      "side": 1,
+      "message": "Ah, o.k., sure. \u0027index\u0027 is much faster than checking every line inside the text-body with the regex - nice and clever :)",
+      "parentUuid": "f5692139_fd9b4e8e",
+      "revId": "91c03fb3c25fa9239220be58876ffb80edd80970",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }
