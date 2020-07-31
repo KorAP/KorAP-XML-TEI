@@ -35,7 +35,7 @@ sub new {
   my $self = bless [$text, undef, ''], $class;
 
   # Check header types to distinguish between siglen types
-  if ($text =~ m!^<${_HEADER_TAG} [^<]*type="([^"]+)"!) {
+  if ($text =~ m!^<${_HEADER_TAG}\s+[^<]*type="([^"]+)"!) {
     $self->[HEADTYPE] = $1;
   }
 
@@ -55,6 +55,9 @@ sub parse {
 
   my $sig_type = $sig{$self->[HEADTYPE]} // 'textSigle';
 
+  my $pos;
+  my $l = length('</' . $_HEADER_TAG) + 1;
+
   # Iterate over file handle
   while (<$fh>) {
 
@@ -62,14 +65,15 @@ sub parse {
     #   This version keeps comments in header files
 
     # End of header found - finish parsing
-    if ( m!^(.*</${_HEADER_TAG}>)(.*)$! ){
+    if (($pos = index($_, '</' . $_HEADER_TAG)) >= 0) {
 
       # Add to text
-      $self->[TEXT] .= $1;
+      $self->[TEXT] .= substr($_, 0, $l + $pos);
 
-      die "ERROR ($0): main(): input line number $.: line with closing header tag '${_HEADER_TAG}'"
+      die "ERROR ($0): main(): input line number $.: " .
+        "line with closing header tag '${_HEADER_TAG}'"
         ." contains additional information ... => Aborting\n\tline=$_"
-        if $2 !~ /^\s*$/;
+        if substr($_, $l + $pos) !~ /^\s*$/;
 
       if ($self->dir eq '') {
 
@@ -83,28 +87,27 @@ sub parse {
     };
 
     # Check for sigle in line
-    if ( m!^(.*)<$sig_type(?: [^>]*)?>([^<]*)(.*)$! ){
+    if (index($_, '<' . $sig_type) >= 0) {
 
-      my $pfx = $1;
-      my $sig = $2;
-      my $sfx = $3;
+      unless (m!^\s*<$sig_type[^>]*>([^<]*)</$sig_type>\s*$!) {
+        die "ERROR ($0): main(): input line number $.: " .
+          "line with sigle-tag is not in expected format ... => Aborting\n\tline=$_";
+      };
 
-      die "ERROR ($0): main(): input line number $.: line with sigle-tag is not in expected format ... => Aborting\n\tline=$_"
-        if $pfx !~ /^\s*$/  || $sfx !~ m!^</$sig_type>\s*$! || $sig =~ /^\s*$/;
-
-      $self->[SIGLE] = encode('UTF-8' , $sig);
+      $self->[SIGLE] = encode('UTF-8' , $1);
 
       # Escape sig
       my $sig_esc = decode('UTF-8', $self->sigle_esc);
 
       # replace sigle in header, if there's an escaped version that differs
-      s!(<$sig_type(?: [^>]*)?>)[^<]+</$sig_type>!$1$sig_esc</$sig_type>! if $sig_esc ne $sig;
+      s!$1</$sig_type>!$sig_esc</$sig_type>! if $sig_esc ne $1;
     };
 
     # Add line to header text
     $self->[TEXT] .= $_;
   };
 };
+
 
 # Type of the header
 sub type {
