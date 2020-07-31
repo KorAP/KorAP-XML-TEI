@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "334da819_3812b2a6",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-07-31T17:53:28Z",
+      "side": 1,
+      "message": "This looks unfinished ...\nShould I also check the other statements in question?",
+      "revId": "91c03fb3c25fa9239220be58876ffb80edd80970",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
