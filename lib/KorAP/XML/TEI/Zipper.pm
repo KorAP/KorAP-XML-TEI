@@ -1,6 +1,7 @@
 package KorAP::XML::TEI::Zipper;
 use strict;
 use warnings;
+use Log::Any qw($log);
 use IO::Compress::Zip qw($ZipError :constants);
 
 # man IO::Compress::Zip
@@ -36,7 +37,7 @@ sub new_stream {
       Method => $_COMPRESSION_METHOD,
       Append => 0,
       Name => "$file"
-    ) or die "ERROR ('$file'): zip failed: $ZipError\n"
+    ) or die $log->fatal("Zipping $file failed: $ZipError");
   }
 
   # Close existing stream and open a new one
@@ -47,7 +48,7 @@ sub new_stream {
       Method => $_COMPRESSION_METHOD,
       Append => 1,
       Name => "$file"
-    ) or die "ERROR ('$file'): zip failed: $ZipError\n"
+    ) or die $log->fatal("Zipping $file failed: $ZipError");
   };
 
   return $self->[1];
