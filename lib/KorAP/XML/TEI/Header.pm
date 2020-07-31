@@ -1,6 +1,7 @@
 package KorAP::XML::TEI::Header;
 use strict;
 use warnings;
+use Log::Any qw($log);
 use Encode qw(encode decode);
 use KorAP::XML::TEI qw!escape_xml!;
 
@@ -41,7 +42,7 @@ sub new {
 
   # Unexpected header init
   else {
-    die "ERROR ($0): Unable to parse header init '$text'";
+    die $log->fatal("Unable to parse header init '$text'");
     return;
   };
 
@@ -67,14 +68,11 @@ sub parse {
       # Add to text
       $self->[TEXT] .= $1;
 
-      die "ERROR ($0): main(): input line number $.: line with closing header tag '${_HEADER_TAG}'"
-        ." contains additional information ... => Aborting\n\tline=$_"
+      die $log->fatal("Line with tag '</${_HEADER_TAG}>' (L$.) contains additional information")
         if $2 !~ /^\s*$/;
 
       if ($self->dir eq '') {
-
-        print STDERR "WARNING ($0): main(): input line number $.: empty " . $sig_type .
-          " in header => nothing to do ...\n header=" . $self->[TEXT] . "\n";
+        $log->error("Empty '<$sig_type />' (L$.) in header");
         return;
 
       };
@@ -89,7 +87,7 @@ sub parse {
       my $sig = $2;
       my $sfx = $3;
 
-      die "ERROR ($0): main(): input line number $.: line with sigle-tag is not in expected format ... => Aborting\n\tline=$_"
+      die $log->fatal("line with '<$sig_type />' (L$.) is not in expected format")
         if $pfx !~ /^\s*$/  || $sfx !~ m!^</$sig_type>\s*$! || $sig =~ /^\s*$/;
 
       $self->[SIGLE] = encode('UTF-8' , $sig);

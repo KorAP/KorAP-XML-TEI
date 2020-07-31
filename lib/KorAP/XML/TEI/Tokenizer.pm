@@ -1,6 +1,7 @@
 package KorAP::XML::TEI::Tokenizer;
 use strict;
 use warnings;
+use Log::Any qw($log);
 
 # This is the base class for tokenizer objects.
 
@@ -29,7 +30,7 @@ sub to_string {
   my ($self, $text_id) = @_;
 
   unless ($text_id) {
-    warn 'Missing textID';
+    $log->warn('Missing textID');
     return;
   };
 

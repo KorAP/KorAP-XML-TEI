@@ -2,6 +2,7 @@ package KorAP::XML::TEI::Tokenizer::External;
 use base 'KorAP::XML::TEI::Tokenizer';
 use strict;
 use warnings;
+use Log::Any qw($log);
 use IO::Select;
 use IPC::Open2 qw(open2);
 
@@ -25,7 +26,7 @@ sub new {
   #      " de.ids_mannheim.korap.tokenizer.KorAPTokenizerImpl"
 
   unless ($cmd) {
-    print STDERR "WARNING: tokenizer not established.\n";
+    $log->warn('Tokenizer not established');
     return;
   };
 
@@ -77,7 +78,7 @@ sub _init {
   }
 
   else {
-    print STDERR "WARNING: tokenizer can't be started.\n";
+    $log->error('Tokenizer can\'t be started');
   };
 };
 
@@ -97,7 +98,7 @@ sub to_string {
   my ($self, $text_id) = @_;
 
   unless ($text_id) {
-    warn 'Missing textID';
+    $log->warn('Missing textID');
     return;
   };
 
@@ -130,17 +131,17 @@ sub to_string {
       $_ = <$out>;
 
       if (defined $_ && $_ ne '') {
-        print STDERR "WARNING: extra output: $_\n"
+        $log->warn("Extra output: $_");
       }
       else {
-        print STDERR "WARNING: tokenizer seems to have crashed, restarting.\n";
+        $log->warn('Tokenizer seems to have crashed, restarting');
         $self->reset;
       };
     };
   }
 
   else {
-    die "ERROR ($0): cannot retrieve token bounds from external tokenizer for text '$text_id' => Aborting ...\n";
+    die $log->fatal("Can\'t retrieve token bounds from external tokenizer ('$text_id')");
   };
 
   # Add footer

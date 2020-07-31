@@ -23,6 +23,7 @@ WriteMakefile(
     'XML::CompactTree::XS'     => '0.03',
     'XML::LibXML::Reader' => '2.0201',
     'IO::Compress::Zip' => '2.091',
+    'Log::Any' => '1.708'
   },
   MIN_PERL_VERSION => '5.016',
   EXE_FILES => ['script/tei2korapxml']
