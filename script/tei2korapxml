@@ -192,9 +192,12 @@ $fval = $fval2 = 0;
 $_root_dir .= '/'; # base dir must always end with a slash
 $_root_dir =~ s/^\.?\///; # remove leading / (only relative paths allowed in IO::Compress::Zip) and redundant ./
 
-$_CORP_HEADER_BEG =~ s#^([^\s]+)(.*)$#$1\[\^>\]*$2#;
-$_DOC_HEADER_BEG  =~ s#^([^\s]+)(.*)$#$1\[\^>\]*$2#;
-$_TEXT_HEADER_BEG =~ s#^([^\s]+)(.*)$#$1\[\^>\]*$2#;
+# Normalize regex for header parsing
+for ($_CORP_HEADER_BEG,
+     $_DOC_HEADER_BEG,
+     $_TEXT_HEADER_BEG) {
+  s!^([^\s]+)(.*)$!$1\[\^>\]*$2!;
+};
 
 $data_prfx1   = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 $data_prfx1  .= "<?xml-model href=\"text.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n";
