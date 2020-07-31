@@ -34,6 +34,24 @@
       "revId": "91c03fb3c25fa9239220be58876ffb80edd80970",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5692139_fd9b4e8e",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-07-31T18:33:18Z",
+      "side": 1,
+      "message": "No - I thought it\u0027s easier to keep it that way. The preliminary \"index()\" is a short circuit so the regex is only triggered in case the $_text_body is part of the line.",
+      "parentUuid": "207ce29d_fd424a54",
+      "revId": "91c03fb3c25fa9239220be58876ffb80edd80970",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
     }
   ]
 }
