@@ -242,6 +242,8 @@ sub main {
   # see in perlfunc: If LAYER is omitted or specified as ":raw" the filehandle is made suitable for passing binary data.
   binmode $input_fh;
 
+  my $pos;
+  my $l = length('</' . $_TEXT_BODY) + 1;
 
   # ~ loop (reading input document) ~
 
@@ -251,19 +253,16 @@ sub main {
     # must-have, otherwise comments in input could be fatal (e.g.: ...<!--\n<idsHeader...\n-->...)
     remove_xml_comments( $input_fh, $_ ); # remove HTML comments (<!--...-->)
 
-    if ( $data_fl && m#^(.*)</${_TEXT_BODY}>(.*)$# ){
-
+    if ( $data_fl && ($pos = index($_, '</' . $_TEXT_BODY)) >= 0) {
 
       # ~ end of text body ~
 
 
       # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files (s.a.: $_tok_file_ext, $_tok_file_con, $_tok_file_agg)
 
-      $pfx = $1; $sfx = $2;
-
       die "ERROR ($0): main(): input line number $.: line with closing text-body tag '${_TEXT_BODY}'"
         ." contains additional information ... => Aborting\n\tline=$_"
-          if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
+        if (substr($_, 0, $pos) . substr($_, $l + $pos)) !~ /^\s*$/;
 
       if ( $dir ne "" ){
 
@@ -427,7 +426,7 @@ sub main {
       # add line to buffer
       $buf_in .= $_;
 
-    } elsif ( m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$# ){
+    } elsif ( index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$# ){
 
       # ~ start of text body ~
 
