@@ -50,4 +50,7 @@ subtest 'i5_template' => sub {
     ;
 };
 
+subtest 'i5_template' => sub {
+};
+
 done_testing;
