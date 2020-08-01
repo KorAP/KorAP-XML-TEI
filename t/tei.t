@@ -7,7 +7,7 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-use Test::KorAP::XML::TEI qw!korap_tempfile!;
+use Test::KorAP::XML::TEI qw!korap_tempfile test_tei2korapxml!;
 
 use_ok('KorAP::XML::TEI', 'remove_xml_comments', 'escape_xml');
 
@@ -44,6 +44,21 @@ HTML
 
   close($fh);
 };
+
+
+subtest 'remove_xml_comments in script' => sub {
+  test_tei2korapxml(
+    template => {
+      text => "<!--\nDies ist ein\nmehrzeiligerKommentar -->Text1",
+      textSigle => 'A/B.1',
+      pattern => 'xx'
+    }
+  )
+    ->file_exists('A/B/1/data.xml')
+    ->unzip_xml('A/B/1/data.xml')
+    ->text_is('text', 'Text1');
+};
+
 
 subtest 'escape_xml' => sub {
   is(
