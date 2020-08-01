@@ -391,4 +391,14 @@ subtest 'Check Inline annotations with untagged file' => sub {
   ok($zip, 'found structure.xml');
 };
 
+
+subtest 'Test Log' => sub {
+  test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '-l=warn'
+  )->stderr_is('');
+};
+
+
 done_testing;
