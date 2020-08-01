@@ -8,13 +8,14 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-use_ok('KorAP::XML::TEI::Tokenizer::Collector');
+use_ok('KorAP::XML::TEI::Annotations::Collector');
+use_ok('KorAP::XML::TEI::Annotations::Annotation');
 
-my $t = KorAP::XML::TEI::Tokenizer::Collector->new;
+my $t = KorAP::XML::TEI::Annotations::Collector->new;
 
-$t->add_token('x1',0,8);
-my $token = $t->add_token('x2',9,14,2);
-$t->add_token('x3',15,20);
+$t->add_new_annotation('x1',0,8);
+my $token = $t->add_new_annotation('x2',9,14,2);
+$t->add_new_annotation('x3',15,20);
 
 my $loy = Test::XML::Loy->new($token->to_string(2));
 
@@ -41,6 +42,19 @@ $loy = Test::XML::Loy->new($t->to_string('text', 0))
   ->attr_is('span#s2', 'to', '20')
 ;
 
+my $anno = KorAP::XML::TEI::Annotations::Annotation->new('x4', 20 => 21);
+
+$t->add_annotation($anno);
+
+$loy = Test::XML::Loy->new($t->to_string('text',0))
+  ->attr_is('layer', 'docid', 'text')
+  ->attr_is('span#s0', 'to', '8')
+  ->attr_is('span#s1', 'to', '14')
+  ->attr_is('span#s1', 'l', '2')
+  ->attr_is('span#s2', 'to', '20')
+  ->attr_is('span#s3', 'from', '20')
+  ->attr_is('span#s3', 'to', '21')
+;
 
 done_testing;
 

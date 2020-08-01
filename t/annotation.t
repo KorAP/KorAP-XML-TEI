@@ -8,10 +8,10 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-use_ok('KorAP::XML::TEI::Tokenizer::Token');
+use_ok('KorAP::XML::TEI::Annotations::Annotation');
 
 subtest 'Initialization' => sub {
-  my $t = KorAP::XML::TEI::Tokenizer::Token->new;
+  my $t = KorAP::XML::TEI::Annotations::Annotation->new;
 
   ok(!defined($t->from), 'Undefined from');
   ok(!defined($t->to), 'Undefined to');
@@ -52,7 +52,7 @@ subtest 'Initialization' => sub {
 
 
 subtest 'Test inline annotations' => sub {
-  my $t = KorAP::XML::TEI::Tokenizer::Token->new('x1', 0, 6);
+  my $t = KorAP::XML::TEI::Annotations::Annotation->new('x1', 0, 6);
   $t->add_attribute('ana' => 'DET @PREMOD');
   $t->add_attribute('lemma' => 'C & A');
 

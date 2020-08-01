@@ -22,7 +22,7 @@ use KorAP::XML::TEI qw!remove_xml_comments escape_xml!;
 use KorAP::XML::TEI::Tokenizer::External;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
-use KorAP::XML::TEI::Tokenizer::Collector;
+use KorAP::XML::TEI::Annotations::Collector;
 use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
 
@@ -129,8 +129,9 @@ my $_INLINE_LEM_WR   = "lemma";                      # name (inside $_tokens_fil
 # ~~~ variables ~~~
 #
 
-# Initialize Token-Collector
-my $tokens = KorAP::XML::TEI::Tokenizer::Collector->new;
+# Initialize Token- and Structure-Collector
+my $tokens = KorAP::XML::TEI::Annotations::Collector->new;
+my $structures = KorAP::XML::TEI::Annotations::Collector->new;
 
 
 # Initialize zipper
@@ -148,10 +149,6 @@ my ( $data_fl );
 
 my ( $data_prfx1, $data_prfx2, $data_sfx );          # $data_* are written to $_data_file
 
-
-my @structures;                                      # list of arrays, where each array represents a TEI I5 tag (except $_TOKENS_TAG) from the input document
-                                                     #  - the input of this array is written in func. 'write_structures' into the file '$_structure_file'
-
 my ( $ref, $idx, $att_idx );                         # needed in func. 'write_structures'
 
 my ( $reader,                                        # instance of 'XML::LibXML::Reader->new' (on input '$buf_in')
@@ -160,21 +157,17 @@ my ( $reader,                                        # instance of 'XML::LibXML:
 # these are only used inside recursive function 'retr_info'
 my ( $_IDX,                                          # value is set dependent on $_XCT_LN - for extracting array of child elements from element in $tree_data
      $e,                                             # element from $tree_data
-     $n,                                             # tag name of actual processed element $e
      $dl,                                            # actual length of string $data
-     @oti,                                           # oti='open tags indizes' - a stack of indizes into @structures, where the top index in @oti
                                                      #                            represents the actual processed element from @structures
      ## variables for handling ~ whitespace related issue ~ (it is sometimes necessary, to correct the from-values for some tags)
      $add_one,                                       # ...
-     $fval, $fval2,                                  # ...
+     $fval,                                          # ...
      %ws);                                           # hash for indices of whitespace-nodes (needed to recorrect from-values)
                                                      # idea: when closing element, check if it's from-index minus 1 refers to a whitespace-node
                                                      #  (means: 'from-index - 1' is a key in %ws).
                                                      # if this is _not_ the case, then the from-value is one to high => correct it by substracting 1
 
-my $output;                                          # temporary variable needed in 'write_*'-functions for writing output to zip-stream $zip)
-
-my ( $i, $c );                                       # index variables used in loops
+my $c;                                               # index variables used in loops
 
 
 #
@@ -187,7 +180,7 @@ my ( $i, $c );                                       # index variables used in l
 
 $data_prfx1 = $data_prfx2 = $data_sfx = "";
 
-$fval = $fval2 = 0;
+$fval = 0;
 
 $_root_dir .= '/'; # base dir must always end with a slash
 $_root_dir =~ s/^\.?\///; # remove leading / (only relative paths allowed in IO::Compress::Zip) and redundant ./
@@ -289,11 +282,8 @@ sub main {
           $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY );
         }
 
-        @structures = (); @oti = ();
-
-        if ( $_TOKENS_PROC ){
-          $tokens->reset;
-        }
+        $structures->reset;
+        $tokens->reset if $_TOKENS_PROC;
 
         $dl = 0;
 
@@ -353,22 +343,27 @@ sub main {
         $zipper->new_stream("$_root_dir$dir/$_data_file")
           ->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
 
-        # ~ write structures ~
 
-        write_structures() if @structures;
+        # ~ write structures ~
+        if (!$structures->empty) {
+          $structures->to_zip(
+            $zipper->new_stream("$_root_dir$dir/$_structure_dir/$_structure_file"),
+            $text_id_esc,
+            2 # = structure serialization
+          );
+        };
 
 
         # ~ write tokens ~
-
         if ($_TOKENS_PROC && !$tokens->empty) {
           $tokens->to_zip(
             $zipper->new_stream("$_root_dir$dir/$_tokens_dir/${_tokens_file}"),
             $text_id_esc,
-            $_INLINE_ANNOT
+            $_INLINE_ANNOT # Either 0 = tokens without inline or 1 = tokens with inline
           );
         };
 
-        #print STDERR "$0: write_tokenization(): DONE\n";
+        # print STDERR "$0: write_tokenization(): DONE\n";
 
         $data_fl = 0; $buf_in = $data = $dir = ""; # reinit.
 
@@ -601,34 +596,20 @@ sub retr_info { # called from main()
       #~~~~
 
 
-      # insert new array (for new tag) into @structures with tag-name and tag-attributes (if present)
-      # update @oti (open tags indizes) with @structures highest index (= $#structures); e.g.: @a=(1,2,3) => $#a = 2
-
-      # ~ tag name ~
-
-      $n = $e->[1];
-
-
       # ~ handle structures ~
 
-      my @array;
-      push @array, $n;
-      push @structures, \@array;
-      push @oti, $#structures; # add highest index of @structures to @oti
-
+      # $e->[1] represents the tag name
+      my $current = $structures->add_new_annotation($e->[1]);
 
       # ~ handle tokens ~
 
       # Wether to push entry also into tokens
-      my $inside_tokens_tag = 1 if $_TOKENS_PROC && $n eq $_TOKENS_TAG;
+      my $inside_tokens_tag = 1 if $_TOKENS_PROC && $e->[1] eq $_TOKENS_TAG;
 
-      my $current_token;
-
-      # Add element to token list
+      # Add element also to token list
       if ($inside_tokens_tag) {
-        $current_token = $tokens->add_token($n); # TODO: adding $n is of no use (redundant)
-      }
-
+        $tokens->add_annotation($current);
+      };
 
       # ~ handle attributes ~
 
@@ -639,15 +620,9 @@ sub retr_info { # called from main()
                                                   # note: arrays are faster (see: http://makepp.sourceforge.net/2.0/perl_performance.html)
 
           # '$c' references the 'key' and '$c+1' the 'value'
-          push @{$structures[$#structures]}, ${$e->[3]}[$c], ${$e->[3]}[$c+1];
-
-          if ($inside_tokens_tag) {
-
-            # Add attributes to current token
-            $current_token->add_attribute(
-              @{$e->[3]}[$c, $c + 1]
-            );
-          }
+          $current->add_attribute(
+            @{$e->[3]}[$c, $c + 1]
+          );
         }
       }
 
@@ -655,15 +630,7 @@ sub retr_info { # called from main()
       # ~ index 'from' ~
 
       # this is, where a normal tag or tokens-tag ($_TOKENS_TAG) starts
-
-      push @{$structures[$#structures]}, ( $dl + $add_one ); # see below (text- and whitespace-nodes) for explanation on '$add_one'
-
-      if ($inside_tokens_tag) {
-
-        # Set from value to tokens
-        $current_token->set_from($dl + $add_one);
-      };
-
+      $current->set_from($dl + $add_one);
 
       #~~~~
       # until here: tag-node (opening)
@@ -683,20 +650,16 @@ sub retr_info { # called from main()
       #~~~~~
 
 
-      # ~ handle structures ~
+      # ~ handle structures and tokens ~
 
       {
-        my $ix  = pop @oti; # index of just closed tag
-
-        my $aix = $#{$structures[$ix]}; # determine highest index from 'array referring to last closed tag' ...
-
-        $fval = ${$structures[$ix]}[ $aix ]; # ... and get it's from-value
+        $fval = $current->from;
 
         if ( $fval > 0 && not exists $ws{ $fval - 1 } ){ # ~ whitespace related issue ~
 
           # ~ previous node was a text-node ~
 
-          ${$structures[$ix]}[ $aix ] = $fval - 1; # recorrect from-value (see below: Notes on ~ whitespace related issue ~)
+          $current->set_from($fval - 1);
         }
 
         # in case this fails, check input
@@ -708,57 +671,16 @@ sub retr_info { # called from main()
         #  maybe this is not necessary anymore, because the above recorrection of the from-value suffices
         # TODO: check, if it's better to remove this line and change above check to 'if ( $fval - 1) >= $dl;
         #   do testing with bigger corpus excerpt (wikipedia?)
-        ${$structures[$ix]}[ $aix ] = $dl if $fval == $dl + 1; # correct from-value (same as ... if $fval-1 == $dl)
-
-        push @{$structures[$ix]}, $dl, $rl; # to-value and recursion-level
+        $current->set_from($dl) if $fval == $dl + 1;
+        $current->set_to($dl);
+        $current->set_level($rl);
 
         # note: use $dl, because the offsets are _between_ the characters (e.g.: word = 'Hello' => from = 0 (before 'H'), to = 5 (after 'o'))
-      }
-
-
-      # ~ handle tokens ~
-
-
-      if ($inside_tokens_tag) {
-
-        # Check last added token
-        my $last_token = $tokens->last_token;
-
-        # Get from-value from last added token
-        my $fval2 = $last_token->from;
-
-        if( $fval2 > 0 && not exists $ws{ $fval2 - 1 } ){ # ~ whitespace related issue ~
-
-          # ~ previous node was a text-node ~
-
-          # recorrect from-value
-          # (see below: Notes on ~ whitespace related issue ~)
-          $last_token->set_from($fval2 - 1);
-        }
-
-        # in case this fails, check input
-        die "ERROR ($0, retr_info()): text_id='$text_id', processing of tokens: from-value ($fval2) is 2 or more greater"
-          ." than to-value ($dl) => please check. aborting ...\n"
-            if ( $fval2 - 1 ) > $dl;
-
-        # TODO:
-        #   find example for which this case applies
-        #    maybe this is not necessary anymore, because the above recorrection of the from-value suffices
-        #
-        # TODO:
-        #   check, if it's better to remove this line and change above check to 'if ( $fval2 - 1) >= $dl;
-        #   do testing with bigger corpus excerpt (wikipedia?)
-
-        # Correct from-value (same as ... if $fval-1 == $dl)
-        $last_token->set_from($dl) if $fval2 == $dl + 1;
-        $last_token->set_to($dl); # Here from == to?
-        $last_token->set_level($rl);
       }
 
       # ~ whitespace related issue ~
       # clean up
       delete $ws{ $fval  - 1 } if $fval > 0 && exists $ws{ $fval - 1 };
-      delete $ws{ $fval2 - 1 } if $_TOKENS_PROC && $fval2 > 0 && exists $ws{ $fval2 - 1 };
 
 
       #~~~~
@@ -860,89 +782,6 @@ sub retr_info { # called from main()
   } # end: foreach iteration
 
 } # end: sub retr_info
-
-
-sub write_structures { # called from main()
-
-  # ~ write @structures ~
-
-  #print STDERR "$0: write_structures(): ...\n";
-
-  if ( $dir eq "" ){
- 
-   print STDERR "WARNING ($0): write_structures(): empty textSigle => nothing to do ...\n";
-    return;
-  }
-
-  $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-model href=\"span.rng\" type=\"application/xml\""
-           ." schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n<layer docid=\""
-           .decode( "UTF-8", $text_id_esc )."\" xmlns=\"http://ids-mannheim.de/ns/KorAP\" version=\"KorAP-0.4\">\n  <spanList>\n"; # convert binary string to text string
-
-  $c = 0;
-
-  foreach $ref ( @structures ){
-
-    ( @{$ref} == 4 )?( $idx = 1 ):( $idx = @{$ref}-3 ); # if array '@{$ref}' doesn't contain attributes, then the number of elements in this array is 4
-                                                        #  (name, from, to, rec_level), otherwise >4
-
-    # correct last from-value ( if the 'second to last' from-value refers to an s-tag, then the last from-value is one to big - see retr_info )
-
-    if( $#structures == $c && ${$ref}[ $idx ] == ${$ref}[ $idx+1 ] + 1 ){
-
-      ${$ref}[$idx] = ${$ref}[ $idx+1 ];
-    }
-
-    # this consistency check is already done in 'retr_info()'
-    #elsif( ${$ref}[$idx] > ${$ref}[$idx+1] ){ # consistency check: abort, if this doesn't hold
-    #  die "ERROR ($0: write_structures(): \$text_id=$text_id, \$c=$c, tag-name=${$ref}[0]):"
-    #     ." 'from-index=${$ref}[$idx]' > 'to-index=${$ref}[$idx+1]' => please check! aborting ...\n";
-    #  die "ERROR ($0: write_structures(): \$text_id=$text_id, \$c=$c, tag-name=${$ref}[0]):"
-    #     ." 'from-index=${$ref}[$idx]' > 'to-index=${$ref}[$idx+1]' => please check! aborting ...\n\n$output" }
-
-    # at least 'POS' should always be there => remove constraint '$_TOKENS_PROC'
-    #if( $_TOKENS_PROC && ${$ref}[0] ne $_TOKENS_TAG )
-
-    if( ${$ref}[0] ne $_TOKENS_TAG ){ # $_TOKENS_TAG is already written in 'write_tokens'
-
-      # l (level): insert information about depth of element in XML-tree (top element = level 1)
-      $output .=  "    <span id=\"s$c\" from=\"${$ref}[ $idx ]\" to=\"${$ref}[ $idx+1 ]\" l=\"${$ref}[ $idx+2 ]\">\n"
-                 ."      <fs type=\"struct\" xmlns=\"http://www.tei-c.org/ns/1.0\">\n"
-                 ."        <f name=\"name\">${$ref}[ 0 ]</f>\n";
-
-      if ( $idx > 2 ) # attributes
-      {
-        $output .= "        <f name=\"attr\">\n          <fs type=\"attr\">\n";
-
-        for ( $att_idx = 1; $att_idx < $idx; $att_idx += 2 ){
-
-          # see explanation in func. 'write_tokens'
-          ${$ref}[ $att_idx+1 ] = escape_xml(${$ref}[ $att_idx+1 ]);
-
-          # attribute (at index $att_idx) with value (at index $att_idx+1)
-          $output .= "            <f name=\"${$ref}[ $att_idx ]\">${$ref}[ $att_idx+1 ]</f>\n";
-        }
-
-        $output .= "          </fs>\n        </f>\n";
-      }
-
-      $output .= "      </fs>\n    </span>\n";
-
-    } # fi: ... ne $_TOKENS_TAG
-
-    $c++;
-
-  } # end: foreach
-
-  $output .= "  </spanList>\n</layer>";
-
-  $output = encode( "UTF-8", $output ); # convert text string to binary string
-
-  $zipper->new_stream("$_root_dir$dir/$_structure_dir/$_structure_file")
-    ->print($output);
-
-  #print STDERR "$0: write_structures(): DONE\n";
-
-} # end: sub write_structures
 
 
 __END__
