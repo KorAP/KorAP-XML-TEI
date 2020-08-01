@@ -86,7 +86,7 @@ sub test_tei2korapxml {
       my $tmpl = i5_template(%{$hash{template}});
 
       # Write template to file
-      ($file, $fh) = korap_tempfile($pattern);
+      ($fh, $file) = korap_tempfile($pattern);
       print $fh $tmpl;
       close($fh);
     }
