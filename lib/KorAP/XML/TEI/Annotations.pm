@@ -1,34 +1,35 @@
-package KorAP::XML::TEI::Tokenizer;
+package KorAP::XML::TEI::Annotations;
 use strict;
 use warnings;
 use Log::Any qw($log);
 
-# This is the base class for tokenizer objects.
+# This is the base class for Annotation objects.
 
-# Construct a new tokenizer
+# Construct a new annotation collector
 sub new {
   bless [], shift;
 };
 
 
-# Reset the inner state of the tokenizer
-# and return the tokenizer object.
+# Reset the inner state of the annotation collection
+# and return the annotation object.
 sub reset {
   @{$_[0]} = ();
   $_[0];
 };
 
 
-# Return boundaries
+# Return boundaries of annotations
 sub boundaries {
   @{$_[0]};
 };
 
 
-# Check if no tokens are stored
+# Check if no annotations are stored
 sub empty {
   return @{$_[0]} > 0 ? 0 : 1
 };
+
 
 # Return data as a string
 sub to_string {

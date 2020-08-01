@@ -1,5 +1,5 @@
 package KorAP::XML::TEI::Tokenizer::External;
-use base 'KorAP::XML::TEI::Tokenizer';
+use base 'KorAP::XML::TEI::Annotations';
 use strict;
 use warnings;
 use Log::Any qw($log);

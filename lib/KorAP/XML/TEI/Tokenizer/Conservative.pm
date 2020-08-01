@@ -1,5 +1,5 @@
 package KorAP::XML::TEI::Tokenizer::Conservative;
-use base 'KorAP::XML::TEI::Tokenizer';
+use base 'KorAP::XML::TEI::Annotations';
 use strict;
 use warnings;
 
