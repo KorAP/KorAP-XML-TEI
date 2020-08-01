@@ -2,6 +2,8 @@
 use strict;
 use warnings;
 
+use Log::Any '$log';
+use Log::Any::Adapter;
 use Pod::Usage;
 use Getopt::Long qw(GetOptions :config no_auto_abbrev);
 
@@ -43,6 +45,7 @@ GetOptions(
   'tokenizer-call|tc=s' => \(my $tokenizer_call), # Temporary argument for testing purposes
   'tokenizer-korap|tk' => \(my $tokenizer_korap), # use KorAP-tokenizer
   'use-intern-tokenization|ti' => \(my $tokenizer_intern), # use intern tokenization (default = no)
+  'log|l=s' => \(my $log_level = 'notice'),
   'help|h'    => sub {
     pod2usage(
       -verbose => 99,
@@ -59,6 +62,8 @@ GetOptions(
     )
   }
 );
+
+Log::Any::Adapter->set('Stderr', log_level => $log_level);
 
 #
 # ~~~ parameter (mandatory) ~~~
@@ -356,7 +361,9 @@ sub main {
         # which are counted as 1 (search for '&amp;' in data.xml and see
         # corresponding indices in $_tokens_file)
 
-        print STDERR "DEBUG ($0): main(): Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file\n" if $_DEBUG;
+        if ($_DEBUG) {
+          $log->debug("Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file");
+        };
 
         $zipper->new_stream("$_root_dir$dir/$_data_file")
           ->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
@@ -381,10 +388,7 @@ sub main {
         $data_fl = 0; $buf_in = $data = $dir = ""; # reinit.
 
       } else { # $dir eq ""
-
-        print STDERR "WARNING ($0): main(): maybe empty textSigle => skipping this text ...\n";
-        # print STDERR "WARNING ($0): main(): text header=$header_txt\n";
-        print STDERR "WARNING ($0): main(): data=$data\n";
+        $log->warn("Maybe empty textSigle => skipping this text ...\ndata=$data");
       }
 
     } elsif ( $data_fl ){
@@ -473,7 +477,7 @@ sub main {
         # Write header to zip
         my $file = $_root_dir . $header->dir . '/' . $_header_file;
 
-        print STDERR "DEBUG ($0): Writing file $file\n" if $_DEBUG;
+        $log->debug("Writing file $file") if $_DEBUG;
 
         $header->to_zip($zipper->new_stream($file));
 
@@ -486,7 +490,7 @@ sub main {
           $text_id_esc = $header->id_esc;
 
           # log output for seeing progression
-          print STDERR "$0: main(): text_id=".decode("UTF-8", $text_id )."\n";
+          $log->notice("$0: main(): text_id=".decode('UTF-8', $text_id ));
 
           $tl = 0; # reset (needed for ~ whitespace handling ~)
         };
@@ -877,8 +881,7 @@ sub write_structures { # called from main()
   #print STDERR "$0: write_structures(): ...\n";
 
   if ( $dir eq "" ){
- 
-   print STDERR "WARNING ($0): write_structures(): empty textSigle => nothing to do ...\n";
+    $log->warn("write_structures(): empty textSigle => nothing to do ...");
     return;
   }
 
@@ -1072,6 +1075,10 @@ Use the standard KorAP/DeReKo tokenizer.
 Tokenize the data using two embedded tokenizers,
 that will take an I<Aggressive> and a I<conservative>
 approach.
+
+=item B<--log|-l>
+
+Loglevel for I<Log::Any>. Defaults to C<notice>.
 
 =back
 
