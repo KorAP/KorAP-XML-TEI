@@ -3,6 +3,9 @@ use strict;
 use warnings;
 use Log::Any qw($log);
 
+# TODO:
+#   Rename to KorAP::XML::TEI::Annotations
+
 # This is the base class for tokenizer objects.
 
 # Construct a new tokenizer
@@ -29,6 +32,7 @@ sub boundaries {
 sub empty {
   return @{$_[0]} > 0 ? 0 : 1
 };
+
 
 # Return data as a string
 sub to_string {
