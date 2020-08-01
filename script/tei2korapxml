@@ -254,7 +254,7 @@ sub main {
 
     # TODO: yet not tested fo big amounts of data
     # must-have, otherwise comments in input could be fatal (e.g.: ...<!--\n<idsHeader...\n-->...)
-    remove_xml_comments( $input_fh, $_ ); # remove HTML comments (<!--...-->)
+    $_ = remove_xml_comments( $input_fh, $_ ); # remove HTML comments (<!--...-->)
 
     if ( $data_fl && ($pos = index($_, '</' . $_TEXT_BODY)) >= 0) {
 
