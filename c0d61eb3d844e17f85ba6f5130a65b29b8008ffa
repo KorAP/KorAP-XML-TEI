@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a2437ed1_2b90fdb6",
+        "filename": "lib/KorAP/XML/TEI/Annotations/Collector.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-08-02T08:49:20Z",
+      "side": 1,
+      "message": "No longer necessary.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 14
+      },
+      "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb35d600_7fba600b",
+        "filename": "lib/KorAP/XML/TEI/Annotations/Collector.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-08-02T08:49:20Z",
+      "side": 1,
+      "message": "This was only active for tokens in the code, but may very well be relevant for structures. Currently this operates on the same annotation - so it changes whatever annotation is first serialized. A better approach would be to use a clone - but I would wait for your response to see if it matters.",
+      "range": {
+        "startLine": 52,
+        "startChar": 2,
+        "endLine": 52,
+        "endChar": 52
+      },
+      "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c3aca24_a4f5891f",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 6
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-08-02T08:49:20Z",
+      "side": 1,
+      "message": "I generalized the annotation collector, as there is no actual difference between tokens and structures.",
+      "range": {
+        "startLine": 133,
+        "startChar": 30,
+        "endLine": 133,
+        "endChar": 52
+      },
+      "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c3e35d9e_307bc506",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 6
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-08-02T08:49:20Z",
+      "side": 1,
+      "message": "There are now thre different serialization types:\n0: Tokens\n1: Tokens with inline annotations\n2: Structures",
+      "range": {
+        "startLine": 352,
+        "startChar": 12,
+        "endLine": 352,
+        "endChar": 41
+      },
+      "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4cd267e5_d199c8af",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 6
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-08-02T08:49:20Z",
+      "side": 1,
+      "message": "Instead of creating the annotation array twice (for structures and tokens), it\u0027s created once and reused for tokens, if tokens are supported.\n\nThat\u0027s why the whole modification of the annotation only needs to be done once.",
+      "range": {
+        "startLine": 602,
+        "startChar": 6,
+        "endLine": 602,
+        "endChar": 58
+      },
+      "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
