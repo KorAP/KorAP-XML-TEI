@@ -144,8 +144,6 @@ my $dir;                                             # text     directory (below
 
 my ( $text_id, $text_id_esc );                       # '$text_id_esc' = escaped version of $text_id (see %ent)
 
-my ( $data_fl );
-
 my ( $data_prfx1, $data_prfx2, $data_sfx );          # $data_* are written to $_data_file
 
 
@@ -227,8 +225,6 @@ sub main {
 
   $input_fh = *STDIN;  # input file handle (default: stdin)
 
-  $data_fl = 0;
-
   $buf_in = $data = $dir = "";
 
 
@@ -250,189 +246,14 @@ sub main {
 
   # ~ loop (reading input document) ~
 
-  while ( <$input_fh> ){
+  MAIN: while ( <$input_fh> ){
 
     # TODO: yet not tested fo big amounts of data
     # must-have, otherwise comments in input could be fatal (e.g.: ...<!--\n<idsHeader...\n-->...)
     remove_xml_comments( $input_fh, $_ ); # remove HTML comments (<!--...-->)
 
-    if ( $data_fl && ($pos = index($_, '</' . $_TEXT_BODY)) >= 0) {
 
-      # ~ end of text body ~
-
-
-      # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files (s.a.: $_tok_file_ext, $_tok_file_con, $_tok_file_agg)
-
-      die "ERROR ($0): main(): input line number $.: line with closing text-body tag '${_TEXT_BODY}'"
-        ." contains additional information ... => Aborting\n\tline=$_"
-        if (substr($_, 0, $pos) . substr($_, $l + $pos)) !~ /^\s*$/;
-
-      if ( $dir ne "" ){
-
-        $reader = XML::LibXML::Reader->new( string => "<text>$buf_in</text>", huge => 1 );
-
-        #  ~ whitespace handling ~
-        #
-        #  Every whitespace inside the processed text is 'significant' and recognized as a node of type 'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'
-        #   (see function 'retr_info()').
-        #
-        #  Definition of significant and insignificant whitespace
-        #   (source: https://www.oracle.com/technical-resources/articles/wang-whitespace.html):
-        #
-        #   Significant whitespace is part of the document content and should be preserved.
-        #   Insignificant whitespace is used when editing XML documents for readability.
-        #    These whitespaces are typically not intended for inclusion in the delivery of the document.
-        #
-        if ( $_XCT_LN ){ # _XCT_LINE_NUMBERS is only for debugging
-          $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY | XCT_LINE_NUMBERS );
-        } else {
-          $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY );
-        }
-
-        @structures = (); @oti = ();
-
-        if ( $_TOKENS_PROC ){
-          $tokens->reset;
-        }
-
-        $dl = 0;
-
-        # ~ whitespace related issue ~
-        $add_one = 0;
-        %ws = ();
-
-
-        # ~ recursion ~
-        retr_info(1, \$tree_data->[2] ); # parse input data
-
-
-        # ~ write data.xml ~
-
-        # TODO: should not be necessary, because whitespace at the end of every input line is removed: see 'whitespace handling' inside text body
-        #   (...elsif ( $data_fl )....)
-        $data =~ tr/\n\r/  /; # note: 2 blanks - otherwise offset data would become corrupt
-        #
-
-
-        # ~ tokenization ~
-
-        if ( $_GEN_TOK_EXT ){
-
-          # Tokenize and output
-          $ext_tok->tokenize($data)->to_zip(
-            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
-            $text_id_esc
-          );
-        };
-
-        if ( $_GEN_TOK_INT ){
-
-          # Tokenize and output
-          $cons_tok->tokenize($data)->to_zip(
-            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_con"),
-            $text_id_esc
-          );
-
-          $aggr_tok->tokenize($data)->to_zip(
-            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_agg"),
-            $text_id_esc
-          );
-
-          $aggr_tok->reset;
-          $cons_tok->reset;
-        };
-
-        # Encode and escape data
-        $data = escape_xml(encode( "UTF-8", $data ));
-        # note: the index still refers to the 'single character'-versions,
-        # which are counted as 1 (search for '&amp;' in data.xml and see
-        # corresponding indices in $_tokens_file)
-
-        print STDERR "DEBUG ($0): main(): Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file\n" if $_DEBUG;
-
-        $zipper->new_stream("$_root_dir$dir/$_data_file")
-          ->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
-
-        # ~ write structures ~
-
-        write_structures() if @structures;
-
-
-        # ~ write tokens ~
-
-        if ($_TOKENS_PROC && !$tokens->empty) {
-          $tokens->to_zip(
-            $zipper->new_stream("$_root_dir$dir/$_tokens_dir/${_tokens_file}"),
-            $text_id_esc,
-            $_INLINE_ANNOT
-          );
-        };
-
-        #print STDERR "$0: write_tokenization(): DONE\n";
-
-        $data_fl = 0; $buf_in = $data = $dir = ""; # reinit.
-
-      } else { # $dir eq ""
-
-        print STDERR "WARNING ($0): main(): maybe empty textSigle => skipping this text ...\n";
-        # print STDERR "WARNING ($0): main(): text header=$header_txt\n";
-        print STDERR "WARNING ($0): main(): data=$data\n";
-      }
-
-    } elsif ( $data_fl ){
-
-
-      # ~ inside text body ~
-
-
-      #print STDERR "inside text body (\$data_fl set)\n";
-
-      # ~ whitespace handling ~
-
-      # The idea for the below code fragment was to fix (recreate) missing whitespace in a poorly created corpus, in which linebreaks where inserted
-      #  into the text with the addition that maybe (or not) whitespace before those linebreaks was unintenionally stripped.
-      #
-      # It soon turned out, that it was best to suggest considering just avoiding linebreaks and putting all primary text tokens into one line (see
-      #  example further down and notes on 'Input restrictions' in the manpage).
-      #
-      # Somehow an old first very poor approach remained, which is not stringent, but also doesn't affect one-line text.
-      #
-      # TODO: Maybe it's best, to keep the stripping of whitespace and to just remove the if-clause and to insert a blank by default (with possibly
-      #  an option on how newlines in primary text should be handled (stripped or replaced by a whitespace)).
-      #
-      # Examples (how primary text with linebreaks would be converted by below code):
-      #
-      #  '...<w>end</w>\n<w>.</w>...' -> '...<w>end</w> <w>.</w>...'
-      #  '...<w>,</w>\n<w>this</w>\n<w>is</w>\n<w>it</w>\n<w>!</w>...' -> '<w>,<w> <w>this</w> <w>is</w> <w>it</w> <w>!</w>'.
-
-      s/^\s+//; s/\s+$//; # remove consecutive whitespace at beginning and end (mostly one newline)
-
-      ### NOTE: this is only relevant, if a text consists of more than one line
-      ### TODO: find a better solution, or create a warning, if a text has more than one line ($tl > 1)
-      ###  do testing with 2 different corpora (one with only one-line texts, the other with several lines per text)
-      if ( m/<[^>]+>[^<]/ ){ # line contains at least one tag with at least one character contents
-
-        # NOTE: not stringent ('...' stands for text):
-        #
-        #   beg1............................end1  => no blank before 'beg1'
-        #   beg2....<pb/>...................end2  => no blank before 'beg2'
-        #   beg3....<info attr1="val1"/>....end3  => no blank before 'beg3'
-        #   beg4....<test>ok</test>.........end4  =>    blank before 'beg4'
-        #
-        #     =>  beg1....end1beg2...<pb/>...end2beg3....<info attr1="val1"/>....end3 beg4...<test>ok</test>....end4
-        #                                                                            ^
-        #                                                                            |_blank between 'end3' and 'beg4'
-
-        $tl++; # counter for text lines
-
-        s/^(.)/ $1/ if $tl > 1; # insert blank before 1st character (for 2nd line and consecutive lines)
-      }
-      ###
-
-      # add line to buffer
-      $buf_in .= $_;
-
-    } elsif ( index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$# ){
+    if ( index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$# ){
 
       # ~ start of text body ~
 
@@ -440,11 +261,186 @@ sub main {
 
       $pfx = $1; $sfx = $2;
 
-      $data_fl = 1;
-
       die "ERROR ($0): main(): input line number $.: line with opening text-body tag '${_TEXT_BODY}'"
         ." contains additional information ... => Aborting\n\tline=$_"
           if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
+
+
+      # Iterate over all lines in the text body
+      while (<$input_fh>) {
+
+        # ~ end of text body ~
+        if (($pos = index($_, '</' . $_TEXT_BODY)) >= 0) {
+
+          # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files (s.a.: $_tok_file_ext, $_tok_file_con, $_tok_file_agg)
+
+          die "ERROR ($0): main(): input line number $.: line with closing text-body tag '${_TEXT_BODY}'"
+            ." contains additional information ... => Aborting\n\tline=$_"
+            if (substr($_, 0, $pos) . substr($_, $l + $pos)) !~ /^\s*$/;
+
+          if ( $dir ne "" ){
+
+            $reader = XML::LibXML::Reader->new( string => "<text>$buf_in</text>", huge => 1 );
+
+            #  ~ whitespace handling ~
+            #
+            #  Every whitespace inside the processed text is 'significant' and recognized as a node of type 'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'
+            #   (see function 'retr_info()').
+            #
+            #  Definition of significant and insignificant whitespace
+            #   (source: https://www.oracle.com/technical-resources/articles/wang-whitespace.html):
+            #
+            #   Significant whitespace is part of the document content and should be preserved.
+            #   Insignificant whitespace is used when editing XML documents for readability.
+            #    These whitespaces are typically not intended for inclusion in the delivery of the document.
+            #
+            if ( $_XCT_LN ){ # _XCT_LINE_NUMBERS is only for debugging
+              $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY | XCT_LINE_NUMBERS );
+            } else {
+              $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY );
+            }
+
+            @structures = (); @oti = ();
+
+            if ( $_TOKENS_PROC ){
+              $tokens->reset;
+            }
+
+            $dl = 0;
+
+            # ~ whitespace related issue ~
+            $add_one = 0;
+            %ws = ();
+
+
+            # ~ recursion ~
+            retr_info(1, \$tree_data->[2] ); # parse input data
+
+
+            # ~ write data.xml ~
+
+            # TODO: should not be necessary, because whitespace at the end of every input line is removed: see 'whitespace handling' inside text body
+            $data =~ tr/\n\r/  /; # note: 2 blanks - otherwise offset data would become corrupt
+            #
+
+
+            # ~ tokenization ~
+
+            if ( $_GEN_TOK_EXT ){
+
+              # Tokenize and output
+              $ext_tok->tokenize($data)->to_zip(
+                $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
+                $text_id_esc
+              );
+            };
+
+            if ( $_GEN_TOK_INT ){
+
+              # Tokenize and output
+              $cons_tok->tokenize($data)->to_zip(
+                $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_con"),
+                $text_id_esc
+              );
+
+              $aggr_tok->tokenize($data)->to_zip(
+                $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_agg"),
+                $text_id_esc
+              );
+
+              $aggr_tok->reset;
+              $cons_tok->reset;
+            };
+
+            # Encode and escape data
+            $data = escape_xml(encode( "UTF-8", $data ));
+            # note: the index still refers to the 'single character'-versions,
+            # which are counted as 1 (search for '&amp;' in data.xml and see
+            # corresponding indices in $_tokens_file)
+
+            print STDERR "DEBUG ($0): main(): Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file\n" if $_DEBUG;
+
+            $zipper->new_stream("$_root_dir$dir/$_data_file")
+              ->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
+
+            # ~ write structures ~
+
+            write_structures() if @structures;
+
+
+            # ~ write tokens ~
+
+            if ($_TOKENS_PROC && !$tokens->empty) {
+              $tokens->to_zip(
+                $zipper->new_stream("$_root_dir$dir/$_tokens_dir/${_tokens_file}"),
+                $text_id_esc,
+                $_INLINE_ANNOT
+              );
+            };
+
+            #print STDERR "$0: write_tokenization(): DONE\n";
+
+            $buf_in = $data = $dir = ""; # reinit.
+
+          } else { # $dir eq ""
+
+            print STDERR "WARNING ($0): main(): maybe empty textSigle => skipping this text ...\n";
+            # print STDERR "WARNING ($0): main(): text header=$header_txt\n";
+            print STDERR "WARNING ($0): main(): data=$data\n";
+          }
+
+          next MAIN;
+        };
+
+        # ~ inside text body ~
+
+        #print STDERR "inside text body (\$data_fl set)\n";
+
+        # ~ whitespace handling ~
+
+        # The idea for the below code fragment was to fix (recreate) missing whitespace in a poorly created corpus, in which linebreaks where inserted
+        #  into the text with the addition that maybe (or not) whitespace before those linebreaks was unintenionally stripped.
+        #
+        # It soon turned out, that it was best to suggest considering just avoiding linebreaks and putting all primary text tokens into one line (see
+        #  example further down and notes on 'Input restrictions' in the manpage).
+        #
+        # Somehow an old first very poor approach remained, which is not stringent, but also doesn't affect one-line text.
+        #
+        # TODO: Maybe it's best, to keep the stripping of whitespace and to just remove the if-clause and to insert a blank by default (with possibly
+        #  an option on how newlines in primary text should be handled (stripped or replaced by a whitespace)).
+        #
+        # Examples (how primary text with linebreaks would be converted by below code):
+        #
+        #  '...<w>end</w>\n<w>.</w>...' -> '...<w>end</w> <w>.</w>...'
+        #  '...<w>,</w>\n<w>this</w>\n<w>is</w>\n<w>it</w>\n<w>!</w>...' -> '<w>,<w> <w>this</w> <w>is</w> <w>it</w> <w>!</w>'.
+
+        s/^\s+//; s/\s+$//; # remove consecutive whitespace at beginning and end (mostly one newline)
+
+        ### NOTE: this is only relevant, if a text consists of more than one line
+        ### TODO: find a better solution, or create a warning, if a text has more than one line ($tl > 1)
+        ###  do testing with 2 different corpora (one with only one-line texts, the other with several lines per text)
+        if ( m/<[^>]+>[^<]/ ){ # line contains at least one tag with at least one character contents
+
+          # NOTE: not stringent ('...' stands for text):
+          #
+          #   beg1............................end1  => no blank before 'beg1'
+          #   beg2....<pb/>...................end2  => no blank before 'beg2'
+          #   beg3....<info attr1="val1"/>....end3  => no blank before 'beg3'
+          #   beg4....<test>ok</test>.........end4  =>    blank before 'beg4'
+          #
+          #     =>  beg1....end1beg2...<pb/>...end2beg3....<info attr1="val1"/>....end3 beg4...<test>ok</test>....end4
+          #                                                                            ^
+          #                                                                            |_blank between 'end3' and 'beg4'
+
+          $tl++; # counter for text lines
+
+          s/^(.)/ $1/ if $tl > 1; # insert blank before 1st character (for 2nd line and consecutive lines)
+        }
+        ###
+
+        # add line to buffer
+        $buf_in .= $_;
+      };
 
     } elsif ( m#^(.*)(<(?:${_TEXT_HEADER_BEG}|${_DOC_HEADER_BEG}|${_CORP_HEADER_BEG}).*)$# ){
 
