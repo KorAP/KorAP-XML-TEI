@@ -25,6 +25,7 @@ use KorAP::XML::TEI::Tokenizer::External;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
 use KorAP::XML::TEI::Tokenizer::Collector;
+use KorAP::XML::TEI::Data;
 use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
 
@@ -138,12 +139,15 @@ my $_INLINE_LEM_WR   = "lemma";                      # name (inside $_tokens_fil
 my $tokens = KorAP::XML::TEI::Tokenizer::Collector->new;
 
 
+# Initialize Data-Collector
+my $data = KorAP::XML::TEI::Data->new;
+
+
 # Initialize zipper
 my $zipper = KorAP::XML::TEI::Zipper->new;
 my $input_fh;                                        # input file handle (default: stdin)
 
 my $buf_in;                                          # text body data extracted from input document ($input_fh), further processed by XML::LibXML::Reader
-my $data;                                            # contains the primary text (created by func. 'retr_info' from $buf_in), which is written to '$data_file'
 
 my $dir;                                             # text     directory (below $_root_dir)
 
@@ -166,7 +170,6 @@ my ( $reader,                                        # instance of 'XML::LibXML:
 my ( $_IDX,                                          # value is set dependent on $_XCT_LN - for extracting array of child elements from element in $tree_data
      $e,                                             # element from $tree_data
      $n,                                             # tag name of actual processed element $e
-     $dl,                                            # actual length of string $data
      @oti,                                           # oti='open tags indizes' - a stack of indizes into @structures, where the top index in @oti
                                                      #                            represents the actual processed element from @structures
      ## variables for handling ~ whitespace related issue ~ (it is sometimes necessary, to correct the from-values for some tags)
@@ -190,8 +193,6 @@ my ( $i, $c );                                       # index variables used in l
 
 ($_XCT_LN)?($_IDX=5):($_IDX=4);
 
-$data_prfx1 = $data_prfx2 = $data_sfx = "";
-
 $fval = $fval2 = 0;
 
 $_root_dir .= '/'; # base dir must always end with a slash
@@ -203,16 +204,6 @@ for ($_CORP_HEADER_BEG,
      $_TEXT_HEADER_BEG) {
   s!^([^\s]+)(.*)$!$1\[\^>\]*$2!;
 };
-
-$data_prfx1   = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-$data_prfx1  .= "<?xml-model href=\"text.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?>\n\n";
-$data_prfx1  .= "<raw_text docid=\"";
-$data_prfx2  .= "\" xmlns=\"http://ids-mannheim.de/ns/KorAP\">\n";
-## TODO: can 'metadata.xml' change or is it constant?
-$data_prfx2  .= "  <metadata file=\"metadata.xml\" />\n";
-##
-$data_prfx2  .= "  <text>";
-$data_sfx     = "</text>\n</raw_text>";
 
 
 # ~ read input and write output (text by text) ~
@@ -234,7 +225,10 @@ sub main {
 
   $data_fl = 0;
 
-  $buf_in = $data = $dir = "";
+  # Maybe not necessary
+  $data->reset;
+
+  $buf_in = $dir = "";
 
 
   if ( $input_fname ne '' ){
@@ -288,19 +282,18 @@ sub main {
         #   Insignificant whitespace is used when editing XML documents for readability.
         #    These whitespaces are typically not intended for inclusion in the delivery of the document.
         #
-        if ( $_XCT_LN ){ # _XCT_LINE_NUMBERS is only for debugging
-          $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY | XCT_LINE_NUMBERS );
-        } else {
-          $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY );
-        }
+        my $param = XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY;
+
+        # _XCT_LINE_NUMBERS is only for debugging
+        $param |= XCT_LINE_NUMBERS if $_XCT_LN;
+
+        $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, $param);
 
         @structures = (); @oti = ();
 
         if ( $_TOKENS_PROC ){
           $tokens->reset;
         }
-
-        $dl = 0;
 
         # ~ whitespace related issue ~
         $add_one = 0;
@@ -310,21 +303,12 @@ sub main {
         # ~ recursion ~
         retr_info(1, \$tree_data->[2] ); # parse input data
 
-
-        # ~ write data.xml ~
-
-        # TODO: should not be necessary, because whitespace at the end of every input line is removed: see 'whitespace handling' inside text body
-        #   (...elsif ( $data_fl )....)
-        $data =~ tr/\n\r/  /; # note: 2 blanks - otherwise offset data would become corrupt
-        #
-
-
         # ~ tokenization ~
 
         if ( $_GEN_TOK_EXT ){
 
           # Tokenize and output
-          $ext_tok->tokenize($data)->to_zip(
+          $ext_tok->tokenize($data->data)->to_zip(
             $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
             $text_id_esc
           );
@@ -333,12 +317,12 @@ sub main {
         if ( $_GEN_TOK_INT ){
 
           # Tokenize and output
-          $cons_tok->tokenize($data)->to_zip(
+          $cons_tok->tokenize($data->data)->to_zip(
             $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_con"),
             $text_id_esc
           );
 
-          $aggr_tok->tokenize($data)->to_zip(
+          $aggr_tok->tokenize($data->data)->to_zip(
             $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_agg"),
             $text_id_esc
           );
@@ -347,18 +331,15 @@ sub main {
           $cons_tok->reset;
         };
 
-        # Encode and escape data
-        $data = escape_xml(encode( "UTF-8", $data ));
-        # note: the index still refers to the 'single character'-versions,
-        # which are counted as 1 (search for '&amp;' in data.xml and see
-        # corresponding indices in $_tokens_file)
-
         if ($_DEBUG) {
           $log->debug("Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file");
         };
 
-        $zipper->new_stream("$_root_dir$dir/$_data_file")
-          ->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
+        # ~ write data.xml ~
+        $data->to_zip(
+          $zipper->new_stream("$_root_dir$dir/${_data_file}"),
+          $text_id_esc
+        );
 
         # ~ write structures ~
 
@@ -377,7 +358,10 @@ sub main {
 
         #print STDERR "$0: write_tokenization(): DONE\n";
 
-        $data_fl = 0; $buf_in = $data = $dir = ""; # reinit.
+        $data_fl = 0; $buf_in = $dir = ""; # reinit.
+
+        # Maybe not necessary
+        $data->reset;
 
       } else { # $dir eq ""
         $log->warn("Maybe empty textSigle => skipping this text ...\ndata=$data");
@@ -596,7 +580,6 @@ sub retr_info { # called from main()
 
   foreach $e ( @{${$_[0]}} ){ # iteration through all array elements ($_[0] is a reference to an array reference)
 
-
     if ( $e->[0] == XML_READER_TYPE_ELEMENT ){ # element-node (see 'NODE TYPES' in manpage of XML::LibXML::Reader)
 
 
@@ -660,12 +643,12 @@ sub retr_info { # called from main()
 
       # this is, where a normal tag or tokens-tag ($_TOKENS_TAG) starts
 
-      push @{$structures[$#structures]}, ( $dl + $add_one ); # see below (text- and whitespace-nodes) for explanation on '$add_one'
+      push @{$structures[$#structures]}, ( $data->position + $add_one ); # see below (text- and whitespace-nodes) for explanation on '$add_one'
 
       if ($inside_tokens_tag) {
 
         # Set from value to tokens
-        $current_token->set_from($dl + $add_one);
+        $current_token->set_from($data->position + $add_one);
       };
 
 
@@ -686,6 +669,7 @@ sub retr_info { # called from main()
       # from here: tag-node (closing)
       #~~~~~
 
+      my $pos = $data->position;
 
       # ~ handle structures ~
 
@@ -705,16 +689,16 @@ sub retr_info { # called from main()
 
         # in case this fails, check input
         die "ERROR ($0, retr_info()): text_id='$text_id', processing of \@structures: from-value ($fval) is 2 or more greater"
-          ." than to-value ($dl) => please check. aborting ...\n"
-            if ( $fval - 1 ) > $dl;
+          ." than to-value ($pos) => please check. aborting ...\n"
+          if ( $fval - 1 ) > $pos;
 
         # TODO: find example for which this case applies
         #  maybe this is not necessary anymore, because the above recorrection of the from-value suffices
-        # TODO: check, if it's better to remove this line and change above check to 'if ( $fval - 1) >= $dl;
+        # TODO: check, if it's better to remove this line and change above check to 'if ( $fval - 1) >= $pos;
         #   do testing with bigger corpus excerpt (wikipedia?)
-        ${$structures[$ix]}[ $aix ] = $dl if $fval == $dl + 1; # correct from-value (same as ... if $fval-1 == $dl)
+        ${$structures[$ix]}[ $aix ] = $pos if $fval == $pos + 1; # correct from-value (same as ... if $fval-1 == $dl)
 
-        push @{$structures[$ix]}, $dl, $rl; # to-value and recursion-level
+        push @{$structures[$ix]}, $pos, $rl; # to-value and recursion-level
 
         # note: use $dl, because the offsets are _between_ the characters (e.g.: word = 'Hello' => from = 0 (before 'H'), to = 5 (after 'o'))
       }
@@ -742,8 +726,8 @@ sub retr_info { # called from main()
 
         # in case this fails, check input
         die "ERROR ($0, retr_info()): text_id='$text_id', processing of tokens: from-value ($fval2) is 2 or more greater"
-          ." than to-value ($dl) => please check. aborting ...\n"
-            if ( $fval2 - 1 ) > $dl;
+          ." than to-value ($pos) => please check. aborting ...\n"
+            if ( $fval2 - 1 ) > $pos;
 
         # TODO:
         #   find example for which this case applies
@@ -754,8 +738,8 @@ sub retr_info { # called from main()
         #   do testing with bigger corpus excerpt (wikipedia?)
 
         # Correct from-value (same as ... if $fval-1 == $dl)
-        $last_token->set_from($dl) if $fval2 == $dl + 1;
-        $last_token->set_to($dl); # Here from == to?
+        $last_token->set_from($pos) if $fval2 == $pos + 1;
+        $last_token->set_to($pos); # Here from == to?
         $last_token->set_level($rl);
       }
 
@@ -829,8 +813,9 @@ sub retr_info { # called from main()
 
         $add_one = 0;
 
-        $ws{ $dl }++; # state, that this from-index belongs to a whitespace-node
-                      #  ('++' doesn't mean a thing here - maybe it could be used for a consistency check)
+        # state, that this from-index belongs to a whitespace-node
+        #  ('++' doesn't mean a thing here - maybe it could be used for a consistency check)
+        $ws{$data->position}++;
 
       }else{
 
@@ -840,12 +825,9 @@ sub retr_info { # called from main()
       }
 
 
-      # ~ update $data and $dl ~
+      # ~ update $data ~
 
-      $data .= $e->[1];
-
-      $dl += length( $e->[1] ); # update length of $data
-
+      $data->append($e->[1]);
 
       #~~~~~
       # until here: text- and whitespace-nodes
