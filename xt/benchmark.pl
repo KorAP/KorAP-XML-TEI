@@ -17,6 +17,7 @@ use Test::KorAP::XML::TEI qw!korap_tempfile!;
 use KorAP::XML::TEI 'remove_xml_comments';
 use KorAP::XML::TEI::Tokenizer::Aggressive;
 use KorAP::XML::TEI::Tokenizer::Conservative;
+use KorAP::XML::TEI::Data;
 
 my $columns = 0;
 my $no_header = 0;
@@ -73,10 +74,12 @@ else {
 };
 
 my $t_data_utf_8 = decode('utf-8',$t_data);
+my @t_data_split = split(' ', $t_data);
 
 my $cons_tok = KorAP::XML::TEI::Tokenizer::Conservative->new;
 my $aggr_tok = KorAP::XML::TEI::Tokenizer::Aggressive->new;
 
+my $data = KorAP::XML::TEI::Data->new;
 
 # Add benchmark instances
 $bench->add_instances(
@@ -141,6 +144,13 @@ $bench->add_instances(
     code => sub {
       $result = $aggr_tok->reset->tokenize($t_data_utf_8);
       $result = 0;
+    }
+  ),
+  Dumbbench::Instance::PerlSub->new(
+    name => 'Data-Collect with serialization',
+    code => sub {
+      $data->reset->append($_) foreach @t_data_split;
+      $result = $data->to_string;
     }
   )
 );
