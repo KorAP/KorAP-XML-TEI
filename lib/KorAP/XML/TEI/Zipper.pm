@@ -19,8 +19,20 @@ our $_COMPRESSION_METHOD = ZIP_CM_DEFLATE;
 # Output parameter, that may be a file or a file handle.
 # Defaults to stdout.
 sub new {
-  my ($class, $out) = @_;
-  bless [$out // '-'], $class;
+  my ($class, $root_dir, $out) = @_;
+
+  if ($root_dir) {
+
+    # base dir must always end with a slash
+    $root_dir .= '/';
+
+    # remove leading /
+    # (only relative paths allowed in IO::Compress::Zip)
+    # and redundant ./
+    $root_dir =~ s/^\.?\/+//;
+  };
+
+  bless [$out // '-', undef, $root_dir // ''], $class;
 };
 
 
@@ -36,7 +48,7 @@ sub new_stream {
       TextFlag => 1,
       Method => $_COMPRESSION_METHOD,
       Append => 0,
-      Name => "$file"
+      Name => $self->[2] . $file
     ) or die $log->fatal("Zipping $file failed: $ZipError");
   }
 
@@ -47,7 +59,7 @@ sub new_stream {
       TextFlag => 1,
       Method => $_COMPRESSION_METHOD,
       Append => 1,
-      Name => "$file"
+      Name => $self->[2] . $file
     ) or die $log->fatal("Zipping $file failed: $ZipError");
   };
 
