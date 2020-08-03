@@ -30,8 +30,7 @@ our %sig = (
 
 # Create new header object
 sub new {
-  my $class = shift;
-  my $text = shift;
+  my ($class, $text) = @_;
 
   my $self = bless [$text, undef, ''], $class;
 
@@ -136,20 +135,18 @@ sub sigle_esc {
 
 # corpus/doc/text id escaped
 sub id_esc {
-  escape_xml($_[0]->[SIGLE] =~ tr/\//_/r);
+  escape_xml($_[0]->id);
 };
 
 
 # Return data as a string
 sub to_string {
-  my $self = shift;
-  return $self->_header . $self->[TEXT];
+  return $_[0]->_header . $_[0]->[TEXT];
 };
 
 
 # Header for XML output
 sub _header {
-  my $self = shift;
   # TODO: IDS-specific
   return <<"HEADER";
 <?xml version="1.0" encoding="UTF-8"?>
