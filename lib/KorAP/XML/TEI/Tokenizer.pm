@@ -61,7 +61,7 @@ sub to_zip {
 
 # Header for XML output
 sub _header {
-  my ($self, $text_id) = @_;
+  my (undef, $text_id) = @_;
   return <<"HEADER";
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="span.rng"
