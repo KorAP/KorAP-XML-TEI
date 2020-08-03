@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5d7a1c6_86faaf31",
+        "filename": "lib/KorAP/XML/TEI/Data.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-08-03T10:18:27Z",
+      "side": 1,
+      "message": "Currently this adds data to a string. It may be better to append data to an array and later \"join()\" it. This would, however, require a separate variable to keep track of the position aka length.",
+      "range": {
+        "startLine": 9,
+        "startChar": 8,
+        "endLine": 9,
+        "endChar": 24
+      },
+      "revId": "f0d241bb33048abfd7099479ba56271c655ab5ca",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b46138a9_7c5168fa",
+        "filename": "lib/KorAP/XML/TEI/Data.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-08-03T10:18:27Z",
+      "side": 1,
+      "message": "This should be tested.",
+      "range": {
+        "startLine": 46,
+        "startChar": 2,
+        "endLine": 48,
+        "endChar": 15
+      },
+      "revId": "f0d241bb33048abfd7099479ba56271c655ab5ca",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da19c28b_1ff6e876",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 2
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-08-03T10:18:27Z",
+      "side": 1,
+      "message": "This may actually not be the best option. Maybe the data serialization should be a separate step.",
+      "range": {
+        "startLine": 306,
+        "startChar": 29,
+        "endLine": 306,
+        "endChar": 40
+      },
+      "revId": "f0d241bb33048abfd7099479ba56271c655ab5ca",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "53390b2a_277b12e8",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 2
+      },
+      "lineNbr": 814,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-08-03T10:18:27Z",
+      "side": 1,
+      "message": "Maybe keeping track of ws should be part of the data collector as well.",
+      "range": {
+        "startLine": 814,
+        "startChar": 8,
+        "endLine": 814,
+        "endChar": 28
+      },
+      "revId": "f0d241bb33048abfd7099479ba56271c655ab5ca",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
