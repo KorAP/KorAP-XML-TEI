@@ -139,7 +139,7 @@ my $tokens = KorAP::XML::TEI::Tokenizer::Collector->new;
 
 
 # Initialize zipper
-my $zipper = KorAP::XML::TEI::Zipper->new;
+my $zipper = KorAP::XML::TEI::Zipper->new($_root_dir);
 my $input_fh;                                        # input file handle (default: stdin)
 
 my $buf_in;                                          # text body data extracted from input document ($input_fh), further processed by XML::LibXML::Reader
@@ -193,9 +193,6 @@ my ( $i, $c );                                       # index variables used in l
 $data_prfx1 = $data_prfx2 = $data_sfx = "";
 
 $fval = $fval2 = 0;
-
-$_root_dir .= '/'; # base dir must always end with a slash
-$_root_dir =~ s/^\.?\///; # remove leading / (only relative paths allowed in IO::Compress::Zip) and redundant ./
 
 # Normalize regex for header parsing
 for ($_CORP_HEADER_BEG,
@@ -325,7 +322,7 @@ sub main {
 
           # Tokenize and output
           $ext_tok->tokenize($data)->to_zip(
-            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_ext"),
+            $zipper->new_stream("$dir/$_tok_dir/$_tok_file_ext"),
             $text_id_esc
           );
         };
@@ -334,12 +331,12 @@ sub main {
 
           # Tokenize and output
           $cons_tok->tokenize($data)->to_zip(
-            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_con"),
+            $zipper->new_stream("$dir/$_tok_dir/$_tok_file_con"),
             $text_id_esc
           );
 
           $aggr_tok->tokenize($data)->to_zip(
-            $zipper->new_stream("$_root_dir$dir/$_tok_dir/$_tok_file_agg"),
+            $zipper->new_stream("$dir/$_tok_dir/$_tok_file_agg"),
             $text_id_esc
           );
 
@@ -354,10 +351,10 @@ sub main {
         # corresponding indices in $_tokens_file)
 
         if ($_DEBUG) {
-          $log->debug("Writing (utf8-formatted) xml file $_root_dir$dir/$_data_file");
+          $log->debug("Writing (utf8-formatted) xml file $dir/$_data_file");
         };
 
-        $zipper->new_stream("$_root_dir$dir/$_data_file")
+        $zipper->new_stream("$dir/$_data_file")
           ->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
 
         # ~ write structures ~
@@ -369,7 +366,7 @@ sub main {
 
         if ($_TOKENS_PROC && !$tokens->empty) {
           $tokens->to_zip(
-            $zipper->new_stream("$_root_dir$dir/$_tokens_dir/${_tokens_file}"),
+            $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}"),
             $text_id_esc,
             $_INLINE_ANNOT
           );
@@ -467,7 +464,7 @@ sub main {
       if ($header) {
 
         # Write header to zip
-        my $file = $_root_dir . $header->dir . '/' . $_header_file;
+        my $file = $header->dir . '/' . $_header_file;
 
         $log->debug("Writing file $file") if $_DEBUG;
 
@@ -940,7 +937,7 @@ sub write_structures { # called from main()
 
   $output = encode( "UTF-8", $output ); # convert text string to binary string
 
-  $zipper->new_stream("$_root_dir$dir/$_structure_dir/$_structure_file")
+  $zipper->new_stream("$dir/$_structure_dir/$_structure_file")
     ->print($output);
 
   #print STDERR "$0: write_structures(): DONE\n";

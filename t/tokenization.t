@@ -132,7 +132,7 @@ is(302, scalar(@$cons));
 subtest 'Test Zipper' => sub {
   # Test Zipper
   my ($fh, $outzip) = korap_tempfile('tokenize_zipper');
-  my $zip = KorAP::XML::TEI::Zipper->new($outzip);
+  my $zip = KorAP::XML::TEI::Zipper->new('', $outzip);
   $fh->close;
 
   my $aggr = KorAP::XML::TEI::Tokenizer::Aggressive->new;

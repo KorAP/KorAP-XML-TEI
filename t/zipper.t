@@ -13,37 +13,89 @@ use Test::KorAP::XML::TEI qw!korap_tempfile!;
 
 require_ok('KorAP::XML::TEI::Zipper');
 
-my $data;
-my ($fh, $outzip) = korap_tempfile('zipper');
+subtest 'Create Zipper' => sub {
+  my $data;
+  my ($fh, $outzip) = korap_tempfile('zipper');
 
-my $zip = KorAP::XML::TEI::Zipper->new($outzip);
-$fh->close;
+  my $zip = KorAP::XML::TEI::Zipper->new('', $outzip);
+  $fh->close;
 
-ok($zip, 'Zipper initialized');
+  ok($zip, 'Zipper initialized');
 
-ok($zip->new_stream('data/file1.txt')->print('hello'), 'Write to initial stream');
-ok($zip->new_stream('data/file2.txt')->print('world'), 'Write to appended stream');
+  ok($zip->new_stream('data/file1.txt')->print('hello'), 'Write to initial stream');
+  ok($zip->new_stream('data/file2.txt')->print('world'), 'Write to appended stream');
 
-$zip->close;
+  $zip->close;
 
-ok(-e $outzip, 'Zip exists');
+  ok(-e $outzip, 'Zip exists');
 
-# Uncompress GOE/header.xml from zip file
-my $unzip = IO::Uncompress::Unzip->new($outzip, Name => 'data/file1.txt');
+  my $unzip = IO::Uncompress::Unzip->new($outzip, Name => 'data/file1.txt');
 
-$data .= $unzip->getline while !$unzip->eof;
-ok($unzip->close, 'Closed');
+  $data .= $unzip->getline while !$unzip->eof;
+  ok($unzip->close, 'Closed');
 
-is($data, 'hello', 'Data correct');
+  is($data, 'hello', 'Data correct');
+
+  $unzip = IO::Uncompress::Unzip->new($outzip, Name => 'data/file2.txt');
+
+  $data = '';
+  $data .= $unzip->getline while !$unzip->eof;
+  ok($unzip->close, 'Closed');
+
+  is($data, 'world', 'Data correct');
+};
 
 
-# Uncompress data/file2.txt from zip file
-$unzip = IO::Uncompress::Unzip->new($outzip, Name => 'data/file2.txt');
+subtest 'Create Zipper with root dir "."' => sub {
+  my $data;
+  my ($fh, $outzip) = korap_tempfile('zipper');
 
-$data = '';
-$data .= $unzip->getline while !$unzip->eof;
-ok($unzip->close, 'Closed');
+  my $zip = KorAP::XML::TEI::Zipper->new('.', $outzip);
+  $fh->close;
 
-is($data, 'world', 'Data correct');
+  ok($zip, 'Zipper initialized');
+
+  ok($zip->new_stream('data/file1.txt')->print('hello'), 'Write to initial stream');
+  $zip->close;
+  ok(-e $outzip, 'Zip exists');
+
+  ok(IO::Uncompress::Unzip->new($outzip, Name => 'data/file1.txt'), 'File exists');
+};
+
+
+subtest 'Create Zipper with root dir "subdir"' => sub {
+  my $data;
+  my ($fh, $outzip) = korap_tempfile('zipper');
+
+  my $zip = KorAP::XML::TEI::Zipper->new('subdir', $outzip);
+  $fh->close;
+
+  ok($zip, 'Zipper initialized');
+
+  ok($zip->new_stream('data/file1.txt')->print('hello'), 'Write to initial stream');
+  $zip->close;
+  ok(-e $outzip, 'Zip exists');
+
+  ok(IO::Uncompress::Unzip->new($outzip, Name => 'subdir/data/file1.txt'), 'File exists');
+  ok(!IO::Uncompress::Unzip->new($outzip, Name => 'data/file1.txt'), 'File exists not');
+};
+
+subtest 'Create Zipper with root dir "./"' => sub {
+  my $data;
+  my ($fh, $outzip) = korap_tempfile('zipper');
+
+  my $zip = KorAP::XML::TEI::Zipper->new('./', $outzip);
+  $fh->close;
+
+  ok($zip, 'Zipper initialized');
+
+  ok($zip->new_stream('data/file1.txt')->print('hello'), 'Write to initial stream');
+  $zip->close;
+  ok(-e $outzip, 'Zip exists');
+
+  # Uncompress GOE/header.xml from zip file
+  ok(IO::Uncompress::Unzip->new($outzip, Name => 'data/file1.txt'), 'File exists');
+};
+
 
 done_testing;
