@@ -6,6 +6,8 @@ use File::Spec::Functions qw/catfile/;
 use Test::XML::Loy;
 
 use FindBin;
+use utf8;
+
 BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
@@ -22,10 +24,6 @@ my $ext = KorAP::XML::TEI::Tokenizer::External->new(
 );
 
 $ext->tokenize("Der alte Mann");
-# TODO:
-#   see comments on $sep in 'lib/KorAP/XML/TEI/Tokenizer/External.pm'
-#$ext->tokenize("ging über die Straße");
-
 my $str = $ext->to_string('unknown');
 my $t = Test::XML::Loy->new($str);
 $t->attr_is('layer spanList span:nth-child(1)', 'to', 3);
@@ -35,8 +33,20 @@ $t->attr_is('layer spanList span:nth-child(3)', 'from', 9);
 $t->attr_is('layer spanList span:nth-child(3)', 'to', 13);
 $t->element_count_is('layer spanList span', 3);
 
+$ext->tokenize("ging über die Straße");
+$str = $ext->to_string('unknown');
+$t = Test::XML::Loy->new($str);
+$t->attr_is('layer spanList span:nth-child(1)', 'to', 4);
+$t->attr_is('layer spanList span:nth-child(2)', 'from', 5);
+$t->attr_is('layer spanList span:nth-child(2)', 'to', 9);
+$t->attr_is('layer spanList span:nth-child(3)', 'from', 10);
+$t->attr_is('layer spanList span:nth-child(3)', 'to', 13);
+$t->attr_is('layer spanList span:nth-child(4)', 'from', 14);
+$t->attr_is('layer spanList span:nth-child(4)', 'to', 20);
+$t->element_count_is('layer spanList span', 4);
+
 $ext->reset;
-$ext->tokenize("Hu aha\ndas ist cool");
+$ext->tokenize("Hu aha\x{04}\ndas ist cool");
 
 $str = $ext->to_string('unknown');
 $t = Test::XML::Loy->new($str);
