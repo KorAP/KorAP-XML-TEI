@@ -30,13 +30,9 @@ sub new {
     return;
   };
 
-  # Send this sequence to separate inputs
-  # TODO: needs to be explored furthermore ...
-  #   '\x03' produces a warning in 't/tokenization-external.t' (WARNING: extra output: 0 1)
-  #   - see discussion in gerrit (3123: Establish tokenizer object for external base tokenization)
-  #   an empty $sep leads to a blocking situation inside t/cmd/tokenizer.pl (right before the while-loop)
-  #$sep //= "\n\x03\n";
-  $sep //= "\n";
+  # Send this sequence to separate texts
+  # (Default for KorAP-Tokenizer).
+  $sep //= "\n\x03\n";
 
   my $self = bless {
     chld_in  => undef,
@@ -131,6 +127,10 @@ sub to_string {
       $_ = <$out>;
 
       if (defined $_ && $_ ne '') {
+
+        # This warning is sometimes thrown, though not yet replicated in the test suite.
+        # See the discussion in gerrit (3123: Establish tokenizer object for external base tokenization)
+        # for further issues.
         $log->warn("Extra output: $_");
       }
       else {
