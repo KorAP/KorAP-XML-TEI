@@ -5,6 +5,7 @@ use warnings;
 use Log::Any qw($log);
 use IO::Select;
 use IPC::Open2 qw(open2);
+use Encode;
 
 # This tokenizer starts an external process for
 # tokenization. It writes the data to tokenize
@@ -54,7 +55,7 @@ sub tokenize {
   my ($self, $txt) = @_;
   return unless $self->{pid};
   my $out = $self->{chld_in};
-  print $out $txt . $self->{sep};
+  print $out encode_utf8($txt) . $self->{sep};
   return $self;
 };
 
