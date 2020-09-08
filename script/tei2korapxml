@@ -20,6 +20,7 @@ BEGIN {
 
 use KorAP::XML::TEI qw!remove_xml_comments escape_xml!;
 use KorAP::XML::TEI::Tokenizer::External;
+use KorAP::XML::TEI::Tokenizer::KorAP;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
 use KorAP::XML::TEI::Tokenizer::Collector;
@@ -37,6 +38,7 @@ GetOptions(
   "root|r=s"  => \(my $_root_dir = '.'),  # name of root directory inside zip file
   "input|i=s" => \(my $input_fname = ''), # input file (yet only TEI I5 Format accepted)
   'tokenizer-call|tc=s' => \(my $tokenizer_call), # Temporary argument for testing purposes
+  'tokenizer-korap|tk' => \(my $tokenizer_korap), # use KorAP-tokenizer
   'use-intern-tokenization|ti' => \(my $tokenizer_intern), # use intern tokenization (default = no)
   'help|h'    => sub {
     pod2usage(
@@ -79,6 +81,9 @@ my $_GEN_TOK_EXT = $tokenizer_call ? 1 : 0;
   if ($tokenizer_call) {
     $ext_tok = KorAP::XML::TEI::Tokenizer::External->new($tokenizer_call);
   };
+  if ($tokenizer_korap) {
+    $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new();
+  }
   my $_tok_file_ext  = "tokens.xml";
 ##
 
@@ -1054,6 +1059,10 @@ Print version information.
 
 Call an external tokenizer process, that will tokenize
 a single line from STDIN and outputs one token per line.
+
+=item B<--tokenizer-korap|-tk>
+
+Use the standard KorAP/DeReKo tokenizer.
 
 =item B<--use-intern-tokenization|-ti>
 
