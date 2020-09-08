@@ -22,9 +22,6 @@ use constant {
 sub new {
   my ($class, $cmd, $sep) = @_;
 
-  # e.g. 'java  -cp '. join(':', '.', glob(dirname(__FILE__) . "/../target/*.jar")).
-  #      " de.ids_mannheim.korap.tokenizer.KorAPTokenizerImpl"
-
   unless ($cmd) {
     $log->warn('Tokenizer not established');
     return;
@@ -69,6 +66,7 @@ sub _init {
     $self->{chld_in},
     $self->{cmd}
   )) {
+    binmode($self->{chld_in}, ":utf8");
     $self->{select} = IO::Select->new;
     $self->{select}->add(*{$self->{chld_out}});
   }
@@ -128,8 +126,9 @@ sub to_string {
 
       if (defined $_ && $_ ne '') {
 
-        # This warning is sometimes thrown, though not yet replicated in the test suite.
-        # See the discussion in gerrit (3123: Establish tokenizer object for external base tokenization)
+        # This warning is sometimes thrown, though not yet replicated
+        # in the test suite. See the discussion in gerrit (3123:
+        # Establish tokenizer object for external base tokenization)
         # for further issues.
         $log->warn("Extra output: $_");
       }
