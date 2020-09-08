@@ -3,6 +3,9 @@ use v5.16;
 use strict;
 use warnings;
 use ExtUtils::MakeMaker;
+use File::ShareDir::Install;
+
+install_share dist => 'share';
 
 WriteMakefile(
   NAME         => 'tei2korapxml',
@@ -21,6 +24,7 @@ WriteMakefile(
     'Capture::Tiny' => '0.48'
   },
   PREREQ_PM => {
+    'File::Share' => '0.25',
     'XML::CompactTree::XS'     => '0.03',
     'XML::LibXML::Reader' => '2.0201',
     'IO::Compress::Zip' => '2.091',
@@ -29,3 +33,5 @@ WriteMakefile(
   MIN_PERL_VERSION => '5.016',
   EXE_FILES => ['script/tei2korapxml']
 );
+package MY;
+use File::ShareDir::Install 'postamble';

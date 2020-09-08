@@ -54,7 +54,7 @@ sub tokenize {
   my ($self, $txt) = @_;
   return unless $self->{pid};
   my $out = $self->{chld_in};
-  print $out $txt . $self->{sep};
+  print $out ($txt) . $self->{sep};
   return $self;
 };
 
@@ -69,6 +69,7 @@ sub _init {
     $self->{chld_in},
     $self->{cmd}
   )) {
+    binmode($self->{chld_in}, ":utf8");
     $self->{select} = IO::Select->new;
     $self->{select}->add(*{$self->{chld_out}});
   }
