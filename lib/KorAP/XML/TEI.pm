@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-our @EXPORT_OK = qw(remove_xml_comments escape_xml);
+our @EXPORT_OK = qw(remove_xml_comments escape_xml escape_xml_minimal);
 
 # convert '&', '<' and '>' into their corresponding sgml-entities
 my %ent = (
@@ -70,5 +70,16 @@ sub escape_xml {
   return $data;
 };
 
+# Escape
+sub escape_xml_minimal {
+    my %ent_without_qout = (
+        '&' => '&amp;',
+        '<' => '&lt;',
+        '>' => '&gt;'
+    );
+    my $data = shift // '';
+    $data =~ s/([&<>])/$ent_without_qout{$1}/ge;
+    return $data;
+};
 
 1;
