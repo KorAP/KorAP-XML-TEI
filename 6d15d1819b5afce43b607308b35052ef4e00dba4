@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0f47c649_f4882364",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2020-09-09T10:08:36Z",
+      "side": 1,
+      "message": "This should be moved to the superclass, I guess, because all external tokenizers need it.",
+      "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    }
+  ]
+}
