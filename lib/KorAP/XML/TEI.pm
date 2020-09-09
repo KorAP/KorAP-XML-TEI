@@ -3,15 +3,20 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-our @EXPORT_OK = qw(remove_xml_comments escape_xml);
+our @EXPORT_OK = qw(remove_xml_comments escape_xml escape_xml_minimal);
 
 # convert '&', '<' and '>' into their corresponding sgml-entities
-my %ent = (
-  '"' => '&quot;',
+my %ent_without_quot = (
   '&' => '&amp;',
   '<' => '&lt;',
   '>' => '&gt;'
 );
+
+my %ent = (
+  %ent_without_quot,
+  '"' => '&quot;'
+);
+
 
 # remove xml comments
 sub remove_xml_comments {
@@ -67,6 +72,14 @@ sub remove_xml_comments {
 sub escape_xml {
   my $data = shift // '';
   $data =~ s/([&<>"])/$ent{$1}/ge;
+  return $data;
+};
+
+
+# Escape
+sub escape_xml_minimal {
+  my $data = shift // '';
+  $data =~ s/([&<>])/$ent_without_quot{$1}/ge;
   return $data;
 };
 
