@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "21026a6e_c21bb451",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-09-09T11:06:27Z",
+      "side": 1,
+      "message": "$sep could be set here as well.",
+      "range": {
+        "startLine": 16,
+        "startChar": 23,
+        "endLine": 16,
+        "endChar": 26
+      },
+      "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c72b51f_d7aded92",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-09-09T11:06:27Z",
+      "side": 1,
+      "message": "This would require Java installed for all depending tests - which is a bit tricky to do in the Makefile, so we shouldn\u0027t expect it. It would be better to skip the tests in case java is not installed, or even run the tests only, in case a certain environment variable is set.",
+      "range": {
+        "startLine": 18,
+        "startChar": 35,
+        "endLine": 18,
+        "endChar": 44
+      },
+      "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0f47c649_f4882364",
         "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
         "patchSetId": 4
@@ -13,6 +59,47 @@
       "writtenOn": "2020-09-09T10:08:36Z",
       "side": 1,
       "message": "This should be moved to the superclass, I guess, because all external tokenizers need it.",
+      "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d18d2e03_183ffe68",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-09-09T11:06:27Z",
+      "side": 1,
+      "message": "I agree!",
+      "parentUuid": "0f47c649_f4882364",
+      "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbbc3a8e_096640a8",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-09-09T11:06:27Z",
+      "side": 1,
+      "message": "Following #3251, I guess encode(...) is prefered.",
+      "range": {
+        "startLine": 26,
+        "startChar": 34,
+        "endLine": 26,
+        "endChar": 45
+      },
       "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
