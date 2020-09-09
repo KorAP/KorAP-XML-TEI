@@ -4,6 +4,7 @@ use Test::More;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
 use IO::Uncompress::Unzip;
+use utf8;
 use open qw(:std :utf8); # assume utf-8 encoding
 
 use FindBin;
@@ -39,6 +40,9 @@ like(
 my $cons = KorAP::XML::TEI::Tokenizer::Conservative->new;
 $cons->tokenize("Der alte Mann");
 is_deeply($cons, [0,3,4,8,9,13]);
+
+$cons->reset->tokenize("Der ältere Mann");
+is_deeply($cons, [0,3,4,10,11,15]);
 
 $cons->reset->tokenize("Der alte bzw. der grau-melierte Mann");
 is_deeply($cons, [0,3,4,8,9,12,12,13,14,17,18,31,32,36]);
