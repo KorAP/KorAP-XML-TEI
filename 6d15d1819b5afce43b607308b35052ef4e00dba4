@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "cda51d03_045118d3",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2020-09-09T14:54:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21026a6e_c21bb451",
+      "range": {
+        "startLine": 16,
+        "startChar": 23,
+        "endLine": 16,
+        "endChar": 26
+      },
+      "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1c72b51f_d7aded92",
         "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2c15ead_cc018f91",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2020-09-09T14:54:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c72b51f_d7aded92",
+      "range": {
+        "startLine": 18,
+        "startChar": 35,
+        "endLine": 18,
+        "endChar": 44
+      },
+      "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     },
     {
       "key": {
@@ -103,6 +151,48 @@
       "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be891e05_43a99b3f",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2020-09-09T14:54:11Z",
+      "side": 1,
+      "message": "really? Anyway, binmode on handle ist probably best",
+      "parentUuid": "dbbc3a8e_096640a8",
+      "range": {
+        "startLine": 26,
+        "startChar": 34,
+        "endLine": 26,
+        "endChar": 45
+      },
+      "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af20473f_f46680ad",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2020-09-09T14:54:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d18d2e03_183ffe68",
+      "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }
