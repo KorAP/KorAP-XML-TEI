@@ -217,6 +217,30 @@
       "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40e64e6b_3f066154",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2020-09-10T08:01:32Z",
+      "side": 1,
+      "message": "OK, you\u0027re right and it still seems to be compatible. I\u0027ve changed it.",
+      "parentUuid": "4234f157_0530740c",
+      "range": {
+        "startLine": 26,
+        "startChar": 34,
+        "endLine": 26,
+        "endChar": 45
+      },
+      "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }
