@@ -193,6 +193,30 @@
       "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4234f157_0530740c",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2020-09-10T06:54:20Z",
+      "side": 1,
+      "message": "See the discussion in #3251. At least I think there shouldn\u0027t be multiple flavors of the same encoding in a script.",
+      "parentUuid": "be891e05_43a99b3f",
+      "range": {
+        "startLine": 26,
+        "startChar": 34,
+        "endLine": 26,
+        "endChar": 45
+      },
+      "revId": "6d15d1819b5afce43b607308b35052ef4e00dba4",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": true
     }
   ]
 }
