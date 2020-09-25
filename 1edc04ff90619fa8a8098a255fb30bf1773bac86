@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd0136c9_5cacd8c5",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 7
+      },
+      "lineNbr": 612,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 1,
+      "message": "Nice work! Now the code can do without $inside_token_tag, because manipulating $anno (by adding attributes) only affects $tokens, if this line has been processed.",
+      "revId": "1edc04ff90619fa8a8098a255fb30bf1773bac86",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    }
+  ]
+}

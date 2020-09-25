@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5d5e4c2b_fa9354b0",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 7
+      },
+      "lineNbr": 723,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 0,
+      "message": "o.k., this part can be completely skipped, because it\u0027s now handled by $anno (under ~ handle structures and tokens ~), where $anno does, what $last_token did here.",
+      "revId": "3378dfd94059ba6572303919f2fa35a539b2db68",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    }
+  ]
+}

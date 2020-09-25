@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9684383c_110cb243",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/Collector.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 0,
+      "message": "for \u0027Tokenizer/Token.pm\u0027 and \u0027Annotations/Annotation.pm\u0027 a \u0027similarity index 67%\u0027 is noted. Maybe, if the diff is to \"big\", the old file/version is deleted and a new file/version generated ...",
+      "parentUuid": "471c98cb_a7ee1e8b",
+      "range": {
+        "startLine": 1,
+        "startChar": 8,
+        "endLine": 1,
+        "endChar": 46
+      },
+      "revId": "c1124218984572bec3cda16814d74dc9c7d6e577",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "724621fb_a8af77d0",
         "filename": "script/tei2korapxml",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "c1124218984572bec3cda16814d74dc9c7d6e577",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65b53a27_e049017d",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 6
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 0,
+      "message": "Right. $anno doesn\u0027t have to be checked for tokens, as structures and tokens share $anno and tokens itself has already been checked.",
+      "parentUuid": "724621fb_a8af77d0",
+      "range": {
+        "startLine": 623,
+        "startChar": 6,
+        "endLine": 623,
+        "endChar": 71
+      },
+      "revId": "c1124218984572bec3cda16814d74dc9c7d6e577",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "bd50436c_144460e6",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 6
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 0,
+      "message": "Yes, with the OO approach, each recursion level has it\u0027s own $anno \u0027object\u0027 it can refer to and @oti is no longer necessary ...",
+      "parentUuid": "44e115ce_84fa3439",
+      "range": {
+        "startLine": 689,
+        "startChar": 8,
+        "endLine": 689,
+        "endChar": 54
+      },
+      "revId": "c1124218984572bec3cda16814d74dc9c7d6e577",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "58c3b1a6_504288ae",
         "filename": "script/tei2korapxml",
         "patchSetId": 6
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "f41c7170_d9aae036",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 6
+      },
+      "lineNbr": 725,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "58c3b1a6_504288ae",
+      "range": {
+        "startLine": 724,
+        "startChar": 7,
+        "endLine": 725,
+        "endChar": 45
+      },
+      "revId": "c1124218984572bec3cda16814d74dc9c7d6e577",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9055ed6a_72d2fa1f",
         "filename": "t/tokenization-collect.t",
         "patchSetId": 6
@@ -114,6 +210,30 @@
       "revId": "c1124218984572bec3cda16814d74dc9c7d6e577",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6f3a9f4_9abdf9ea",
+        "filename": "t/tokenization-collect.t",
+        "patchSetId": 6
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 0,
+      "message": "For \u0027t/token.t\u0027 and \u0027t/annotation.t\u0027 only 3 lines changed and a \u0027similarity index 92%\u0027 is noted. Maybe, if the diff is to \"big\", the old file/version is deleted and a new file/version generated ...",
+      "parentUuid": "9055ed6a_72d2fa1f",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 15
+      },
+      "revId": "c1124218984572bec3cda16814d74dc9c7d6e577",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }

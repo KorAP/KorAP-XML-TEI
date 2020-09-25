@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9ccc8bbe_3ba01245",
+        "filename": "lib/KorAP/XML/TEI/Annotations/Collector.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 1,
+      "message": "Not yet, as it is still used inside the \u0027to_string\u0027 function (see next point) ...",
+      "parentUuid": "a2437ed1_2b90fdb6",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 14
+      },
+      "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eb35d600_7fba600b",
         "filename": "lib/KorAP/XML/TEI/Annotations/Collector.pm",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ee318bb_4af32414",
+        "filename": "lib/KorAP/XML/TEI/Annotations/Collector.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 1,
+      "message": "At the time, first $structures is written and then eventually $tokens (inside \u0027tei2korapxml\u0027 via \u0027to_zip\u0027, which calls \u0027to_string\u0027). You\u0027re right, that this was first only active for tokens - but I stick with you to the idea, that it could also be relevant for structures. Referring to the idea of working with a clone: I think that we don\u0027t need it, because in the original \u0027dereko2korap.pl\u0027, we decided to build 2 disjunct sets regarding tokens and structures, by not adding token-entries into structures (in most cases, this where the w tags). So by having 2 disjunct sets, they won\u0027t affect each other. The actual implementation misses to regard this and should check the tag name (TAG in Annotation.pm) against the one defined in \u0027script/tei2korapxml\u0027 (_TOKENS_TAG) ...\n\nFor now, I\u0027ll mark this point as \u0027resolved\u0027, to be able to go on with merging this commit into the trunk. I will try to add a \u0027tag name compare\u0027 into \u0027to_string_as_struct()\u0027 later then.",
+      "parentUuid": "eb35d600_7fba600b",
+      "range": {
+        "startLine": 52,
+        "startChar": 2,
+        "endLine": 52,
+        "endChar": 52
+      },
+      "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "11f46c6a_b644e759",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 6
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 1,
+      "message": "You\u0027re right. Now it\u0027s much clearer and a lot less redundant - thank you!",
+      "parentUuid": "8c3aca24_a4f5891f",
+      "range": {
+        "startLine": 133,
+        "startChar": 30,
+        "endLine": 133,
+        "endChar": 52
+      },
+      "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c3e35d9e_307bc506",
         "filename": "script/tei2korapxml",
         "patchSetId": 6
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "3a1f8834_99fc10a4",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 6
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 1,
+      "message": "Yes, sure. This makes sense, as we now have 3 different types of output/serialization on the same data set. Thanks!!",
+      "parentUuid": "c3e35d9e_307bc506",
+      "range": {
+        "startLine": 352,
+        "startChar": 12,
+        "endLine": 352,
+        "endChar": 41
+      },
+      "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4cd267e5_d199c8af",
         "filename": "script/tei2korapxml",
         "patchSetId": 6
@@ -114,6 +210,30 @@
       "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b059150_98fe7898",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 6
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 25
+      },
+      "writtenOn": "2020-09-25T08:48:17Z",
+      "side": 1,
+      "message": "Absolutely right! By this you removed a lot of redundant stuff. A good and useful decision!",
+      "parentUuid": "4cd267e5_d199c8af",
+      "range": {
+        "startLine": 602,
+        "startChar": 6,
+        "endLine": 602,
+        "endChar": 58
+      },
+      "revId": "c0d61eb3d844e17f85ba6f5130a65b29b8008ffa",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c",
+      "unresolved": false
     }
   ]
 }
