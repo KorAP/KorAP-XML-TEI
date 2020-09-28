@@ -66,7 +66,8 @@ subtest 'Basic processing' => sub {
 # Uncompress GOE/AGA/00000/data.xml from zip file
   $t->unzip_xml('GOE/AGA/00000/data.xml')
     ->attr_is('raw_text', 'docid', 'GOE_AGA.00000', 'text id')
-    ->text_like('raw_text > text', qr!^Campagne in Frankreich 1792.*?uns allein begl.*cke\.$!, 'text content');
+    ->text_like('raw_text > text', qr!^Campagne in Frankreich 1792.*?uns allein begl.*cke\.$!, 'text content')
+    ->text_like('raw_text > text', qr!unter dem Titel "Kriegstheater"!, 'text content');
 
   $t->unzip_xml('GOE/AGA/00000/struct/structure.xml')
     ->text_is('span[id=s3] *[name=type]', 'Autobiographie', 'text content')

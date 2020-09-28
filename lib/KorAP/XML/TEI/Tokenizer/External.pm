@@ -5,6 +5,7 @@ use warnings;
 use Log::Any qw($log);
 use IO::Select;
 use IPC::Open2 qw(open2);
+use Encode qw(encode);
 
 # This tokenizer starts an external process for
 # tokenization. It writes the data to tokenize
@@ -21,9 +22,6 @@ use constant {
 # end of an input.
 sub new {
   my ($class, $cmd, $sep) = @_;
-
-  # e.g. 'java  -cp '. join(':', '.', glob(dirname(__FILE__) . "/../target/*.jar")).
-  #      " de.ids_mannheim.korap.tokenizer.KorAPTokenizerImpl"
 
   unless ($cmd) {
     $log->warn('Tokenizer not established');
@@ -54,7 +52,7 @@ sub tokenize {
   my ($self, $txt) = @_;
   return unless $self->{pid};
   my $out = $self->{chld_in};
-  print $out $txt . $self->{sep};
+  print $out encode( "UTF-8", $txt ) . $self->{sep};
   return $self;
 };
 
@@ -128,8 +126,9 @@ sub to_string {
 
       if (defined $_ && $_ ne '') {
 
-        # This warning is sometimes thrown, though not yet replicated in the test suite.
-        # See the discussion in gerrit (3123: Establish tokenizer object for external base tokenization)
+        # This warning is sometimes thrown, though not yet replicated
+        # in the test suite. See the discussion in gerrit (3123:
+        # Establish tokenizer object for external base tokenization)
         # for further issues.
         $log->warn("Extra output: $_");
       }

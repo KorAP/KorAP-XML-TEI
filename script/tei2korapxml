@@ -20,7 +20,7 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-use KorAP::XML::TEI qw!remove_xml_comments escape_xml!;
+use KorAP::XML::TEI qw!remove_xml_comments escape_xml escape_xml_minimal!;
 use KorAP::XML::TEI::Tokenizer::External;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
@@ -28,6 +28,10 @@ use KorAP::XML::TEI::Annotations::Collector;
 use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
 
+eval {
+  require KorAP::XML::TEI::Tokenizer::KorAP;
+  1;
+};
 
 our $VERSION = '0.01';
 
@@ -39,6 +43,7 @@ GetOptions(
   "root|r=s"  => \(my $_root_dir = '.'),  # name of root directory inside zip file
   "input|i=s" => \(my $input_fname = ''), # input file (yet only TEI I5 Format accepted)
   'tokenizer-call|tc=s' => \(my $tokenizer_call), # Temporary argument for testing purposes
+  'tokenizer-korap|tk' => \(my $tokenizer_korap), # use KorAP-tokenizer
   'use-intern-tokenization|ti' => \(my $tokenizer_intern), # use intern tokenization (default = no)
   'log|l=s' => \(my $log_level = 'notice'),
   'help|h'    => sub {
@@ -76,13 +81,18 @@ my $_TEXT_HEADER_BEG  = "idsHeader type=\"text\"";     # analog
 #
 
 ## extern tokenization
-my $_GEN_TOK_EXT = $tokenizer_call ? 1 : 0;
+my $_GEN_TOK_EXT = $tokenizer_call || $tokenizer_korap ? 1 : 0;
+
   # TODO:
   #   Read tokenizer call from configuration file.
   #   was 'java  -cp '. join(":", ".", glob(&dirname(__FILE__)."/../target/*.jar")). " de.ids_mannheim.korap.tokenizer.KorAPTokenizerImpl";
   my $ext_tok;
   if ($tokenizer_call) {
     $ext_tok = KorAP::XML::TEI::Tokenizer::External->new($tokenizer_call);
+  }
+
+  elsif ($tokenizer_korap) {
+    $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new;
   };
   my $_tok_file_ext  = "tokens.xml";
 ##
@@ -318,6 +328,20 @@ sub main {
             #
 
 
+            # Encode and escape data
+            my $escaped_data = escape_xml_minimal(encode( "UTF-8", $data ));
+            # note: the index still refers to the 'single character'-versions,
+            # which are counted as 1 (search for '&amp;' in data.xml and see
+            # corresponding indices in $_tokens_file)
+
+            if ($_DEBUG) {
+              $log->debug("Writing (utf8-formatted) xml file $dir/$_data_file");
+            };
+
+            $zipper->new_stream("$dir/$_data_file")
+              ->print("$data_prfx1$text_id_esc$data_prfx2$escaped_data$data_sfx");
+
+
             # ~ tokenization ~
 
             if ( $_GEN_TOK_EXT ){
@@ -345,19 +369,6 @@ sub main {
               $aggr_tok->reset;
               $cons_tok->reset;
             };
-
-            # Encode and escape data
-            $data = escape_xml(encode( "UTF-8", $data ));
-            # note: the index still refers to the 'single character'-versions,
-            # which are counted as 1 (search for '&amp;' in data.xml and see
-            # corresponding indices in $_tokens_file)
-
-            if ($_DEBUG) {
-              $log->debug("Writing (utf8-formatted) xml file $dir/$_data_file");
-            };
-
-            $zipper->new_stream("$dir/$_data_file")
-              ->print("$data_prfx1$text_id_esc$data_prfx2$data$data_sfx");
 
             # ~ write structures ~
             if (!$structures->empty) {
@@ -884,6 +895,10 @@ Print version information.
 
 Call an external tokenizer process, that will tokenize
 a single line from STDIN and outputs one token per line.
+
+=item B<--tokenizer-korap|-tk>
+
+Use the standard KorAP/DeReKo tokenizer.
 
 =item B<--use-intern-tokenization|-ti>
 

@@ -9,7 +9,7 @@ BEGIN {
 
 use Test::KorAP::XML::TEI qw!korap_tempfile test_tei2korapxml!;
 
-use_ok('KorAP::XML::TEI', 'remove_xml_comments', 'escape_xml');
+use_ok('KorAP::XML::TEI', 'remove_xml_comments', 'escape_xml', 'escape_xml_minimal');
 
 subtest 'remove_xml_comments' => sub {
   my ($fh, $filename) = korap_tempfile('tei');
@@ -87,5 +87,31 @@ subtest 'escape_xml' => sub {
   );
 };
 
+subtest 'escape_xml_minimal' => sub {
+  is(
+      escape_xml_minimal('"""'),
+      '"""'
+  );
+
+  is(
+      escape_xml_minimal('&&&'),
+      '&amp;&amp;&amp;'
+  );
+
+  is(
+      escape_xml_minimal('<<<'),
+      '&lt;&lt;&lt;'
+  );
+
+  is(
+      escape_xml_minimal('>>>'),
+      '&gt;&gt;&gt;'
+  );
+
+  is(
+      escape_xml_minimal('<tag att1="foo" att2="bar">C&A</tag>'),
+      '&lt;tag att1="foo" att2="bar"&gt;C&amp;A&lt;/tag&gt;'
+  );
+};
 
 done_testing;
