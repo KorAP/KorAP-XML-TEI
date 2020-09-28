@@ -221,6 +221,19 @@ sub file_readable {
 };
 
 
+# Get content of a file
+sub get_content_of {
+  my ($self, $file) = @_;
+  if (my $zip = IO::Uncompress::Unzip->new(\$self->{stdout}, Name => $file)) {
+    my $data = '';
+    $data .= $zip->getline while !$zip->eof;
+    $zip->close;
+    return $data;
+  };
+  return '';
+};
+
+
 # Returns an Test::XML::Loy object
 sub unzip_xml {
   my ($self, $file) = @_;

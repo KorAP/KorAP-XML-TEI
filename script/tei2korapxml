@@ -160,7 +160,7 @@ my $input_fh;                                        # input file handle (defaul
 
 my $dir;                                             # text     directory (below $_root_dir)
 
-my ( $text_id, $text_id_esc );                       # '$text_id_esc' = escaped version of $text_id (see %ent)
+my ( $text_id, $text_id_esc );                       # '$text_id_esc' = escaped version of $text_id
 
 my ( $reader,                                        # instance of 'XML::LibXML::Reader->new' (on input '$buf_in')
      $tree_data );                                   # instance of 'XML::CompactTree::XS::readSubtreeToPerl' (on input '$reader')

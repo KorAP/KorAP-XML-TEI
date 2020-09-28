@@ -69,6 +69,9 @@ subtest 'Basic processing' => sub {
     ->text_like('raw_text > text', qr!^Campagne in Frankreich 1792.*?uns allein begl.*cke\.$!, 'text content')
     ->text_like('raw_text > text', qr!unter dem Titel "Kriegstheater"!, 'text content');
 
+  my $content = $t->get_content_of('GOE/AGA/00000/data.xml');
+  like($content, qr!unter dem Titel "Kriegstheater"!, 'raw text content');
+
   $t->unzip_xml('GOE/AGA/00000/struct/structure.xml')
     ->text_is('span[id=s3] *[name=type]', 'Autobiographie', 'text content')
     ->text_is('#s3 *[name=type]', 'Autobiographie', 'text content')
