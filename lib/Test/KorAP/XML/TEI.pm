@@ -170,6 +170,18 @@ sub stderr_like {
 };
 
 
+# Check for stderr non-similarity
+sub stderr_unlike {
+  my ($self, $value, $desc) = @_;
+  return $self->_test(
+    'unlike',
+    $self->{stderr},
+    $value,
+    _desc($desc, 'not similar to stderr')
+  );
+};
+
+
 # Check if a zip exists
 sub file_exists {
   my ($self, $file, $desc) = @_;

@@ -122,6 +122,22 @@ Loglevel for I<Log::Any>. Defaults to C<notice>.
 
 =back
 
+=head1 ENVIRONMENT VARIABLES
+
+=over 2
+
+=item B<KORAPXMLTEI_DEBUG>
+
+Activate minimal debugging.
+Defaults to C<false>.
+
+=item B<KORAPXMLTEI_INLINE>
+
+Process inline annotations, if present.
+Defaults to C<false>.
+
+=back
+
 =head1 COPYRIGHT AND LICENSE
 
 Copyright (C) 2020, L<IDS Mannheim|https://www.ids-mannheim.de/>

@@ -34,13 +34,25 @@ stdout_like(
 # Load example file
 my $file = catfile($f, 'data', 'goe_sample.i5.xml');
 
+subtest 'Debugging' => sub {
+
+  my $t = test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '-ti',
+    env => 'KORAPXMLTEI_DEBUG=1'
+  )->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+  ->stderr_like(qr!Debugging is activated!);
+};
+
 subtest 'Basic processing' => sub {
 
   my $t = test_tei2korapxml(
     tmp => 'script_out',
     file => $file,
     param => '-ti'
-  )->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!);
+  )->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+  ->stderr_unlike(qr!Debugging is activated!);
 
 
   # Uncompress GOE/header.xml from zip file
