@@ -38,6 +38,8 @@ our $VERSION = '0.01';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
+# Set to 1 for minimal more debug output (no need to be parametrized)
+use constant DEBUG => $ENV{KORAPXMLTEI_DEBUG} // 0;
 
 # Parse options from the command line
 GetOptions(
@@ -65,6 +67,8 @@ GetOptions(
 );
 
 Log::Any::Adapter->set('Stderr', log_level => $log_level);
+
+$log->notice('Debugging is activated') if DEBUG;
 
 #
 # ~~~ parameter (mandatory) ~~~
@@ -108,7 +112,6 @@ my $_GEN_TOK_INT = $tokenizer_intern;                  # simple tokenization (re
 
 my $_tok_dir         = "base";                       # name of directory for storing tokenization files
 
-my $_DEBUG           = 0;                            # set to 1 for minimal more debug output (no need to be parametrized)
 my $_XCT_LN          = 0;                            # only for debugging: include line numbers in elements of $tree_data
                                                      #  (see also manpage of XML::CompactTree::XS)
 
@@ -306,7 +309,7 @@ sub main {
             # ~ recursion ~
             retr_info(1, \$tree_data->[2] ); # parse input data
 
-            if ($_DEBUG) {
+            if (DEBUG) {
               $log->debug("Writing (utf8-formatted) xml file $dir/$_data_file");
             };
 
@@ -443,7 +446,7 @@ sub main {
         # Write header to zip
         my $file = $header->dir . '/' . $_header_file;
 
-        $log->debug("Writing file $file") if $_DEBUG;
+        $log->debug("Writing file $file") if DEBUG;
 
         $header->to_zip($zipper->new_stream($file));
 
@@ -884,6 +887,22 @@ approach.
 =item B<--log|-l>
 
 Loglevel for I<Log::Any>. Defaults to C<notice>.
+
+=back
+
+=head1 ENVIRONMENT VARIABLES
+
+=over 2
+
+=item B<KORAPXMLTEI_DEBUG>
+
+Activate minimal debugging.
+Defaults to C<false>.
+
+=item B<KORAPXMLTEI_INLINE>
+
+Process inline annotations, if present.
+Defaults to C<false>.
 
 =back
 
