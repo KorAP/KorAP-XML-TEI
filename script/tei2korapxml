@@ -887,7 +887,7 @@ Copyright (C) 2020, L<IDS Mannheim|https://www.ids-mannheim.de/>
 
 Author: Peter Harders
 
-Contributors: Marc Kupietz, Carsten Schnober, Nils Diewald
+Contributors: Nils Diewald, Marc Kupietz, Carsten Schnober
 
 L<KorAP::XML::TEI> is developed as part of the L<KorAP|https://korap.ids-mannheim.de/>
 Corpus Analysis Platform at the
