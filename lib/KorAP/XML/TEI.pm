@@ -73,17 +73,13 @@ sub remove_xml_comments {
 
 # Escape strings using XML entities
 sub escape_xml {
-  my $data = shift // '';
-  $data =~ s/([&<>"])/$ent{$1}/ge;
-  return $data;
+  ($_[0] // '') =~ s/([&<>"])/$ent{$1}/ger;
 };
 
 
 # Escape
 sub escape_xml_minimal {
-  my $data = shift // '';
-  $data =~ s/([&<>])/$ent_without_quot{$1}/ge;
-  return $data;
+  ($_[0] // '') =~ s/([&<>])/$ent_without_quot{$1}/ger;
 };
 
 
