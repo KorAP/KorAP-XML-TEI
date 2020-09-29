@@ -26,13 +26,6 @@ sub add_annotation {
 };
 
 
-# Get last token added to the tokens list
-sub last_token {
-  # DEPRECATED
-  $_[0]->[$#{$_[0]}];
-};
-
-
 # Stringify all tokens
 sub to_string {
   my ($self, $text_id, $param) = @_;
@@ -54,7 +47,7 @@ sub to_string {
     # correct last from-value (if the 'second to last'
     # from-value refers to an s-tag, then the last from-value
     # is one to big - see retr_info())
-    my $last_token = $self->last_token;
+    my $last_token = $_[0]->[$#{$_[0]}];
     if ($last_token->from == $last_token->to + 1) {
       # TODO:
       #   check
