@@ -221,7 +221,9 @@ sub main {
   $dir = "";
 
   if ( $input_fname ne '' ){
-    open ( $input_fh, "<", "$input_fname") || die "File \'$input_fname\' could not be opened.\n";
+    unless (open($input_fh, '<', $input_fname)) {
+      die $log->fatal("File '$input_fname' could not be opened.");
+    };
   }
 
   # prevents segfaulting of 'XML::LibXML::Reader' inside 'main()' - see notes on 'PerlIO layers' in  'man XML::LibXML')
@@ -247,9 +249,11 @@ sub main {
       $pfx = $1;
       $sfx = $2;
 
-      die "ERROR ($0): main(): input line number $.: line with opening text-body tag '${_TEXT_BODY}'"
-        ." contains additional information ... => Aborting\n\tline=$_"
-        if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
+      if ($pfx !~ /^\s*$/ || $sfx !~ /^\s*$/) {
+        die $log->fatal("input line number $.: " .
+                          "line with opening text-body tag '${_TEXT_BODY}' " .
+                          "contains additional information ... => Aborting (line=$_)");
+      };
 
       # text body data extracted from input document ($input_fh), further processed by XML::LibXML::Reader
       my $buf_in = '';
@@ -264,9 +268,11 @@ sub main {
 
           # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files (s.a.: $_tok_file_ext, $_tok_file_con, $_tok_file_agg)
 
-          die "ERROR ($0): main(): input line number $.: line with closing text-body tag '${_TEXT_BODY}'"
-            ." contains additional information ... => Aborting\n\tline=$_"
-            if (substr($_, 0, $pos) . substr($_, $l + $pos)) !~ /^\s*$/;
+          if ((substr($_, 0, $pos) . substr($_, $l + $pos)) !~ /^\s*$/) {
+            die $log->fatal("input line number $.: " .
+                              "line with closing text-body tag '${_TEXT_BODY}'".
+                              " contains additional information ... => Aborting (line=$_)");
+          };
 
           if ( $dir ne "" ){
 
@@ -426,9 +432,11 @@ sub main {
       $pfx = $1;
       my $content = "$2\n";
 
-      die "ERROR ($0): main(): input line number $.: line with opening header tag"
-        ." is not in expected format ... => Aborting\n\tline=$_"
-          if $pfx !~ /^\s*$/;
+      if ($pfx !~ /^\s*$/) {
+        die $log->fatal("input line number $.: " .
+                          "line with opening header tag" .
+                          " is not in expected format ... => Aborting (line=$_)");
+      };
 
       # Parse header
       my $header = KorAP::XML::TEI::Header->new($content)->parse($input_fh);
@@ -636,9 +644,12 @@ sub retr_info { # called from main()
         }
 
         # in case this fails, check input
-        die "ERROR ($0, retr_info()): text_id='$text_id', processing of \@structures: from-value ($fval) is 2 or more greater"
-          ." than to-value ($pos) => please check. aborting ...\n"
-          if ( $fval - 1 ) > $pos;
+        if (($fval - 1) > $pos) {
+          die $log->fatal("text_id='$text_id', " .
+                            "processing of structures: " .
+                            "from-value ($fval) is 2 or more greater " .
+                            "than to-value ($pos) => please check. Aborting");
+        };
 
         # TODO: find example for which this case applies
         #  maybe this is not necessary anymore, because the above recorrection of the from-value suffices
@@ -748,7 +759,7 @@ sub retr_info { # called from main()
 
     } else { # not yet handled type
 
-      die "ERROR ($0): Not yet handled type (\$e->[0]=".$e->[0].") ... => Aborting\n";
+      die $log->fatal('Not yet handled type ($e->[0]=' . $e->[0] . ') ... => Aborting');
     }
 
   } # end: foreach iteration
