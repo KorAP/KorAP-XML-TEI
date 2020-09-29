@@ -52,7 +52,7 @@ sub tokenize {
   my ($self, $txt) = @_;
   return unless $self->{pid};
   my $out = $self->{chld_in};
-  print $out encode( "UTF-8", $txt ) . $self->{sep};
+  print $out encode('UTF-8', $txt) . $self->{sep};
   return $self;
 };
 

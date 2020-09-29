@@ -1,0 +1,142 @@
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+tei2korapxml - Conversion of TEI P5 based formats to KorAP-XML
+
+=head1 SYNOPSIS
+
+  cat corpus.i5.xml | tei2korapxml > corpus.korapxml.zip
+
+=head1 DESCRIPTION
+
+C<tei2korapxml> is a script to convert TEI P5 and
+L<I5|https://www1.ids-mannheim.de/kl/projekte/korpora/textmodell.html>
+based documents to the
+L<KorAP-XML format|https://github.com/KorAP/KorAP-XML-Krill#about-korap-xml>.
+If no specific input is defined, data is
+read from C<STDIN>. If no specific output is defined, data is written
+to C<STDOUT>.
+
+This program is usually called from inside another script.
+
+=head1 FORMATS
+
+=head2 Input restrictions
+
+=over 2
+
+=item
+
+utf8 encoded
+
+=item
+
+TEI P5 formatted input with certain restrictions:
+
+=over 4
+
+=item
+
+B<mandatory>: text-header with integrated textsigle, text-body
+
+=item
+
+B<optional>: corp-header with integrated corpsigle,
+doc-header with integrated docsigle
+
+=back
+
+=item
+
+All tokens inside the primary text may not be
+newline seperated, because newlines are removed
+(see L<KorAP::XML::TEI::Data>) and a conversion of newlines
+into blanks between 2 tokens could lead to additional blanks,
+where there should be none (e.g.: punctuation characters like C<,> or
+C<.> should not be seperated from their predecessor token).
+(see also code section C<~ whitespace handling ~>).
+
+=back
+
+=head2 Notes on the output
+
+=over 2
+
+=item
+
+zip file output (default on C<stdout>) with utf8 encoded entries
+(which together form the KorAP-XML format)
+
+=back
+
+=head1 INSTALLATION
+
+C<tei2korapxml> requires L<libxml2-dev> bindings to build. When
+these bindings are available, the preferred way to install the script is
+to use L<cpanm|App::cpanminus>.
+
+  $ cpanm https://github.com/KorAP/KorAP-XML-TEI.git
+
+In case everything went well, the C<tei2korapxml> tool will
+be available on your command line immediately.
+
+Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
+
+=head1 OPTIONS
+
+=over 2
+
+=item B<--root|-r>
+
+The root directory for output. Defaults to C<.>.
+
+=item B<--help|-h>
+
+Print help information.
+
+=item B<--version|-v>
+
+Print version information.
+
+=item B<--tokenizer-call|-tc>
+
+Call an external tokenizer process, that will tokenize
+a single line from STDIN and outputs one token per line.
+
+=item B<--tokenizer-korap|-tk>
+
+Use the standard KorAP/DeReKo tokenizer.
+
+=item B<--use-intern-tokenization|-ti>
+
+Tokenize the data using two embedded tokenizers,
+that will take an I<Aggressive> and a I<conservative>
+approach.
+
+=item B<--log|-l>
+
+Loglevel for I<Log::Any>. Defaults to C<notice>.
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2020, L<IDS Mannheim|https://www.ids-mannheim.de/>
+
+Author: Peter Harders
+
+Contributors: Marc Kupietz, Carsten Schnober, Nils Diewald
+
+L<KorAP::XML::TEI> is developed as part of the L<KorAP|https://korap.ids-mannheim.de/>
+Corpus Analysis Platform at the
+L<Leibniz Institute for the German Language (IDS)|http://ids-mannheim.de/>,
+member of the
+L<Leibniz-Gemeinschaft|http://www.leibniz-gemeinschaft.de/>.
+
+This program is free software published under the
+L<BSD-2 License|https://raw.githubusercontent.com/KorAP/KorAP-XML-TEI/master/LICENSE>.
+
+=cut

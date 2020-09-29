@@ -70,41 +70,41 @@ Log::Any::Adapter->set('Stderr', log_level => $log_level);
 # ~~~ parameter (mandatory) ~~~
 #
 my $_TEXT_BODY        = "text";                        # tag (without attributes), which contains the primary text
- # optional
+# optional
 my $_CORP_HEADER_BEG  = "idsHeader type=\"corpus\"";   # just keep the correct order of the attributes and evtl. add an '.*' between them
- # optional
+# optional
 my $_DOC_HEADER_BEG   = "idsHeader type=\"document\""; # analog
- # mandatory
+# mandatory
 my $_TEXT_HEADER_BEG  = "idsHeader type=\"text\"";     # analog
 
 #
 # ~~~ constants ~~~
 #
 
+
 ## extern tokenization
 my $_GEN_TOK_EXT = $tokenizer_call || $tokenizer_korap ? 1 : 0;
 
-  # TODO:
-  #   Read tokenizer call from configuration file.
-  #   was 'java  -cp '. join(":", ".", glob(&dirname(__FILE__)."/../target/*.jar")). " de.ids_mannheim.korap.tokenizer.KorAPTokenizerImpl";
-  my $ext_tok;
-  if ($tokenizer_call) {
-    $ext_tok = KorAP::XML::TEI::Tokenizer::External->new($tokenizer_call);
-  }
+my $ext_tok;
+if ($tokenizer_call) {
+  $ext_tok = KorAP::XML::TEI::Tokenizer::External->new($tokenizer_call);
+}
 
-  elsif ($tokenizer_korap) {
-    $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new;
-  };
-  my $_tok_file_ext  = "tokens.xml";
+elsif ($tokenizer_korap) {
+  $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new;
+};
+my $_tok_file_ext  = "tokens.xml";
 ##
+
 
 ## intern tokenization
 my $_GEN_TOK_INT = $tokenizer_intern;                  # simple tokenization (recommended for testing)
-  my $_tok_file_con  = "tokens_conservative.xml";
-  my $_tok_file_agg  = "tokens_aggressive.xml";
-  my $aggr_tok       = KorAP::XML::TEI::Tokenizer::Aggressive->new;
-  my $cons_tok       = KorAP::XML::TEI::Tokenizer::Conservative->new;
+my $_tok_file_con  = "tokens_conservative.xml";
+my $_tok_file_agg  = "tokens_aggressive.xml";
+my $aggr_tok       = KorAP::XML::TEI::Tokenizer::Aggressive->new;
+my $cons_tok       = KorAP::XML::TEI::Tokenizer::Conservative->new;
 ##
+
 
 my $_tok_dir         = "base";                       # name of directory for storing tokenization files
 
@@ -160,7 +160,8 @@ my $input_fh;                                        # input file handle (defaul
 
 my $dir;                                             # text     directory (below $_root_dir)
 
-my ( $text_id, $text_id_esc );                       # '$text_id_esc' = escaped version of $text_id
+my ( $text_id,
+     $text_id_esc );                                 # '$text_id_esc' = escaped version of $text_id
 
 my ( $reader,                                        # instance of 'XML::LibXML::Reader->new' (on input '$buf_in')
      $tree_data );                                   # instance of 'XML::CompactTree::XS::readSubtreeToPerl' (on input '$reader')
@@ -220,11 +221,8 @@ sub main {
   $dir = "";
 
   if ( $input_fname ne '' ){
-
     open ( $input_fh, "<", "$input_fname") || die "File \'$input_fname\' could not be opened.\n";
-
   }
-
 
   # prevents segfaulting of 'XML::LibXML::Reader' inside 'main()' - see notes on 'PerlIO layers' in  'man XML::LibXML')
   # removing 'use open qw(:std :utf8)' would fix this problem too, but using binmode on input is more granular
@@ -246,7 +244,8 @@ sub main {
 
       # ~ start of text body ~
 
-      $pfx = $1; $sfx = $2;
+      $pfx = $1;
+      $sfx = $2;
 
       die "ERROR ($0): main(): input line number $.: line with opening text-body tag '${_TEXT_BODY}'"
         ." contains additional information ... => Aborting\n\tline=$_"
@@ -294,9 +293,7 @@ sub main {
 
             $structures->reset;
 
-            if ( $_TOKENS_PROC ){
-              $tokens->reset;
-            }
+            $tokens->reset if $_TOKENS_PROC;
 
             # ~ whitespace related issue ~
             $add_one = 0;
@@ -317,8 +314,7 @@ sub main {
             );
 
             # ~ tokenization ~
-
-            if ( $_GEN_TOK_EXT ){
+            if ($_GEN_TOK_EXT) {
 
               # Tokenize and output
               $ext_tok->tokenize($data->data)->to_zip(
@@ -327,7 +323,7 @@ sub main {
               );
             };
 
-            if ( $_GEN_TOK_INT ){
+            if ($_GEN_TOK_INT) {
 
               # Tokenize and output
               $cons_tok->tokenize($data->data)->to_zip(
@@ -401,7 +397,7 @@ sub main {
         ### NOTE: this is only relevant, if a text consists of more than one line
         ### TODO: find a better solution, or create a warning, if a text has more than one line ($tl > 1)
         ###  do testing with 2 different corpora (one with only one-line texts, the other with several lines per text)
-        if ( m/<[^>]+>[^<]/ ){ # line contains at least one tag with at least one character contents
+        if (m/<[^>]+>[^<]/){ # line contains at least one tag with at least one character contents
 
           # NOTE: not stringent ('...' stands for text):
           #
@@ -424,7 +420,7 @@ sub main {
         $buf_in .= $_;
       };
 
-    } elsif ( m#^(.*)(<(?:${_TEXT_HEADER_BEG}|${_DOC_HEADER_BEG}|${_CORP_HEADER_BEG}).*)$# ){
+    } elsif (m#^(.*)(<(?:${_TEXT_HEADER_BEG}|${_DOC_HEADER_BEG}|${_CORP_HEADER_BEG}).*)$#) {
 
       # ~ start of header ~
       $pfx = $1;
@@ -456,10 +452,10 @@ sub main {
           $text_id_esc = $header->id_esc;
 
           # log output for seeing progression
-          $log->notice("$0: main(): text_id=".decode('UTF-8', $text_id ));
+          $log->notice("$0: main(): text_id=".decode('UTF-8', $text_id));
 
           $tl = 0; # reset (needed for ~ whitespace handling ~)
-        };
+        }
       }
     }
   } #end: while
@@ -561,22 +557,19 @@ sub retr_info { # called from main()
   #  ref($data->[2]->[0]->[5]->[0]->[5]->[2])                                == ARRAY (with 2 elements)
   #  $data->[2]->[0]->[5]->[0]->[5]->[2]->[0]                                == 3 (=> type ==  XML_READER_TYPE_TEXT)
   #  $data->[2]->[0]->[5]->[0]->[5]->[2]->[1]                                == ' text'
-  # 
+  #
   #
   #  retr_info() starts with the array reference ${$_[0]} (= \$tree_data->[2]), which corresponds to ${\$data->[2]} in the above example.
   #  Hence, the expression @{${$_[0]}} corresponds to @{${\$data->[2]}}, $e to ${${\$data->[2]}}[0] (= $data->[2]->[0]) and $e->[0] to
   #  ${${\$data->[2]}}[0]->[0] (= $data->[2]->[0]->[0]).
 
+  foreach $e (@{${$_[0]}}) { # iteration through all array elements ($_[0] is a reference to an array reference)
 
-  foreach $e ( @{${$_[0]}} ){ # iteration through all array elements ($_[0] is a reference to an array reference)
-
-    if ( $e->[0] == XML_READER_TYPE_ELEMENT ){ # element-node (see 'NODE TYPES' in manpage of XML::LibXML::Reader)
-
+    if ($e->[0] == XML_READER_TYPE_ELEMENT) { # element-node (see 'NODE TYPES' in manpage of XML::LibXML::Reader)
 
       #~~~~
       # from here: tag-node (opening)
       #~~~~
-
 
       # ~ handle structures ~
 
@@ -592,9 +585,9 @@ sub retr_info { # called from main()
 
       # ~ handle attributes ~
 
-      if ( defined $e->[3] ){ # only if attributes exist
+      if (defined $e->[3]) { # only if attributes exist
 
-        for ( $c = 0; $c < @{$e->[3]}; $c += 2 ){ # with 'XCT_ATTRIBUTE_ARRAY', $node->[3] is an array reference of the form
+        for ($c = 0; $c < @{$e->[3]}; $c += 2) {  # with 'XCT_ATTRIBUTE_ARRAY', $node->[3] is an array reference of the form
                                                   #  [ name1, value1, name2, value2, ....] of attribute names and corresponding values.
                                                   # note: arrays are faster (see: http://makepp.sourceforge.net/2.0/perl_performance.html)
 
@@ -618,7 +611,7 @@ sub retr_info { # called from main()
 
       # ~~ RECURSION ~~
 
-      if ( defined $e->[$_IDX] ){  # do no recursion, if $e->[$_IDX] is not defined (because we have no array of child-nodes, e.g.: <back/>)
+      if (defined $e->[$_IDX]) {  # do no recursion, if $e->[$_IDX] is not defined (because we have no array of child-nodes, e.g.: <back/>)
 
         retr_info($rl+1, \$e->[$_IDX]); # recursion with array of child-nodes
       }
@@ -635,7 +628,7 @@ sub retr_info { # called from main()
       {
         $fval = $anno->from;
 
-        if ( $fval > 0 && not exists $ws{ $fval - 1 } ){ # ~ whitespace related issue ~
+        if ($fval > 0 && not exists $ws{$fval - 1}) { # ~ whitespace related issue ~
 
           # ~ previous node was a text-node ~
 
@@ -649,6 +642,7 @@ sub retr_info { # called from main()
 
         # TODO: find example for which this case applies
         #  maybe this is not necessary anymore, because the above recorrection of the from-value suffices
+        #
         # TODO: check, if it's better to remove this line and change above check to 'if ( $fval - 1) >= $pos;
         #   do testing with bigger corpus excerpt (wikipedia?)
         $anno->set_from($pos) if $fval == $pos + 1;
@@ -660,7 +654,7 @@ sub retr_info { # called from main()
 
       # ~ whitespace related issue ~
       # clean up
-      delete $ws{ $fval  - 1 } if $fval > 0 && exists $ws{ $fval - 1 };
+      delete $ws{$fval  - 1} if $fval > 0 && exists $ws{$fval - 1};
 
 
       #~~~~
@@ -668,20 +662,20 @@ sub retr_info { # called from main()
       #~~~~
 
 
-    #~~~~~
-    # from here: text- and whitespace-nodes
-    #~~~~~
+      #~~~~~
+      # from here: text- and whitespace-nodes
+      #~~~~~
 
-    # The 3rd form of nodes, besides text- (XML_READER_TYPE_TEXT) and tag-nodes (XML_READER_TYPE_ELEMENT) are nodes of the type
-    #  'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'.
-    #
-    # When modifiying the previous example (see: Notes on how 'XML::CompactTree::XS' works) by inserting an additional blank between
-    #  '</node1>' and '<node2>', the output for '$data->[2]->[0]->[5]->[1]->[1]' is a blank (' ') and it's type is '14'
-    #  (XML_READER_TYPE_SIGNIFICANT_WHITESPACE, see 'man XML::LibXML::Reader'):
-    #
-    # echo '<node a="v"><node1>some <n/> text</node1> <node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print "node=\x27".$data->[2]->[0]->[5]->[1]->[1]."\x27, type=".$data->[2]->[0]->[5]->[1]->[0]."\n"'
+      # The 3rd form of nodes, besides text- (XML_READER_TYPE_TEXT) and tag-nodes (XML_READER_TYPE_ELEMENT) are nodes of the type
+      #  'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'.
+      #
+      # When modifiying the previous example (see: Notes on how 'XML::CompactTree::XS' works) by inserting an additional blank between
+      #  '</node1>' and '<node2>', the output for '$data->[2]->[0]->[5]->[1]->[1]' is a blank (' ') and it's type is '14'
+      #  (XML_READER_TYPE_SIGNIFICANT_WHITESPACE, see 'man XML::LibXML::Reader'):
+      #
+      # echo '<node a="v"><node1>some <n/> text</node1> <node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print "node=\x27".$data->[2]->[0]->[5]->[1]->[1]."\x27, type=".$data->[2]->[0]->[5]->[1]->[0]."\n"'
 
-    } elsif ( $e->[0] == XML_READER_TYPE_TEXT || $e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE ){
+    } elsif ($e->[0] == XML_READER_TYPE_TEXT || $e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE){
 
       # Notes on ~ whitespace related issue ~ (referred to the code fragment below)
       #
@@ -689,7 +683,7 @@ sub retr_info { # called from main()
       #
       # Two text-nodes should normally be separated by a blank. In the above example, that would be the 2 text-nodes
       #  'Campagne in Frankreich' and '1792', which are separated by the whitespace-node ' ' (see [2]).
-      # 
+      #
       # The text-node 'Campagne in Frankreich' leads to the setting of '$add_one' to 1, so that when opening the 2nd 'head'-tag,
       #  it's from-index gets set to the correct start-index of '1792' (and not to the start-index of the whitespace-node ' ').
       #
@@ -719,7 +713,7 @@ sub retr_info { # called from main()
       # Empty tags also cling to the next text-token - e.g. in '<w>tok1</w> <w>tok2</w><a><b/></a> <w>tok3</w>' are the from-
       #  and to-indizes for the tags 'a' and 'b' both 12, which is the start-index of the token 'tok3'.
 
-      if( $e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE ){
+      if ($e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE) {
 
         # ~ whitespace-node ~
 
@@ -731,12 +725,12 @@ sub retr_info { # called from main()
         #  ('++' doesn't mean a thing here - maybe it could be used for a consistency check)
         $ws{$data->position}++;
 
-      }else{
+      } else {
 
         # ~ text-node ~
 
         $add_one = 1;
-      }
+      };
 
 
       # ~ update $data ~
@@ -748,11 +742,11 @@ sub retr_info { # called from main()
       #~~~~~
 
 
-    #elsif ( $e->[0] == XML_READER_TYPE_ATTRIBUTE ) # attribute-node
-    #   note: attributes cannot be processed like this ( => use 'XCT_ATTRIBUTE_ARRAY' - see above )
+      # elsif ( $e->[0] == XML_READER_TYPE_ATTRIBUTE ) # attribute-node
+      #   note: attributes cannot be processed like this ( => use 'XCT_ATTRIBUTE_ARRAY' - see above )
 
 
-    }else{ # not yet handled type
+    } else { # not yet handled type
 
       die "ERROR ($0): Not yet handled type (\$e->[0]=".$e->[0].") ... => Aborting\n";
     }
@@ -816,9 +810,9 @@ doc-header with integrated docsigle
 
 =item
 
-all tokens inside the primary text (inside $data) may not be
+All tokens inside the primary text may not be
 newline seperated, because newlines are removed
-(see code section C<~ inside text body ~>) and a conversion of newlines
+(see L<KorAP::XML::TEI::Data>) and a conversion of newlines
 into blanks between 2 tokens could lead to additional blanks,
 where there should be none (e.g.: punctuation characters like C<,> or
 C<.> should not be seperated from their predecessor token).
