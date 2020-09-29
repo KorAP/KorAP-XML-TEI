@@ -26,7 +26,7 @@ $loy->attr_is('span', 'id', 's2')
   ->attr_is('span fs f', 'name', 'lex')
   ;
 
-$loy = Test::XML::Loy->new($t->last_token->to_string(3));
+$loy = Test::XML::Loy->new($t->[-1]->to_string(3));
 
 $loy->attr_is('span', 'id', 's3')
   ->attr_is('span', 'from', 15)
