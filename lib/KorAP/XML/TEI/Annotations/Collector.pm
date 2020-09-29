@@ -2,6 +2,7 @@ package KorAP::XML::TEI::Annotations::Collector;
 use base 'KorAP::XML::TEI::Annotations';
 use KorAP::XML::TEI::Annotations::Annotation;
 use Encode qw(encode decode);
+use Log::Any '$log';
 use strict;
 use warnings;
 
@@ -38,7 +39,7 @@ sub to_string {
   my ($self, $text_id, $param) = @_;
 
   unless ($text_id) {
-    warn 'Missing textID';
+    $log->warn('Missing textID');
     return;
   };
 
@@ -93,7 +94,7 @@ sub to_string {
 
 # Overwrite non-applicable boundary method
 sub boundaries {
-  warn 'Not supported';
+  $log->warn('Not supported');
 };
 
 
