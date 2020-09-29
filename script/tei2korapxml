@@ -198,278 +198,273 @@ for ($_CORP_HEADER_BEG,
 
 
 # ~ read input and write output (text by text) ~
-main();
-
 
 #
 # ~~~ subs ~~~
 #
 
 
-sub main {
+my ( $pfx, $sfx );
 
-  my ( $pfx, $sfx );
+my $tl = 0; # text line (needed for whitespace handling)
 
-  my $tl = 0; # text line (needed for whitespace handling)
+$input_fh = *STDIN;  # input file handle (default: stdin)
 
-  $input_fh = *STDIN;  # input file handle (default: stdin)
+# Maybe not necessary
+$data->reset;
 
-  # Maybe not necessary
-  $data->reset;
+$dir = "";
 
-  $dir = "";
+if ( $input_fname ne '' ){
 
-  if ( $input_fname ne '' ){
+  open ( $input_fh, "<", "$input_fname") || die "File \'$input_fname\' could not be opened.\n";
 
-    open ( $input_fh, "<", "$input_fname") || die "File \'$input_fname\' could not be opened.\n";
-
-  }
+}
 
 
-  # prevents segfaulting of 'XML::LibXML::Reader' inside 'main()' - see notes on 'PerlIO layers' in  'man XML::LibXML')
-  # removing 'use open qw(:std :utf8)' would fix this problem too, but using binmode on input is more granular
-  # see in perluniintro: You can switch encodings on an already opened stream by using "binmode()
-  # see in perlfunc: If LAYER is omitted or specified as ":raw" the filehandle is made suitable for passing binary data.
-  binmode $input_fh;
+# prevents segfaulting of 'XML::LibXML::Reader' inside 'main()' - see notes on 'PerlIO layers' in  'man XML::LibXML')
+# removing 'use open qw(:std :utf8)' would fix this problem too, but using binmode on input is more granular
+# see in perluniintro: You can switch encodings on an already opened stream by using "binmode()
+# see in perlfunc: If LAYER is omitted or specified as ":raw" the filehandle is made suitable for passing binary data.
+binmode $input_fh;
 
-  my $pos;
-  my $l = length('</' . $_TEXT_BODY) + 1;
+my $pos;
+my $l = length('</' . $_TEXT_BODY) + 1;
 
-  # ~ loop (reading input document) ~
+# ~ loop (reading input document) ~
 
- MAIN: while ( <$input_fh> ){
+MAIN: while ( <$input_fh> ){
 
-    $_ = remove_xml_comments( $input_fh, $_ ); # remove HTML (multi-line) comments (<!--...-->)
-
-
-    if ( index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$# ){
-
-      # ~ start of text body ~
-
-      $pfx = $1; $sfx = $2;
-
-      die "ERROR ($0): main(): input line number $.: line with opening text-body tag '${_TEXT_BODY}'"
-        ." contains additional information ... => Aborting\n\tline=$_"
-        if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
-
-      # text body data extracted from input document ($input_fh), further processed by XML::LibXML::Reader
-      my $buf_in = '';
-
-      # Iterate over all lines in the text body
-      while (<$input_fh>) {
-
-        $_ = remove_xml_comments( $input_fh, $_ );
-
-        # ~ end of text body ~
-        if (($pos = index($_, '</' . $_TEXT_BODY)) >= 0) {
-
-          # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files (s.a.: $_tok_file_ext, $_tok_file_con, $_tok_file_agg)
-
-          die "ERROR ($0): main(): input line number $.: line with closing text-body tag '${_TEXT_BODY}'"
-            ." contains additional information ... => Aborting\n\tline=$_"
-            if (substr($_, 0, $pos) . substr($_, $l + $pos)) !~ /^\s*$/;
-
-          if ( $dir ne "" ){
-
-            $reader = XML::LibXML::Reader->new( string => "<text>$buf_in</text>", huge => 1 );
-
-            #  ~ whitespace handling ~
-            #
-            #  Every whitespace inside the processed text is 'significant' and recognized as a node of type 'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'
-            #   (see function 'retr_info()').
-            #
-            #  Definition of significant and insignificant whitespace
-            #   (source: https://www.oracle.com/technical-resources/articles/wang-whitespace.html):
-            #
-            #   Significant whitespace is part of the document content and should be preserved.
-            #   Insignificant whitespace is used when editing XML documents for readability.
-            #    These whitespaces are typically not intended for inclusion in the delivery of the document.
-            #
-
-            my $param = XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY;
-
-            # _XCT_LINE_NUMBERS is only for debugging
-            $param |= XCT_LINE_NUMBERS if $_XCT_LN;
-            $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, $param);
-
-            $structures->reset;
-
-            if ( $_TOKENS_PROC ){
-              $tokens->reset;
-            }
-
-            # ~ whitespace related issue ~
-            $add_one = 0;
-            %ws = ();
+  $_ = remove_xml_comments( $input_fh, $_ ); # remove HTML (multi-line) comments (<!--...-->)
 
 
-            # ~ recursion ~
-            retr_info(1, \$tree_data->[2] ); # parse input data
+  if ( index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$# ){
 
-            if ($_DEBUG) {
-              $log->debug("Writing (utf8-formatted) xml file $dir/$_data_file");
-            };
+    # ~ start of text body ~
 
-            # ~ write data.xml ~
-            $data->to_zip(
-              $zipper->new_stream("$dir/${_data_file}"),
+    $pfx = $1; $sfx = $2;
+
+    die "ERROR ($0): main(): input line number $.: line with opening text-body tag '${_TEXT_BODY}'"
+      ." contains additional information ... => Aborting\n\tline=$_"
+      if $pfx !~ /^\s*$/ || $sfx !~ /^\s*$/;
+
+    # text body data extracted from input document ($input_fh), further processed by XML::LibXML::Reader
+    my $buf_in = '';
+
+    # Iterate over all lines in the text body
+    while (<$input_fh>) {
+
+      $_ = remove_xml_comments( $input_fh, $_ );
+
+      # ~ end of text body ~
+      if (($pos = index($_, '</' . $_TEXT_BODY)) >= 0) {
+
+        # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files (s.a.: $_tok_file_ext, $_tok_file_con, $_tok_file_agg)
+
+        die "ERROR ($0): main(): input line number $.: line with closing text-body tag '${_TEXT_BODY}'"
+          ." contains additional information ... => Aborting\n\tline=$_"
+          if (substr($_, 0, $pos) . substr($_, $l + $pos)) !~ /^\s*$/;
+
+        if ( $dir ne "" ){
+
+          $reader = XML::LibXML::Reader->new( string => "<text>$buf_in</text>", huge => 1 );
+
+          #  ~ whitespace handling ~
+          #
+          #  Every whitespace inside the processed text is 'significant' and recognized as a node of type 'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'
+          #   (see function 'retr_info()').
+          #
+          #  Definition of significant and insignificant whitespace
+          #   (source: https://www.oracle.com/technical-resources/articles/wang-whitespace.html):
+          #
+          #   Significant whitespace is part of the document content and should be preserved.
+          #   Insignificant whitespace is used when editing XML documents for readability.
+          #    These whitespaces are typically not intended for inclusion in the delivery of the document.
+          #
+
+          my $param = XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY;
+
+          # _XCT_LINE_NUMBERS is only for debugging
+          $param |= XCT_LINE_NUMBERS if $_XCT_LN;
+          $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, $param);
+
+          $structures->reset;
+
+          if ( $_TOKENS_PROC ){
+            $tokens->reset;
+          }
+
+          # ~ whitespace related issue ~
+          $add_one = 0;
+          %ws = ();
+
+
+          # ~ recursion ~
+          retr_info(1, \$tree_data->[2] ); # parse input data
+
+          if ($_DEBUG) {
+            $log->debug("Writing (utf8-formatted) xml file $dir/$_data_file");
+          };
+
+          # ~ write data.xml ~
+          $data->to_zip(
+            $zipper->new_stream("$dir/${_data_file}"),
+            $text_id_esc
+          );
+
+          # ~ tokenization ~
+
+          if ( $_GEN_TOK_EXT ){
+
+            # Tokenize and output
+            $ext_tok->tokenize($data->data)->to_zip(
+              $zipper->new_stream("$dir/$_tok_dir/$_tok_file_ext"),
+              $text_id_esc
+            );
+          };
+
+          if ( $_GEN_TOK_INT ){
+
+            # Tokenize and output
+            $cons_tok->tokenize($data->data)->to_zip(
+              $zipper->new_stream("$dir/$_tok_dir/$_tok_file_con"),
               $text_id_esc
             );
 
-            # ~ tokenization ~
+            $aggr_tok->tokenize($data->data)->to_zip(
+              $zipper->new_stream("$dir/$_tok_dir/$_tok_file_agg"),
+              $text_id_esc
+            );
 
-            if ( $_GEN_TOK_EXT ){
+            $aggr_tok->reset;
+            $cons_tok->reset;
+          };
 
-              # Tokenize and output
-              $ext_tok->tokenize($data->data)->to_zip(
-                $zipper->new_stream("$dir/$_tok_dir/$_tok_file_ext"),
-                $text_id_esc
-              );
-            };
+          # ~ write structures ~
+          if (!$structures->empty) {
+            $structures->to_zip(
+              $zipper->new_stream("$dir/$_structure_dir/$_structure_file"),
+              $text_id_esc,
+              2 # = structure serialization
+            );
+          };
 
-            if ( $_GEN_TOK_INT ){
-
-              # Tokenize and output
-              $cons_tok->tokenize($data->data)->to_zip(
-                $zipper->new_stream("$dir/$_tok_dir/$_tok_file_con"),
-                $text_id_esc
-              );
-
-              $aggr_tok->tokenize($data->data)->to_zip(
-                $zipper->new_stream("$dir/$_tok_dir/$_tok_file_agg"),
-                $text_id_esc
-              );
-
-              $aggr_tok->reset;
-              $cons_tok->reset;
-            };
-
-            # ~ write structures ~
-            if (!$structures->empty) {
-              $structures->to_zip(
-                $zipper->new_stream("$dir/$_structure_dir/$_structure_file"),
-                $text_id_esc,
-                2 # = structure serialization
-              );
-            };
-
-            # ~ write tokens ~
-            if ($_TOKENS_PROC && !$tokens->empty) {
-              $tokens->to_zip(
-                $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}"),
-                $text_id_esc,
-                $_INLINE_ANNOT # Either 0 = tokens without inline or 1 = tokens with inline
-              );
-            };
+          # ~ write tokens ~
+          if ($_TOKENS_PROC && !$tokens->empty) {
+            $tokens->to_zip(
+              $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}"),
+              $text_id_esc,
+              $_INLINE_ANNOT # Either 0 = tokens without inline or 1 = tokens with inline
+            );
+          };
 
 
-            $dir = ""; # reinit.
+          $dir = ""; # reinit.
 
-            # Maybe not necessary
-            $data->reset;
+          # Maybe not necessary
+          $data->reset;
 
-          } else { # $dir eq ""
+        } else { # $dir eq ""
 
-            $log->warn("Maybe empty textSigle => skipping this text ...\ndata=$data");
-          }
-
-          next MAIN;
-        };
-
-        # ~ inside text body ~
-
-        # ~ whitespace handling ~
-
-        # The idea for the below code fragment was to fix (recreate) missing whitespace in a poorly created corpus, in which linebreaks where inserted
-        #  into the text with the addition that maybe (or not) whitespace before those linebreaks was unintenionally stripped.
-        #
-        # It soon turned out, that it was best to suggest considering just avoiding linebreaks and putting all primary text tokens into one line (see
-        #  example further down and notes on 'Input restrictions' in the manpage).
-        #
-        # Somehow an old first very poor approach remained, which is not stringent, but also doesn't affect one-line text.
-        #
-        # TODO: Maybe it's best, to keep the stripping of whitespace and to just remove the if-clause and to insert a blank by default (with possibly
-        #  an option on how newlines in primary text should be handled (stripped or replaced by a whitespace)).
-        #
-        # Examples (how primary text with linebreaks would be converted by below code):
-        #
-        #  '...<w>end</w>\n<w>.</w>...' -> '...<w>end</w> <w>.</w>...'
-        #  '...<w>,</w>\n<w>this</w>\n<w>is</w>\n<w>it</w>\n<w>!</w>...' -> '<w>,<w> <w>this</w> <w>is</w> <w>it</w> <w>!</w>'.
-
-        s/^\s+//; s/\s+$//; # remove consecutive whitespace at beginning and end (mostly one newline)
-
-        ### NOTE: this is only relevant, if a text consists of more than one line
-        ### TODO: find a better solution, or create a warning, if a text has more than one line ($tl > 1)
-        ###  do testing with 2 different corpora (one with only one-line texts, the other with several lines per text)
-        if ( m/<[^>]+>[^<]/ ){ # line contains at least one tag with at least one character contents
-
-          # NOTE: not stringent ('...' stands for text):
-          #
-          #   beg1............................end1  => no blank before 'beg1'
-          #   beg2....<pb/>...................end2  => no blank before 'beg2'
-          #   beg3....<info attr1="val1"/>....end3  => no blank before 'beg3'
-          #   beg4....<test>ok</test>.........end4  =>    blank before 'beg4'
-          #
-          #     =>  beg1....end1beg2...<pb/>...end2beg3....<info attr1="val1"/>....end3 beg4...<test>ok</test>....end4
-          #                                                                            ^
-          #                                                                            |_blank between 'end3' and 'beg4'
-
-          $tl++; # counter for text lines
-
-          s/^(.)/ $1/ if $tl > 1; # insert blank before 1st character (for 2nd line and consecutive lines)
+          $log->warn("Maybe empty textSigle => skipping this text ...\ndata=$data");
         }
-        ###
 
-        # add line to buffer
-        $buf_in .= $_;
+        next MAIN;
       };
 
-    } elsif ( m#^(.*)(<(?:${_TEXT_HEADER_BEG}|${_DOC_HEADER_BEG}|${_CORP_HEADER_BEG}).*)$# ){
+      # ~ inside text body ~
 
-      # ~ start of header ~
-      $pfx = $1;
-      my $content = "$2\n";
+      # ~ whitespace handling ~
 
-      die "ERROR ($0): main(): input line number $.: line with opening header tag"
-        ." is not in expected format ... => Aborting\n\tline=$_"
-          if $pfx !~ /^\s*$/;
+      # The idea for the below code fragment was to fix (recreate) missing whitespace in a poorly created corpus, in which linebreaks where inserted
+      #  into the text with the addition that maybe (or not) whitespace before those linebreaks was unintenionally stripped.
+      #
+      # It soon turned out, that it was best to suggest considering just avoiding linebreaks and putting all primary text tokens into one line (see
+      #  example further down and notes on 'Input restrictions' in the manpage).
+      #
+      # Somehow an old first very poor approach remained, which is not stringent, but also doesn't affect one-line text.
+      #
+      # TODO: Maybe it's best, to keep the stripping of whitespace and to just remove the if-clause and to insert a blank by default (with possibly
+      #  an option on how newlines in primary text should be handled (stripped or replaced by a whitespace)).
+      #
+      # Examples (how primary text with linebreaks would be converted by below code):
+      #
+      #  '...<w>end</w>\n<w>.</w>...' -> '...<w>end</w> <w>.</w>...'
+      #  '...<w>,</w>\n<w>this</w>\n<w>is</w>\n<w>it</w>\n<w>!</w>...' -> '<w>,<w> <w>this</w> <w>is</w> <w>it</w> <w>!</w>'.
 
-      # Parse header
-      my $header = KorAP::XML::TEI::Header->new($content)->parse($input_fh);
+      s/^\s+//; s/\s+$//; # remove consecutive whitespace at beginning and end (mostly one newline)
 
-      # Header was parseable
-      if ($header) {
+      ### NOTE: this is only relevant, if a text consists of more than one line
+      ### TODO: find a better solution, or create a warning, if a text has more than one line ($tl > 1)
+      ###  do testing with 2 different corpora (one with only one-line texts, the other with several lines per text)
+      if ( m/<[^>]+>[^<]/ ){ # line contains at least one tag with at least one character contents
 
-        # Write header to zip
-        my $file = $header->dir . '/' . $_header_file;
+        # NOTE: not stringent ('...' stands for text):
+        #
+        #   beg1............................end1  => no blank before 'beg1'
+        #   beg2....<pb/>...................end2  => no blank before 'beg2'
+        #   beg3....<info attr1="val1"/>....end3  => no blank before 'beg3'
+        #   beg4....<test>ok</test>.........end4  =>    blank before 'beg4'
+        #
+        #     =>  beg1....end1beg2...<pb/>...end2beg3....<info attr1="val1"/>....end3 beg4...<test>ok</test>....end4
+        #                                                                            ^
+        #                                                                            |_blank between 'end3' and 'beg4'
 
-        $log->debug("Writing file $file") if $_DEBUG;
+        $tl++; # counter for text lines
 
-        $header->to_zip($zipper->new_stream($file));
-
-        # Header is for text level
-        if ($header->type eq 'text') {
-
-          # Remember dir and sigles
-          $dir         = $header->dir;
-          $text_id     = $header->id;
-          $text_id_esc = $header->id_esc;
-
-          # log output for seeing progression
-          $log->notice("$0: main(): text_id=".decode('UTF-8', $text_id ));
-
-          $tl = 0; # reset (needed for ~ whitespace handling ~)
-        };
+        s/^(.)/ $1/ if $tl > 1; # insert blank before 1st character (for 2nd line and consecutive lines)
       }
+      ###
+
+      # add line to buffer
+      $buf_in .= $_;
+    };
+
+  } elsif ( m#^(.*)(<(?:${_TEXT_HEADER_BEG}|${_DOC_HEADER_BEG}|${_CORP_HEADER_BEG}).*)$# ){
+
+    # ~ start of header ~
+    $pfx = $1;
+    my $content = "$2\n";
+
+    die "ERROR ($0): main(): input line number $.: line with opening header tag"
+      ." is not in expected format ... => Aborting\n\tline=$_"
+      if $pfx !~ /^\s*$/;
+
+    # Parse header
+    my $header = KorAP::XML::TEI::Header->new($content)->parse($input_fh);
+
+    # Header was parseable
+    if ($header) {
+
+      # Write header to zip
+      my $file = $header->dir . '/' . $_header_file;
+
+      $log->debug("Writing file $file") if $_DEBUG;
+
+      $header->to_zip($zipper->new_stream($file));
+
+      # Header is for text level
+      if ($header->type eq 'text') {
+
+        # Remember dir and sigles
+        $dir         = $header->dir;
+        $text_id     = $header->id;
+        $text_id_esc = $header->id_esc;
+
+        # log output for seeing progression
+        $log->notice("$0: main(): text_id=".decode('UTF-8', $text_id ));
+
+        $tl = 0; # reset (needed for ~ whitespace handling ~)
+      };
     }
-  } #end: while
+  }
+} #end: while
 
-  $zipper->close;
+$zipper->close;
 
-  $ext_tok->close if $_GEN_TOK_EXT;
+$ext_tok->close if $_GEN_TOK_EXT;
 
-} # end: sub main
-
+exit(0);
 
 sub retr_info { # called from main()
   # recursion level
