@@ -128,18 +128,6 @@ my $_TOKENS_TAG      = "w";                          # name of tag        contai
 # handling inline annotations (inside $_TOKENS_TAG)
 my $_INLINE_ANNOT    = $ENV{KORAPXMLTEI_INLINE}?1:0; # on/off: set to 1 if inline annotations are present and should be processed (default: 0)
 
-# TODO:
-#   These parameters are now defunct and moved to Token.pm
-my $_INLINE_LEM_RD   = "lemma";                      # from which attribute to read LEMMA information
-my $_INLINE_ATT_RD   = "ana";                        # from which attribute to read POS information (and evtl. additional MSD - Morphosyntactic Descriptions)
-                                                     # TODO: The format for the POS and MSD information has to suffice the regular expression ([^ ]+)( (.+))?
-                                                     #  - which means, that the POS information can be followed by an optional blank with additional
-                                                     #     MSD information; unlike the MSD part, the POS part may not contain any blanks.
-my $_INLINE_POS_WR   = "pos";                        # name (inside $_tokens_file) referring to POS   information
-my $_INLINE_MSD_WR   = "msd";                        # name (inside $_tokens_file) referring to MSD   information
-my $_INLINE_LEM_WR   = "lemma";                      # name (inside $_tokens_file) referring to LEMMA information
-##
-
 
 #
 # ~~~ variables ~~~
