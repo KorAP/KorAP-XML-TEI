@@ -45,7 +45,7 @@ GetOptions(
   "input|i=s" => \(my $input_fname = ''), # input file (yet only TEI I5 Format accepted)
   'tokenizer-call|tc=s' => \(my $tokenizer_call), # Temporary argument for testing purposes
   'tokenizer-korap|tk' => \(my $tokenizer_korap), # use KorAP-tokenizer
-  'use-intern-tokenization|ti' => \(my $tokenizer_intern), # use intern tokenization (default = no)
+  'tokenizer-internal|ti' => \(my $tokenizer_intern), # use intern tokenization (default = no)
   'log|l=s' => \(my $log_level = 'notice'),
   'help|h'    => sub {
     pod2usage(
@@ -869,7 +869,7 @@ a single line from STDIN and outputs one token per line.
 
 Use the standard KorAP/DeReKo tokenizer.
 
-=item B<--use-intern-tokenization|-ti>
+=item B<--tokenizer-internal|-ti>
 
 Tokenize the data using two embedded tokenizers,
 that will take an I<Aggressive> and a I<conservative>

@@ -110,7 +110,7 @@ a single line from STDIN and outputs one token per line.
 
 Use the standard KorAP/DeReKo tokenizer.
 
-=item B<--use-intern-tokenization|-ti>
+=item B<--tokenizer-internal|-ti>
 
 Tokenize the data using two embedded tokenizers,
 that will take an I<Aggressive> and a I<conservative>
