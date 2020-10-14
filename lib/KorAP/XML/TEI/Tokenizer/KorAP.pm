@@ -20,7 +20,7 @@ if ($java eq '') {
 
 my $tokenizer_jar = dist_file(
   'tei2korapxml',
-  'KorAP-Tokenizer-1.3-SNAPSHOT-6cc760f-standalone.jar'
+  'KorAP-Tokenizer-2.0.0-SNAPSHOT-standalone.jar'
 );
 
 

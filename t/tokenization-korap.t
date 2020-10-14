@@ -63,4 +63,13 @@ $t = Test::XML::Loy->new($str);
 $t->attr_is('layer spanList span:nth-child(14)', 'from', 80);
 $t->attr_is('layer spanList span:nth-child(14)', 'to', 92);
 $t->element_count_is('layer spanList span', 14);
+
+$string = "Gefunden auf www.wikipedia.de";
+$ext->reset;
+$ext->tokenize($string);
+$str = $ext->to_string('unknown');
+$t = Test::XML::Loy->new($str);
+$t->attr_is('layer spanList span:nth-child(3)', 'from', 13);
+$t->attr_is('layer spanList span:nth-child(3)', 'to', 29);
+$t->element_count_is('layer spanList span', 3);
 done_testing;
