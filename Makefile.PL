@@ -21,6 +21,7 @@ WriteMakefile(
     'Pod::Usage'      => 0,
     'Dumbbench' => '0.111',
     'DateTime' => '1.51',
+    'File::Share' => '0.25',
     'Capture::Tiny' => '0.48'
   },
   PREREQ_PM => {
