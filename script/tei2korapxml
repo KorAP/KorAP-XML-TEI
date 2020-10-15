@@ -9,8 +9,7 @@ use Getopt::Long qw(GetOptions :config no_auto_abbrev);
 
 use File::Basename qw(dirname);
 
-use open qw(:std :utf8); # assume utf-8 encoding
-use Encode qw(encode decode);
+use Encode qw(decode);
 
 use XML::CompactTree::XS;
 use XML::LibXML::Reader;
@@ -34,7 +33,7 @@ eval {
   1;
 };
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
@@ -215,6 +214,7 @@ if ( $input_fname ne '' ){
 binmode $input_fh;
 
 my $pos;
+my $input_enc = 'UTF-8';
 my $l = length('</' . $_TEXT_BODY) + 1;
 
 # ~ loop (reading input document) ~
@@ -222,6 +222,14 @@ my $l = length('</' . $_TEXT_BODY) + 1;
 MAIN: while ( <$input_fh> ){
 
   $_ = remove_xml_comments( $input_fh, $_ ); # remove HTML (multi-line) comments (<!--...-->)
+
+  # Set input encoding
+  if ( index($_, '<?xml') == 0 && $_ =~ /\sencoding=(['"])([^\1]+?)\1/) {
+    $input_enc = $2;
+    next;
+  };
+
+  $_ = decode($input_enc, $_);
 
   if ( index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$# ){
 
@@ -243,6 +251,7 @@ MAIN: while ( <$input_fh> ){
     while (<$input_fh>) {
 
       $_ = remove_xml_comments( $input_fh, $_ );
+      $_ = decode($input_enc, $_);
 
       # ~ end of text body ~
       if (($pos = index($_, '</' . $_TEXT_BODY)) >= 0) {
@@ -418,7 +427,7 @@ MAIN: while ( <$input_fh> ){
     };
 
     # Parse header
-    my $header = KorAP::XML::TEI::Header->new($content)->parse($input_fh);
+    my $header = KorAP::XML::TEI::Header->new($content, $input_enc)->parse($input_fh);
 
     # Header was parseable
     if ($header) {

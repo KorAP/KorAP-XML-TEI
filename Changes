@@ -1,2 +1,6 @@
+0.02 2020-10-15
+        - Switch input encoding based on XML
+          processing instruction.
+
 0.01 2020-09-28
         - Initial release to GitHub.
