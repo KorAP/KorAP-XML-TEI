@@ -16,7 +16,8 @@ my $_HEADER_TAG = 'idsHeader';
 use constant {
   TEXT      => 0,
   HEADTYPE  => 1,
-  SIGLE     => 2
+  SIGLE     => 2,
+  INPUTENC  => 3
 };
 
 
@@ -30,9 +31,9 @@ our %sig = (
 
 # Create new header object
 sub new {
-  my ($class, $text) = @_;
+  my ($class, $text, $input_enc) = @_;
 
-  my $self = bless [$text, undef, ''], $class;
+  my $self = bless [$text, undef, '', $input_enc // 'UTF-8'], $class;
 
   # Check header types to distinguish between siglen types
   if ($text =~ m!^<${_HEADER_TAG}\s+[^<]*type="([^"]+)"!) {
@@ -60,6 +61,8 @@ sub parse {
 
   # Iterate over file handle
   while (<$fh>) {
+
+    $_ = decode($self->[INPUTENC], $_);
 
     # Change:
     #   This version keeps comments in header files
