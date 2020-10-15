@@ -1,3 +1,7 @@
+0.02 2020-10-15
+        - Switch input encoding based on XML
+          processing instruction.
+
 0.02 2020-10-14
         - Update KorAP-Tokenizer to v2.0.0.
 

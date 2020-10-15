@@ -306,11 +306,11 @@ subtest 'Test utf-8 handling' => sub {
   my (undef, $outzip) = korap_tempfile('script_out5');
 
   # because output 'textid=...' goes to STDERR (see script/tei2korapxml)
-  binmode STDERR, qw{ :encoding(UTF-8) };
+  binmode STDERR;
 
   stderr_like(
     sub { `cat '$tplfile' | perl '$script' -ti > '$outzip'` },
-    qr!tei2korapxml: .*? text_id=$text_sigle_lax!, # see above: print $fh encode_utf8($tpl);
+    qr!tei2korapxml: .*? text_id=$text_sigle_esc!, # see above: print $fh encode_utf8($tpl);
   );
 };
 
@@ -407,6 +407,32 @@ subtest 'Check Inline annotations with untagged file' => sub {
   ok($zip, 'found structure.xml');
 };
 
+
+subtest 'Check input encoding' => sub {
+
+  # Load example file
+  test_tei2korapxml(
+    file => catfile($f, 'data', 'goe_sample.i5.xml'),
+    env => 'KORAPXMLTEI_INLINE=1',
+    tmp => 'script_utf8_enc'
+  )
+    ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->unzip_xml('GOE/AGA/00000/data.xml')
+    ->content_like(qr/\Q&quot;Kriegstheater&quot;\E/)
+    ->content_like(qr/\QTür&#39;\E/)
+    ;
+
+  test_tei2korapxml(
+    file => catfile($f, 'data', 'goe_sample.i5.iso.xml'),
+    env => 'KORAPXMLTEI_INLINE=1',
+    tmp => 'script_iso_enc'
+  )
+    ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->unzip_xml('GOE/AGA/00000/data.xml')
+    ->content_like(qr/\Q&quot;Kriegstheater&quot;\E/)
+    ->content_like(qr/\QTür&#39;\E/)
+    ;
+};
 
 subtest 'Test Log' => sub {
   test_tei2korapxml(
