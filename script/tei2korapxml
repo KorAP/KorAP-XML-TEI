@@ -65,6 +65,7 @@ GetOptions(
   }
 );
 
+binmode(STDERR, ":encoding(UTF-8)");
 Log::Any::Adapter->set('Stderr', log_level => $log_level);
 
 $log->notice('Debugging is activated') if DEBUG;
@@ -448,7 +449,7 @@ MAIN: while ( <$input_fh> ){
         $text_id_esc = $header->id_esc;
 
         # log output for seeing progression
-        $log->notice("$0: main(): text_id=".decode('UTF-8', $text_id));
+        $log->notice("$0: main(): text_id=$text_id");
 
         $tl = 0; # reset (needed for ~ whitespace handling ~)
       }

@@ -112,13 +112,13 @@ sub type {
 };
 
 
-# Directory (leveled) of the header file
+# Directory (leveled) of the header file as UTF-8
 sub dir {
   $_[0]->[SIGLE] =~ tr/\./\//r;
 };
 
 
-# corpus/doc/text sigle
+# corpus/doc/text sigle - as UTF-8
 sub sigle {
   $_[0]->[SIGLE];
 };
@@ -126,11 +126,12 @@ sub sigle {
 
 # corpus/doc/text id
 sub id {
-  $_[0]->[SIGLE] =~ tr/\//_/r;
+  my $self = shift;
+  decode($self->[INPUTENC], $self->[SIGLE] =~ tr/\//_/r);
 };
 
 
-# corpus/doc/text sigle escaped
+# corpus/doc/text sigle escaped - as UTF-8
 sub sigle_esc {
   escape_xml($_[0]->[SIGLE]);
 };
