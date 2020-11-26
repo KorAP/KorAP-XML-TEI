@@ -1,6 +1,7 @@
 package KorAP::XML::TEI::Annotations;
 use strict;
 use warnings;
+use Encode qw(encode);
 use Log::Any qw($log);
 
 # This is the base class for Annotation objects.
@@ -56,7 +57,7 @@ sub to_string {
 # Write data to zip stream
 sub to_zip {
   my ($self, $zip, $text_id) = @_;
-  $zip->print($self->to_string($text_id));
+  $zip->print(encode('UTF-8', $self->to_string($text_id)));
 };
 
 
