@@ -36,7 +36,7 @@ sub to_string {
     return;
   };
 
-  my $output = $self->_header($text_id);
+  my $output = $self->_header(decode("UTF-8", $text_id));
 
   # Iterate
   my $c = 0;

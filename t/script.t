@@ -434,6 +434,34 @@ subtest 'Check input encoding' => sub {
     ;
 };
 
+subtest 'Check encoding with utf-8 sigle' => sub {
+
+  # Load example file
+  my $file = catfile($f, 'data', 'wdd_sample.i5.xml');
+
+  my $t = test_tei2korapxml(
+      tmp   => 'script_sigle',
+      file  => $file,
+      param => "-ti -tk"
+  )->stderr_like(qr!tei2korapxml: .*? text_id=WDD19_ß0000\.10317!)
+  ->stderr_unlike(qr!Debugging is activated!);
+
+  $t->unzip_xml('WDD19/ß0000/10317/header.xml')
+      ->text_is('idsHeader fileDesc titleStmt textSigle', 'WDD19/ß0000.10317');
+
+  $t->unzip_xml('WDD19/ß0000/10317/data.xml')
+    ->attr_is('raw_text', 'docid', 'WDD19_ß0000.10317');
+
+  $t->unzip_xml('WDD19/ß0000/10317/struct/structure.xml')
+      ->attr_is('layer', 'docid', 'WDD19_ß0000.10317');
+
+  $t->unzip_xml('WDD19/ß0000/10317/base/tokens.xml')
+      ->attr_is('layer', 'docid', 'WDD19_ß0000.10317');
+
+  $t->unzip_xml('WDD19/ß0000/10317/base/tokens_conservative.xml')
+      ->attr_is('layer', 'docid', 'WDD19_ß0000.10317');
+};
+
 subtest 'Test Log' => sub {
   test_tei2korapxml(
     tmp => 'script_out',
