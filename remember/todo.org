@@ -1,0 +1,4 @@
+# - Test order of zips in stream
+
+* Profiling
+cat t/data/goe_sample_tagged.i5.xml | perl -d:NYTProf script/tei2korapxml -ti > /dev/null 
