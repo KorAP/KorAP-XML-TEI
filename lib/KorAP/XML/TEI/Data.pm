@@ -1,6 +1,8 @@
 package KorAP::XML::TEI::Data;
 use strict;
 use warnings;
+use open qw(:utf8 :std);
+use warnings qw(FATAL utf8);
 use Log::Any qw($log);
 use Encode qw(encode decode);
 use KorAP::XML::TEI qw!escape_xml_minimal!;
@@ -64,6 +66,7 @@ sub position {
 sub _header {
   my (undef, $text_id) = @_;
 
+  $text_id = decode("UTF-8", $text_id);
   # TODO:
   #   Can 'metadata.xml' change or is it constant?
   return <<"HEADER";

@@ -1,0 +1,1618 @@
+Archive:  out5.zip
+  inflating: WDD19/header.xml        
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="header.rng"
+            type="application/xml"
+            schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!DOCTYPE idsCorpus PUBLIC "-//IDS//DTD IDS-XCES 1.0//EN"
+          "http://corpora.ids-mannheim.de/idsxces1/DTD/ids.xcesdoc.dtd">
+<idsHeader pattern="allesaußerZtg/Zschr" type="corpus" version="1.0" status="new" TEIform="teiHeader">
+  <fileDesc>
+   <titleStmt>
+    <korpusSigle>WDD19</korpusSigle>
+    <c.title>Wikipedia.de 2019 Diskussionen zu Artikeln</c.title>
+   </titleStmt>
+   <editionStmt version="1.0"/>
+   <publicationStmt>
+    <distributor>Leibniz-Institut für Deutsche Sprache</distributor>
+    <pubAddress>Postfach 10 16 21, D-68016 Mannheim</pubAddress>
+    <telephone>+49 (0)621 1581 0</telephone>
+    <eAddress type="www">http://www.ids-mannheim.de</eAddress>
+    <eAddress type="www">http://www.ids-mannheim.de/kl/projekte/korpora/</eAddress>
+    <eAddress type="email">dereko@ids-mannheim.de</eAddress>
+    <availability status="free" Default="n" region="world">This document, the IDS-Wikipedia.de-Corpus, is part of the Archive
+      of General Reference Corpora at IDS. It is published under the Creative Commons
+      Attribution-ShareAlike License. See http://creativecommons.org/licenses/by-sa/3.0/legalcode
+      for details. See http://www.ids-mannheim.de/kl/projekte/korpora/releases.html on how to refer
+      to this document.</availability>
+    <pubDate type="year">2020</pubDate>
+   </publicationStmt>
+   <sourceDesc Default="n">
+    <biblStruct Default="n" status="draft">
+     <monogr>
+      <h.title type="main">Wikipedia</h.title>
+      <h.author/>
+      <editor>Wikimedia Foundation</editor>
+      <edition>
+       <further>Dump file "dewiki-20190801-pages-meta-current.xml" retrieved from
+         http://dumps.wikimedia.org</further>
+       <kind/>
+       <appearance/>
+      </edition>
+      <imprint>
+       <publisher>Wikipedia</publisher>
+       <pubPlace>
+        <ref target="http://de.wikipedia.org"/>
+       </pubPlace>
+       <pubDate type="year">2019</pubDate>
+       <pubDate type="month">08</pubDate>
+       <pubDate type="day">01</pubDate>
+      </imprint>
+     </monogr>
+    </biblStruct>
+   </sourceDesc>
+  </fileDesc>
+  <encodingDesc>
+   <projectDesc Default="n">French-German Project Comparable Wikipedia Corpora 2019; Leibniz-Institute for the
+     German Language and Université de Toulouse Jean Jaurès</projectDesc>
+   <editorialDecl Default="n">
+    <conformance level="0">This document conforms to I5 (see http://jtei.revues.org/508)</conformance>
+    <transduction n="1" Default="n">Extraction from Wikidump and building of CMC-core version: Mai Ho-Dac, U
+      Toulouse, July 2020</transduction>
+    <transduction n="2" Default="n">Conversion from CMC-core to I5: IDS, August 2020</transduction>
+   </editorialDecl>
+   <classDecl>
+    <taxonomy id="topic">
+     <h.bibl>Thementaxonomie (siehe http://www.ids-mannheim.de/kl/projekte/methoden/te.html)</h.bibl>
+     <category id="topic.fiktion">
+      <catDesc>Fiktion</catDesc>
+      <category id="topic.fiktion.vermischtes">
+       <catDesc>Fiktion:Vermischtes</catDesc>
+      </category>
+     </category>
+     <category id="topic.freizeit-unterhaltung">
+      <catDesc>Freizeit_Unterhaltung</catDesc>
+      <category id="topic.freizeit-unterhaltung.reisen">
+       <catDesc>Freizeit_Unterhaltung:Reisen</catDesc>
+      </category>
+      <category id="topic.freizeit-unterhaltung.rundfunk">
+       <catDesc>Freizeit_Unterhaltung:Rundfunk</catDesc>
+      </category>
+      <category id="topic.freizeit-unterhaltung.vereine-veranstaltungen">
+       <catDesc>Freizeit_Unterhaltung:Vereine_Veranstaltungen</catDesc>
+      </category>
+     </category>
+     <category id="topic.gesundheit-ernaehrung">
+      <catDesc>Gesundheit_Ernaehrung</catDesc>
+      <category id="topic.gesundheit-ernaehrung.ernaehrung">
+       <catDesc>Gesundheit_Ernaehrung:Ernaehrung</catDesc>
+      </category>
+      <category id="topic.gesundheit-ernaehrung.gesundheit">
+       <catDesc>Gesundheit_Ernaehrung:Gesundheit</catDesc>
+      </category>
+     </category>
+     <category id="topic.kultur">
+      <catDesc>Kultur</catDesc>
+      <category id="topic.kultur.bildende-kunst">
+       <catDesc>Kultur:Bildende Kunst</catDesc>
+      </category>
+      <category id="topic.kultur.darstellende-kunst">
+       <catDesc>Kultur:Darstellende Kunst</catDesc>
+      </category>
+      <category id="topic.kultur.film">
+       <catDesc>Kultur:Film</catDesc>
+      </category>
+      <category id="topic.kultur.literatur">
+       <catDesc>Kultur:Literatur</catDesc>
+      </category>
+      <category id="topic.kultur.mode">
+       <catDesc>Kultur:Mode</catDesc>
+      </category>
+      <category id="topic.kultur.musik">
+       <catDesc>Kultur:Musik</catDesc>
+      </category>
+     </category>
+     <category id="topic.natur-umwelt">
+      <catDesc>Natur_Umwelt</catDesc>
+      <category id="topic.natur-umwelt.garten">
+       <catDesc>Natur_Umwelt:Garten</catDesc>
+      </category>
+      <category id="topic.natur-umwelt.tiere">
+       <catDesc>Natur_Umwelt:Tiere</catDesc>
+      </category>
+      <category id="topic.natur-umwelt.wetter-klima">
+       <catDesc>Natur_Umwelt:Wetter_Klima</catDesc>
+      </category>
+     </category>
+     <category id="topic.politik">
+      <catDesc>Politik</catDesc>
+      <category id="topic.politik.ausland">
+       <catDesc>Politik:Ausland</catDesc>
+      </category>
+      <category id="topic.politik.inland">
+       <catDesc>Politik:Inland</catDesc>
+      </category>
+      <category id="topic.politik.kommunalpolitik">
+       <catDesc>Politik:Kommunalpolitik</catDesc>
+      </category>
+     </category>
+     <category id="topic.rest">
+      <catDesc>Rest</catDesc>
+      <category id="topic.rest.boersenkurse">
+       <catDesc>Rest:boersenkurse</catDesc>
+      </category>
+      <category id="topic.rest.geburt-tod-heirat">
+       <catDesc>Rest:geburt_tod_heirat</catDesc>
+      </category>
+      <category id="topic.rest.impressum">
+       <catDesc>Rest:impressum</catDesc>
+      </category>
+      <category id="topic.rest.inhaltsverzeichnisse">
+       <catDesc>Rest:inhaltsverzeichnisse</catDesc>
+      </category>
+      <category id="topic.rest.ligatabellen">
+       <catDesc>Rest:ligatabellen</catDesc>
+      </category>
+      <category id="topic.rest.tabellen">
+       <catDesc>Rest:tabellen</catDesc>
+      </category>
+      <category id="topic.rest.veranstaltungshinweise">
+       <catDesc>Rest:veranstaltungshinweise</catDesc>
+      </category>
+     </category>
+     <category id="topic.sport">
+      <catDesc>Sport</catDesc>
+      <category id="topic.sport.ballsport">
+       <catDesc>Sport:Ballsport</catDesc>
+      </category>
+      <category id="topic.sport.fussball">
+       <catDesc>Sport:Fussball</catDesc>
+      </category>
+      <category id="topic.sport.motorsport">
+       <catDesc>Sport:Motorsport</catDesc>
+      </category>
+      <category id="topic.sport.radsport">
+       <catDesc>Sport:Radsport</catDesc>
+      </category>
+      <category id="topic.sport.tennis">
+       <catDesc>Sport:Tennis</catDesc>
+      </category>
+      <category id="topic.sport.vermischtes">
+       <catDesc>Sport:Vermischtes</catDesc>
+      </category>
+      <category id="topic.sport.wintersport">
+       <catDesc>Sport:Wintersport</catDesc>
+      </category>
+     </category>
+     <category id="topic.staat-gesellschaft">
+      <catDesc>Staat_Gesellschaft</catDesc>
+      <category id="topic.staat-gesellschaft.arbeit-und-beruf">
+       <catDesc>Staat_Gesellschaft:Arbeit_und_Beruf</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.bildung">
+       <catDesc>Staat_Gesellschaft:Bildung</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.biographien-interviews">
+       <catDesc>Staat_Gesellschaft:Biographien_Interviews</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.drittes-reich-rechtsextremismus">
+       <catDesc>Staat_Gesellschaft:Drittes_Reich_Rechtsextremismus</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.familie-geschlecht">
+       <catDesc>Staat_Gesellschaft:Familie_Geschlecht</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.kirche">
+       <catDesc>Staat_Gesellschaft:Kirche</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.recht">
+       <catDesc>Staat_Gesellschaft:Recht</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.tod">
+       <catDesc>Staat_Gesellschaft:Tod</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.verbrechen">
+       <catDesc>Staat_Gesellschaft:Verbrechen</catDesc>
+      </category>
+     </category>
+     <category id="topic.technik-industrie">
+      <catDesc>Technik_Industrie</catDesc>
+      <category id="topic.technik-industrie.edv-elektronik">
+       <catDesc>Technik_Industrie:EDV_Elektronik</catDesc>
+      </category>
+      <category id="topic.technik-industrie.kfz">
+       <catDesc>Technik_Industrie:Kfz</catDesc>
+      </category>
+      <category id="topic.technik-industrie.transport-verkehr">
+       <catDesc>Technik_Industrie:Transport_Verkehr</catDesc>
+      </category>
+      <category id="topic.technik-industrie.umweltschutz">
+       <catDesc>Technik_Industrie:Umweltschutz</catDesc>
+      </category>
+      <category id="topic.technik-industrie.unfaelle">
+       <catDesc>Technik_Industrie:Unfaelle</catDesc>
+      </category>
+     </category>
+     <category id="topic.wirtschaft-finanzen">
+      <catDesc>Wirtschaft_Finanzen</catDesc>
+      <category id="topic.wirtschaft-finanzen.banken">
+       <catDesc>Wirtschaft_Finanzen:Banken</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.bilanzen">
+       <catDesc>Wirtschaft_Finanzen:Bilanzen</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.oeffentliche-finanzen">
+       <catDesc>Wirtschaft_Finanzen:Oeffentliche_Finanzen</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.sozialprodukt">
+       <catDesc>Wirtschaft_Finanzen:Sozialprodukt</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.waehrung">
+       <catDesc>Wirtschaft_Finanzen:Waehrung</catDesc>
+      </category>
+     </category>
+     <category id="topic.wissenschaft">
+      <catDesc>Wissenschaft</catDesc>
+      <category id="topic.wissenschaft.populaerwissenschaft">
+       <catDesc>Wissenschaft:Populaerwissenschaft</catDesc>
+      </category>
+     </category>
+     <category id="topic.unklassifizierbar">
+      <catDesc>Text ist thematisch nicht klassifizierbar.</catDesc>
+     </category>
+    </taxonomy>
+   </classDecl>
+  </encodingDesc>
+  <profileDesc>
+   <langUsage Default="n">
+    <language id="de">Deutsch</language>
+   </langUsage>
+   <textDesc Default="n">
+    <textType>Diskussionen zu Enzyklopädie-Artikeln</textType>
+    <textTypeRef/>
+   </textDesc>
+  </profileDesc>
+  <revisionDesc status="draft">
+   <listChange ordered="true">
+    <change when="2020-09" who="Harald Lüngen" status="draft">generated from cmc-core</change>
+   </listChange>
+  </revisionDesc>
+ </idsHeader>
+  inflating: WDD19/A00/header.xml    
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="header.rng"
+            type="application/xml"
+            schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!DOCTYPE idsCorpus PUBLIC "-//IDS//DTD IDS-XCES 1.0//EN"
+          "http://corpora.ids-mannheim.de/idsxces1/DTD/ids.xcesdoc.dtd">
+<idsHeader pattern="text" type="document" version="1.0" status="new" TEIform="teiHeader">
+   <fileDesc>
+    <titleStmt>
+     <dokumentSigle>WDD19/A00</dokumentSigle>
+     <d.title>Wikipedia, Diskussionen zu Artikeln mit Anfangsbuchstabe A, Teil 00</d.title>
+    </titleStmt>
+    <publicationStmt>
+     <distributor/>
+     <pubAddress/>
+     <availability region="world" status="free" Default="n">CC-BY-SA</availability>
+     <pubDate/>
+    </publicationStmt>
+    <sourceDesc Default="n">
+     <biblStruct Default="n" status="draft">
+      <monogr>
+       <h.title type="main"/>
+       <imprint/>
+      </monogr>
+     </biblStruct>
+    </sourceDesc>
+   </fileDesc>
+  </idsHeader>
+  inflating: WDD19/ß0000/10317/header.xml  
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="header.rng"
+            type="application/xml"
+            schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!DOCTYPE idsCorpus PUBLIC "-//IDS//DTD IDS-XCES 1.0//EN"
+          "http://corpora.ids-mannheim.de/idsxces1/DTD/ids.xcesdoc.dtd">
+<idsHeader pattern="text" type="text" version="1" status="new" TEIform="teiHeader">
+    <fileDesc>
+     <titleStmt>
+      <textSigle>WDD19/ß0000.10317</textSigle>
+      <t.title assemblage="external">WDD19/ß0000.10317 Diskussion:Öffentlich-private Partnerschaft. URL:https://de.wikipedia.org/wiki/Diskussion:%C3%96ffentlich-private%20Partnerschaft . In: Wikipedia, 2019</t.title>
+     </titleStmt>
+     <publicationStmt>
+      <distributor>French-German-English Project Comparable Wikipedia Corpora 2019;
+Leibniz-Institute for the German Language and Université de Toulouse Jean Jaurès</distributor>
+      <pubAddress/>
+      <idno type="cmc-core-filename">10317.tei.xml</idno>
+      <availability region="world" status="free" Default="n">CC-BY-SA</availability>
+      <pubDate type="year">2020</pubDate>
+      <pubPlace>Mannheim</pubPlace>
+      <pubPlace>Toulouse</pubPlace>
+     </publicationStmt>
+     <sourceDesc Default="n">
+      <biblStruct Default="n" status="draft">
+       <analytic>
+        <h.title type="main">Diskussion:Öffentlich-private Partnerschaft</h.title>
+        <h.author>Karl 3 et al.</h.author>
+        <imprint>
+         <pubPlace>
+          <ref target="https://de.wikipedia.org/wiki/Diskussion:%C3%96ffentlich-private%20Partnerschaft" type="page_url"/>
+         </pubPlace>
+        </imprint>
+        <idno type="wikipedia-id">10317</idno>
+       </analytic>
+       <monogr>
+        <h.title type="main">Wikipedia</h.title>
+        <edition>
+         <further/>
+         <kind>German language version</kind>
+         <appearance/>
+        </edition>
+        <imprint>
+         <publisher>Wikimedia Foundation, Inc</publisher>
+         <pubPlace>
+          <ref target="https://wikipedia.org/"/>
+         </pubPlace>
+        </imprint>
+       </monogr>
+       <monogr>
+        <h.title type="main">dewiki-2019-08-01-pages-meta-current</h.title>
+        <edition>
+         <further/>
+         <kind>Dump file</kind>
+         <appearance/>
+        </edition>
+        <imprint>
+         <publisher>Wikimedia Foundation, Inc</publisher>
+         <pubPlace>
+          <ref target="http://dumps.wikimedia.org"/>
+         </pubPlace>
+         <pubDate type="year">2019</pubDate>
+         <pubDate type="month">08</pubDate>
+         <pubDate type="day">01</pubDate>
+        </imprint>
+        <idno type="dump-filename">dewiki-2019-08-01-pages-meta-current</idno>
+       </monogr>
+       <relatedItem type="articleLink">
+        <ref n="10316" target="https://de.wikipedia.org/wiki/%C3%96ffentlich-private%20Partnerschaft" targetLang="de">https://de.wikipedia.org/wiki/Öffentlich-private Partnerschaft</ref>
+       </relatedItem>
+       <relatedItem type="articleTextSigle">
+        <ref type="derekoTextSigle">WPD19/ß0000.10316</ref>
+       </relatedItem>
+       <relatedItem type="langLink">
+        <ref target="https://fr.wikipedia.org/wiki/Partenariat public-privé" targetLang="fr">Partenariat public-privé</ref>
+       </relatedItem>
+       <relatedItem type="langLink">
+        <ref target="https://en.wikipedia.org/wiki/Public–private partnership" targetLang="en">Public–private partnership</ref>
+       </relatedItem>
+      </biblStruct>
+      <reference assemblage="non-automatic" type="complete">WDD19/ß0000.10317 Wikipedia: Diskussion:Öffentlich-private Partnerschaft. URL: https://de.wikipedia.org/wiki/Diskussion:%C3%96ffentlich-private%20Partnerschaft (Letzte Änderung 19.7.2019). In: Wikipedia, Die freie Enzyklopädie - Dump vom 1.8.2019</reference>
+      <reference assemblage="regular" type="short">WDD19/ß0000.10317 Wikipedia: Diskussion:Öffentlich-private Partnerschaft, (Letzte Änderung 19.7.2019), 2019</reference>
+     </sourceDesc>
+    </fileDesc>
+    <profileDesc>
+     <creation>
+      <creatDate>2019.07.19</creatDate>
+      <creatRef>(Letzte Änderung 19.7.2019)</creatRef>
+      <creatRefShort>(Letzte Änderung 19.7.2019)</creatRefShort>
+     </creation>
+     <textClass Default="n">
+      <classCode scheme="https://de.wikipedia.org/wiki/Kategorie:!Hauptkategorie">
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Kommunalpolitik%20%28Deutschland%29" targetLang="de">Kategorie:Kommunalpolitik (Deutschland)</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Kommunalpolitik%20%28%C3%96sterreich%29" targetLang="de">Kategorie:Kommunalpolitik (Österreich)</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:%C3%96ffentliche%20Wirtschaft" targetLang="de">Kategorie:Öffentliche Wirtschaft</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Verwaltungsrecht" targetLang="de">Kategorie:Verwaltungsrecht</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Verwaltungswissenschaft" targetLang="de">Kategorie:Verwaltungswissenschaft</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Privatisierung" targetLang="de">Kategorie:Privatisierung</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Unternehmensart" targetLang="de">Kategorie:Unternehmensart</ref>
+      </classCode>
+      <classCode scheme="https://en.wikipedia.org/wiki/Wikipedia:Contents/Categories">
+       <ref target="https://en.wikipedia.org/wiki/Category%3APublic%20economics" targetLang="en">Category:Public economics</ref>
+       <ref target="https://en.wikipedia.org/wiki/Category%3AAdministrative%20law" targetLang="en">Category:Administrative law</ref>
+       <ref target="https://en.wikipedia.org/wiki/Category%3APrivatization" targetLang="en">Category:Privatization</ref>
+       <ref target="https://en.wikipedia.org/wiki/Category%3ACompanies%20by%20type" targetLang="en">Category:Companies by type</ref>
+      </classCode>
+      <catRef n="0.999998" scheme="topic" target="topic.politik.kommunalpolitik"/>
+     </textClass>
+     <textDesc Default="n">
+      <textType>Diskussion</textType>
+      <textTypeArt>Diskussion</textTypeArt>
+      <textDomain/>
+     </textDesc>
+    </profileDesc>
+   </idsHeader>
+  inflating: WDD19/ß0000/10317/data.xml  
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="text.rng"
+            type="application/xml"
+            schematypens="http://relaxng.org/ns/structure/1.0"?>
+<raw_text docid="WDD19_ß0000.10317"
+          xmlns="http://ids-mannheim.de/ns/KorAP">
+  <metadata file="metadata.xml" />
+  <text>Öffentlich-private Partnerschaft{{Autoarchiv|Alter=900|Ziel='((Lemma))/Archiv/1'|Mindestbeiträge=1|Mindestabschnitte=5|Frequenz=monatlich|Zeigen=Nein}}  Archivübersicht|  Archiv  {{Anker|deadurl_2015-10}} Defekte Weblinks  nicht archivieren|Zeigen=neinDefekter Weblink|Bot=GiftBot |Lauf=2015-10   |2=007 wba=20100525003126 http://www.psiru.org/reports/2008-11-PPPs-crit.doc   |3=403 wba=20141218044639 proto http://www.partnerschaftendeutschland.de/   – GiftBot 22:35, 24. Nov. 2015 (CET) Aktuelle Entwicklungen zur ÖPP-Verfassungsreform  In Kürze soll der Bundestag über den Regierungsentwurf zur Verfassungsänderung betreffend ÖPP für Verkehr und Bildung entscheiden (http://dipbt.bundestag.de/extrakt/ba/WP18/786/78664.html). Momentan wird der Vorschlag noch kontrovers diskutiert (vgl. http://www.berliner-zeitung.de/wirtschaft/autobahn-privatisierung-spd-taeuscht-die-eigenen-genossen-26972860). Da die Legislaturperiode sich allerdings dem Ende zuneigt, dürfte (vorerst) mit dem geplanten Beschluss oder alternativ einer Vertagung ein fester Zwischenstand erreicht sein. Gerne ergänze ich, wenn es soweit ist, im Abschnitt "Anwendungsfelder" also einen entsprechenden Passus.  Dies wäre eine günstige Gelegenheit, die Entwicklung der letzten Jahre insgesamt aufzuarbeiten, zumal in der entsprechenden Chronologie das letzte vermerkte Ereignis auf 2010 zurückdatiert. Vielleicht ist jemand diesbezüglich bereits im Bilde und könnte die nötigen Daten ergänzen. Das würde dann doppelte Recherchearbeit sparen.  Mit besten Grüßen --Baronomingo 23:13, 26. Mai 2017 (CEST)  - Nun hier hat sich ja jetzt einiges getan und die geplanten Verfassungsänderungen wurden alle durchgewunken. Der Artikel muss dringend überarbeitet und aktualisiert werden. Ich denke mich auch erinnern zu können, dass es mittlerweile sowohl in Deutschland sowie in der EU viele Projekte gibt, die sich als Kostenfallen für die Kommunen etc. herausgestellt haben. --Milla Krauskopf 23:20, 3. Nov. 2017 (CET) Zustimmung! Wer fängt an?--Karl 3 23:59, 3. Nov. 2017 (CET) Link Nr. 34 veraltet?  "Die NDR-Fernsehdokumentation „Der geplünderte Staat“ (2013)34 ..."   Der link unter der Nr. 34 funktioniert nicht mehr, aber man kann den Artikel bei 3Sat nachlesen:   http://www.3sat.de/page/?source=/ard/sendung/178884/index.html   Leider habe ich hier noch nie etwas geändert und weiß nicht, wie das geht. Vielleicht kann das jemand von Euch korrigieren?  --Stefuzius 15:28, 29. Mai 2017 (CEST) Danke für den Hinweis, ich verändere den Link. --Casra 11:16, 30. Mai 2017 (CEST) Öffentliche Dienstleistungen, Ver-/Entsorgung  Dieser Bereich unterliegt, sofern er in öffentlicher Hand ist, dem Preisgesetz. Durch eine PPP fällt die Bindung an das Preisgesetz weg, mit der Folge, dass die Kosten frei kalkuliert werden können, regelmäßige weitere Folge: Preissteigerungen! Vgl. http://www.econstor.eu/bitstream/10419/85329/1/770675158.pdf Möglicherweise wird diese "Flucht aus dem Preisrecht" (Greiffenhagen) durch die derzeit in Vorbereitung befindliche Novellierung des Preisgesetzes verhindert oder zumindest erschwert. -- Karl 3 17:53, 9. Jul. 2017 (CEST)</text>
+</raw_text>
+  inflating: WDD19/ß0000/10317/base/tokens.xml  
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="span.rng"
+            type="application/xml"
+            schematypens="http://relaxng.org/ns/structure/1.0"?>
+<layer docid="WDD19_ß0000.10317"
+       xmlns="http://ids-mannheim.de/ns/KorAP"
+       version="KorAP-0.4">
+  <spanList>
+    <!-- /usr/bin/java -jar /opt/perl/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0/auto/share/dist/tei2korapxml/KorAP-Tokenizer-2.0.0-SNAPSHOT-standalone.jar --no-tokens --positions -->
+    <span id="t_0" from="0" to="18" />
+    <span id="t_1" from="19" to="32" />
+    <span id="t_2" from="32" to="33" />
+    <span id="t_3" from="33" to="34" />
+    <span id="t_4" from="34" to="44" />
+    <span id="t_5" from="44" to="45" />
+    <span id="t_6" from="45" to="50" />
+    <span id="t_7" from="50" to="51" />
+    <span id="t_8" from="51" to="54" />
+    <span id="t_9" from="54" to="55" />
+    <span id="t_10" from="55" to="59" />
+    <span id="t_11" from="59" to="63" />
+    <span id="t_12" from="63" to="68" />
+    <span id="t_13" from="68" to="69" />
+    <span id="t_14" from="69" to="70" />
+    <span id="t_15" from="70" to="71" />
+    <span id="t_16" from="71" to="79" />
+    <span id="t_17" from="79" to="80" />
+    <span id="t_18" from="80" to="81" />
+    <span id="t_19" from="81" to="96" />
+    <span id="t_20" from="96" to="97" />
+    <span id="t_21" from="97" to="98" />
+    <span id="t_22" from="98" to="99" />
+    <span id="t_23" from="99" to="116" />
+    <span id="t_24" from="116" to="117" />
+    <span id="t_25" from="117" to="118" />
+    <span id="t_26" from="118" to="119" />
+    <span id="t_27" from="119" to="127" />
+    <span id="t_28" from="127" to="128" />
+    <span id="t_29" from="128" to="137" />
+    <span id="t_30" from="137" to="138" />
+    <span id="t_31" from="138" to="144" />
+    <span id="t_32" from="144" to="145" />
+    <span id="t_33" from="145" to="149" />
+    <span id="t_34" from="149" to="150" />
+    <span id="t_35" from="150" to="151" />
+    <span id="t_36" from="153" to="168" />
+    <span id="t_37" from="168" to="169" />
+    <span id="t_38" from="171" to="177" />
+    <span id="t_39" from="179" to="180" />
+    <span id="t_40" from="180" to="181" />
+    <span id="t_41" from="181" to="186" />
+    <span id="t_42" from="186" to="187" />
+    <span id="t_43" from="187" to="202" />
+    <span id="t_44" from="202" to="203" />
+    <span id="t_45" from="203" to="204" />
+    <span id="t_46" from="205" to="212" />
+    <span id="t_47" from="213" to="221" />
+    <span id="t_48" from="223" to="228" />
+    <span id="t_49" from="229" to="240" />
+    <span id="t_50" from="240" to="241" />
+    <span id="t_51" from="241" to="247" />
+    <span id="t_52" from="247" to="248" />
+    <span id="t_53" from="248" to="260" />
+    <span id="t_54" from="261" to="268" />
+    <span id="t_55" from="268" to="269" />
+    <span id="t_56" from="269" to="272" />
+    <span id="t_57" from="272" to="273" />
+    <span id="t_58" from="273" to="280" />
+    <span id="t_59" from="281" to="282" />
+    <span id="t_60" from="282" to="286" />
+    <span id="t_61" from="286" to="287" />
+    <span id="t_62" from="287" to="294" />
+    <span id="t_63" from="297" to="298" />
+    <span id="t_64" from="298" to="299" />
+    <span id="t_65" from="299" to="300" />
+    <span id="t_66" from="300" to="303" />
+    <span id="t_67" from="304" to="307" />
+    <span id="t_68" from="307" to="308" />
+    <span id="t_69" from="308" to="322" />
+    <span id="t_70" from="323" to="373" />
+    <span id="t_71" from="376" to="377" />
+    <span id="t_72" from="377" to="378" />
+    <span id="t_73" from="378" to="379" />
+    <span id="t_74" from="379" to="382" />
+    <span id="t_75" from="383" to="386" />
+    <span id="t_76" from="386" to="387" />
+    <span id="t_77" from="387" to="401" />
+    <span id="t_78" from="402" to="407" />
+    <span id="t_79" from="408" to="449" />
+    <span id="t_80" from="452" to="453" />
+    <span id="t_81" from="454" to="461" />
+    <span id="t_82" from="462" to="464" />
+    <span id="t_83" from="464" to="466" />
+    <span id="t_84" from="466" to="467" />
+    <span id="t_85" from="467" to="468" />
+    <span id="t_86" from="469" to="472" />
+    <span id="t_87" from="473" to="477" />
+    <span id="t_88" from="478" to="482" />
+    <span id="t_89" from="483" to="484" />
+    <span id="t_90" from="484" to="487" />
+    <span id="t_91" from="487" to="488" />
+    <span id="t_92" from="489" to="497" />
+    <span id="t_93" from="498" to="511" />
+    <span id="t_94" from="512" to="515" />
+    <span id="t_95" from="516" to="537" />
+    <span id="t_96" from="539" to="541" />
+    <span id="t_97" from="542" to="547" />
+    <span id="t_98" from="548" to="552" />
+    <span id="t_99" from="553" to="556" />
+    <span id="t_100" from="557" to="566" />
+    <span id="t_101" from="567" to="571" />
+    <span id="t_102" from="572" to="575" />
+    <span id="t_103" from="576" to="593" />
+    <span id="t_104" from="594" to="597" />
+    <span id="t_105" from="598" to="617" />
+    <span id="t_106" from="618" to="628" />
+    <span id="t_107" from="629" to="632" />
+    <span id="t_108" from="633" to="636" />
+    <span id="t_109" from="637" to="644" />
+    <span id="t_110" from="645" to="648" />
+    <span id="t_111" from="649" to="656" />
+    <span id="t_112" from="657" to="668" />
+    <span id="t_113" from="669" to="670" />
+    <span id="t_114" from="670" to="726" />
+    <span id="t_115" from="726" to="727" />
+    <span id="t_116" from="727" to="728" />
+    <span id="t_117" from="729" to="737" />
+    <span id="t_118" from="738" to="742" />
+    <span id="t_119" from="743" to="746" />
+    <span id="t_120" from="747" to="756" />
+    <span id="t_121" from="757" to="761" />
+    <span id="t_122" from="762" to="772" />
+    <span id="t_123" from="773" to="783" />
+    <span id="t_124" from="784" to="785" />
+    <span id="t_125" from="785" to="789" />
+    <span id="t_126" from="790" to="898" />
+    <span id="t_127" from="898" to="899" />
+    <span id="t_128" from="899" to="900" />
+    <span id="t_129" from="901" to="903" />
+    <span id="t_130" from="904" to="907" />
+    <span id="t_131" from="908" to="925" />
+    <span id="t_132" from="926" to="930" />
+    <span id="t_133" from="931" to="941" />
+    <span id="t_134" from="942" to="945" />
+    <span id="t_135" from="946" to="950" />
+    <span id="t_136" from="951" to="958" />
+    <span id="t_137" from="958" to="959" />
+    <span id="t_138" from="960" to="966" />
+    <span id="t_139" from="967" to="968" />
+    <span id="t_140" from="968" to="975" />
+    <span id="t_141" from="975" to="976" />
+    <span id="t_142" from="977" to="980" />
+    <span id="t_143" from="981" to="984" />
+    <span id="t_144" from="985" to="994" />
+    <span id="t_145" from="995" to="1004" />
+    <span id="t_146" from="1005" to="1009" />
+    <span id="t_147" from="1010" to="1020" />
+    <span id="t_148" from="1021" to="1026" />
+    <span id="t_149" from="1027" to="1036" />
+    <span id="t_150" from="1037" to="1040" />
+    <span id="t_151" from="1041" to="1047" />
+    <span id="t_152" from="1048" to="1061" />
+    <span id="t_153" from="1062" to="1070" />
+    <span id="t_154" from="1071" to="1075" />
+    <span id="t_155" from="1075" to="1076" />
+    <span id="t_156" from="1077" to="1082" />
+    <span id="t_157" from="1083" to="1090" />
+    <span id="t_158" from="1091" to="1094" />
+    <span id="t_159" from="1094" to="1095" />
+    <span id="t_160" from="1096" to="1100" />
+    <span id="t_161" from="1101" to="1103" />
+    <span id="t_162" from="1104" to="1110" />
+    <span id="t_163" from="1111" to="1114" />
+    <span id="t_164" from="1114" to="1115" />
+    <span id="t_165" from="1116" to="1118" />
+    <span id="t_166" from="1119" to="1128" />
+    <span id="t_167" from="1129" to="1130" />
+    <span id="t_168" from="1130" to="1146" />
+    <span id="t_169" from="1146" to="1147" />
+    <span id="t_170" from="1148" to="1152" />
+    <span id="t_171" from="1153" to="1158" />
+    <span id="t_172" from="1159" to="1173" />
+    <span id="t_173" from="1174" to="1180" />
+    <span id="t_174" from="1180" to="1181" />
+    <span id="t_175" from="1183" to="1187" />
+    <span id="t_176" from="1188" to="1192" />
+    <span id="t_177" from="1193" to="1197" />
+    <span id="t_178" from="1198" to="1206" />
+    <span id="t_179" from="1207" to="1218" />
+    <span id="t_180" from="1218" to="1219" />
+    <span id="t_181" from="1220" to="1223" />
+    <span id="t_182" from="1224" to="1235" />
+    <span id="t_183" from="1236" to="1239" />
+    <span id="t_184" from="1240" to="1247" />
+    <span id="t_185" from="1248" to="1253" />
+    <span id="t_186" from="1254" to="1263" />
+    <span id="t_187" from="1264" to="1277" />
+    <span id="t_188" from="1277" to="1278" />
+    <span id="t_189" from="1279" to="1284" />
+    <span id="t_190" from="1285" to="1287" />
+    <span id="t_191" from="1288" to="1291" />
+    <span id="t_192" from="1292" to="1306" />
+    <span id="t_193" from="1307" to="1318" />
+    <span id="t_194" from="1319" to="1322" />
+    <span id="t_195" from="1323" to="1329" />
+    <span id="t_196" from="1330" to="1339" />
+    <span id="t_197" from="1340" to="1348" />
+    <span id="t_198" from="1349" to="1352" />
+    <span id="t_199" from="1353" to="1357" />
+    <span id="t_200" from="1358" to="1371" />
+    <span id="t_201" from="1371" to="1372" />
+    <span id="t_202" from="1373" to="1383" />
+    <span id="t_203" from="1384" to="1387" />
+    <span id="t_204" from="1388" to="1394" />
+    <span id="t_205" from="1395" to="1408" />
+    <span id="t_206" from="1409" to="1416" />
+    <span id="t_207" from="1417" to="1419" />
+    <span id="t_208" from="1420" to="1425" />
+    <span id="t_209" from="1426" to="1429" />
+    <span id="t_210" from="1430" to="1436" />
+    <span id="t_211" from="1437" to="1440" />
+    <span id="t_212" from="1441" to="1448" />
+    <span id="t_213" from="1449" to="1454" />
+    <span id="t_214" from="1455" to="1463" />
+    <span id="t_215" from="1463" to="1464" />
+    <span id="t_216" from="1465" to="1468" />
+    <span id="t_217" from="1469" to="1474" />
+    <span id="t_218" from="1475" to="1479" />
+    <span id="t_219" from="1480" to="1488" />
+    <span id="t_220" from="1489" to="1504" />
+    <span id="t_221" from="1505" to="1511" />
+    <span id="t_222" from="1511" to="1512" />
+    <span id="t_223" from="1514" to="1517" />
+    <span id="t_224" from="1518" to="1524" />
+    <span id="t_225" from="1525" to="1531" />
+    <span id="t_226" from="1532" to="1534" />
+    <span id="t_227" from="1534" to="1545" />
+    <span id="t_228" from="1546" to="1548" />
+    <span id="t_229" from="1548" to="1549" />
+    <span id="t_230" from="1549" to="1551" />
+    <span id="t_231" from="1551" to="1552" />
+    <span id="t_232" from="1553" to="1556" />
+    <span id="t_233" from="1557" to="1560" />
+    <span id="t_234" from="1561" to="1565" />
+    <span id="t_235" from="1566" to="1567" />
+    <span id="t_236" from="1567" to="1571" />
+    <span id="t_237" from="1571" to="1572" />
+    <span id="t_238" from="1574" to="1575" />
+    <span id="t_239" from="1576" to="1579" />
+    <span id="t_240" from="1580" to="1584" />
+    <span id="t_241" from="1585" to="1588" />
+    <span id="t_242" from="1589" to="1593" />
+    <span id="t_243" from="1594" to="1596" />
+    <span id="t_244" from="1597" to="1602" />
+    <span id="t_245" from="1603" to="1610" />
+    <span id="t_246" from="1611" to="1616" />
+    <span id="t_247" from="1617" to="1620" />
+    <span id="t_248" from="1621" to="1624" />
+    <span id="t_249" from="1625" to="1634" />
+    <span id="t_250" from="1635" to="1656" />
+    <span id="t_251" from="1657" to="1663" />
+    <span id="t_252" from="1664" to="1668" />
+    <span id="t_253" from="1669" to="1682" />
+    <span id="t_254" from="1682" to="1683" />
+    <span id="t_255" from="1684" to="1687" />
+    <span id="t_256" from="1688" to="1695" />
+    <span id="t_257" from="1696" to="1700" />
+    <span id="t_258" from="1701" to="1709" />
+    <span id="t_259" from="1710" to="1722" />
+    <span id="t_260" from="1723" to="1726" />
+    <span id="t_261" from="1727" to="1739" />
+    <span id="t_262" from="1740" to="1746" />
+    <span id="t_263" from="1746" to="1747" />
+    <span id="t_264" from="1748" to="1751" />
+    <span id="t_265" from="1752" to="1757" />
+    <span id="t_266" from="1758" to="1762" />
+    <span id="t_267" from="1763" to="1767" />
+    <span id="t_268" from="1768" to="1776" />
+    <span id="t_269" from="1777" to="1779" />
+    <span id="t_270" from="1780" to="1786" />
+    <span id="t_271" from="1786" to="1787" />
+    <span id="t_272" from="1788" to="1792" />
+    <span id="t_273" from="1793" to="1795" />
+    <span id="t_274" from="1796" to="1808" />
+    <span id="t_275" from="1809" to="1815" />
+    <span id="t_276" from="1816" to="1818" />
+    <span id="t_277" from="1819" to="1830" />
+    <span id="t_278" from="1831" to="1836" />
+    <span id="t_279" from="1837" to="1839" />
+    <span id="t_280" from="1840" to="1843" />
+    <span id="t_281" from="1844" to="1846" />
+    <span id="t_282" from="1847" to="1852" />
+    <span id="t_283" from="1853" to="1861" />
+    <span id="t_284" from="1862" to="1866" />
+    <span id="t_285" from="1866" to="1867" />
+    <span id="t_286" from="1868" to="1871" />
+    <span id="t_287" from="1872" to="1876" />
+    <span id="t_288" from="1877" to="1880" />
+    <span id="t_289" from="1881" to="1893" />
+    <span id="t_290" from="1894" to="1897" />
+    <span id="t_291" from="1898" to="1901" />
+    <span id="t_292" from="1902" to="1910" />
+    <span id="t_293" from="1911" to="1915" />
+    <span id="t_294" from="1916" to="1930" />
+    <span id="t_295" from="1931" to="1936" />
+    <span id="t_296" from="1936" to="1937" />
+    <span id="t_297" from="1938" to="1940" />
+    <span id="t_298" from="1940" to="1945" />
+    <span id="t_299" from="1946" to="1955" />
+    <span id="t_300" from="1956" to="1958" />
+    <span id="t_301" from="1958" to="1959" />
+    <span id="t_302" from="1959" to="1961" />
+    <span id="t_303" from="1961" to="1962" />
+    <span id="t_304" from="1963" to="1965" />
+    <span id="t_305" from="1966" to="1970" />
+    <span id="t_306" from="1971" to="1975" />
+    <span id="t_307" from="1976" to="1977" />
+    <span id="t_308" from="1977" to="1980" />
+    <span id="t_309" from="1980" to="1981" />
+    <span id="t_310" from="1982" to="1992" />
+    <span id="t_311" from="1992" to="1993" />
+    <span id="t_312" from="1994" to="1997" />
+    <span id="t_313" from="1998" to="2003" />
+    <span id="t_314" from="2004" to="2006" />
+    <span id="t_315" from="2006" to="2007" />
+    <span id="t_316" from="2007" to="2009" />
+    <span id="t_317" from="2009" to="2013" />
+    <span id="t_318" from="2014" to="2015" />
+    <span id="t_319" from="2016" to="2018" />
+    <span id="t_320" from="2018" to="2019" />
+    <span id="t_321" from="2019" to="2021" />
+    <span id="t_322" from="2021" to="2022" />
+    <span id="t_323" from="2023" to="2025" />
+    <span id="t_324" from="2026" to="2030" />
+    <span id="t_325" from="2031" to="2035" />
+    <span id="t_326" from="2036" to="2037" />
+    <span id="t_327" from="2037" to="2040" />
+    <span id="t_328" from="2040" to="2041" />
+    <span id="t_329" from="2042" to="2046" />
+    <span id="t_330" from="2047" to="2050" />
+    <span id="t_331" from="2051" to="2053" />
+    <span id="t_332" from="2054" to="2062" />
+    <span id="t_333" from="2062" to="2063" />
+    <span id="t_334" from="2065" to="2066" />
+    <span id="t_335" from="2066" to="2069" />
+    <span id="t_336" from="2070" to="2094" />
+    <span id="t_337" from="2095" to="2096" />
+    <span id="t_338" from="2096" to="2099" />
+    <span id="t_339" from="2100" to="2111" />
+    <span id="t_340" from="2112" to="2117" />
+    <span id="t_341" from="2117" to="2118" />
+    <span id="t_342" from="2119" to="2120" />
+    <span id="t_343" from="2120" to="2124" />
+    <span id="t_344" from="2124" to="2125" />
+    <span id="t_345" from="2125" to="2127" />
+    <span id="t_346" from="2128" to="2131" />
+    <span id="t_347" from="2131" to="2132" />
+    <span id="t_348" from="2135" to="2138" />
+    <span id="t_349" from="2139" to="2143" />
+    <span id="t_350" from="2144" to="2149" />
+    <span id="t_351" from="2150" to="2153" />
+    <span id="t_352" from="2154" to="2157" />
+    <span id="t_353" from="2158" to="2160" />
+    <span id="t_354" from="2161" to="2173" />
+    <span id="t_355" from="2174" to="2179" />
+    <span id="t_356" from="2180" to="2184" />
+    <span id="t_357" from="2184" to="2185" />
+    <span id="t_358" from="2186" to="2190" />
+    <span id="t_359" from="2191" to="2194" />
+    <span id="t_360" from="2195" to="2199" />
+    <span id="t_361" from="2200" to="2203" />
+    <span id="t_362" from="2204" to="2211" />
+    <span id="t_363" from="2212" to="2215" />
+    <span id="t_364" from="2216" to="2220" />
+    <span id="t_365" from="2221" to="2230" />
+    <span id="t_366" from="2230" to="2231" />
+    <span id="t_367" from="2234" to="2296" />
+    <span id="t_368" from="2299" to="2305" />
+    <span id="t_369" from="2306" to="2310" />
+    <span id="t_370" from="2311" to="2314" />
+    <span id="t_371" from="2315" to="2319" />
+    <span id="t_372" from="2320" to="2324" />
+    <span id="t_373" from="2325" to="2328" />
+    <span id="t_374" from="2329" to="2334" />
+    <span id="t_375" from="2335" to="2343" />
+    <span id="t_376" from="2344" to="2347" />
+    <span id="t_377" from="2348" to="2352" />
+    <span id="t_378" from="2353" to="2358" />
+    <span id="t_379" from="2358" to="2359" />
+    <span id="t_380" from="2360" to="2363" />
+    <span id="t_381" from="2364" to="2367" />
+    <span id="t_382" from="2368" to="2372" />
+    <span id="t_383" from="2372" to="2373" />
+    <span id="t_384" from="2374" to="2384" />
+    <span id="t_385" from="2385" to="2389" />
+    <span id="t_386" from="2390" to="2393" />
+    <span id="t_387" from="2394" to="2400" />
+    <span id="t_388" from="2401" to="2404" />
+    <span id="t_389" from="2405" to="2409" />
+    <span id="t_390" from="2410" to="2421" />
+    <span id="t_391" from="2421" to="2422" />
+    <span id="t_392" from="2424" to="2426" />
+    <span id="t_393" from="2426" to="2435" />
+    <span id="t_394" from="2436" to="2441" />
+    <span id="t_395" from="2441" to="2442" />
+    <span id="t_396" from="2443" to="2446" />
+    <span id="t_397" from="2447" to="2450" />
+    <span id="t_398" from="2451" to="2455" />
+    <span id="t_399" from="2456" to="2457" />
+    <span id="t_400" from="2457" to="2461" />
+    <span id="t_401" from="2461" to="2462" />
+    <span id="t_402" from="2463" to="2468" />
+    <span id="t_403" from="2469" to="2472" />
+    <span id="t_404" from="2473" to="2476" />
+    <span id="t_405" from="2477" to="2484" />
+    <span id="t_406" from="2484" to="2485" />
+    <span id="t_407" from="2486" to="2489" />
+    <span id="t_408" from="2490" to="2499" />
+    <span id="t_409" from="2500" to="2503" />
+    <span id="t_410" from="2504" to="2508" />
+    <span id="t_411" from="2508" to="2509" />
+    <span id="t_412" from="2510" to="2512" />
+    <span id="t_413" from="2512" to="2517" />
+    <span id="t_414" from="2518" to="2523" />
+    <span id="t_415" from="2523" to="2524" />
+    <span id="t_416" from="2525" to="2528" />
+    <span id="t_417" from="2529" to="2532" />
+    <span id="t_418" from="2533" to="2537" />
+    <span id="t_419" from="2538" to="2539" />
+    <span id="t_420" from="2539" to="2543" />
+    <span id="t_421" from="2543" to="2544" />
+    <span id="t_422" from="2545" to="2556" />
+    <span id="t_423" from="2557" to="2573" />
+    <span id="t_424" from="2573" to="2574" />
+    <span id="t_425" from="2575" to="2579" />
+    <span id="t_426" from="2579" to="2580" />
+    <span id="t_427" from="2580" to="2590" />
+    <span id="t_428" from="2592" to="2598" />
+    <span id="t_429" from="2599" to="2606" />
+    <span id="t_430" from="2607" to="2617" />
+    <span id="t_431" from="2617" to="2618" />
+    <span id="t_432" from="2619" to="2625" />
+    <span id="t_433" from="2626" to="2628" />
+    <span id="t_434" from="2629" to="2631" />
+    <span id="t_435" from="2632" to="2644" />
+    <span id="t_436" from="2645" to="2649" />
+    <span id="t_437" from="2650" to="2653" />
+    <span id="t_438" from="2653" to="2654" />
+    <span id="t_439" from="2655" to="2658" />
+    <span id="t_440" from="2659" to="2670" />
+    <span id="t_441" from="2670" to="2671" />
+    <span id="t_442" from="2672" to="2677" />
+    <span id="t_443" from="2678" to="2682" />
+    <span id="t_444" from="2683" to="2686" />
+    <span id="t_445" from="2687" to="2692" />
+    <span id="t_446" from="2693" to="2696" />
+    <span id="t_447" from="2697" to="2704" />
+    <span id="t_448" from="2705" to="2707" />
+    <span id="t_449" from="2708" to="2711" />
+    <span id="t_450" from="2712" to="2723" />
+    <span id="t_451" from="2724" to="2727" />
+    <span id="t_452" from="2727" to="2728" />
+    <span id="t_453" from="2729" to="2732" />
+    <span id="t_454" from="2733" to="2736" />
+    <span id="t_455" from="2737" to="2742" />
+    <span id="t_456" from="2742" to="2743" />
+    <span id="t_457" from="2744" to="2748" />
+    <span id="t_458" from="2749" to="2752" />
+    <span id="t_459" from="2753" to="2759" />
+    <span id="t_460" from="2760" to="2764" />
+    <span id="t_461" from="2765" to="2775" />
+    <span id="t_462" from="2776" to="2782" />
+    <span id="t_463" from="2783" to="2789" />
+    <span id="t_464" from="2789" to="2790" />
+    <span id="t_465" from="2791" to="2802" />
+    <span id="t_466" from="2803" to="2810" />
+    <span id="t_467" from="2811" to="2816" />
+    <span id="t_468" from="2816" to="2817" />
+    <span id="t_469" from="2818" to="2835" />
+    <span id="t_470" from="2835" to="2836" />
+    <span id="t_471" from="2837" to="2841" />
+    <span id="t_472" from="2842" to="2902" />
+    <span id="t_473" from="2903" to="2917" />
+    <span id="t_474" from="2918" to="2922" />
+    <span id="t_475" from="2923" to="2928" />
+    <span id="t_476" from="2929" to="2930" />
+    <span id="t_477" from="2930" to="2936" />
+    <span id="t_478" from="2937" to="2940" />
+    <span id="t_479" from="2941" to="2944" />
+    <span id="t_480" from="2945" to="2955" />
+    <span id="t_481" from="2955" to="2956" />
+    <span id="t_482" from="2957" to="2958" />
+    <span id="t_483" from="2958" to="2971" />
+    <span id="t_484" from="2971" to="2972" />
+    <span id="t_485" from="2973" to="2978" />
+    <span id="t_486" from="2979" to="2982" />
+    <span id="t_487" from="2983" to="2990" />
+    <span id="t_488" from="2991" to="2993" />
+    <span id="t_489" from="2994" to="3006" />
+    <span id="t_490" from="3007" to="3018" />
+    <span id="t_491" from="3019" to="3031" />
+    <span id="t_492" from="3032" to="3035" />
+    <span id="t_493" from="3036" to="3049" />
+    <span id="t_494" from="3050" to="3060" />
+    <span id="t_495" from="3061" to="3065" />
+    <span id="t_496" from="3066" to="3075" />
+    <span id="t_497" from="3076" to="3085" />
+    <span id="t_498" from="3085" to="3086" />
+    <span id="t_499" from="3087" to="3089" />
+    <span id="t_500" from="3090" to="3094" />
+    <span id="t_501" from="3095" to="3096" />
+    <span id="t_502" from="3097" to="3102" />
+    <span id="t_503" from="3102" to="3103" />
+    <span id="t_504" from="3104" to="3106" />
+    <span id="t_505" from="3107" to="3111" />
+    <span id="t_506" from="3112" to="3116" />
+    <span id="t_507" from="3117" to="3118" />
+    <span id="t_508" from="3118" to="3122" />
+    <span id="t_509" from="3122" to="3123" />
+  </spanList>
+</layer>
+  inflating: WDD19/ß0000/10317/struct/structure.xml  
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="span.rng"
+            type="application/xml"
+            schematypens="http://relaxng.org/ns/structure/1.0"?>
+<layer docid="WDD19_ß0000.10317"
+       xmlns="http://ids-mannheim.de/ns/KorAP"
+       version="KorAP-0.4">
+  <spanList>
+    <span id="s0" from="0" to="3123" l="1">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">text</f>
+      </fs>
+        </span>
+    <span id="s1" from="0" to="3123" l="2">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">body</f>
+      </fs>
+        </span>
+    <span id="s2" from="0" to="3123" l="3">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">div</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="type">talk</f>
+            <f name="part">N</f>
+            <f name="org">uniform</f>
+            <f name="sample">complete</f>
+            <f name="complete">y</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s3" from="0" to="32" l="4">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">head</f>
+      </fs>
+        </span>
+    <span id="s4" from="32" to="151" l="4">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">note</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="creation">template</f>
+            <f name="type">header</f>
+            <f name="anchored">true</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s5" from="151" to="178" l="4">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">div</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_1</f>
+            <f name="type">thread</f>
+            <f name="part">N</f>
+            <f name="org">uniform</f>
+            <f name="sample">complete</f>
+            <f name="complete">y</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s6" from="151" to="151" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">head</f>
+      </fs>
+        </span>
+    <span id="s7" from="151" to="170" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">posting</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_1_1</f>
+            <f name="indentLevel">0</f>
+            <f name="who">WU00000000</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s8" from="152" to="170" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s9" from="170" to="178" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">posting</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_1_2</f>
+            <f name="indentLevel">1</f>
+            <f name="who">WU00000000</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s10" from="171" to="178" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s11" from="178" to="488" l="4">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">div</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_2</f>
+            <f name="type">thread</f>
+            <f name="part">N</f>
+            <f name="org">uniform</f>
+            <f name="sample">complete</f>
+            <f name="complete">y</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s12" from="179" to="221" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">head</f>
+      </fs>
+        </span>
+    <span id="s13" from="221" to="488" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">posting</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="creation">bot</f>
+            <f name="id">i.10317_2_1</f>
+            <f name="indentLevel">0</f>
+            <f name="when-iso">2015-11-24T22:35+01</f>
+            <f name="who">WU00001824</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s14" from="222" to="295" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s15" from="273" to="281" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">autoSignature</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="type">signed</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s16" from="296" to="374" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s17" from="375" to="450" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s18" from="451" to="488" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s19" from="454" to="488" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">autoSignature</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="type">signed</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s20" from="462" to="488" l="8">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">timestamp</f>
+      </fs>
+        </span>
+    <span id="s21" from="488" to="2041" l="4">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">div</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_3</f>
+            <f name="type">thread</f>
+            <f name="part">N</f>
+            <f name="org">uniform</f>
+            <f name="sample">complete</f>
+            <f name="complete">y</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s22" from="489" to="537" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">head</f>
+      </fs>
+        </span>
+    <span id="s23" from="537" to="1572" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">posting</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_3_1</f>
+            <f name="indentLevel">0</f>
+            <f name="when-iso">2017-05-26T23:13+02</f>
+            <f name="who">WU00003187</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s24" from="537" to="1181" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s25" from="538" to="728" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s26" from="729" to="900" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s27" from="901" to="1076" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s28" from="1077" to="1181" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s29" from="1181" to="1512" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s30" from="1182" to="1372" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="broken">yes</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s31" from="1373" to="1464" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s32" from="1465" to="1512" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s33" from="1512" to="1572" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s34" from="1513" to="1531" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s35" from="1534" to="1572" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">autoSignature</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="type">signed</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s36" from="1546" to="1572" l="8">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">timestamp</f>
+      </fs>
+        </span>
+    <span id="s37" from="1572" to="1981" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">posting</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_3_2</f>
+            <f name="indentLevel">0</f>
+            <f name="when-iso">2017-11-03T23:20+01</f>
+            <f name="who">WU00003188</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s38" from="1573" to="1981" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s39" from="1683" to="1747" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s40" from="1748" to="1937" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s41" from="1940" to="1981" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">autoSignature</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="type">signed</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s42" from="1956" to="1981" l="8">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">timestamp</f>
+      </fs>
+        </span>
+    <span id="s43" from="1981" to="2041" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">posting</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_3_3</f>
+            <f name="indentLevel">1</f>
+            <f name="when-iso">2017-11-03T23:59+01</f>
+            <f name="who">WU00003189</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s44" from="1982" to="2041" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s45" from="1993" to="2007" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s46" from="2009" to="2041" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">autoSignature</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="type">signed</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s47" from="2016" to="2041" l="8">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">timestamp</f>
+      </fs>
+        </span>
+    <span id="s48" from="2041" to="2544" l="4">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">div</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_4</f>
+            <f name="type">thread</f>
+            <f name="part">N</f>
+            <f name="org">uniform</f>
+            <f name="sample">complete</f>
+            <f name="complete">y</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s49" from="2042" to="2063" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">head</f>
+      </fs>
+        </span>
+    <span id="s50" from="2063" to="2462" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">posting</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_4_1</f>
+            <f name="indentLevel">0</f>
+            <f name="when-iso">2017-05-29T15:28+02</f>
+            <f name="who">WU00003190</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s51" from="2063" to="2133" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s52" from="2064" to="2133" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s53" from="2133" to="2232" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s54" from="2134" to="2232" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s55" from="2232" to="2297" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s56" from="2233" to="2297" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s57" from="2297" to="2422" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s58" from="2298" to="2373" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s59" from="2374" to="2422" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s60" from="2423" to="2462" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s61" from="2426" to="2462" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">autoSignature</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="type">signed</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s62" from="2436" to="2462" l="8">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">timestamp</f>
+      </fs>
+        </span>
+    <span id="s63" from="2462" to="2544" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">posting</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_4_2</f>
+            <f name="indentLevel">1</f>
+            <f name="when-iso">2017-05-30T11:16+02</f>
+            <f name="who">WU00000716</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s64" from="2463" to="2544" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s65" from="2512" to="2544" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">autoSignature</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="type">signed</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s66" from="2518" to="2544" l="8">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">timestamp</f>
+      </fs>
+        </span>
+    <span id="s67" from="2544" to="3123" l="4">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">div</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_5</f>
+            <f name="type">thread</f>
+            <f name="part">N</f>
+            <f name="org">uniform</f>
+            <f name="sample">complete</f>
+            <f name="complete">y</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s68" from="2545" to="2590" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">head</f>
+      </fs>
+        </span>
+    <span id="s69" from="2590" to="3123" l="5">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">posting</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="id">i.10317_5_1</f>
+            <f name="indentLevel">0</f>
+            <f name="when-iso">2017-07-09T17:53+02</f>
+            <f name="who">WU00003189</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s70" from="2591" to="3123" l="6">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">p</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="part">N</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s71" from="2671" to="2836" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s72" from="2837" to="3086" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s73" from="3087" to="3089" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">s</f>
+      </fs>
+        </span>
+    <span id="s74" from="3090" to="3123" l="7">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">autoSignature</f>
+        <f name="attr">
+          <fs type="attr">
+            <f name="type">signed</f>
+          </fs>
+        </f>
+      </fs>
+        </span>
+    <span id="s75" from="3097" to="3123" l="8">
+      <fs type="struct" xmlns="http://www.tei-c.org/ns/1.0">
+        <f name="name">timestamp</f>
+      </fs>
+        </span>
+  </spanList>
+</layer>
