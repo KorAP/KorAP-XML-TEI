@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE idsCorpus
+  PUBLIC "-//IDS//DTD IDS-I5 1.0//EN" "http://corpora.ids-mannheim.de/I5/DTD/i5.dtd">
+<idsCorpus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" TEIform="teiCorpus.2">
+ <idsHeader pattern="allesaußerZtg/Zschr" type="corpus" version="1.0" status="new" TEIform="teiHeader">
+  <fileDesc>
+   <titleStmt>
+    <korpusSigle>WDD19</korpusSigle>
+    <c.title>Wikipedia.de 2019 Diskussionen zu Artikeln</c.title>
+   </titleStmt>
+   <editionStmt version="1.0"/>
+   <publicationStmt>
+    <distributor>Leibniz-Institut für Deutsche Sprache</distributor>
+    <pubAddress>Postfach 10 16 21, D-68016 Mannheim</pubAddress>
+    <telephone>+49 (0)621 1581 0</telephone>
+    <eAddress type="www">http://www.ids-mannheim.de</eAddress>
+    <eAddress type="www">http://www.ids-mannheim.de/kl/projekte/korpora/</eAddress>
+    <eAddress type="email">dereko@ids-mannheim.de</eAddress>
+    <availability status="free" Default="n" region="world">This document, the IDS-Wikipedia.de-Corpus, is part of the Archive
+      of General Reference Corpora at IDS. It is published under the Creative Commons
+      Attribution-ShareAlike License. See http://creativecommons.org/licenses/by-sa/3.0/legalcode
+      for details. See http://www.ids-mannheim.de/kl/projekte/korpora/releases.html on how to refer
+      to this document.</availability>
+    <pubDate type="year">2020</pubDate>
+   </publicationStmt>
+   <sourceDesc Default="n">
+    <biblStruct Default="n" status="draft">
+     <monogr>
+      <h.title type="main">Wikipedia</h.title>
+      <h.author/>
+      <editor>Wikimedia Foundation</editor>
+      <edition>
+       <further>Dump file "dewiki-20190801-pages-meta-current.xml" retrieved from
+         http://dumps.wikimedia.org</further>
+       <kind/>
+       <appearance/>
+      </edition>
+      <imprint>
+       <publisher>Wikipedia</publisher>
+       <pubPlace>
+        <ref target="http://de.wikipedia.org"/>
+       </pubPlace>
+       <pubDate type="year">2019</pubDate>
+       <pubDate type="month">08</pubDate>
+       <pubDate type="day">01</pubDate>
+      </imprint>
+     </monogr>
+    </biblStruct>
+   </sourceDesc>
+  </fileDesc>
+  <encodingDesc>
+   <projectDesc Default="n">French-German Project Comparable Wikipedia Corpora 2019; Leibniz-Institute for the
+     German Language and Université de Toulouse Jean Jaurès</projectDesc>
+   <editorialDecl Default="n">
+    <conformance level="0">This document conforms to I5 (see http://jtei.revues.org/508)</conformance>
+    <transduction n="1" Default="n">Extraction from Wikidump and building of CMC-core version: Mai Ho-Dac, U
+      Toulouse, July 2020</transduction>
+    <transduction n="2" Default="n">Conversion from CMC-core to I5: IDS, August 2020</transduction>
+   </editorialDecl>
+   <classDecl>
+    <taxonomy id="topic">
+     <h.bibl>Thementaxonomie (siehe http://www.ids-mannheim.de/kl/projekte/methoden/te.html)</h.bibl>
+     <category id="topic.fiktion">
+      <catDesc>Fiktion</catDesc>
+      <category id="topic.fiktion.vermischtes">
+       <catDesc>Fiktion:Vermischtes</catDesc>
+      </category>
+     </category>
+     <category id="topic.freizeit-unterhaltung">
+      <catDesc>Freizeit_Unterhaltung</catDesc>
+      <category id="topic.freizeit-unterhaltung.reisen">
+       <catDesc>Freizeit_Unterhaltung:Reisen</catDesc>
+      </category>
+      <category id="topic.freizeit-unterhaltung.rundfunk">
+       <catDesc>Freizeit_Unterhaltung:Rundfunk</catDesc>
+      </category>
+      <category id="topic.freizeit-unterhaltung.vereine-veranstaltungen">
+       <catDesc>Freizeit_Unterhaltung:Vereine_Veranstaltungen</catDesc>
+      </category>
+     </category>
+     <category id="topic.gesundheit-ernaehrung">
+      <catDesc>Gesundheit_Ernaehrung</catDesc>
+      <category id="topic.gesundheit-ernaehrung.ernaehrung">
+       <catDesc>Gesundheit_Ernaehrung:Ernaehrung</catDesc>
+      </category>
+      <category id="topic.gesundheit-ernaehrung.gesundheit">
+       <catDesc>Gesundheit_Ernaehrung:Gesundheit</catDesc>
+      </category>
+     </category>
+     <category id="topic.kultur">
+      <catDesc>Kultur</catDesc>
+      <category id="topic.kultur.bildende-kunst">
+       <catDesc>Kultur:Bildende Kunst</catDesc>
+      </category>
+      <category id="topic.kultur.darstellende-kunst">
+       <catDesc>Kultur:Darstellende Kunst</catDesc>
+      </category>
+      <category id="topic.kultur.film">
+       <catDesc>Kultur:Film</catDesc>
+      </category>
+      <category id="topic.kultur.literatur">
+       <catDesc>Kultur:Literatur</catDesc>
+      </category>
+      <category id="topic.kultur.mode">
+       <catDesc>Kultur:Mode</catDesc>
+      </category>
+      <category id="topic.kultur.musik">
+       <catDesc>Kultur:Musik</catDesc>
+      </category>
+     </category>
+     <category id="topic.natur-umwelt">
+      <catDesc>Natur_Umwelt</catDesc>
+      <category id="topic.natur-umwelt.garten">
+       <catDesc>Natur_Umwelt:Garten</catDesc>
+      </category>
+      <category id="topic.natur-umwelt.tiere">
+       <catDesc>Natur_Umwelt:Tiere</catDesc>
+      </category>
+      <category id="topic.natur-umwelt.wetter-klima">
+       <catDesc>Natur_Umwelt:Wetter_Klima</catDesc>
+      </category>
+     </category>
+     <category id="topic.politik">
+      <catDesc>Politik</catDesc>
+      <category id="topic.politik.ausland">
+       <catDesc>Politik:Ausland</catDesc>
+      </category>
+      <category id="topic.politik.inland">
+       <catDesc>Politik:Inland</catDesc>
+      </category>
+      <category id="topic.politik.kommunalpolitik">
+       <catDesc>Politik:Kommunalpolitik</catDesc>
+      </category>
+     </category>
+     <category id="topic.rest">
+      <catDesc>Rest</catDesc>
+      <category id="topic.rest.boersenkurse">
+       <catDesc>Rest:boersenkurse</catDesc>
+      </category>
+      <category id="topic.rest.geburt-tod-heirat">
+       <catDesc>Rest:geburt_tod_heirat</catDesc>
+      </category>
+      <category id="topic.rest.impressum">
+       <catDesc>Rest:impressum</catDesc>
+      </category>
+      <category id="topic.rest.inhaltsverzeichnisse">
+       <catDesc>Rest:inhaltsverzeichnisse</catDesc>
+      </category>
+      <category id="topic.rest.ligatabellen">
+       <catDesc>Rest:ligatabellen</catDesc>
+      </category>
+      <category id="topic.rest.tabellen">
+       <catDesc>Rest:tabellen</catDesc>
+      </category>
+      <category id="topic.rest.veranstaltungshinweise">
+       <catDesc>Rest:veranstaltungshinweise</catDesc>
+      </category>
+     </category>
+     <category id="topic.sport">
+      <catDesc>Sport</catDesc>
+      <category id="topic.sport.ballsport">
+       <catDesc>Sport:Ballsport</catDesc>
+      </category>
+      <category id="topic.sport.fussball">
+       <catDesc>Sport:Fussball</catDesc>
+      </category>
+      <category id="topic.sport.motorsport">
+       <catDesc>Sport:Motorsport</catDesc>
+      </category>
+      <category id="topic.sport.radsport">
+       <catDesc>Sport:Radsport</catDesc>
+      </category>
+      <category id="topic.sport.tennis">
+       <catDesc>Sport:Tennis</catDesc>
+      </category>
+      <category id="topic.sport.vermischtes">
+       <catDesc>Sport:Vermischtes</catDesc>
+      </category>
+      <category id="topic.sport.wintersport">
+       <catDesc>Sport:Wintersport</catDesc>
+      </category>
+     </category>
+     <category id="topic.staat-gesellschaft">
+      <catDesc>Staat_Gesellschaft</catDesc>
+      <category id="topic.staat-gesellschaft.arbeit-und-beruf">
+       <catDesc>Staat_Gesellschaft:Arbeit_und_Beruf</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.bildung">
+       <catDesc>Staat_Gesellschaft:Bildung</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.biographien-interviews">
+       <catDesc>Staat_Gesellschaft:Biographien_Interviews</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.drittes-reich-rechtsextremismus">
+       <catDesc>Staat_Gesellschaft:Drittes_Reich_Rechtsextremismus</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.familie-geschlecht">
+       <catDesc>Staat_Gesellschaft:Familie_Geschlecht</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.kirche">
+       <catDesc>Staat_Gesellschaft:Kirche</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.recht">
+       <catDesc>Staat_Gesellschaft:Recht</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.tod">
+       <catDesc>Staat_Gesellschaft:Tod</catDesc>
+      </category>
+      <category id="topic.staat-gesellschaft.verbrechen">
+       <catDesc>Staat_Gesellschaft:Verbrechen</catDesc>
+      </category>
+     </category>
+     <category id="topic.technik-industrie">
+      <catDesc>Technik_Industrie</catDesc>
+      <category id="topic.technik-industrie.edv-elektronik">
+       <catDesc>Technik_Industrie:EDV_Elektronik</catDesc>
+      </category>
+      <category id="topic.technik-industrie.kfz">
+       <catDesc>Technik_Industrie:Kfz</catDesc>
+      </category>
+      <category id="topic.technik-industrie.transport-verkehr">
+       <catDesc>Technik_Industrie:Transport_Verkehr</catDesc>
+      </category>
+      <category id="topic.technik-industrie.umweltschutz">
+       <catDesc>Technik_Industrie:Umweltschutz</catDesc>
+      </category>
+      <category id="topic.technik-industrie.unfaelle">
+       <catDesc>Technik_Industrie:Unfaelle</catDesc>
+      </category>
+     </category>
+     <category id="topic.wirtschaft-finanzen">
+      <catDesc>Wirtschaft_Finanzen</catDesc>
+      <category id="topic.wirtschaft-finanzen.banken">
+       <catDesc>Wirtschaft_Finanzen:Banken</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.bilanzen">
+       <catDesc>Wirtschaft_Finanzen:Bilanzen</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.oeffentliche-finanzen">
+       <catDesc>Wirtschaft_Finanzen:Oeffentliche_Finanzen</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.sozialprodukt">
+       <catDesc>Wirtschaft_Finanzen:Sozialprodukt</catDesc>
+      </category>
+      <category id="topic.wirtschaft-finanzen.waehrung">
+       <catDesc>Wirtschaft_Finanzen:Waehrung</catDesc>
+      </category>
+     </category>
+     <category id="topic.wissenschaft">
+      <catDesc>Wissenschaft</catDesc>
+      <category id="topic.wissenschaft.populaerwissenschaft">
+       <catDesc>Wissenschaft:Populaerwissenschaft</catDesc>
+      </category>
+     </category>
+     <category id="topic.unklassifizierbar">
+      <catDesc>Text ist thematisch nicht klassifizierbar.</catDesc>
+     </category>
+    </taxonomy>
+   </classDecl>
+  </encodingDesc>
+  <profileDesc>
+   <langUsage Default="n">
+    <language id="de">Deutsch</language>
+   </langUsage>
+   <textDesc Default="n">
+    <textType>Diskussionen zu Enzyklopädie-Artikeln</textType>
+    <textTypeRef/>
+   </textDesc>
+  </profileDesc>
+  <revisionDesc status="draft">
+   <listChange ordered="true">
+    <change when="2020-09" who="Harald Lüngen" status="draft">generated from cmc-core</change>
+   </listChange>
+  </revisionDesc>
+ </idsHeader>
+ <idsDoc id="A00" type="text" version="1.0" TEIform="TEI.2">
+  <idsHeader pattern="text" type="document" version="1.0" status="new" TEIform="teiHeader">
+   <fileDesc>
+    <titleStmt>
+     <dokumentSigle>WDD19/A00</dokumentSigle>
+     <d.title>Wikipedia, Diskussionen zu Artikeln mit Anfangsbuchstabe A, Teil 00</d.title>
+    </titleStmt>
+    <publicationStmt>
+     <distributor/>
+     <pubAddress/>
+     <availability region="world" status="free" Default="n">CC-BY-SA</availability>
+     <pubDate/>
+    </publicationStmt>
+    <sourceDesc Default="n">
+     <biblStruct Default="n" status="draft">
+      <monogr>
+       <h.title type="main"/>
+       <imprint/>
+      </monogr>
+     </biblStruct>
+    </sourceDesc>
+   </fileDesc>
+  </idsHeader>
+  <idsText id="WDD19.ß0000.10317" n="de.Diskussion:Öffentlich-private Partnerschaft">
+   <idsHeader pattern="text" type="text" version="1" status="new" TEIform="teiHeader">
+    <fileDesc>
+     <titleStmt>
+      <textSigle>WDD19/ß0000.10317</textSigle>
+      <t.title assemblage="external">WDD19/ß0000.10317 Diskussion:Öffentlich-private Partnerschaft. URL:https://de.wikipedia.org/wiki/Diskussion:%C3%96ffentlich-private%20Partnerschaft . In: Wikipedia, 2019</t.title>
+     </titleStmt>
+     <publicationStmt>
+      <distributor>French-German-English Project Comparable Wikipedia Corpora 2019;
+Leibniz-Institute for the German Language and Université de Toulouse Jean Jaurès</distributor>
+      <pubAddress/>
+      <idno type="cmc-core-filename">10317.tei.xml</idno>
+      <availability region="world" status="free" Default="n">CC-BY-SA</availability>
+      <pubDate type="year">2020</pubDate>
+      <pubPlace>Mannheim</pubPlace>
+      <pubPlace>Toulouse</pubPlace>
+     </publicationStmt>
+     <sourceDesc Default="n">
+      <biblStruct Default="n" status="draft">
+       <analytic>
+        <h.title type="main">Diskussion:Öffentlich-private Partnerschaft</h.title>
+        <h.author>Karl 3 et al.</h.author>
+        <imprint>
+         <pubPlace>
+          <ref target="https://de.wikipedia.org/wiki/Diskussion:%C3%96ffentlich-private%20Partnerschaft" type="page_url"/>
+         </pubPlace>
+        </imprint>
+        <idno type="wikipedia-id">10317</idno>
+       </analytic>
+       <monogr>
+        <h.title type="main">Wikipedia</h.title>
+        <edition>
+         <further/>
+         <kind>German language version</kind>
+         <appearance/>
+        </edition>
+        <imprint>
+         <publisher>Wikimedia Foundation, Inc</publisher>
+         <pubPlace>
+          <ref target="https://wikipedia.org/"/>
+         </pubPlace>
+        </imprint>
+       </monogr>
+       <monogr>
+        <h.title type="main">dewiki-2019-08-01-pages-meta-current</h.title>
+        <edition>
+         <further/>
+         <kind>Dump file</kind>
+         <appearance/>
+        </edition>
+        <imprint>
+         <publisher>Wikimedia Foundation, Inc</publisher>
+         <pubPlace>
+          <ref target="http://dumps.wikimedia.org"/>
+         </pubPlace>
+         <pubDate type="year">2019</pubDate>
+         <pubDate type="month">08</pubDate>
+         <pubDate type="day">01</pubDate>
+        </imprint>
+        <idno type="dump-filename">dewiki-2019-08-01-pages-meta-current</idno>
+       </monogr>
+       <relatedItem type="articleLink">
+        <ref n="10316" target="https://de.wikipedia.org/wiki/%C3%96ffentlich-private%20Partnerschaft" targetLang="de">https://de.wikipedia.org/wiki/Öffentlich-private Partnerschaft</ref>
+       </relatedItem>
+       <relatedItem type="articleTextSigle">
+        <ref type="derekoTextSigle">WPD19/ß0000.10316</ref>
+       </relatedItem>
+       <relatedItem type="langLink">
+        <ref target="https://fr.wikipedia.org/wiki/Partenariat public-privé" targetLang="fr">Partenariat public-privé</ref>
+       </relatedItem>
+       <relatedItem type="langLink">
+        <ref target="https://en.wikipedia.org/wiki/Public–private partnership" targetLang="en">Public–private partnership</ref>
+       </relatedItem>
+      </biblStruct>
+      <reference assemblage="non-automatic" type="complete">WDD19/ß0000.10317 Wikipedia: Diskussion:Öffentlich-private Partnerschaft. URL: https://de.wikipedia.org/wiki/Diskussion:%C3%96ffentlich-private%20Partnerschaft (Letzte Änderung 19.7.2019). In: Wikipedia, Die freie Enzyklopädie - Dump vom 1.8.2019</reference>
+      <reference assemblage="regular" type="short">WDD19/ß0000.10317 Wikipedia: Diskussion:Öffentlich-private Partnerschaft, (Letzte Änderung 19.7.2019), 2019</reference>
+     </sourceDesc>
+    </fileDesc>
+    <profileDesc>
+     <creation>
+      <creatDate>2019.07.19</creatDate>
+      <creatRef>(Letzte Änderung 19.7.2019)</creatRef>
+      <creatRefShort>(Letzte Änderung 19.7.2019)</creatRefShort>
+     </creation>
+     <textClass Default="n">
+      <classCode scheme="https://de.wikipedia.org/wiki/Kategorie:!Hauptkategorie">
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Kommunalpolitik%20%28Deutschland%29" targetLang="de">Kategorie:Kommunalpolitik (Deutschland)</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Kommunalpolitik%20%28%C3%96sterreich%29" targetLang="de">Kategorie:Kommunalpolitik (Österreich)</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:%C3%96ffentliche%20Wirtschaft" targetLang="de">Kategorie:Öffentliche Wirtschaft</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Verwaltungsrecht" targetLang="de">Kategorie:Verwaltungsrecht</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Verwaltungswissenschaft" targetLang="de">Kategorie:Verwaltungswissenschaft</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Privatisierung" targetLang="de">Kategorie:Privatisierung</ref>
+       <ref target="https://de.wikipedia.org/wiki/Kategorie:Unternehmensart" targetLang="de">Kategorie:Unternehmensart</ref>
+      </classCode>
+      <classCode scheme="https://en.wikipedia.org/wiki/Wikipedia:Contents/Categories">
+       <ref target="https://en.wikipedia.org/wiki/Category%3APublic%20economics" targetLang="en">Category:Public economics</ref>
+       <ref target="https://en.wikipedia.org/wiki/Category%3AAdministrative%20law" targetLang="en">Category:Administrative law</ref>
+       <ref target="https://en.wikipedia.org/wiki/Category%3APrivatization" targetLang="en">Category:Privatization</ref>
+       <ref target="https://en.wikipedia.org/wiki/Category%3ACompanies%20by%20type" targetLang="en">Category:Companies by type</ref>
+      </classCode>
+      <catRef n="0.999998" scheme="topic" target="topic.politik.kommunalpolitik"/>
+     </textClass>
+     <textDesc Default="n">
+      <textType>Diskussion</textType>
+      <textTypeArt>Diskussion</textTypeArt>
+      <textDomain/>
+     </textDesc>
+    </profileDesc>
+   </idsHeader>
+   <text>
+    <body>
+     <div type="talk" part="N" org="uniform" sample="complete" complete="y">
+      <head>Öffentlich-private Partnerschaft</head>
+      <note creation="template" type="header" anchored="true">
+      {{Autoarchiv|Alter=900|Ziel='((Lemma))/Archiv/1'|Mindestbeiträge=1|Mindestabschnitte=5|Frequenz=monatlich|Zeigen=Nein}}</note>
+      <div id="i.10317_1" type="thread" part="N" org="uniform" sample="complete" complete="y">
+       <head/>
+       <posting id="i.10317_1_1" indentLevel="0" who="WU00000000">
+        <p part="N"> Archivübersicht| </p>
+       </posting>
+       <posting id="i.10317_1_2" indentLevel="1" who="WU00000000">
+        <p part="N">Archiv </p>
+       </posting>
+      </div>
+      <div id="i.10317_2" type="thread" part="N" org="uniform" sample="complete" complete="y">
+       <head>{{Anker|deadurl_2015-10}} Defekte Weblinks</head>
+       <posting creation="bot" id="i.10317_2_1" indentLevel="0" when-iso="2015-11-24T22:35+01" who="WU00001824">
+        <p part="N"> nicht archivieren|Zeigen=neinDefekter Weblink|Bot=<autoSignature type="signed">GiftBot </autoSignature>|Lauf=2015-10 </p>
+        <p part="N"> |2=007 wba=20100525003126 http://www.psiru.org/reports/2008-11-PPPs-crit.doc </p>
+        <p part="N"> |3=403 wba=20141218044639 proto http://www.partnerschaftendeutschland.de/ </p>
+        <p part="N"> – <autoSignature type="signed">GiftBot <timestamp>22:35, 24. Nov. 2015 (CET)</timestamp>
+         </autoSignature>
+         </p>
+       </posting>
+      </div>
+      <div id="i.10317_3" type="thread" part="N" org="uniform" sample="complete" complete="y">
+       <head>Aktuelle Entwicklungen zur ÖPP-Verfassungsreform</head>
+       <posting id="i.10317_3_1" indentLevel="0" when-iso="2017-05-26T23:13+02" who="WU00003187">
+        <p part="N">
+         <s> In Kürze soll der Bundestag über den Regierungsentwurf zur Verfassungsänderung betreffend ÖPP für Verkehr und Bildung entscheiden (http://dipbt.bundestag.de/extrakt/ba/WP18/786/78664.html).</s> 
+         <s>Momentan wird der Vorschlag noch kontrovers diskutiert (vgl. http://www.berliner-zeitung.de/wirtschaft/autobahn-privatisierung-spd-taeuscht-die-eigenen-genossen-26972860).</s> 
+         <s>Da die Legislaturperiode sich allerdings dem Ende zuneigt, dürfte (vorerst) mit dem geplanten Beschluss oder alternativ einer Vertagung ein fester Zwischenstand erreicht sein.</s> 
+         <s>Gerne ergänze ich, wenn es soweit ist, im Abschnitt "Anwendungsfelder" also einen entsprechenden Passus.</s> 
+        </p>
+        <p part="N">
+         <s broken="yes"> Dies wäre eine günstige Gelegenheit, die Entwicklung der letzten Jahre insgesamt aufzuarbeiten, zumal in der entsprechenden Chronologie das letzte vermerkte Ereignis auf 2010 zurückdatiert.</s> 
+         <s>Vielleicht ist jemand diesbezüglich bereits im Bilde und könnte die nötigen Daten ergänzen.</s> 
+         <s>Das würde dann doppelte Recherchearbeit sparen.</s> 
+        </p>
+        <p part="N">
+         <s> Mit besten Grüßen</s> --<autoSignature type="signed">Baronomingo <timestamp>23:13, 26. Mai 2017 (CEST)</timestamp>
+         </autoSignature>
+         </p>
+       </posting>
+       <posting id="i.10317_3_2" indentLevel="0" when-iso="2017-11-03T23:20+01" who="WU00003188">
+        <p part="N"> - Nun hier hat sich ja jetzt einiges getan und die geplanten Verfassungsänderungen wurden alle durchgewunken.<s> Der Artikel muss dringend überarbeitet und aktualisiert werden.</s> 
+         <s>Ich denke mich auch erinnern zu können, dass es mittlerweile sowohl in Deutschland sowie in der EU viele Projekte gibt, die sich als Kostenfallen für die Kommunen etc. herausgestellt haben.</s> --<autoSignature type="signed">Milla Krauskopf <timestamp>23:20, 3. Nov. 2017 (CET)</timestamp>
+         </autoSignature>
+         </p>
+       </posting>
+       <posting id="i.10317_3_3" indentLevel="1" when-iso="2017-11-03T23:59+01" who="WU00003189">
+        <p part="N">Zustimmung!<s> Wer fängt an?</s>--<autoSignature type="signed">Karl 3 <timestamp>23:59, 3. Nov. 2017 (CET)</timestamp>
+         </autoSignature>
+         </p>
+       </posting>
+      </div>
+      <div id="i.10317_4" type="thread" part="N" org="uniform" sample="complete" complete="y">
+       <head>Link Nr. 34 veraltet?</head>
+       <posting id="i.10317_4_1" indentLevel="0" when-iso="2017-05-29T15:28+02" who="WU00003190">
+        <p part="N">
+         <s> "Die NDR-Fernsehdokumentation „Der geplünderte Staat“ (2013)34 ..." </s>
+        </p>
+        <p part="N">
+         <s> Der link unter der Nr. 34 funktioniert nicht mehr, aber man kann den Artikel bei 3Sat nachlesen: </s>
+        </p>
+        <p part="N">
+         <s> http://www.3sat.de/page/?source=/ard/sendung/178884/index.html </s>
+        </p>
+        <p part="N">
+         <s> Leider habe ich hier noch nie etwas geändert und weiß nicht, wie das geht.</s> 
+         <s>Vielleicht kann das jemand von Euch korrigieren?</s> 
+        </p>
+        <p part="N"> --<autoSignature type="signed">Stefuzius <timestamp>15:28, 29. Mai 2017 (CEST)</timestamp>
+         </autoSignature>
+         </p>
+       </posting>
+       <posting id="i.10317_4_2" indentLevel="1" when-iso="2017-05-30T11:16+02" who="WU00000716">
+        <p part="N">Danke für den Hinweis, ich verändere den Link. --<autoSignature type="signed">Casra <timestamp>11:16, 30. Mai 2017 (CEST)</timestamp>
+         </autoSignature>
+         </p>
+       </posting>
+      </div>
+      <div id="i.10317_5" type="thread" part="N" org="uniform" sample="complete" complete="y">
+       <head>Öffentliche Dienstleistungen, Ver-/Entsorgung</head>
+       <posting id="i.10317_5_1" indentLevel="0" when-iso="2017-07-09T17:53+02" who="WU00003189">
+        <p part="N"> Dieser Bereich unterliegt, sofern er in öffentlicher Hand ist, dem Preisgesetz.<s> Durch eine PPP fällt die Bindung an das Preisgesetz weg, mit der Folge, dass die Kosten frei kalkuliert werden können, regelmäßige weitere Folge: Preissteigerungen!</s> 
+         <s>Vgl. http://www.econstor.eu/bitstream/10419/85329/1/770675158.pdf Möglicherweise wird diese "Flucht aus dem Preisrecht" (Greiffenhagen) durch die derzeit in Vorbereitung befindliche Novellierung des Preisgesetzes verhindert oder zumindest erschwert.</s>
+         <s>--</s>
+         <autoSignature type="signed">Karl 3 <timestamp>17:53, 9. Jul. 2017 (CEST)</timestamp>
+         </autoSignature>
+         </p>
+       </posting>
+      </div>
+     </div>
+    </body>
+   </text>
+  </idsText>
+ </idsDoc>
+</idsCorpus>
