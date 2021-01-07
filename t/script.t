@@ -116,7 +116,7 @@ subtest 'Basic processing' => sub {
     ->attr_is('#s38','l','2')
     ->attr_is('#s38 > fs','type','struct')
     ->text_is('#s38 > fs > f[name=name]','back')
-    ->element_count_is('', 196);
+    ->element_count_is('*', 196);
 
   $t->file_exists_not('GOE/AGA/00000/base/tokens.xml', 'External not generated');
 
