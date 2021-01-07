@@ -1,12 +1,13 @@
 0.03 2021-01-06
         - Update KorAP-Tokenizer to released 2.0 version
+
 0.02 2020-11-27
+        - Update KorAP-Tokenizer to v2.0.0.
         - Switch input encoding based on XML
           processing instruction.
         - Fix handling of UTF-8 in sigles.
-
-0.02 2020-10-14
-        - Update KorAP-Tokenizer to v2.0.0.
+        - Improve test suite for recent version
+          of Mojolicious.
 
 0.01 2020-09-28
         - Initial release to GitHub.
