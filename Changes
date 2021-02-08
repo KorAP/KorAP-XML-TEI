@@ -1,7 +1,8 @@
-0.03 2021-01-12
+0.03 2021-02-08
         - Update KorAP-Tokenizer to released 2.0 version
         - Improve test suite for recent version
           of Mojolicious.
+        - Define resources in Makefile.
 
 0.02 2020-11-27
         - Update KorAP-Tokenizer to v2.0.0.
