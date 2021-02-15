@@ -12,6 +12,12 @@ use constant {
 };
 
 
+# Dummy annotation that will not be added to output
+sub new_dummy_annotation {
+  my $token = KorAP::XML::TEI::Annotations::Annotation->new(@_);
+  return $token;
+};
+
 # Add new annotation to annotation list
 sub add_new_annotation {
   my $self = shift;
