@@ -175,6 +175,31 @@ subtest 'Tokenize with external tokenizer' => sub {
     ->element_count_is('spanList span', 227);
 };
 
+subtest 'Sentence split with KorAP tokenizer' => sub {
+
+  eval {
+    require KorAP::XML::TEI::Tokenizer::KorAP;
+    1;
+  } or do {
+    plan skip_all => "KorAP::XML::TEI::Tokenizer::KorAP cannot be used";
+  };
+
+  test_tei2korapxml(
+      file => $file,
+      param => "-tk -s",
+      tmp => 'script_sentence_split'
+  )
+      ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+      ->file_readable('GOE/AGA/00000/struct/structure.xml')
+      ->unzip_xml('GOE/AGA/00000/struct/structure.xml')
+      ->text_is('span#s25 fs f', 's')
+      ->attr_is('span#s25', 'l', -1)
+      ->attr_is('span#s25', 'to', 54)
+      ->text_is('span#s30 fs f', 's')
+      ->attr_is('span#s30', 'l', -1)
+      ->attr_is('span#s30', 'from', 1099)
+      ->attr_is('span#s30', 'to', 1266);
+};
 
 subtest 'Test Tokenizations' => sub {
 
