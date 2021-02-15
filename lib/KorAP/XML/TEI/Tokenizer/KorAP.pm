@@ -26,8 +26,10 @@ my $tokenizer_jar = dist_file(
 
 # Construct a new KorAP Tokenizer
 sub new {
-  my $class = shift;
-  my $self = $class->SUPER::new("$java -jar $tokenizer_jar --no-tokens --positions");
+  my ($class, $sentence_split) = @_;
+  my $self = $class->SUPER::new("$java -jar $tokenizer_jar --no-tokens --positions" .
+      ($sentence_split? " --sentence-boundaries" : ""));
+  $self->{sentence_split} = $sentence_split;
   $self->{name} = 'korap';
   $self->{sep} = "\x{04}\n";
   return bless $self, $class;

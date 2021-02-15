@@ -47,6 +47,7 @@ GetOptions(
   'tokenizer-call|tc=s' => \(my $tokenizer_call), # Temporary argument for testing purposes
   'tokenizer-korap|tk' => \(my $tokenizer_korap), # use KorAP-tokenizer
   'tokenizer-internal|ti' => \(my $tokenizer_intern), # use intern tokenization (default = no)
+  'use-tokenizer-sentence-splits|s' => (\my $use_tokenizer_sentence_splits), #
   'log|l=s' => \(my $log_level = 'notice'),
   'help|h'    => sub {
     pod2usage(
@@ -89,13 +90,17 @@ my $_TEXT_HEADER_BEG  = "idsHeader type=\"text\"";     # analog
 ## extern tokenization
 my $_GEN_TOK_EXT = $tokenizer_call || $tokenizer_korap ? 1 : 0;
 
+if ($use_tokenizer_sentence_splits && !$tokenizer_korap) {
+  die $log->fatal("Sentence splitting is currently only supported by KorAP tokenizer (use -tk to activate it");
+}
+
 my $ext_tok;
 if ($tokenizer_call) {
   $ext_tok = KorAP::XML::TEI::Tokenizer::External->new($tokenizer_call);
 }
 
 elsif ($tokenizer_korap) {
-  $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new;
+  $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new($use_tokenizer_sentence_splits);
 };
 my $_tok_file_ext  = "tokens.xml";
 ##
@@ -336,6 +341,10 @@ MAIN: while ( <$input_fh> ){
             $cons_tok->reset;
           };
 
+          if ($use_tokenizer_sentence_splits) {
+            $ext_tok->sentencize_from_previous_input($structures);
+          }
+
           # ~ write structures ~
           if (!$structures->empty) {
             $structures->to_zip(
@@ -469,6 +478,11 @@ sub retr_info { # called from main()
   # (1 = topmost level inside retr_info() = should always be level of tag $_TEXT_BODY)
   my $rl = shift;
 
+  my $dummy_anno;
+  if ($use_tokenizer_sentence_splits) {
+    $dummy_anno = $structures->new_dummy_annotation();
+  }
+
   #  Notes on how 'XML::CompactTree::XS' works
   #
   #  Example: <node a="v"><node1>some <n/> text</node1><node2>more-text</node2></node>
@@ -570,8 +584,14 @@ sub retr_info { # called from main()
 
       # ~ handle structures ~
 
+      my $anno;
+
       # $e->[1] represents the tag name
-      my $anno = $structures->add_new_annotation($e->[1]);
+      if ($use_tokenizer_sentence_splits && $e->[1] eq "s") {
+        $anno = $dummy_anno;
+      } else {
+        $anno = $structures->add_new_annotation($e->[1]);
+      }
 
       # ~ handle tokens ~
 
@@ -874,6 +894,11 @@ Use the standard KorAP/DeReKo tokenizer.
 Tokenize the data using two embedded tokenizers,
 that will take an I<Aggressive> and a I<conservative>
 approach.
+
+=item B<--use-tokenizer-sentence-splits|-s>
+
+Replace existing or add sentence boundary information provided
+by the KorAP tokenizer (currently supported only).
 
 =item B<--log|-l>
 
