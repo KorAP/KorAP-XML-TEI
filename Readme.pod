@@ -116,6 +116,11 @@ Tokenize the data using two embedded tokenizers,
 that will take an I<Aggressive> and a I<conservative>
 approach.
 
+=item B<--use-tokenizer-sentence-splits|-s>
+
+Replace existing with, or add new, sentence boundary information
+provided by the KorAP tokenizer (currently supported only).
+
 =item B<--log|-l>
 
 Loglevel for I<Log::Any>. Defaults to C<notice>.
@@ -140,7 +145,7 @@ Defaults to C<false>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2020, L<IDS Mannheim|https://www.ids-mannheim.de/>
+Copyright (C) 2021, L<IDS Mannheim|https://www.ids-mannheim.de/>
 
 Author: Peter Harders
 

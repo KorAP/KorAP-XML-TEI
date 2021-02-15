@@ -1,3 +1,4 @@
+        - -s option added that uses sentence boundaries provided by the KorAP tokenizer (-tk)
 0.03 2021-01-12
         - Update KorAP-Tokenizer to released 2.0 version
         - Improve test suite for recent version
