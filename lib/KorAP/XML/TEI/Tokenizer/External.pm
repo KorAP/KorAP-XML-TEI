@@ -33,12 +33,15 @@ sub new {
   $sep //= "\x04\n";
 
   my $self = bless {
-    chld_in  => undef,
-    chld_out => undef,
-    pid      => undef,
-    cmd      => $cmd,
-    select   => undef,
-    sep      => $sep,
+      chld_in         => undef,
+      chld_out        => undef,
+      pid             => undef,
+      cmd             => $cmd,
+      select          => undef,
+      sep             => $sep,
+      sentence_split  => undef,
+      sentence_starts => [],
+      sentence_ends   => [],
   }, $class;
 
   # Initialize tokenizer
@@ -110,8 +113,19 @@ sub to_string {
 
     my $out = $self->{chld_out};
     $_ = <$out>;
-
     my @bounds = split;
+
+    if ($self->{sentence_split}) {
+      # sentence boundaries will be on a second line
+      $_ = <$out>;
+      my @sentence_bounds = split;
+
+      # Save all sentence bounds
+      for (my $i = 0; $i < @sentence_bounds; $i +=  2 ) {
+        push @{$self->{sentence_starts}}, $sentence_bounds[$i];
+        push @{$self->{sentence_endss}}, $sentence_bounds[$i+1];
+      };
+    }
 
     # Serialize all bounds
     my $c = 0;
@@ -161,6 +175,19 @@ sub close {
     $self->{pid} = undef;
   };
 };
+
+sub sentencize_from_previous_input {
+  my ($self, $structures) = @_;
+
+  for (my $i=0; $i < @{$self->{sentence_starts}}; $i++) {
+    my $anno = $structures->add_new_annotation("s");
+    $anno->set_from($self->{sentence_starts}[$i]);
+    $anno->set_to($self->{sentence_endss}[$i]);
+    $anno->set_level(-1);
+  }
+  $self->{sentence_starts} = [];
+  $self->{sentence_endss} = [];
+}
 
 
 1;

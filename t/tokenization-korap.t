@@ -17,12 +17,13 @@ BEGIN {
   };
 }
 
+use_ok('KorAP::XML::TEI::Annotations::Collector');
 require_ok('KorAP::XML::TEI::Tokenizer::KorAP');
 
 my $f = dirname(__FILE__);
 my $cmd = catfile($f, 'cmd', 'tokenizer.pl');
 
-my $ext = KorAP::XML::TEI::Tokenizer::KorAP->new();
+my $ext = KorAP::XML::TEI::Tokenizer::KorAP->new(1);
 
 $ext->tokenize("Der alte Mann");
 my $str = $ext->to_string('unknown');
@@ -63,6 +64,13 @@ $t = Test::XML::Loy->new($str);
 $t->attr_is('layer spanList span:nth-child(14)', 'from', 80);
 $t->attr_is('layer spanList span:nth-child(14)', 'to', 92);
 $t->element_count_is('layer spanList span', 14);
+
+my $structures = KorAP::XML::TEI::Annotations::Collector->new;
+$ext->sentencize_from_previous_input($structures);
+$t = Test::XML::Loy->new($structures->[-1]->to_string(3));
+$t->attr_is('span', 'from', 6)
+  ->attr_is('span', 'to', 92)
+  ->attr_is('span', 'l', -1, "sentence splitting with korap tokenizer");
 
 $string = "Gefunden auf www.wikipedia.de";
 $ext->reset;
