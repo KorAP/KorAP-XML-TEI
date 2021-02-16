@@ -4,6 +4,7 @@ use warnings;
 use Log::Any qw($log);
 use Encode qw(encode decode);
 use KorAP::XML::TEI qw!escape_xml!;
+use KorAP::XML::TEI qw!remove_xml_comments replace_entities!;
 
 # Parsing of i5 header files
 
@@ -63,6 +64,7 @@ sub parse {
   while (<$fh>) {
 
     $_ = decode($self->[INPUTENC], $_);
+    $_ = replace_entities($_);
 
     # Change:
     #   This version keeps comments in header files
