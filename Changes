@@ -1,6 +1,7 @@
         - -s option added that uses sentence boundaries provided by the KorAP tokenizer (-tk)
         - tokenizer invocation comments removed from KorAP XML output
         - indentation of </span> tags fixed
+        - character entities that used in DeReKo are automatically replaced by their corresponding characters
 0.03 2021-01-12
         - Update KorAP-Tokenizer to released 2.0 version
         - Improve test suite for recent version
