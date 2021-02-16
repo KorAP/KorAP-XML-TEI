@@ -19,7 +19,7 @@ BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
 };
 
-use KorAP::XML::TEI qw!remove_xml_comments!;
+use KorAP::XML::TEI qw!remove_xml_comments replace_entities!;
 use KorAP::XML::TEI::Tokenizer::External;
 use KorAP::XML::TEI::Tokenizer::Conservative;
 use KorAP::XML::TEI::Tokenizer::Aggressive;
@@ -236,6 +236,7 @@ MAIN: while ( <$input_fh> ){
   };
 
   $_ = decode($input_enc, $_);
+  $_ = replace_entities($_);
 
   if ( index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$# ){
 
@@ -258,6 +259,7 @@ MAIN: while ( <$input_fh> ){
 
       $_ = remove_xml_comments( $input_fh, $_ );
       $_ = decode($input_enc, $_);
+      $_ = replace_entities($_);
 
       # ~ end of text body ~
       if (($pos = index($_, '</' . $_TEXT_BODY)) >= 0) {

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idsCorpus>
+  <idsHeader type="text">
+    <textSigle>CORP/DOC.00001</textSigle>
+  </idsHeader>
+  <text>
+   <p id="p1">&#x20;&#65;&alpha;&ap;&bdquo;&blk12;&blk14;&blk34;&block;&boxDL;&boxdl;&boxdr;&boxDR;&boxH;&boxh;&boxhd;&boxHD;&boxhu;&boxHU;&boxUL;&boxul;&boxur;&boxUR;&boxv;&boxV;&boxvh;&boxVH;&boxvl;&boxVL;&boxVR;&boxvr;&bull;&caron;&ccaron;&circ;&dagger;&Dagger;&ecaron;&euro;&fnof;&hellip;&Horbar;&inodot;&iota;&ldquo;&ldquor;&lhblk;&lsaquo;&lsquo;&lsquor;&mdash;&ndash;&nu;&oelig;&OElig;&omega;&Omega;&permil;&phi;&pi;&piv;&rcaron;&rdquo;&rho;&rsaquo;&rsquo;&rsquor;&scaron;&Scaron;&sigma;&squ;&squb;&squf;&sub;&tilde;&trade;&uhblk;&Yuml;&zcaron;&Zcaron;</p>
+  </text>
+</idsCorpus>
