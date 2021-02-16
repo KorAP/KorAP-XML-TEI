@@ -131,7 +131,7 @@ sub _header_struct {
 
 # Serialize footer for lex and struct
 sub _footer {
-  return "      </fs>\n        </span>\n";
+  return "      </fs>\n    </span>\n";
 };
 
 
