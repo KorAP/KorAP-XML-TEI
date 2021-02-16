@@ -104,10 +104,6 @@ sub to_string {
   # Start header
   my $output = $self->_header($text_id);
 
-  # TODO:
-  #   Escape the stringification of cmd.
-  $output .= '    <!-- ' . $self->{cmd} . " -->\n";
-
   # Wait 60m for the external tokenizer
   if ($self->{select}->can_read(WAIT_SECS)) {
 
