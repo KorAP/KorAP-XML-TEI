@@ -477,6 +477,18 @@ subtest 'Check encoding with utf-8 sigle' => sub {
       ->attr_is('layer', 'docid', 'WDD19_ß0000.10317');
 };
 
+subtest 'Check entity replacement' => sub {
+  my $t = test_tei2korapxml(
+    file => catfile($f, 'data', 'text_with_entities.i5.xml'),
+    tmp => 'script_entity_replacement',
+    param => '-ti'
+  )->stderr_like(qr!tei2korapxml: .*? text_id=CORP_DOC.00001!);
+
+  $t->unzip_xml('CORP/DOC/00001/data.xml')
+    ->text_is('text',
+    encode_utf8(' Aα≈„▒░▓█╗┐┌╔═─┬╦┴╩╝┘└╚│║┼╬┤╣╠├•ˇčˆ†‡ě€ƒ…‗ıι“„▄‹‘‚—–νœŒωΩ‰φπϖř”ρ›’‘šŠσ□■▪⊂˜™▀ŸžŽ'));
+};
+
 subtest 'Test Log' => sub {
   test_tei2korapxml(
     tmp => 'script_out',
