@@ -31,7 +31,7 @@ sub new {
       ($sentence_split? " --sentence-boundaries" : ""));
   $self->{sentence_split} = $sentence_split;
   $self->{name} = 'korap';
-  $self->{sep} = "\x{04}\n";
+  $self->{sep} = "\n\x{04}\n";
   return bless $self, $class;
 };
 

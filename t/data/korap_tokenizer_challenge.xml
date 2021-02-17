@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE idsCorpus
+  PUBLIC "-//IDS//DTD IDS-I5 1.0//EN" "http://corpora.ids-mannheim.de/I5/DTD/i5.dtd">
+<idsCorpus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" TEIform="teiCorpus.2">
+ <idsDoc id="A00" type="text" version="1.0" TEIform="TEI.2">
+  <idsText id="WDD19.H0039.87242" n="de.Diskussion:Hilfswerk_der_Evangelischen_Kirchen_der_Schweiz" version="1">
+   <idsHeader type="text" pattern="text" version="1.0">
+    <fileDesc>
+     <titleStmt>
+      <textSigle>WDD19/H0039.87242</textSigle>
+		 </titleStmt>
+		</fileDesc>
+	 </idsHeader>
+   <text>
+    <body>
+     <div>
+       <p>?____</p>
+     </div>
+    </body>
+    <back></back>
+   </text>
+  </idsText>
+ </idsDoc>
+</idsCorpus>

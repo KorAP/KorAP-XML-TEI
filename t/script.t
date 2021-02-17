@@ -175,6 +175,26 @@ subtest 'Tokenize with external tokenizer' => sub {
     ->element_count_is('spanList span', 227);
 };
 
+subtest 'Check KorAP tokenizer for infinite loop bug' => sub {
+
+  my $file = catfile($f, 'data', 'korap_tokenizer_challenge.xml');
+
+  eval {
+    require KorAP::XML::TEI::Tokenizer::KorAP;
+    1;
+  } or do {
+    plan skip_all => "KorAP::XML::TEI::Tokenizer::KorAP cannot be used";
+  };
+
+  test_tei2korapxml(
+    file => $file,
+    param => "-tk -s",
+    tmp => 'script_bug_check'
+  )
+    ->stderr_like(qr!tei2korapxml: .*? text_id=WDD19_H0039\.87242!)
+    ->file_readable('WDD19/H0039/87242/struct/structure.xml');
+};
+
 subtest 'Sentence split with KorAP tokenizer' => sub {
 
   eval {
