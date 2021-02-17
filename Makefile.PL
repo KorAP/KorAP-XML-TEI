@@ -32,7 +32,22 @@ WriteMakefile(
     'Log::Any' => '1.708'
   },
   MIN_PERL_VERSION => '5.016',
-  EXE_FILES => ['script/tei2korapxml']
+  EXE_FILES => ['script/tei2korapxml'],
+  META_MERGE   => {
+    'meta-spec' => { version => 2 },
+    requires  => { perl => '5.010001' },
+    resources => {
+      license     => 'https://opensource.org/licenses/BSD-2-Clause',
+      repository  => {
+        type => 'git',
+        url => 'https://github.com/KorAP/KorAP-XML-TEI.git',
+        web => 'https://github.com/KorAP/KorAP-XML-TEI',
+      },
+      bugtracker => {
+        web => 'https://github.com/KorAP/KorAP-XML-TEI/issues'
+      }
+    }
+  }
 );
 
 package MY;

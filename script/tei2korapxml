@@ -926,7 +926,7 @@ Defaults to C<false>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2020, L<IDS Mannheim|https://www.ids-mannheim.de/>
+Copyright (C) 2021, L<IDS Mannheim|https://www.ids-mannheim.de/>
 
 Author: Peter Harders
 
@@ -939,6 +939,6 @@ member of the
 L<Leibniz-Gemeinschaft|http://www.leibniz-gemeinschaft.de/>.
 
 This program is free software published under the
-L<BSD-2 License|https://raw.githubusercontent.com/KorAP/KorAP-XML-TEI/master/LICENSE>.
+L<BSD-2 License|https://opensource.org/licenses/BSD-2-Clause>.
 
 =cut
