@@ -120,6 +120,12 @@ If L</KORAPXMLTEI_INLINE> is set, this will contain
 annotations as well.
 Defaults to C<tokens> and C<morpho>.
 
+=item B<--inline-structures> <foundry>#[<file>]
+
+Define the foundry and file (without extension)
+to store inline structure information in.
+Defaults to C<struct> and C<structures>.
+
 =item B<--use-tokenizer-sentence-splits|-s>
 
 Replace existing with, or add new, sentence boundary information

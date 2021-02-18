@@ -360,6 +360,44 @@ subtest 'Test utf-8 handling' => sub {
 };
 
 
+subtest 'Check structure parsing with defined foundry and folder' => sub {
+  # Load example file
+  my $file = catfile($f, 'data', 'goe_sample.i5.xml');
+
+  my $t = test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '-ti --inline-structures=myfoundry#mystr'
+  )->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->file_exists_not('GOE/AGA/00000/struct/structure.xml', 'Structure not generated')
+    ->unzip_xml('GOE/AGA/00000/myfoundry/mystr.xml')
+    ->text_is('span[id=s3] *[name=type]', 'Autobiographie', 'text content')
+    ->text_is('#s3 *[name=type]', 'Autobiographie', 'text content')
+    ->attr_is('#s0','to','1266')
+    ->attr_is('#s0','l','1')
+    ->attr_is('#s18','from','925')
+    ->attr_is('#s18','to','1266')
+    ->attr_is('#s18','l','5')
+    ;
+
+  $t = test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '-ti --inline-structures=myfoundry'
+  )->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->file_exists_not('GOE/AGA/00000/struct/structure.xml', 'Structure not generated')
+    ->unzip_xml('GOE/AGA/00000/myfoundry/structure.xml')
+    ->text_is('span[id=s3] *[name=type]', 'Autobiographie', 'text content')
+    ->text_is('#s3 *[name=type]', 'Autobiographie', 'text content')
+    ->attr_is('#s0','to','1266')
+    ->attr_is('#s0','l','1')
+    ->attr_is('#s18','from','925')
+    ->attr_is('#s18','to','1266')
+    ->attr_is('#s18','l','5')
+    ;
+};
+
+
 subtest 'Check Inline annotations' => sub {
 
   # Load example file

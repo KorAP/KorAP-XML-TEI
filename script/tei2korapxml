@@ -49,6 +49,7 @@ GetOptions(
   'tokenizer-internal|ti' => \(my $tokenizer_intern), # use intern tokenization (default = no)
   'use-tokenizer-sentence-splits|s' => (\my $use_tokenizer_sentence_splits), # use KorAP tokenizer to split s (default=no)
   'inline-tokens=s' => \(my $inline_tokens = 'tokens#morpho'),
+  'inline-structures=s' => \(my $inline_structures = 'struct#structure'),
   'log|l=s' => \(my $log_level = 'notice'),
   'help|h'    => sub {
     pod2usage(
@@ -121,11 +122,15 @@ my $_tok_dir         = "base";                       # name of directory for sto
 
 my $_header_file     = "header.xml";                 # name of files      containing the  text, document and corpus header
 my $_data_file       = "data.xml";                   # name of file       containing the  primary text data (tokens)
-my $_structure_dir   = "struct";                     # name of directory  containing the  $_structure_file
-my $_structure_file  = "structure.xml";              # name of file       containing all  tags (except ${_TOKEN_TAG}'s) related information
-                                                     #                                     (= their names and byte offsets in $_data)
+
 ## TODO: optional (different annotation tools can produce more zip-files for feeding into KorAP-XML-Krill)
 my $_TOKENS_PROC     = 1;                            # on/off: processing of ${_TOKEN_TAG}'s (default: 1)
+
+
+# Name of the directory and the file containing all inline structure informations
+# except for $_TOKEN_TAG information
+my ($_structure_dir, $_structure_file) = split '#', $inline_structures . '#structure';
+$_structure_file .= '.xml';
 
 
 # Name of the directory and the file containing all inline token informations
@@ -713,6 +718,12 @@ to store inline token information in.
 If L</KORAPXMLTEI_INLINE> is set, this will contain
 annotations as well.
 Defaults to C<tokens> and C<morpho>.
+
+=item B<--inline-structures> <foundry>#[<file>]
+
+Define the foundry and file (without extension)
+to store inline structure information in.
+Defaults to C<struct> and C<structures>.
 
 =item B<--use-tokenizer-sentence-splits|-s>
 
