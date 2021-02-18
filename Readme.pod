@@ -112,6 +112,14 @@ Tokenize the data using two embedded tokenizers,
 that will take an I<Aggressive> and a I<conservative>
 approach.
 
+=item B<--inline-tokens> <foundry>#[<file>]
+
+Define the foundry and file (without extension)
+to store inline token information in.
+If L</KORAPXMLTEI_INLINE> is set, this will contain
+annotations as well.
+Defaults to C<tokens> and C<morpho>.
+
 =item B<--use-tokenizer-sentence-splits|-s>
 
 Replace existing with, or add new, sentence boundary information

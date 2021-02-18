@@ -415,6 +415,51 @@ subtest 'Check Inline annotations' => sub {
     ;
 };
 
+subtest 'Check Inline annotations with defined foundry and folder' => sub {
+  # Load example file
+  my $file = catfile($f, 'data', 'goe_sample_tagged.i5.xml');
+
+  my $t = test_tei2korapxml(
+    file => $file,
+    env => 'KORAPXMLTEI_INLINE=1',
+    tmp => 'script_tagged',
+    param => '--inline-tokens=myfoundry#myfile'
+  )
+    ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+
+    ->file_exists_not('GOE/AGA/00000/tokens/morpho.xml', 'Morpho not generated')
+
+    # Check zip using xml loy
+    ->unzip_xml('GOE/AGA/00000/myfoundry/myfile.xml')
+
+    ->attr_is('layer', 'docid', 'GOE_AGA.00000')
+    ->attr_is('spanList span:nth-child(1)', 'id', 's0')
+    ->attr_is('spanList span:nth-child(1)', 'from', '75')
+    ->attr_is('spanList span:nth-child(1)', 'to', '81')
+    ->attr_is('spanList span:nth-child(1)', 'l', '7')
+    ;
+
+  $t = test_tei2korapxml(
+    file => $file,
+    env => 'KORAPXMLTEI_INLINE=1',
+    tmp => 'script_tagged',
+    param => '--inline-tokens=myfoundry'
+  )
+    ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+
+    ->file_exists_not('GOE/AGA/00000/tokens/morpho.xml', 'Morpho not generated')
+
+    # Check zip using xml loy
+    ->unzip_xml('GOE/AGA/00000/myfoundry/morpho.xml')
+
+    ->attr_is('layer', 'docid', 'GOE_AGA.00000')
+    ->attr_is('spanList span:nth-child(1)', 'id', 's0')
+    ->attr_is('spanList span:nth-child(1)', 'from', '75')
+    ->attr_is('spanList span:nth-child(1)', 'to', '81')
+    ->attr_is('spanList span:nth-child(1)', 'l', '7')
+    ;
+};
+
 subtest 'Check Inline annotations with untagged file' => sub {
 
   # Load example file
