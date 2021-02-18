@@ -6,6 +6,8 @@
         - fixed possible IO deadlock with KorAP tokenizer
         - Simplified debugging by combining with X::C::T line numbers
         - Support inline-tokens parameter
+        - Move verbose code documentation to trailing
+          script section
 
 0.03 2021-01-12
         - Update KorAP-Tokenizer to released 2.0 version
