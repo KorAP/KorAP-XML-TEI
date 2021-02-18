@@ -82,10 +82,6 @@ my $_DOC_HEADER_BEG   = "idsHeader type=\"document\""; # analog
 # mandatory
 my $_TEXT_HEADER_BEG  = "idsHeader type=\"text\"";     # analog
 
-#
-# ~~~ constants ~~~
-#
-
 
 ## extern tokenization
 my $_GEN_TOK_EXT = $tokenizer_call || $tokenizer_korap ? 1 : 0;
@@ -106,6 +102,11 @@ my $_tok_file_ext  = "tokens.xml";
 ##
 
 
+#
+# ~~~ constants ~~~
+#
+
+
 ## intern tokenization
 my $_GEN_TOK_INT = $tokenizer_intern;                  # simple tokenization (recommended for testing)
 my $_tok_file_con  = "tokens_conservative.xml";
@@ -116,9 +117,6 @@ my $cons_tok       = KorAP::XML::TEI::Tokenizer::Conservative->new;
 
 
 my $_tok_dir         = "base";                       # name of directory for storing tokenization files
-
-my $_XCT_LN          = 0;                            # only for debugging: include line numbers in elements of $tree_data
-                                                     #  (see also manpage of XML::CompactTree::XS)
 
 my $_header_file     = "header.xml";                 # name of files      containing the  text, document and corpus header
 my $_data_file       = "data.xml";                   # name of file       containing the  primary text data (tokens)
@@ -132,9 +130,8 @@ my $_tokens_file     = "morpho.xml";                 # name of file       contai
                                                      #                                     - evtl. with additional inline annotations
 my $_TOKENS_TAG      = "w";                          # name of tag        containing all  information stored in $_tokens_file
 
-## TODO: optional
-# handling inline annotations (inside $_TOKENS_TAG)
-my $_INLINE_ANNOT    = $ENV{KORAPXMLTEI_INLINE}?1:0; # on/off: set to 1 if inline annotations are present and should be processed (default: 0)
+# Handling inline annotations (inside $_TOKENS_TAG)
+my $_INLINE_ANNOT    = $ENV{KORAPXMLTEI_INLINE} ? 1 : 0;
 
 
 #
@@ -163,7 +160,7 @@ my ( $reader,                                        # instance of 'XML::LibXML:
      $tree_data );                                   # instance of 'XML::CompactTree::XS::readSubtreeToPerl' (on input '$reader')
 
 # these are only used inside recursive function 'retr_info'
-my ( $_IDX,                                          # value is set dependent on $_XCT_LN - for extracting array of child elements from element in $tree_data
+my ( $_IDX,                                          # value is set dependent on DEBUG - for extracting array of child elements from element in $tree_data
      $e,                                             # element from $tree_data
      ## variables for handling ~ whitespace related issue ~ (it is sometimes necessary, to correct the from-values for some tags)
      $add_one,                                       # ...
@@ -182,7 +179,8 @@ my $c;                                               # index variables used in l
 
 # ~ initializations ~
 
-($_XCT_LN)?($_IDX=5):($_IDX=4);
+# Include line numbers in elements of $tree_data for debugging
+DEBUG ? ($_IDX = 5) : ($_IDX = 4);
 
 $fval = 0;
 
@@ -291,8 +289,9 @@ MAIN: while ( <$input_fh> ){
 
           my $param = XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY;
 
-          # _XCT_LINE_NUMBERS is only for debugging
-          $param |= XCT_LINE_NUMBERS if $_XCT_LN;
+          # XCT_LINE_NUMBERS is only needed for debugging
+          # (see XML::CompactTree::XS)
+          $param |= XCT_LINE_NUMBERS if DEBUG;
           $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, $param);
 
           $structures->reset;
