@@ -48,6 +48,7 @@ GetOptions(
   'tokenizer-korap|tk' => \(my $tokenizer_korap), # use KorAP-tokenizer
   'tokenizer-internal|ti' => \(my $tokenizer_intern), # use intern tokenization (default = no)
   'use-tokenizer-sentence-splits|s' => (\my $use_tokenizer_sentence_splits), # use KorAP tokenizer to split s (default=no)
+  'inline-tokens=s' => \(my $inline_tokens = 'tokens#morpho'),
   'log|l=s' => \(my $log_level = 'notice'),
   'help|h'    => sub {
     pod2usage(
@@ -127,9 +128,13 @@ my $_structure_file  = "structure.xml";              # name of file       contai
                                                      #                                     (= their names and byte offsets in $_data)
 ## TODO: optional (different annotation tools can produce more zip-files for feeding into KorAP-XML-Krill)
 my $_TOKENS_PROC     = 1;                            # on/off: processing of ${_TOKEN_TAG}'s (default: 1)
-my $_tokens_dir      = "tokens";                     # name of directory  containing the  $_tokens_file
-my $_tokens_file     = "morpho.xml";                 # name of file       containing all  ${_TOKEN_TAG}'s related information (=their byte offsets in $_data)
-                                                     #                                     - evtl. with additional inline annotations
+
+
+# Name of the directory and the file containing all inline token informations
+# i.e. tokens of the $_TOKENS_TAG, if $_TOKENS_PROC is set
+my ($_tokens_dir, $_tokens_file) = split '#', $inline_tokens . '#morpho';
+$_tokens_file .= '.xml';
+
 my $_TOKENS_TAG      = "w";                          # name of tag        containing all  information stored in $_tokens_file
 
 ## TODO: optional
@@ -896,6 +901,14 @@ Use the standard KorAP/DeReKo tokenizer.
 Tokenize the data using two embedded tokenizers,
 that will take an I<Aggressive> and a I<conservative>
 approach.
+
+=item B<--inline-tokens> <foundry>#[<file>]
+
+Define the foundry and file (without extension)
+to store inline token information in.
+If L</KORAPXMLTEI_INLINE> is set, this will contain
+annotations as well.
+Defaults to C<tokens> and C<morpho>.
 
 =item B<--use-tokenizer-sentence-splits|-s>
 
