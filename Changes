@@ -1,9 +1,10 @@
+1.00 2021-02-18 Release
         - -s option added that uses sentence boundaries provided by the KorAP tokenizer (-tk)
-        - tokenizer invocation comments removed from KorAP XML output
-        - indentation of </span> tags fixed
-        - character entities used in DeReKo are automatically replaced by their corresponding characters
-        - resources defined in Makefile
-        - fixed possible IO deadlock with KorAP tokenizer
+        - Tokenizer invocation comments removed from KorAP XML output
+        - Indentation of </span> tags fixed
+        - Character entities used in DeReKo are automatically replaced by their corresponding characters
+        - Resources defined in Makefile
+        - Fixed possible IO deadlock with KorAP tokenizer
         - Simplified debugging by combining with X::C::T line numbers
         - Support inline-tokens parameter
         - Move verbose code documentation to trailing
