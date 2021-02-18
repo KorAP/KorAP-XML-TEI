@@ -33,7 +33,7 @@ eval {
   1;
 };
 
-our $VERSION = '0.03';
+our $VERSION = '1.00';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
