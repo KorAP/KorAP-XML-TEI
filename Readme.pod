@@ -30,10 +30,6 @@ This program is usually called from inside another script.
 
 =item
 
-utf8 encoded
-
-=item
-
 TEI P5 formatted input with certain restrictions:
 
 =over 4
