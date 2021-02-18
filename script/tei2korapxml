@@ -443,27 +443,30 @@ $ext_tok->close if $_GEN_TOK_EXT;
 exit(0);
 
 
-sub retr_info { # called from main()
+# Recursively called function to handle XML tree data
+sub retr_info {
+
   # recursion level
   # (1 = topmost level inside retr_info() = should always be level of tag $_TEXT_BODY)
   my $rl = shift;
 
   my $dummy_anno;
   if ($use_tokenizer_sentence_splits) {
-    $dummy_anno = $structures->new_dummy_annotation();
+    $dummy_anno = $structures->new_dummy_annotation;
   }
 
-  # See NOTES ON HOW
+  # Iteration through all array elements
+  # ($_[0] is a reference to an array reference)
+  # See notes on how 'XML::CompactTree::XS' works and
+  # see 'NODE TYPES' in manpage of XML::LibXML::Reader
+  foreach $e (@{${$_[0]}}) {
 
-  foreach $e (@{${$_[0]}}) { # iteration through all array elements ($_[0] is a reference to an array reference)
-
-    if ($e->[0] == XML_READER_TYPE_ELEMENT) { # element-node (see 'NODE TYPES' in manpage of XML::LibXML::Reader)
+    # Element node
+    if ($e->[0] == XML_READER_TYPE_ELEMENT) {
 
       #~~~~
       # from here: tag-node (opening)
       #~~~~
-
-      # ~ handle structures ~
 
       my $anno;
 
@@ -474,44 +477,43 @@ sub retr_info { # called from main()
         $anno = $structures->add_new_annotation($e->[1]);
       }
 
-      # ~ handle tokens ~
 
       # Add element also to token list
       if ($_TOKENS_PROC && $e->[1] eq $_TOKENS_TAG) {
         $tokens->add_annotation($anno);
       };
 
-      # ~ handle attributes ~
+      # Handle attributes (if attributes exist)
+      if (defined $e->[3]) {
 
-      if (defined $e->[3]) { # only if attributes exist
-
-        for ($c = 0; $c < @{$e->[3]}; $c += 2) {  # with 'XCT_ATTRIBUTE_ARRAY', $node->[3] is an array reference of the form
-                                                  #  [ name1, value1, name2, value2, ....] of attribute names and corresponding values.
-                                                  # note: arrays are faster (see: http://makepp.sourceforge.net/2.0/perl_performance.html)
+        # with 'XCT_ATTRIBUTE_ARRAY', $node->[3] is an array reference of the form
+        #  [ name1, value1, name2, value2, ....] of attribute names and corresponding values.
+        # note: arrays are faster (see: http://makepp.sourceforge.net/2.0/perl_performance.html)
+        for ($c = 0; $c < @{$e->[3]}; $c += 2) {
 
           # '$c' references the 'key' and '$c+1' the 'value'
           $anno->add_attribute(
             @{$e->[3]}[$c, $c + 1]
           );
-        }
-      }
-
-
-      # ~ index 'from' ~
+        };
+      };
 
       # this is, where a normal tag or tokens-tag ($_TOKENS_TAG) starts
       $anno->set_from($data->position + $add_one);
+
 
       #~~~~
       # until here: tag-node (opening)
       #~~~~
 
 
-      # ~~ RECURSION ~~
+      # Call function recursively
+      # do no recursion, if $e->[$_IDX] is not defined
+      # (because we have no array of child-nodes, e.g.: <back/>)
+      if (defined $e->[$_IDX]) {
 
-      if (defined $e->[$_IDX]) {  # do no recursion, if $e->[$_IDX] is not defined (because we have no array of child-nodes, e.g.: <back/>)
-
-        retr_info($rl+1, \$e->[$_IDX]); # recursion with array of child-nodes
+        # Recursion with array of child-nodes
+        retr_info($rl+1, \$e->[$_IDX]);
       }
 
 
@@ -519,93 +521,74 @@ sub retr_info { # called from main()
       # from here: tag-node (closing)
       #~~~~~
 
+      # NOTE: use $pos, because the offsets are _between_ the characters
+      # (e.g.: word = 'Hello' => from = 0 (before 'H'), to = 5 (after 'o'))
       my $pos = $data->position;
 
-      # ~ handle structures and tokens ~
+      # Handle structures and tokens
 
-      {
-        $fval = $anno->from;
-
-        if ($fval > 0 && not exists $ws{$fval - 1}) { # ~ whitespace related issue ~
-
-          # ~ previous node was a text-node ~
-
-          $anno->set_from($fval - 1);
-        }
-
-        # in case this fails, check input
-        if (($fval - 1) > $pos) {
-          die $log->fatal("text_id='$text_id', " .
-                            "processing of structures: " .
-                            "from-value ($fval) is 2 or more greater " .
-                            "than to-value ($pos) => please check. Aborting");
-        };
-
-        # TODO: find example for which this case applies
-        #  maybe this is not necessary anymore, because the above recorrection of the from-value suffices
-        #
-        # TODO: check, if it's better to remove this line and change above check to 'if ( $fval - 1) >= $pos;
-        #   do testing with bigger corpus excerpt (wikipedia?)
-        $anno->set_from($pos) if $fval == $pos + 1;
-        $anno->set_to($pos);
-        $anno->set_level($rl);
-
-        # note: use $pos, because the offsets are _between_ the characters (e.g.: word = 'Hello' => from = 0 (before 'H'), to = 5 (after 'o'))
-      }
+      $fval = $anno->from;
 
       # ~ whitespace related issue ~
-      # clean up
+      if ($fval > 0 && not exists $ws{$fval - 1}) {
+
+        # ~ previous node was a text-node ~
+        $anno->set_from($fval - 1);
+      }
+
+      # in case this fails, check input
+      if (($fval - 1) > $pos) {
+        die $log->fatal("text_id='$text_id', " .
+                          "processing of structures: " .
+                          "from-value ($fval) is 2 or more greater " .
+                          "than to-value ($pos) => please check. Aborting");
+      };
+
+      # TODO: find example for which this case applies
+      #  maybe this is not necessary anymore, because the above recorrection of the from-value suffices
+      #
+      # TODO: check, if it's better to remove this line and change above check to 'if ($fval - 1) >= $pos;
+      #   do testing with bigger corpus excerpt (wikipedia?)
+      $anno->set_from($pos) if $fval == $pos + 1;
+      $anno->set_to($pos);
+      $anno->set_level($rl);
+
+      # Clean up whitespace
       delete $ws{$fval  - 1} if $fval > 0 && exists $ws{$fval - 1};
 
 
       #~~~~
       # until here: tag-node (closing)
       #~~~~
-
-
-      #~~~~~
-      # from here: text- and whitespace-nodes
-      #~~~~~
-
-      # (See notes on whitespace handling - regarding XML_READER_TYPE_SIGNIFICANT_WHITESPACE)
-    } elsif ($e->[0] == XML_READER_TYPE_TEXT || $e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE){
-
-      if ($e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE) {
-
-        # ~ whitespace-node ~
-
-        # ~ whitespace related issue ~
-
-        $add_one = 0;
-
-        # state, that this from-index belongs to a whitespace-node
-        #  ('++' doesn't mean a thing here - maybe it could be used for a consistency check)
-        $ws{$data->position}++;
-
-      } else {
-
-        # ~ text-node ~
-
-        $add_one = 1;
-      };
-
-
-      # ~ update $data ~
-
-      $data->append($e->[1]);
-
-      #~~~~~
-      # until here: text- and whitespace-nodes
-      #~~~~~
-
-    } else { # not yet handled type
-
-      die $log->fatal('Not yet handled type ($e->[0]=' . $e->[0] . ') ... => Aborting');
     }
 
-  } # end: foreach iteration
+    # Text node
+    elsif ($e->[0] == XML_READER_TYPE_TEXT){
 
-} # end: sub retr_info
+      $add_one = 1;
+      $data->append($e->[1]);
+    }
+
+    # Whitespace node
+    # (See notes on whitespace handling - regarding XML_READER_TYPE_SIGNIFICANT_WHITESPACE)
+    elsif ($e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE) {
+
+      # state, that this from-index belongs to a whitespace-node
+      #  ('++' doesn't mean a thing here - maybe it could be used for a consistency check)
+      $ws{$data->position}++;
+
+      $add_one = 0;
+      $data->append($e->[1]);
+    }
+
+    # not yet handled type
+    else {
+
+      die $log->fatal('Not yet handled type ($e->[0]=' . $e->[0] . ') ... => Aborting');
+    };
+  };
+};
+
 
 __END__
 
