@@ -213,10 +213,7 @@ if ( $input_fname ne '' ){
   };
 }
 
-# prevents segfaulting of 'XML::LibXML::Reader' inside 'main()' - see notes on 'PerlIO layers' in  'man XML::LibXML')
-# removing 'use open qw(:std :utf8)' would fix this problem too, but using binmode on input is more granular
-# see in perluniintro: You can switch encodings on an already opened stream by using "binmode()
-# see in perlfunc: If LAYER is omitted or specified as ":raw" the filehandle is made suitable for passing binary data.
+# Prevents segfaulting (see notes on segfault prevention)
 binmode $input_fh;
 
 my $pos;
@@ -276,19 +273,7 @@ MAIN: while ( <$input_fh> ){
 
           $reader = XML::LibXML::Reader->new( string => "<text>$buf_in</text>", huge => 1 );
 
-          #  ~ whitespace handling ~
-          #
-          #  Every whitespace inside the processed text is 'significant' and recognized as a node of type 'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'
-          #   (see function 'retr_info()').
-          #
-          #  Definition of significant and insignificant whitespace
-          #   (source: https://www.oracle.com/technical-resources/articles/wang-whitespace.html):
-          #
-          #   Significant whitespace is part of the document content and should be preserved.
-          #   Insignificant whitespace is used when editing XML documents for readability.
-          #    These whitespaces are typically not intended for inclusion in the delivery of the document.
-          #
-
+          # See notes on whitespace handling
           my $param = XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY;
 
           # _XCT_LINE_NUMBERS is only for debugging
@@ -382,39 +367,18 @@ MAIN: while ( <$input_fh> ){
 
       # ~ whitespace handling ~
 
-      # The idea for the below code fragment was to fix (recreate) missing whitespace in a poorly created corpus, in which linebreaks where inserted
-      #  into the text with the addition that maybe (or not) whitespace before those linebreaks was unintenionally stripped.
-      #
-      # It soon turned out, that it was best to suggest considering just avoiding linebreaks and putting all primary text tokens into one line (see
-      #  example further down and notes on 'Input restrictions' in the manpage).
-      #
-      # Somehow an old first very poor approach remained, which is not stringent, but also doesn't affect one-line text.
-      #
-      # TODO: Maybe it's best, to keep the stripping of whitespace and to just remove the if-clause and to insert a blank by default (with possibly
-      #  an option on how newlines in primary text should be handled (stripped or replaced by a whitespace)).
-      #
-      # Examples (how primary text with linebreaks would be converted by below code):
-      #
-      #  '...<w>end</w>\n<w>.</w>...' -> '...<w>end</w> <w>.</w>...'
-      #  '...<w>,</w>\n<w>this</w>\n<w>is</w>\n<w>it</w>\n<w>!</w>...' -> '<w>,<w> <w>this</w> <w>is</w> <w>it</w> <w>!</w>'.
+      # Fix whitespaces (see notes on whitespace fixing)
 
-      s/^\s+//; s/\s+$//; # remove consecutive whitespace at beginning and end (mostly one newline)
+      # TODO: Maybe it's best, to keep the stripping of whitespace and to just remove the if-clause and to insert a blank by default (with possibly
+      #   an option on how newlines in primary text should be handled (stripped or replaced by a whitespace)).
+
+      # Remove consecutive whitespace at beginning and end (mostly one newline)
+      s/^\s+//; s/\s+$//;
 
       ### NOTE: this is only relevant, if a text consists of more than one line
       ### TODO: find a better solution, or create a warning, if a text has more than one line ($tl > 1)
       ###  do testing with 2 different corpora (one with only one-line texts, the other with several lines per text)
       if (m/<[^>]+>[^<]/) { # line contains at least one tag with at least one character contents
-
-        # NOTE: not stringent ('...' stands for text):
-        #
-        #   beg1............................end1  => no blank before 'beg1'
-        #   beg2....<pb/>...................end2  => no blank before 'beg2'
-        #   beg3....<info attr1="val1"/>....end3  => no blank before 'beg3'
-        #   beg4....<test>ok</test>.........end4  =>    blank before 'beg4'
-        #
-        #     =>  beg1....end1beg2...<pb/>...end2beg3....<info attr1="val1"/>....end3 beg4...<test>ok</test>....end4
-        #                                                                            ^
-        #                                                                            |_blank between 'end3' and 'beg4'
 
         $tl++; # counter for text lines
 
@@ -485,96 +449,7 @@ sub retr_info { # called from main()
     $dummy_anno = $structures->new_dummy_annotation();
   }
 
-  #  Notes on how 'XML::CompactTree::XS' works
-  #
-  #  Example: <node a="v"><node1>some <n/> text</node1><node2>more-text</node2></node>
-  #
-  #  Print out name of 'node2' for the above example:
-  #
-  #  echo '<node a="v"><node1>some <n/> text</node1><node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print "\x27".$data->[2]->[0]->[5]->[1]->[1]."\x27\n"'
-  #
-  #  Exploring the structure of $data ( = reference to below array ):
-  #
-  #  [ 0: XML_READER_TYPE_DOCUMENT,
-  #    1: ?
-  #    2: [ 0: [ 0: XML_READER_TYPE_ELEMENT                     <- start recursion with array '$data->[2]' (see main(): retr_info( \$tree_data->[2] ))
-  #              1: 'node'
-  #              2: ?
-  #              3: HASH (attributes)
-  #              4: 1 (line number)
-  #              5: [ 0: [ 0: XML_READER_TYPE_ELEMENT
-  #                        1: 'node1'
-  #                        2: ?
-  #                        3: undefined (no attributes)
-  #                        4: 1 (line number)
-  #                        5: [ 0: [ 0: XML_READER_TYPE_TEXT
-  #                                  1: 'some '
-  #                                ]
-  #                             1: [ 0: XML_READER_TYPE_ELEMENT
-  #                                  1: 'n'
-  #                                  2: ?
-  #                                  3: undefined (no attributes)
-  #                                  4: 1 (line number)
-  #                                  5: undefined (no child-nodes)
-  #                                ]
-  #                             2: [ 0: XML_READER_TYPE_TEXT
-  #                                  1: ' text'
-  #                                ]
-  #                           ]
-  #                      ]
-  #                   1: [ 0: XML_READER_TYPE_ELEMENT
-  #                        1: 'node2'
-  #                        2: ?
-  #                        3: undefined (not attributes)
-  #                        4: 1 (line number)
-  #                        5: [ 0: [ 0: XML_READER_TYPE_TEXT
-  #                                  1: 'more-text'
-  #                                ]
-  #                           ]
-  #                      ]
-  #                 ]
-  #            ]
-  #       ]
-  #  ]
-  #
-  #  $data->[0] = 9 (=> type == XML_READER_TYPE_DOCUMENT)
-  #
-  #  ref($data->[2])                                                         == ARRAY (with 1 element for 'node')
-  #  ref($data->[2]->[0])                                                    == ARRAY (with 6 elements)
-  #
-  #  $data->[2]->[0]->[0]                                                    == 1 (=> type == XML_READER_TYPE_ELEMENT)
-  #  $data->[2]->[0]->[1]                                                    == 'node'
-  #  ref($data->[2]->[0]->[3])                                               == HASH  (=> ${$data->[2]->[0]->[3]}{a} == 'v')
-  #  $data->[2]->[0]->[4]                                                    == 1 (line number)
-  #  ref($data->[2]->[0]->[5])                                               == ARRAY (with 2 elements for 'node1' and 'node2')
-  #                                                                                     # child-nodes of actual node (see $_IDX)
-  #
-  #  ref($data->[2]->[0]->[5]->[0])                                          == ARRAY (with 6 elements)
-  #  $data->[2]->[0]->[5]->[0]->[0]                                          == 1 (=> type == XML_READER_TYPE_ELEMENT)
-  #  $data->[2]->[0]->[5]->[0]->[1]                                          == 'node1'
-  #  $data->[2]->[0]->[5]->[0]->[3]                                          == undefined (=> no attribute)
-  #  $data->[2]->[0]->[5]->[0]->[4]                                          == 1 (line number)
-  #  ref($data->[2]->[0]->[5]->[0]->[5])                                     == ARRAY (with 3 elements for 'some ', '<n/>' and ' text')
-  #
-  #  ref($data->[2]->[0]->[5]->[0]->[5]->[0])                                == ARRAY (with 2 elements)
-  #  $data->[2]->[0]->[5]->[0]->[5]->[0]->[0]                                == 3 (=> type ==  XML_READER_TYPE_TEXT)
-  #  $data->[2]->[0]->[5]->[0]->[5]->[0]->[1]                                == 'some '
-  #
-  #  ref($data->[2]->[0]->[5]->[0]->[5]->[1])                                == ARRAY (with 5 elements)
-  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[0]                                == 1 (=> type == XML_READER_TYPE_ELEMENT)
-  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[1]                                == 'n'
-  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[3]                                == undefined (=> no attribute)
-  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[4]                                == 1 (line number)
-  #  $data->[2]->[0]->[5]->[0]->[5]->[1]->[5]                                == undefined (=> no child-nodes)
-  #
-  #  ref($data->[2]->[0]->[5]->[0]->[5]->[2])                                == ARRAY (with 2 elements)
-  #  $data->[2]->[0]->[5]->[0]->[5]->[2]->[0]                                == 3 (=> type ==  XML_READER_TYPE_TEXT)
-  #  $data->[2]->[0]->[5]->[0]->[5]->[2]->[1]                                == ' text'
-  #
-  #
-  #  retr_info() starts with the array reference ${$_[0]} (= \$tree_data->[2]), which corresponds to ${\$data->[2]} in the above example.
-  #  Hence, the expression @{${$_[0]}} corresponds to @{${\$data->[2]}}, $e to ${${\$data->[2]}}[0] (= $data->[2]->[0]) and $e->[0] to
-  #  ${${\$data->[2]}}[0]->[0] (= $data->[2]->[0]->[0]).
+  # See NOTES ON HOW
 
   foreach $e (@{${$_[0]}}) { # iteration through all array elements ($_[0] is a reference to an array reference)
 
@@ -688,52 +563,8 @@ sub retr_info { # called from main()
       # from here: text- and whitespace-nodes
       #~~~~~
 
-      # The 3rd form of nodes, besides text- (XML_READER_TYPE_TEXT) and tag-nodes (XML_READER_TYPE_ELEMENT) are nodes of the type
-      #  'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'.
-      #
-      # When modifiying the previous example (see: Notes on how 'XML::CompactTree::XS' works) by inserting an additional blank between
-      #  '</node1>' and '<node2>', the output for '$data->[2]->[0]->[5]->[1]->[1]' is a blank (' ') and it's type is '14'
-      #  (XML_READER_TYPE_SIGNIFICANT_WHITESPACE, see 'man XML::LibXML::Reader'):
-      #
-      # echo '<node a="v"><node1>some <n/> text</node1> <node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print "node=\x27".$data->[2]->[0]->[5]->[1]->[1]."\x27, type=".$data->[2]->[0]->[5]->[1]->[0]."\n"'
-
+      # (See notes on whitespace handling - regarding XML_READER_TYPE_SIGNIFICANT_WHITESPACE)
     } elsif ($e->[0] == XML_READER_TYPE_TEXT || $e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE){
-
-      # Notes on ~ whitespace related issue ~ (referred to the code fragment below)
-      #
-      # Example: '... <head type="main"><s>Campagne in Frankreich</s></head><head type="sub"> <s>1792</s> ...'
-      #
-      # Two text-nodes should normally be separated by a blank. In the above example, that would be the 2 text-nodes
-      #  'Campagne in Frankreich' and '1792', which are separated by the whitespace-node ' ' (see [2]).
-      #
-      # The text-node 'Campagne in Frankreich' leads to the setting of '$add_one' to 1, so that when opening the 2nd 'head'-tag,
-      #  it's from-index gets set to the correct start-index of '1792' (and not to the start-index of the whitespace-node ' ').
-      #
-      # The assumption here is, that in most cases there _is_ a whitespace node between 2 text-nodes. The below code fragment
-      #  enables a way, to check, if this really _was_ the case for the last 2 'non-tag'-nodes, when closing a tag:
-      #
-      # When a whitespace-node is read, its from-index is stored as a hash-key (in %ws), to state that it belongs to a ws-node.
-      #  So when closing a tag, it can be checked, if the previous 'non-tag'-node (text or whitespace), which is the one before
-      #  the last read 'non-tag'-node, was a actually _not_ a ws-node, but instead a text-node. In that case, the from-value of
-      #  the last read 'non-tag'-node has to be corrected (see [1]),
-      #
-      # For whitespace-nodes $add_one is set to 0, so when opening the next tag (in the above example the 2nd 's'-tag), no
-      #  additional 1 is added (because this was already done by the whitespace-node itself when incrementing the variable $pos).
-      #
-      # [1]
-      # Now, what happens, when 2 text-nodes are _not_ seperated by a whitespace-node (e.g.: <w>Augen<c>,</c></w>)?
-      # In this case, the falsely increased from-value has to be decreased again by 1 when closing the enclosing tag
-      #  (see above code fragment '... not exists $ws{ $fval - 1 } ...').
-      #
-      # [2]
-      # Comparing the 2 examples '<w>fu</w> <w>bar</w>' and '<w>fu</w><w> </w><w>bar</w>', is ' ' in both cases handled as a
-      #  whitespace-node (XML_READER_TYPE_SIGNIFICANT_WHITESPACE).
-      #
-      # The from-index of the 2nd w-tag in the second example refers to 'bar', which may not have been the intention
-      #  (even though '<w> </w>' doesn't make a lot of sense). TODO: could this be a bug?
-      #
-      # Empty tags also cling to the next text-token - e.g. in '<w>tok1</w> <w>tok2</w><a><b/></a> <w>tok3</w>' are the from-
-      #  and to-indizes for the tags 'a' and 'b' both 12, which is the start-index of the token 'tok3'.
 
       if ($e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE) {
 
@@ -762,11 +593,6 @@ sub retr_info { # called from main()
       #~~~~~
       # until here: text- and whitespace-nodes
       #~~~~~
-
-
-      # elsif ( $e->[0] == XML_READER_TYPE_ATTRIBUTE ) # attribute-node
-      #   note: attributes cannot be processed like this ( => use 'XCT_ATTRIBUTE_ARRAY' - see above )
-
 
     } else { # not yet handled type
 
@@ -938,3 +764,193 @@ This program is free software published under the
 L<BSD-2 License|https://opensource.org/licenses/BSD-2-Clause>.
 
 =cut
+
+# NOTES
+
+##  Notes on how 'XML::CompactTree::XS' works
+
+Example: <node a="v"><node1>some <n/> text</node1><node2>more-text</node2></node>
+
+Print out name of 'node2' for the above example:
+
+echo '<node a="v"><node1>some <n/> text</node1><node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print "\x27".$data->[2]->[0]->[5]->[1]->[1]."\x27\n"'
+
+Exploring the structure of $data ( = reference to below array ):
+
+[ 0: XML_READER_TYPE_DOCUMENT,
+  1: ?
+  2: [ 0: [ 0: XML_READER_TYPE_ELEMENT                     <- start recursion with array '$data->[2]' (see main(): retr_info( \$tree_data->[2] ))
+            1: 'node'
+            2: ?
+            3: HASH (attributes)
+            4: 1 (line number)
+            5: [ 0: [ 0: XML_READER_TYPE_ELEMENT
+                      1: 'node1'
+                      2: ?
+                      3: undefined (no attributes)
+                      4: 1 (line number)
+                      5: [ 0: [ 0: XML_READER_TYPE_TEXT
+                                1: 'some '
+                              ]
+                           1: [ 0: XML_READER_TYPE_ELEMENT
+                                1: 'n'
+                                2: ?
+                                3: undefined (no attributes)
+                                4: 1 (line number)
+                                5: undefined (no child-nodes)
+                              ]
+                           2: [ 0: XML_READER_TYPE_TEXT
+                                1: ' text'
+                              ]
+                         ]
+                    ]
+                 1: [ 0: XML_READER_TYPE_ELEMENT
+                      1: 'node2'
+                      2: ?
+                      3: undefined (not attributes)
+                      4: 1 (line number)
+                      5: [ 0: [ 0: XML_READER_TYPE_TEXT
+                                1: 'more-text'
+                              ]
+                         ]
+                    ]
+               ]
+          ]
+     ]
+]
+
+$data->[0] = 9 (=> type == XML_READER_TYPE_DOCUMENT)
+
+ref($data->[2])                                                         == ARRAY (with 1 element for 'node')
+ref($data->[2]->[0])                                                    == ARRAY (with 6 elements)
+
+$data->[2]->[0]->[0]                                                    == 1 (=> type == XML_READER_TYPE_ELEMENT)
+$data->[2]->[0]->[1]                                                    == 'node'
+ref($data->[2]->[0]->[3])                                               == HASH  (=> ${$data->[2]->[0]->[3]}{a} == 'v')
+$data->[2]->[0]->[4]                                                    == 1 (line number)
+ref($data->[2]->[0]->[5])                                               == ARRAY (with 2 elements for 'node1' and 'node2')
+                                                                                   # child-nodes of actual node (see $_IDX)
+
+ref($data->[2]->[0]->[5]->[0])                                          == ARRAY (with 6 elements)
+$data->[2]->[0]->[5]->[0]->[0]                                          == 1 (=> type == XML_READER_TYPE_ELEMENT)
+$data->[2]->[0]->[5]->[0]->[1]                                          == 'node1'
+$data->[2]->[0]->[5]->[0]->[3]                                          == undefined (=> no attribute)
+$data->[2]->[0]->[5]->[0]->[4]                                          == 1 (line number)
+ref($data->[2]->[0]->[5]->[0]->[5])                                     == ARRAY (with 3 elements for 'some ', '<n/>' and ' text')
+
+ref($data->[2]->[0]->[5]->[0]->[5]->[0])                                == ARRAY (with 2 elements)
+$data->[2]->[0]->[5]->[0]->[5]->[0]->[0]                                == 3 (=> type ==  XML_READER_TYPE_TEXT)
+$data->[2]->[0]->[5]->[0]->[5]->[0]->[1]                                == 'some '
+
+ref($data->[2]->[0]->[5]->[0]->[5]->[1])                                == ARRAY (with 5 elements)
+$data->[2]->[0]->[5]->[0]->[5]->[1]->[0]                                == 1 (=> type == XML_READER_TYPE_ELEMENT)
+$data->[2]->[0]->[5]->[0]->[5]->[1]->[1]                                == 'n'
+$data->[2]->[0]->[5]->[0]->[5]->[1]->[3]                                == undefined (=> no attribute)
+$data->[2]->[0]->[5]->[0]->[5]->[1]->[4]                                == 1 (line number)
+$data->[2]->[0]->[5]->[0]->[5]->[1]->[5]                                == undefined (=> no child-nodes)
+
+ref($data->[2]->[0]->[5]->[0]->[5]->[2])                                == ARRAY (with 2 elements)
+$data->[2]->[0]->[5]->[0]->[5]->[2]->[0]                                == 3 (=> type ==  XML_READER_TYPE_TEXT)
+$data->[2]->[0]->[5]->[0]->[5]->[2]->[1]                                == ' text'
+
+
+retr_info() starts with the array reference ${$_[0]} (= \$tree_data->[2]), which corresponds to ${\$data->[2]} in the above example.
+Hence, the expression @{${$_[0]}} corresponds to @{${\$data->[2]}}, $e to ${${\$data->[2]}}[0] (= $data->[2]->[0]) and $e->[0] to
+${${\$data->[2]}}[0]->[0] (= $data->[2]->[0]->[0]).
+
+
+## Notes on whitespace handling
+
+Every whitespace inside the processed text is 'significant' and recognized as a node of type 'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'
+(see function 'retr_info()').
+
+Definition of significant and insignificant whitespace
+(source: https://www.oracle.com/technical-resources/articles/wang-whitespace.html):
+
+Significant whitespace is part of the document content and should be preserved.
+Insignificant whitespace is used when editing XML documents for readability.
+These whitespaces are typically not intended for inclusion in the delivery of the document.
+
+### Regarding XML_READER_TYPE_SIGNIFICANT_WHITESPACE
+
+The 3rd form of nodes, besides text- (XML_READER_TYPE_TEXT) and tag-nodes (XML_READER_TYPE_ELEMENT) are nodes of the type
+ 'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'.
+
+When modifiying the previous example (see: Notes on how 'XML::CompactTree::XS' works) by inserting an additional blank between
+ '</node1>' and '<node2>', the output for '$data->[2]->[0]->[5]->[1]->[1]' is a blank (' ') and it's type is '14'
+ (XML_READER_TYPE_SIGNIFICANT_WHITESPACE, see 'man XML::LibXML::Reader'):
+
+echo '<node a="v"><node1>some <n/> text</node1> <node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print "node=\x27".$data->[2]->[0]->[5]->[1]->[1]."\x27, type=".$data->[2]->[0]->[5]->[1]->[0]."\n"'
+
+
+Example: '... <head type="main"><s>Campagne in Frankreich</s></head><head type="sub"> <s>1792</s> ...'
+
+Two text-nodes should normally be separated by a blank. In the above example, that would be the 2 text-nodes
+ 'Campagne in Frankreich' and '1792', which are separated by the whitespace-node ' ' (see [2]).
+
+The text-node 'Campagne in Frankreich' leads to the setting of '$add_one' to 1, so that when opening the 2nd 'head'-tag,
+ it's from-index gets set to the correct start-index of '1792' (and not to the start-index of the whitespace-node ' ').
+
+The assumption here is, that in most cases there _is_ a whitespace node between 2 text-nodes. The below code fragment
+ enables a way, to check, if this really _was_ the case for the last 2 'non-tag'-nodes, when closing a tag:
+
+When a whitespace-node is read, its from-index is stored as a hash-key (in %ws), to state that it belongs to a ws-node.
+ So when closing a tag, it can be checked, if the previous 'non-tag'-node (text or whitespace), which is the one before
+ the last read 'non-tag'-node, was a actually _not_ a ws-node, but instead a text-node. In that case, the from-value of
+ the last read 'non-tag'-node has to be corrected (see [1]),
+
+For whitespace-nodes $add_one is set to 0, so when opening the next tag (in the above example the 2nd 's'-tag), no
+ additional 1 is added (because this was already done by the whitespace-node itself when incrementing the variable $pos).
+
+[1]
+Now, what happens, when 2 text-nodes are _not_ seperated by a whitespace-node (e.g.: <w>Augen<c>,</c></w>)?
+ In this case, the falsely increased from-value has to be decreased again by 1 when closing the enclosing tag
+ (see above code fragment '... not exists $ws{ $fval - 1 } ...').
+
+[2]
+Comparing the 2 examples '<w>fu</w> <w>bar</w>' and '<w>fu</w><w> </w><w>bar</w>', is ' ' in both cases handled as a
+ whitespace-node (XML_READER_TYPE_SIGNIFICANT_WHITESPACE).
+
+The from-index of the 2nd w-tag in the second example refers to 'bar', which may not have been the intention
+ (even though '<w> </w>' doesn't make a lot of sense). TODO: could this be a bug?
+
+Empty tags also cling to the next text-token - e.g. in '<w>tok1</w> <w>tok2</w><a><b/></a> <w>tok3</w>' are the from-
+ and to-indizes for the tags 'a' and 'b' both 12, which is the start-index of the token 'tok3'.
+
+
+## Notes on whitespace fixing
+
+The idea for the below code fragment was to fix (recreate) missing whitespace in a poorly created corpus, in which linebreaks where inserted
+ into the text with the addition that maybe (or not) whitespace before those linebreaks was unintenionally stripped.
+
+It soon turned out, that it was best to suggest considering just avoiding linebreaks and putting all primary text tokens into one line (see
+ example further down and notes on 'Input restrictions' in the manpage).
+
+Somehow an old first very poor approach remained, which is not stringent, but also doesn't affect one-line text.
+
+Examples (how primary text with linebreaks would be converted by below code):
+
+  '...<w>end</w>\n<w>.</w>...' -> '...<w>end</w> <w>.</w>...'
+  '...<w>,</w>\n<w>this</w>\n<w>is</w>\n<w>it</w>\n<w>!</w>...' -> '<w>,<w> <w>this</w> <w>is</w> <w>it</w> <w>!</w>'.
+
+Blanks are inserted before the 1st character:
+
+ NOTE: not stringent ('...' stands for text):
+
+   beg1............................end1  => no blank before 'beg1'
+   beg2....<pb/>...................end2  => no blank before 'beg2'
+   beg3....<info attr1="val1"/>....end3  => no blank before 'beg3'
+   beg4....<test>ok</test>.........end4  =>    blank before 'beg4'
+
+     =>  beg1....end1beg2...<pb/>...end2beg3....<info attr1="val1"/>....end3 beg4...<test>ok</test>....end4
+                                                                            ^
+                                                                            |_blank between 'end3' and 'beg4'
+
+
+## Notes on segfault prevention
+
+binmode on the input handler prevents segfaulting of 'XML::LibXML::Reader' inside 'main()'
+(see notes on 'PerlIO layers' in  'man XML::LibXML'),
+removing 'use open qw(:std :utf8)' would fix this problem too, but using binmode on input is more granular
+see in perluniintro: You can switch encodings on an already opened stream by using "binmode()
+see in perlfunc: If LAYER is omitted or specified as ":raw" the filehandle is made suitable for passing binary data.

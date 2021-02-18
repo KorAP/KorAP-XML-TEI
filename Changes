@@ -4,6 +4,8 @@
         - character entities used in DeReKo are automatically replaced by their corresponding characters
         - resources defined in Makefile
         - fixed possible IO deadlock with KorAP tokenizer
+        - Move verbose code documentation to trailing
+          script section
 
 0.03 2021-01-12
         - Update KorAP-Tokenizer to released 2.0 version
