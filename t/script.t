@@ -415,6 +415,34 @@ subtest 'Check Inline annotations' => sub {
     ;
 };
 
+
+subtest 'Check file structure with defined folder and filenames' => sub {
+  # Load example file
+  my $file = catfile($f, 'data', 'goe_sample.i5.xml');
+  my $t = test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '-ti --base-foundry=root --data-file=primary --header-file=meta'
+  )->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->file_exists_not('GOE/AGA/00000/header.xml', 'Header not there')
+    ->file_exists_not('GOE/AGA/header.xml', 'Header not there')
+    ->file_exists_not('GOE/header.xml', 'Header not there')
+    ->file_exists_not('GOE/AGA/00000/data.xml', 'Data not there')
+    ->file_exists_not('GOE/AGA/00000/base/tokens_conservative.xml', 'Tokens not there')
+    ->file_exists_not('GOE/AGA/00000/base/tokens_aggressive.xml', 'Tokens not there')
+    ->file_exists('GOE/AGA/00000/meta.xml', 'Header there')
+    ->file_exists('GOE/AGA/meta.xml', 'Header there')
+    ->file_exists('GOE/meta.xml', 'Header there')
+    ->file_exists('GOE/AGA/00000/primary.xml', 'Data there')
+    ->file_exists('GOE/AGA/00000/root/tokens_conservative.xml', 'Tokens there')
+    ->file_exists('GOE/AGA/00000/root/tokens_aggressive.xml', 'Tokens there')
+    ;
+
+  $t->unzip_xml('GOE/AGA/00000/primary.xml')
+    ->content_like(qr/\Q&quot;Kriegstheater&quot;\E/)
+    ;
+};
+
 subtest 'Check Inline annotations with defined foundry and folder' => sub {
   # Load example file
   my $file = catfile($f, 'data', 'goe_sample_tagged.i5.xml');

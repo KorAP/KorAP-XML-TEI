@@ -49,6 +49,9 @@ GetOptions(
   'tokenizer-internal|ti' => \(my $tokenizer_intern), # use intern tokenization (default = no)
   'use-tokenizer-sentence-splits|s' => (\my $use_tokenizer_sentence_splits), # use KorAP tokenizer to split s (default=no)
   'inline-tokens=s' => \(my $inline_tokens = 'tokens#morpho'),
+  'base-foundry=s' => \(my $_tok_dir = 'base'),
+  'data-file=s' => \(my $_data_file = 'data'),
+  'header-file=s' => \(my $_header_file = 'header'),
   'log|l=s' => \(my $log_level = 'notice'),
   'help|h'    => sub {
     pod2usage(
@@ -116,11 +119,6 @@ my $aggr_tok       = KorAP::XML::TEI::Tokenizer::Aggressive->new;
 my $cons_tok       = KorAP::XML::TEI::Tokenizer::Conservative->new;
 ##
 
-
-my $_tok_dir         = "base";                       # name of directory for storing tokenization files
-
-my $_header_file     = "header.xml";                 # name of files      containing the  text, document and corpus header
-my $_data_file       = "data.xml";                   # name of file       containing the  primary text data (tokens)
 my $_structure_dir   = "struct";                     # name of directory  containing the  $_structure_file
 my $_structure_file  = "structure.xml";              # name of file       containing all  tags (except ${_TOKEN_TAG}'s) related information
                                                      #                                     (= their names and byte offsets in $_data)
@@ -296,12 +294,12 @@ MAIN: while ( <$input_fh> ){
           retr_info(1, \$tree_data->[2] ); # parse input data
 
           if (DEBUG) {
-            $log->debug("Writing (utf8-formatted) xml file $dir/$_data_file");
+            $log->debug("Writing (utf8-formatted) xml file $dir/${_data_file}.xml");
           };
 
           # ~ write data.xml ~
           $data->to_zip(
-            $zipper->new_stream("$dir/${_data_file}"),
+            $zipper->new_stream("$dir/${_data_file}.xml"),
             $text_id_esc
           );
 
@@ -413,7 +411,7 @@ MAIN: while ( <$input_fh> ){
     if ($header) {
 
       # Write header to zip
-      my $file = $header->dir . '/' . $_header_file;
+      my $file = $header->dir . '/' . $_header_file . '.xml';
 
       $log->debug("Writing file $file") if DEBUG;
 
@@ -730,6 +728,25 @@ to store inline token information in.
 If L</KORAPXMLTEI_INLINE> is set, this will contain
 annotations as well.
 Defaults to C<tokens> and C<morpho>.
+
+=item B<--base-foundry> <foundry>
+
+Define the base foundry to store newly generated
+token information in.
+Defaults to C<base>.
+
+=item B<--data-file> <file>
+
+Define the file (without extension)
+to store primary data information in.
+Defaults to C<data>.
+
+=item B<--header-file> <file>
+
+Define the file name (without extension)
+to store header information on
+the corpus, document, and text level in.
+Defaults to C<header>.
 
 =item B<--use-tokenizer-sentence-splits|-s>
 
