@@ -61,6 +61,21 @@ subtest 'remove_xml_comments in script' => sub {
 };
 
 
+subtest 'skip missing dir in script' => sub {
+  test_tei2korapxml(
+    template => {
+      text => "Nur ein Test",
+      textSigle => '',
+      pattern => 'missing_dir'
+    }
+  )
+    ->file_exists_not('A/B/1/data.xml')
+    ->stderr_like(qr!Empty '<textSigle />' \(L29\) in header!)
+    ->stderr_like(qr!skipping this text!)
+    ;
+};
+
+
 subtest 'escape_xml' => sub {
   is(
     escape_xml('"""'),
