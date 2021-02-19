@@ -448,11 +448,6 @@ sub retr_info {
   # (1 = topmost level inside retr_info() = should always be level of tag $_TEXT_BODY)
   my $rl = shift;
 
-  my $dummy_anno;
-  if ($use_tokenizer_sentence_splits) {
-    $dummy_anno = $structures->new_dummy_annotation;
-  }
-
   # Iteration through all array elements
   # ($_[0] is a reference to an array reference)
   # See notes on how 'XML::CompactTree::XS' works and
@@ -466,15 +461,16 @@ sub retr_info {
       # from here: tag-node (opening)
       #~~~~
 
-      my $anno;
-
       # $e->[1] represents the tag name
+      # Skip sentences
       if ($use_tokenizer_sentence_splits && $e->[1] eq "s") {
-        $anno = $dummy_anno;
-      } else {
-        $anno = $structures->add_new_annotation($e->[1]);
+        if (defined $e->[$_IDX]) {
+          retr_info($rl+1, \$e->[$_IDX]);
+        }
+        next;
       }
 
+      my $anno = $structures->add_new_annotation($e->[1]);
 
       # Add element also to token list
       if ($_TOKENS_PROC && $e->[1] eq $_TOKENS_TAG) {
