@@ -161,9 +161,6 @@ my $dir;                                             # text     directory (below
 my ( $text_id,
      $text_id_esc );                                 # '$text_id_esc' = escaped version of $text_id
 
-my ( $reader,                                        # instance of 'XML::LibXML::Reader->new' (on input '$buf_in')
-     $tree_data );                                   # instance of 'XML::CompactTree::XS::readSubtreeToPerl' (on input '$reader')
-
 # these are only used inside recursive function 'retr_info'
 my ( $_IDX,                                          # value is set dependent on DEBUG - for extracting array of child elements from element in $tree_data
      $e,                                             # element from $tree_data
@@ -199,8 +196,6 @@ for ($_CORP_HEADER_BEG,
 
 # ~ read input and write output (text by text) ~
 
-my ( $pfx, $sfx );
-
 my $tl = 0; # text line (needed for whitespace handling)
 
 $input_fh = *STDIN;  # input file handle (default: stdin)
@@ -219,6 +214,7 @@ if ( $input_fname ne '' ){
 # Prevents segfaulting (see notes on segfault prevention)
 binmode $input_fh;
 
+my $sfx;
 my $pos;
 my $input_enc = 'UTF-8';
 my $l = length('</' . $_TEXT_BODY) + 1;
@@ -242,10 +238,9 @@ MAIN: while ( <$input_fh> ){
 
     # ~ start of text body ~
 
-    $pfx = $1;
     $sfx = $2;
 
-    if ($pfx !~ /^\s*$/ || $sfx !~ /^\s*$/) {
+    if ($1 !~ /^\s*$/ || $sfx !~ /^\s*$/) {
       die $log->fatal("input line number $.: " .
                         "line with opening text-body tag '${_TEXT_BODY}' " .
                         "contains additional information ... => Aborting (line=$_)");
@@ -274,7 +269,10 @@ MAIN: while ( <$input_fh> ){
 
         if ($dir ne "") {
 
-          $reader = XML::LibXML::Reader->new( string => "<text>$buf_in</text>", huge => 1 );
+          my $reader = XML::LibXML::Reader->new(
+            string => "<text>$buf_in</text>",
+            huge => 1
+          );
 
           # See notes on whitespace handling
           my $param = XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY;
@@ -282,7 +280,7 @@ MAIN: while ( <$input_fh> ){
           # XCT_LINE_NUMBERS is only needed for debugging
           # (see XML::CompactTree::XS)
           $param |= XCT_LINE_NUMBERS if DEBUG;
-          $tree_data = XML::CompactTree::XS::readSubtreeToPerl( $reader, $param);
+          my $tree_data = XML::CompactTree::XS::readSubtreeToPerl($reader, $param);
 
           $structures->reset;
 
@@ -397,10 +395,9 @@ MAIN: while ( <$input_fh> ){
   } elsif (m#^(.*)(<(?:${_TEXT_HEADER_BEG}|${_DOC_HEADER_BEG}|${_CORP_HEADER_BEG}).*)$#) {
 
     # ~ start of header ~
-    $pfx = $1;
     my $content = "$2\n";
 
-    if ($pfx !~ /^\s*$/) {
+    if ($1 !~ /^\s*$/) {
       die $log->fatal("input line number $.: " .
                         "line with opening header tag" .
                         " is not in expected format ... => Aborting (line=$_)");
