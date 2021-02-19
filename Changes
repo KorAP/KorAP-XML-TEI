@@ -1,6 +1,7 @@
         - Remove unnecessary branch in recursive call
         - Support inline-structures parameter
         - Introduce --base-foundry, --data-file, and --header-file parameters
+        - Introduce --tokens-file parameter
 
 1.00 2021-02-18 Release
         - -s option added that uses sentence boundaries provided by the KorAP tokenizer (-tk)

@@ -175,6 +175,29 @@ subtest 'Tokenize with external tokenizer' => sub {
     ->element_count_is('spanList span', 227);
 };
 
+subtest 'Tokenize with external tokenizer and defined folder' => sub {
+
+  my $cmd = catfile($f, 'cmd', 'tokenizer.pl');
+
+  test_tei2korapxml(
+    file => $file,
+    param => "-tc='perl $cmd' --tokens-file=yadda",
+    tmp => 'script_out2'
+  )
+    ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
+    ->file_exists_not('GOE/AGA/00000/base/tokens.xml')
+    ->file_readable('GOE/AGA/00000/base/yadda.xml')
+    ->unzip_xml('GOE/AGA/00000/base/yadda.xml')
+    ->attr_is('spanList span:nth-child(1)', 'to', 8)
+    ->attr_is('spanList span#t_1', 'from', 9)
+    ->attr_is('spanList span#t_1', 'to', 11)
+    ->attr_is('spanList span#t_67', 'from', 427)
+    ->attr_is('spanList span#t_67', 'to', 430)
+    ->attr_is('spanList span#t_214', 'from', 1209)
+    ->attr_is('spanList span#t_214', 'to', 1212)
+    ->element_count_is('spanList span', 227);
+};
+
 subtest 'Check KorAP tokenizer for infinite loop bug' => sub {
 
   my $file = catfile($f, 'data', 'korap_tokenizer_challenge.xml');
@@ -368,7 +391,7 @@ subtest 'Check structure parsing with defined foundry and folder' => sub {
     tmp => 'script_out',
     file => $file,
     param => '-ti --inline-structures=myfoundry#mystr'
-  )->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+  )->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
     ->file_exists_not('GOE/AGA/00000/struct/structure.xml', 'Structure not generated')
     ->unzip_xml('GOE/AGA/00000/myfoundry/mystr.xml')
     ->text_is('span[id=s3] *[name=type]', 'Autobiographie', 'text content')
@@ -384,7 +407,7 @@ subtest 'Check structure parsing with defined foundry and folder' => sub {
     tmp => 'script_out',
     file => $file,
     param => '-ti --inline-structures=myfoundry'
-  )->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+  )->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
     ->file_exists_not('GOE/AGA/00000/struct/structure.xml', 'Structure not generated')
     ->unzip_xml('GOE/AGA/00000/myfoundry/structure.xml')
     ->text_is('span[id=s3] *[name=type]', 'Autobiographie', 'text content')
@@ -461,7 +484,7 @@ subtest 'Check file structure with defined folder and filenames' => sub {
     tmp => 'script_out',
     file => $file,
     param => '-ti --base-foundry=root --data-file=primary --header-file=meta'
-  )->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+  )->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
     ->file_exists_not('GOE/AGA/00000/header.xml', 'Header not there')
     ->file_exists_not('GOE/AGA/header.xml', 'Header not there')
     ->file_exists_not('GOE/header.xml', 'Header not there')

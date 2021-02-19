@@ -149,6 +149,13 @@ Defaults to C<header>.
 Replace existing with, or add new, sentence boundary information
 provided by the KorAP tokenizer (currently supported only).
 
+=item B<--tokens-file> <file>
+
+Define the file (without extension)
+to store generated token information in
+(either from the KorAP tokenizer or an externally called tokenizer).
+Defaults to C<tokens>.
+
 =item B<--log|-l>
 
 Loglevel for I<Log::Any>. Defaults to C<notice>.

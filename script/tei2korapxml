@@ -46,13 +46,14 @@ GetOptions(
   "input|i=s" => \(my $input_fname = ''), # input file (yet only TEI I5 Format accepted)
   'tokenizer-call|tc=s' => \(my $tokenizer_call), # Temporary argument for testing purposes
   'tokenizer-korap|tk' => \(my $tokenizer_korap), # use KorAP-tokenizer
-  'tokenizer-internal|ti' => \(my $tokenizer_intern), # use intern tokenization (default = no)
+  'tokenizer-internal|ti' => \(my $_GEN_TOK_INT), # use intern tokenization (default = no)
   'use-tokenizer-sentence-splits|s' => (\my $use_tokenizer_sentence_splits), # use KorAP tokenizer to split s (default=no)
   'inline-tokens=s' => \(my $inline_tokens = 'tokens#morpho'),
   'inline-structures=s' => \(my $inline_structures = 'struct#structure'),
   'base-foundry=s' => \(my $_tok_dir = 'base'),
   'data-file=s' => \(my $_data_file = 'data'),
   'header-file=s' => \(my $_header_file = 'header'),
+  'tokens-file=s' => \(my $_tok_file_ext = 'tokens'),
   'log|l=s' => \(my $log_level = 'notice'),
   'help|h'    => sub {
     pod2usage(
@@ -103,7 +104,6 @@ if ($tokenizer_call) {
 elsif ($tokenizer_korap) {
   $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new($use_tokenizer_sentence_splits);
 };
-my $_tok_file_ext  = "tokens.xml";
 ##
 
 
@@ -113,9 +113,6 @@ my $_tok_file_ext  = "tokens.xml";
 
 
 ## intern tokenization
-my $_GEN_TOK_INT = $tokenizer_intern;                  # simple tokenization (recommended for testing)
-my $_tok_file_con  = "tokens_conservative.xml";
-my $_tok_file_agg  = "tokens_aggressive.xml";
 my $aggr_tok       = KorAP::XML::TEI::Tokenizer::Aggressive->new;
 my $cons_tok       = KorAP::XML::TEI::Tokenizer::Conservative->new;
 ##
@@ -266,7 +263,7 @@ MAIN: while ( <$input_fh> ){
       # ~ end of text body ~
       if (($pos = index($_, '</' . $_TEXT_BODY)) >= 0) {
 
-        # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files (s.a.: $_tok_file_ext, $_tok_file_con, $_tok_file_agg)
+        # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files
 
         if ((substr($_, 0, $pos) . substr($_, $l + $pos)) !~ /^\s*$/) {
           die $log->fatal("input line number $.: " .
@@ -312,7 +309,7 @@ MAIN: while ( <$input_fh> ){
 
             # Tokenize and output
             $ext_tok->tokenize($data->data)->to_zip(
-              $zipper->new_stream("$dir/$_tok_dir/$_tok_file_ext"),
+              $zipper->new_stream("$dir/$_tok_dir/${_tok_file_ext}.xml"),
               $text_id_esc
             );
           };
@@ -321,12 +318,12 @@ MAIN: while ( <$input_fh> ){
 
             # Tokenize and output
             $cons_tok->tokenize($data->data)->to_zip(
-              $zipper->new_stream("$dir/$_tok_dir/$_tok_file_con"),
+              $zipper->new_stream("$dir/$_tok_dir/" . $cons_tok->name . '.xml'),
               $text_id_esc
             );
 
             $aggr_tok->tokenize($data->data)->to_zip(
-              $zipper->new_stream("$dir/$_tok_dir/$_tok_file_agg"),
+              $zipper->new_stream("$dir/$_tok_dir/" . $aggr_tok->name . '.xml'),
               $text_id_esc
             );
 
@@ -744,6 +741,13 @@ Defaults to C<header>.
 
 Replace existing with, or add new, sentence boundary information
 provided by the KorAP tokenizer (currently supported only).
+
+=item B<--tokens-file> <file>
+
+Define the file (without extension)
+to store generated token information in
+(either from the KorAP tokenizer or an externally called tokenizer).
+Defaults to C<tokens>.
 
 =item B<--log|-l>
 
