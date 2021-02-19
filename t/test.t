@@ -63,7 +63,7 @@ subtest 'test_tei2korapxml_i5_template' => sub {
     },
     param => '-ti'
   )
-    ->stderr_like(qr!tei2korapxml: .*? text_id=a_b\.1!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=a_b\.1!)
     ->file_exists('a/b/1/header.xml')
     ->file_exists('a/b/header.xml')
     ->file_exists('a/header.xml')

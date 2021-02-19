@@ -430,7 +430,7 @@ MAIN: while ( <$input_fh> ){
         $text_id_esc = $header->id_esc;
 
         # log output for seeing progression
-        $log->notice("$0: main(): text_id=$text_id");
+        $log->notice("$0: text_id=$text_id");
 
         $tl = 0; # reset (needed for ~ whitespace handling ~)
       }
@@ -447,7 +447,6 @@ exit(0);
 
 # Recursively called function to handle XML tree data
 sub retr_info {
-
   # recursion level
   # (1 = topmost level inside retr_info() = should always be level of tag $_TEXT_BODY)
   my $rl = shift;
@@ -801,7 +800,7 @@ Exploring the structure of $data ( = reference to below array ):
 
 [ 0: XML_READER_TYPE_DOCUMENT,
   1: ?
-  2: [ 0: [ 0: XML_READER_TYPE_ELEMENT                     <- start recursion with array '$data->[2]' (see main(): retr_info( \$tree_data->[2] ))
+  2: [ 0: [ 0: XML_READER_TYPE_ELEMENT                     <- start recursion with array '$data->[2]' (see retr_info( \$tree_data->[2] ))
             1: 'node'
             2: ?
             3: HASH (attributes)
@@ -971,7 +970,7 @@ Blanks are inserted before the 1st character:
 
 ## Notes on segfault prevention
 
-binmode on the input handler prevents segfaulting of 'XML::LibXML::Reader' inside 'main()'
+binmode on the input handler prevents segfaulting of 'XML::LibXML::Reader' inside the main loop
 (see notes on 'PerlIO layers' in  'man XML::LibXML'),
 removing 'use open qw(:std :utf8)' would fix this problem too, but using binmode on input is more granular
 see in perluniintro: You can switch encodings on an already opened stream by using "binmode()

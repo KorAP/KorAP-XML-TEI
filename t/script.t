@@ -41,7 +41,7 @@ subtest 'Debugging' => sub {
     file => $file,
     param => '-ti',
     env => 'KORAPXMLTEI_DEBUG=1'
-  )->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+  )->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
   ->stderr_like(qr!Debugging is activated!);
 };
 
@@ -51,7 +51,7 @@ subtest 'Basic processing' => sub {
     tmp => 'script_out',
     file => $file,
     param => '-ti'
-  )->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+  )->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
   ->stderr_unlike(qr!Debugging is activated!);
 
 
@@ -160,7 +160,7 @@ subtest 'Tokenize with external tokenizer' => sub {
     param => "-tc='perl $cmd'",
     tmp => 'script_out2'
   )
-    ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
     ->file_readable('GOE/AGA/00000/base/tokens.xml')
 
     # Uncompress GOE/AGA/00000/base/tokens.xml from zip file
@@ -191,7 +191,7 @@ subtest 'Check KorAP tokenizer for infinite loop bug' => sub {
     param => "-tk -s",
     tmp => 'script_bug_check'
   )
-    ->stderr_like(qr!tei2korapxml: .*? text_id=WDD19_H0039\.87242!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=WDD19_H0039\.87242!)
     ->file_readable('WDD19/H0039/87242/struct/structure.xml');
 };
 
@@ -209,7 +209,7 @@ subtest 'Sentence split with KorAP tokenizer' => sub {
       param => "-tk -s",
       tmp => 'script_sentence_split'
   )
-      ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+      ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
       ->file_readable('GOE/AGA/00000/struct/structure.xml')
       ->unzip_xml('GOE/AGA/00000/struct/structure.xml')
       ->text_is('span#s25 fs f', 's')
@@ -227,7 +227,7 @@ subtest 'Test Tokenizations' => sub {
     file => catfile($f, 'data', 'text_with_blanks.i5.xml'),
     tmp => 'script_out3',
     param => '-ti'
-  )->stderr_like(qr!tei2korapxml: .*? text_id=CORP_DOC.00001!);
+  )->stderr_like(qr!tei2korapxml:.*? text_id=CORP_DOC.00001!);
 
   # ~ test conservative tokenization ~
   $t->unzip_xml('CORP/DOC/00001/base/tokens_conservative.xml')
@@ -304,7 +304,7 @@ subtest 'Check Tokenization Flags' => sub {
     param => "-ti -tc 'perl $cmd'",
     tmp => 'script_tokflags'
   )
-    ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
     ->file_exists('GOE/AGA/00000/base/tokens_aggressive.xml')
     ->file_exists('GOE/AGA/00000/base/tokens_conservative.xml')
     ->file_exists('GOE/AGA/00000/base/tokens.xml')
@@ -355,7 +355,7 @@ subtest 'Test utf-8 handling' => sub {
 
   stderr_like(
     sub { `cat '$tplfile' | perl '$script' -ti > '$outzip'` },
-    qr!tei2korapxml: .*? text_id=$text_sigle_esc!, # see above: print $fh encode_utf8($tpl);
+    qr!tei2korapxml:.*? text_id=$text_sigle_esc!, # see above: print $fh encode_utf8($tpl);
   );
 };
 
@@ -408,7 +408,7 @@ subtest 'Check Inline annotations' => sub {
     env => 'KORAPXMLTEI_INLINE=1',
     tmp => 'script_tagged'
   )
-    ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
 
     # Check zip using xml loy
     ->unzip_xml('GOE/AGA/00000/tokens/morpho.xml')
@@ -491,7 +491,7 @@ subtest 'Check Inline annotations with defined foundry and folder' => sub {
     tmp => 'script_tagged',
     param => '--inline-tokens=myfoundry#myfile'
   )
-    ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
 
     ->file_exists_not('GOE/AGA/00000/tokens/morpho.xml', 'Morpho not generated')
 
@@ -511,7 +511,7 @@ subtest 'Check Inline annotations with defined foundry and folder' => sub {
     tmp => 'script_tagged',
     param => '--inline-tokens=myfoundry'
   )
-    ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
 
     ->file_exists_not('GOE/AGA/00000/tokens/morpho.xml', 'Morpho not generated')
 
@@ -536,7 +536,7 @@ subtest 'Check Inline annotations with untagged file' => sub {
   # Generate zip file (unportable!)
   stderr_like(
     sub { `cat '$file' | KORAPXMLTEI_INLINE=1 perl '$script' > '$outzip'` },
-    qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!,
+    qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!,
     'Processing 1'
   );
 
@@ -572,7 +572,7 @@ subtest 'Check input encoding' => sub {
     env => 'KORAPXMLTEI_INLINE=1',
     tmp => 'script_utf8_enc'
   )
-    ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
     ->unzip_xml('GOE/AGA/00000/data.xml')
     ->content_like(qr/\Q&quot;Kriegstheater&quot;\E/)
     ->content_like(qr/\QTür&#39;\E/)
@@ -583,7 +583,7 @@ subtest 'Check input encoding' => sub {
     env => 'KORAPXMLTEI_INLINE=1',
     tmp => 'script_iso_enc'
   )
-    ->stderr_like(qr!tei2korapxml: .*? text_id=GOE_AGA\.00000!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
     ->unzip_xml('GOE/AGA/00000/data.xml')
     ->content_like(qr/\Q&quot;Kriegstheater&quot;\E/)
     ->content_like(qr/\QTür&#39;\E/)
@@ -599,7 +599,7 @@ subtest 'Check encoding with utf-8 sigle' => sub {
       tmp   => 'script_sigle',
       file  => $file,
       param => "-ti"
-  )->stderr_like(qr!tei2korapxml: .*? text_id=WDD19_ß0000\.10317!)
+  )->stderr_like(qr!tei2korapxml:.*? text_id=WDD19_ß0000\.10317!)
   ->stderr_unlike(qr!Debugging is activated!);
 
   $t->unzip_xml('WDD19/ß0000/10317/header.xml')
@@ -620,7 +620,7 @@ subtest 'Check entity replacement' => sub {
     file => catfile($f, 'data', 'text_with_entities.i5.xml'),
     tmp => 'script_entity_replacement',
     param => '-ti'
-  )->stderr_like(qr!tei2korapxml: .*? text_id=CORP_DOC.00003!);
+  )->stderr_like(qr!tei2korapxml:.*? text_id=CORP_DOC.00003!);
 
   $t->unzip_xml('CORP/DOC/00003/data.xml')
     ->content_like(qr!üüü  Aα≈„▒░▓█╗┐┌╔═─┬╦┴╩╝┘└╚│║┼╬┤╣╠├•ˇčˆ†‡ě€ƒ…‗ıι“„▄‹‘‚—–νœŒωΩ‰φπϖř”ρ›’‘šŠσ□■▪⊂˜™▀ŸžŽ!);
