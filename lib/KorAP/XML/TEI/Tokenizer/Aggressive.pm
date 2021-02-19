@@ -41,4 +41,9 @@ sub tokenize {
 };
 
 
+# Name of the tokenizer file
+sub name {
+  'tokens_aggressive';
+};
+
 1;

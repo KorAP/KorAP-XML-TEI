@@ -87,4 +87,10 @@ sub _add_surroundings {
 };
 
 
+# Name of the tokenizer file
+sub name {
+  'tokens_conservative';
+};
+
+
 1;
