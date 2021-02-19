@@ -84,9 +84,6 @@ my $_DOC_HEADER_BEG   = "idsHeader type=\"document\""; # analog
 my $_TEXT_HEADER_BEG  = "idsHeader type=\"text\"";     # analog
 
 
-## extern tokenization
-my $_GEN_TOK_EXT = $tokenizer_call || $tokenizer_korap ? 1 : 0;
-
 if ($use_tokenizer_sentence_splits && !$tokenizer_korap) {
   die $log->fatal("Sentence splitting is currently only supported by KorAP tokenizer (use -tk to activate it");
 }
@@ -306,7 +303,7 @@ MAIN: while ( <$input_fh> ){
           );
 
           # ~ tokenization ~
-          if ($_GEN_TOK_EXT) {
+          if ($ext_tok) {
 
             # Tokenize and output
             $ext_tok->tokenize($data->data)->to_zip(
@@ -438,7 +435,7 @@ MAIN: while ( <$input_fh> ){
 
 $zipper->close;
 
-$ext_tok->close if $_GEN_TOK_EXT;
+$ext_tok->close if $ext_tok;
 
 exit(0);
 
