@@ -125,6 +125,24 @@ Defaults to C<tokens> and C<morpho>.
 Define the foundry and file (without extension)
 to store inline structure information in.
 Defaults to C<struct> and C<structures>.
+=item B<--base-foundry> <foundry>
+
+Define the base foundry to store newly generated
+token information in.
+Defaults to C<base>.
+
+=item B<--data-file> <file>
+
+Define the file (without extension)
+to store primary data information in.
+Defaults to C<data>.
+
+=item B<--header-file> <file>
+
+Define the file name (without extension)
+to store header information on
+the corpus, document, and text level in.
+Defaults to C<header>.
 
 =item B<--use-tokenizer-sentence-splits|-s>
 
