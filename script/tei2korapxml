@@ -80,14 +80,12 @@ $log->notice('Debugging is activated') if DEBUG;
 #
 # ~~~ parameter (mandatory) ~~~
 #
-my $_TEXT_BODY        = "text";                        # tag (without attributes), which contains the primary text
+# tag (without attributes), which contains the primary text
+my $_TEXT_BODY = 'text';
 # optional
-my $_CORP_HEADER_BEG  = "idsHeader type=\"corpus\"";   # just keep the correct order of the attributes and evtl. add an '.*' between them
-# optional
-my $_DOC_HEADER_BEG   = "idsHeader type=\"document\""; # analog
-# mandatory
-my $_TEXT_HEADER_BEG  = "idsHeader type=\"text\"";     # analog
 
+# TODO: IDS-specific (and redundant)
+my $_HEADER_TAG = 'idsHeader';
 
 if ($use_tokenizer_sentence_splits && !$tokenizer_korap) {
   die $log->fatal("Sentence splitting is currently only supported by KorAP tokenizer (use -tk to activate it");
@@ -181,14 +179,6 @@ my $c;                                               # index variables used in l
 DEBUG ? ($_IDX = 5) : ($_IDX = 4);
 
 $fval = 0;
-
-# Normalize regex for header parsing
-for ($_CORP_HEADER_BEG,
-     $_DOC_HEADER_BEG,
-     $_TEXT_HEADER_BEG) {
-  s!^([^\s]+)(.*)$!$1\[\^>\]*$2!;
-};
-
 
 # ~ read input and write output (text by text) ~
 
@@ -387,7 +377,7 @@ MAIN: while ( <$input_fh> ){
       $buf_in .= $_;
     };
 
-  } elsif (m#^(.*)(<(?:${_TEXT_HEADER_BEG}|${_DOC_HEADER_BEG}|${_CORP_HEADER_BEG}).*)$#) {
+  } elsif (m#^(.*)(\<${_HEADER_TAG}[^>]*?type=["'].*)$#) {
 
     # ~ start of header ~
     my $content = "$2\n";

@@ -11,7 +11,7 @@ use KorAP::XML::TEI qw!remove_xml_comments replace_entities!;
 # Warning:
 # Opening and closing tags (without attributes) have to be in one line
 
-# TODO: IDS-specific
+# TODO: IDS-specific (and redundant)
 my $_HEADER_TAG = 'idsHeader';
 
 use constant {
