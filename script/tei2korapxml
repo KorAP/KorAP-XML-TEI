@@ -159,8 +159,6 @@ my ( $_IDX,                                          # value is set dependent on
                                                      #  (means: 'from-index - 1' is a key in %ws).
                                                      # if this is _not_ the case, then the from-value is one to high => correct it by substracting 1
 
-my $c;                                               # index variables used in loops
-
 
 #
 # ~~~ main ~~~
@@ -459,11 +457,11 @@ sub retr_info {
         # with 'XCT_ATTRIBUTE_ARRAY', $node->[3] is an array reference of the form
         #  [ name1, value1, name2, value2, ....] of attribute names and corresponding values.
         # note: arrays are faster (see: http://makepp.sourceforge.net/2.0/perl_performance.html)
-        for ($c = 0; $c < @{$e->[3]}; $c += 2) {
+        for (local $_ = 0; $_ < @{$e->[3]}; $_ += 2) {
 
-          # '$c' references the 'key' and '$c+1' the 'value'
+          # '$_' references the 'key' and '$_+1' the 'value'
           $anno->add_attribute(
-            @{$e->[3]}[$c, $c + 1]
+            @{$e->[3]}[$_, $_ + 1]
           );
         };
       };
