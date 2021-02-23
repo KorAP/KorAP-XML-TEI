@@ -72,14 +72,12 @@ GetOptions(
   }
 );
 
+# Establish logger
 binmode(STDERR, ":encoding(UTF-8)");
 Log::Any::Adapter->set('Stderr', log_level => $log_level);
 
 $log->notice('Debugging is activated') if DEBUG;
 
-#
-# ~~~ parameter (mandatory) ~~~
-#
 # tag (without attributes), which contains the primary text
 my $_TEXT_BODY = 'text';
 # optional
@@ -89,7 +87,7 @@ my $_HEADER_TAG = 'idsHeader';
 
 if ($use_tokenizer_sentence_splits && !$tokenizer_korap) {
   die $log->fatal("Sentence splitting is currently only supported by KorAP tokenizer (use -tk to activate it");
-}
+};
 
 my $ext_tok;
 if ($tokenizer_call) {
@@ -108,46 +106,43 @@ elsif ($tokenizer_korap) {
 
 
 ## intern tokenization
-my $aggr_tok       = KorAP::XML::TEI::Tokenizer::Aggressive->new;
-my $cons_tok       = KorAP::XML::TEI::Tokenizer::Conservative->new;
+my $aggr_tok = KorAP::XML::TEI::Tokenizer::Aggressive->new;
+my $cons_tok = KorAP::XML::TEI::Tokenizer::Conservative->new;
 ##
 
-## TODO: optional (different annotation tools can produce more zip-files for feeding into KorAP-XML-Krill)
-my $_TOKENS_PROC     = 1;                            # on/off: processing of ${_TOKEN_TAG}'s (default: 1)
-
+# Processing of ${_TOKEN_TAG}'s - on/off (default: 1)
+my $_TOKENS_PROC = 1;
 
 # Name of the directory and the file containing all inline structure informations
 # except for $_TOKEN_TAG information
 my ($_structure_dir, $_structure_file) = split '#', $inline_structures . '#structure';
-$_structure_file .= '.xml';
-
 
 # Name of the directory and the file containing all inline token informations
 # i.e. tokens of the $_TOKENS_TAG, if $_TOKENS_PROC is set
 my ($_tokens_dir, $_tokens_file) = split '#', $inline_tokens . '#morpho';
-$_tokens_file .= '.xml';
 
-my $_TOKENS_TAG      = "w";                          # name of tag        containing all  information stored in $_tokens_file
+# name of the tag containing all information stored in $_tokens_file
+my $_TOKENS_TAG = "w";
 
 # Handling inline annotations (inside $_TOKENS_TAG)
-my $_INLINE_ANNOT    = $ENV{KORAPXMLTEI_INLINE} ? 1 : 0;
+my $_INLINE_ANNOT = $ENV{KORAPXMLTEI_INLINE} ? 1 : 0;
+
+# Initialize Token- and Structure-Collector
+my $tokens = KorAP::XML::TEI::Annotations::Collector->new;
+my $structures = KorAP::XML::TEI::Annotations::Collector->new;
+
+# Initialize Data-Collector
+my $data = KorAP::XML::TEI::Data->new;
+
+# Initialize zipper
+my $zipper = KorAP::XML::TEI::Zipper->new($_root_dir);
 
 
 #
 # ~~~ variables ~~~
 #
 
-# Initialize Token- and Structure-Collector
-my $tokens = KorAP::XML::TEI::Annotations::Collector->new;
-my $structures = KorAP::XML::TEI::Annotations::Collector->new;
 
-
-# Initialize Data-Collector
-my $data = KorAP::XML::TEI::Data->new;
-
-
-# Initialize zipper
-my $zipper = KorAP::XML::TEI::Zipper->new($_root_dir);
 my $input_fh;                                        # input file handle (default: stdin)
 
 my $dir;                                             # text     directory (below $_root_dir)
@@ -326,7 +321,7 @@ MAIN: while ( <$input_fh> ){
         # ~ write structures ~
         if (!$structures->empty) {
           $structures->to_zip(
-            $zipper->new_stream("$dir/$_structure_dir/$_structure_file"),
+            $zipper->new_stream("$dir/$_structure_dir/${_structure_file}.xml"),
             $text_id_esc,
             2 # = structure serialization
           );
@@ -335,7 +330,7 @@ MAIN: while ( <$input_fh> ){
         # ~ write tokens ~
         if ($_TOKENS_PROC && !$tokens->empty) {
           $tokens->to_zip(
-            $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}"),
+            $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}.xml"),
             $text_id_esc,
             $_INLINE_ANNOT # Either 0 = tokens without inline or 1 = tokens with inline
           );
