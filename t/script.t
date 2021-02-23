@@ -421,6 +421,32 @@ subtest 'Check structure parsing with defined foundry and folder' => sub {
 };
 
 
+subtest 'Check parsing but skip inline tokens' => sub {
+  # Load example file
+  my $file = catfile($f, 'data', 'goe_sample.i5.xml');
+
+  my $t = test_tei2korapxml(
+    tmp => 'script_skip_inline_tokens_1',
+    file => $file,
+    param => '-ti --skip-inline-tokens'
+  )->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
+    ->file_exists('GOE/AGA/00000/data.xml', 'Data exists')
+    ->file_exists('GOE/AGA/00000/struct/structure.xml', 'Structure generated')
+    ->file_exists_not('GOE/AGA/00000/tokens/morpho.xml', 'Morpho not generated')
+    ;
+
+  $t = test_tei2korapxml(
+    tmp => 'script_skip_inline_tokens_2',
+    file => $file,
+    param => '-ti --skip-inline-tokens --inline-tokens=myfoundry#myfile'
+  )->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
+    ->file_exists('GOE/AGA/00000/struct/structure.xml', 'Structure generated')
+    ->file_exists_not('GOE/AGA/00000/tokens/morpho.xml', 'Morpho not generated')
+    ->file_exists_not('GOE/AGA/00000/myfoundry/myfile.xml', 'Morpho not generated')
+    ;
+};
+
+
 subtest 'Check Inline annotations' => sub {
 
   # Load example file

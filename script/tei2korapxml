@@ -42,20 +42,21 @@ use constant DEBUG => $ENV{KORAPXMLTEI_DEBUG} // 0;
 
 # Parse options from the command line
 GetOptions(
-  "root|r=s"  => \(my $_root_dir = '.'),  # name of root directory inside zip file
-  "input|i=s" => \(my $input_fname = ''), # input file (yet only TEI I5 Format accepted)
-  'tokenizer-call|tc=s' => \(my $tokenizer_call), # Temporary argument for testing purposes
-  'tokenizer-korap|tk' => \(my $tokenizer_korap), # use KorAP-tokenizer
-  'tokenizer-internal|ti' => \(my $_GEN_TOK_INT), # use intern tokenization (default = no)
-  'use-tokenizer-sentence-splits|s' => (\my $use_tokenizer_sentence_splits), # use KorAP tokenizer to split s (default=no)
-  'inline-tokens=s' => \(my $inline_tokens = 'tokens#morpho'),
-  'inline-structures=s' => \(my $inline_structures = 'struct#structure'),
-  'base-foundry=s' => \(my $_tok_dir = 'base'),
-  'data-file=s' => \(my $_data_file = 'data'),
-  'header-file=s' => \(my $_header_file = 'header'),
-  'tokens-file=s' => \(my $_tok_file_ext = 'tokens'),
-  'log|l=s' => \(my $log_level = 'notice'),
-  'help|h'    => sub {
+  "root|r=s"              => \(my $_root_dir = '.'),
+  "input|i=s"             => \(my $input_fname = ''),
+  'tokenizer-call|tc=s'   => \(my $tokenizer_call),
+  'tokenizer-korap|tk'    => \(my $tokenizer_korap),
+  'tokenizer-internal|ti' => \(my $_GEN_TOK_INT),
+  'use-tokenizer-sentence-splits|s' => \(my $use_tokenizer_sentence_splits),
+  'inline-tokens=s'       => \(my $inline_tokens = 'tokens#morpho'),
+  'inline-structures=s'   => \(my $inline_structures = 'struct#structure'),
+  'skip-inline-tokens'    => \(my $skip_inline_tokens = 0),
+  'base-foundry=s'        => \(my $_tok_dir = 'base'),
+  'data-file=s'           => \(my $_data_file = 'data'),
+  'header-file=s'         => \(my $_header_file = 'header'),
+  'tokens-file=s'         => \(my $_tok_file_ext = 'tokens'),
+  'log|l=s'               => \(my $log_level = 'notice'),
+  'help|h' => sub {
     pod2usage(
       -verbose => 99,
       -sections => 'NAME|DESCRIPTION|SYNOPSIS|ARGUMENTS|OPTIONS',
@@ -109,9 +110,6 @@ elsif ($tokenizer_korap) {
 my $aggr_tok = KorAP::XML::TEI::Tokenizer::Aggressive->new;
 my $cons_tok = KorAP::XML::TEI::Tokenizer::Conservative->new;
 ##
-
-# Processing of ${_TOKEN_TAG}'s - on/off (default: 1)
-my $_TOKENS_PROC = 1;
 
 # Name of the directory and the file containing all inline structure informations
 # except for $_TOKEN_TAG information
@@ -268,7 +266,7 @@ MAIN: while ( <$input_fh> ){
 
         $structures->reset;
 
-        $tokens->reset if $_TOKENS_PROC;
+        $tokens->reset unless $skip_inline_tokens;
 
         # ~ whitespace related issue ~
         $add_one = 0;
@@ -328,7 +326,7 @@ MAIN: while ( <$input_fh> ){
         };
 
         # ~ write tokens ~
-        if ($_TOKENS_PROC && !$tokens->empty) {
+        unless ($skip_inline_tokens || $tokens->empty) {
           $tokens->to_zip(
             $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}.xml"),
             $text_id_esc,
@@ -451,7 +449,7 @@ sub retr_info {
       my $anno = $structures->add_new_annotation($e->[1]);
 
       # Add element also to token list
-      if ($_TOKENS_PROC && $e->[1] eq $_TOKENS_TAG) {
+      if (!$skip_inline_tokens && $e->[1] eq $_TOKENS_TAG) {
         $tokens->add_annotation($anno);
       };
 
@@ -677,6 +675,11 @@ Use the standard KorAP/DeReKo tokenizer.
 Tokenize the data using two embedded tokenizers,
 that will take an I<Aggressive> and a I<conservative>
 approach.
+
+=item B<--skip-inline-tokens>
+
+Boolean flag indicating that inline tokens should not
+be processed. Defaults to false (meaning inline tokens will be processed).
 
 =item B<--inline-tokens> <foundry>#[<file>]
 
