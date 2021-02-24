@@ -91,11 +91,4 @@ sub boundaries {
 };
 
 
-# Write data to zip stream (as utf8)
-sub to_zip {
-  my ($self, $zip, $text_id, $param) = @_;
-  $zip->print(encode('UTF-8', $self->to_string($text_id, $param)));
-};
-
-
 1;
