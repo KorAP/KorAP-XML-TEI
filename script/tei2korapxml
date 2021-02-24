@@ -299,6 +299,10 @@ MAIN: while ( <$input_fh> ){
             $zipper->new_stream("$dir/$base_dir/${tokens_file}.xml"),
             $text_id_esc
           );
+
+          if ($use_tokenizer_sentence_splits) {
+            $ext_tok->sentencize_from_previous_input($structures);
+          };
         };
 
         # Tokenize with internal tokenizer
@@ -317,10 +321,6 @@ MAIN: while ( <$input_fh> ){
 
           $aggr_tok->reset;
           $cons_tok->reset;
-        };
-
-        if ($use_tokenizer_sentence_splits) {
-          $ext_tok->sentencize_from_previous_input($structures);
         };
 
         # ~ write structures ~
