@@ -367,8 +367,8 @@ MAIN: while ( <$input_fh> ){
         $text_line++;
 
         # insert blank before 1st character
-        #(for 2nd line and consecutive lines)
-        s/^(.)/ $1/ if $text_line > 1;
+        # (for 2nd line and consecutive lines)
+        $_ = ' ' . $_ if $text_line > 1;
       }
 
       # add line to buffer
