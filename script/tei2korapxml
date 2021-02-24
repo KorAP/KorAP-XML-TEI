@@ -146,11 +146,6 @@ my $dir = '';                                        # text     directory (below
 # '$text_id_esc' = escaped version of $text_id
 my ($text_id, $text_id_esc);
 
-# these are only used inside recursive function 'retr_info'
-# value is set dependent on DEBUG - for extracting array of
-# child elements from element in $tree_data
-my $child_idx;
-
 # element from $tree_data
 my $e;
 
@@ -181,10 +176,6 @@ my %ws;
 #
 # ~~~ main ~~~
 #
-
-# Include line numbers in elements of $tree_data for debugging
-DEBUG ? ($child_idx = 5) : ($child_idx = 4);
-
 
 # ~ read input and write output (text by text) ~
 
@@ -279,7 +270,7 @@ MAIN: while ( <$input_fh> ){
         %ws = ();
 
         # ~ recursion ~
-        retr_info(1, $tree_data->[2]); # parse input data
+        descend(1, $tree_data->[2]); # parse input data
 
         if (DEBUG) {
           $log->debug("Writing (utf8-formatted) xml file $dir/${data_file}.xml");
@@ -444,10 +435,10 @@ exit(0);
 
 
 # Recursively called function to handle XML tree data
-sub retr_info {
+sub descend {
 
   # recursion level
-  # (1 = topmost level inside retr_info() = should always be level of tag $_TEXT_BODY)
+  # (1 = topmost level inside descend() = should always be level of tag $_TEXT_BODY)
   my $depth = shift;
 
   # Iteration through all array elements
@@ -463,12 +454,14 @@ sub retr_info {
       # from here: tag-node (opening)
       #~~~~
 
+      # Get the child index depending on the debug state.
+      # This is likely to be optimized away by the compiler.
+      my $children = $e->[DEBUG ? 5 : 4];
+
       # $e->[1] represents the tag name
       # Skip sentences
       if ($use_tokenizer_sentence_splits && $e->[1] eq "s") {
-        if (defined $e->[$child_idx]) {
-          retr_info($depth+1, $e->[$child_idx]);
-        }
+        descend($depth+1, $children) if defined $children;
         next;
       }
 
@@ -504,13 +497,9 @@ sub retr_info {
 
 
       # Call function recursively
-      # do no recursion, if $e->[$child_idx] is not defined
+      # do no recursion, if $children is not defined
       # (because we have no array of child-nodes, e.g.: <back/>)
-      if (defined $e->[$child_idx]) {
-
-        # Recursion with array of child-nodes
-        retr_info($depth+1, $e->[$child_idx]);
-      }
+      descend($depth+1, $children) if defined $children;
 
 
       #~~~~~
@@ -813,7 +802,7 @@ Exploring the structure of $data ( = reference to below array ):
 
 [ 0: XML_READER_TYPE_DOCUMENT,
   1: ?
-  2: [ 0: [ 0: XML_READER_TYPE_ELEMENT                     <- start recursion with array '$data->[2]' (see retr_info( \$tree_data->[2] ))
+  2: [ 0: [ 0: XML_READER_TYPE_ELEMENT                     <- start recursion with array '$data->[2]' (see descend( \$tree_data->[2] ))
             1: 'node'
             2: ?
             3: HASH (attributes)
@@ -863,7 +852,7 @@ $data->[2]->[0]->[1]                                                    == 'node
 ref($data->[2]->[0]->[3])                                               == HASH  (=> ${$data->[2]->[0]->[3]}{a} == 'v')
 $data->[2]->[0]->[4]                                                    == 1 (line number)
 ref($data->[2]->[0]->[5])                                               == ARRAY (with 2 elements for 'node1' and 'node2')
-                                                                                   # child-nodes of actual node (see $child_idx)
+                                                                                   # child-nodes of actual node (see $children)
 
 ref($data->[2]->[0]->[5]->[0])                                          == ARRAY (with 6 elements)
 $data->[2]->[0]->[5]->[0]->[0]                                          == 1 (=> type == XML_READER_TYPE_ELEMENT)
@@ -888,7 +877,7 @@ $data->[2]->[0]->[5]->[0]->[5]->[2]->[0]                                == 3 (=>
 $data->[2]->[0]->[5]->[0]->[5]->[2]->[1]                                == ' text'
 
 
-retr_info() starts with the array reference ${$_[0]} (= \$tree_data->[2]), which corresponds to ${\$data->[2]} in the above example.
+descend() starts with the array reference ${$_[0]} (= \$tree_data->[2]), which corresponds to ${\$data->[2]} in the above example.
 Hence, the expression @{${$_[0]}} corresponds to @{${\$data->[2]}}, $e to ${${\$data->[2]}}[0] (= $data->[2]->[0]) and $e->[0] to
 ${${\$data->[2]}}[0]->[0] (= $data->[2]->[0]->[0]).
 
@@ -896,7 +885,7 @@ ${${\$data->[2]}}[0]->[0] (= $data->[2]->[0]->[0]).
 ## Notes on whitespace handling
 
 Every whitespace inside the processed text is 'significant' and recognized as a node of type 'XML_READER_TYPE_SIGNIFICANT_WHITESPACE'
-(see function 'retr_info()').
+(see function 'descend()').
 
 Definition of significant and insignificant whitespace
 (source: https://www.oracle.com/technical-resources/articles/wang-whitespace.html):
