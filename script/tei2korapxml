@@ -279,7 +279,7 @@ MAIN: while ( <$input_fh> ){
         %ws = ();
 
         # ~ recursion ~
-        retr_info(1, \$tree_data->[2]); # parse input data
+        retr_info(1, $tree_data->[2]); # parse input data
 
         if (DEBUG) {
           $log->debug("Writing (utf8-formatted) xml file $dir/${data_file}.xml");
@@ -454,7 +454,7 @@ sub retr_info {
   # ($_[0] is a reference to an array reference)
   # See notes on how 'XML::CompactTree::XS' works and
   # see 'NODE TYPES' in manpage of XML::LibXML::Reader
-  foreach $e (@{${$_[0]}}) {
+  foreach $e (@{$_[0]}) {
 
     # Element node
     if ($e->[0] == XML_READER_TYPE_ELEMENT) {
@@ -467,7 +467,7 @@ sub retr_info {
       # Skip sentences
       if ($use_tokenizer_sentence_splits && $e->[1] eq "s") {
         if (defined $e->[$child_idx]) {
-          retr_info($depth+1, \$e->[$child_idx]);
+          retr_info($depth+1, $e->[$child_idx]);
         }
         next;
       }
@@ -509,7 +509,7 @@ sub retr_info {
       if (defined $e->[$child_idx]) {
 
         # Recursion with array of child-nodes
-        retr_info($depth+1, \$e->[$child_idx]);
+        retr_info($depth+1, $e->[$child_idx]);
       }
 
 
