@@ -37,8 +37,19 @@ our $VERSION = '1.00';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
-# Set to 1 for minimal more debug output (no need to be parametrized)
-use constant DEBUG => $ENV{KORAPXMLTEI_DEBUG} // 0;
+use constant {
+  # Set to 1 for minimal more debug output (no need to be parametrized)
+  DEBUG => $ENV{KORAPXMLTEI_DEBUG} // 0,
+
+  # XCT_LINE_NUMBERS is only needed for debugging
+  # (see XML::CompactTree::XS)
+  XCT_PARAM => (
+    XCT_DOCUMENT_ROOT
+      | XCT_IGNORE_COMMENTS
+      | XCT_ATTRIBUTE_ARRAY
+      | ($ENV{KORAPXMLTEI_DEBUG} ? XCT_LINE_NUMBERS : 0)
+  )
+};
 
 # Parse options from the command line
 GetOptions(
@@ -74,7 +85,7 @@ GetOptions(
 );
 
 # Establish logger
-binmode(STDERR, ":encoding(UTF-8)");
+binmode(STDERR, ':encoding(UTF-8)');
 Log::Any::Adapter->set('Stderr', log_level => $log_level);
 
 $log->notice('Debugging is activated') if DEBUG;
@@ -89,9 +100,11 @@ my $_HEADER_TAG = 'idsHeader';
 # name of the tag containing all information stored in $_tokens_file
 my $_TOKENS_TAG = 'w';
 
-
 if ($use_tokenizer_sentence_splits && !$tokenizer_korap) {
-  die $log->fatal("Sentence splitting is currently only supported by KorAP tokenizer (use -tk to activate it");
+  die $log->fatal(
+    'Sentence splitting is currently only supported by KorAP tokenizer ' .
+      '(use -tk to activate it)'
+    );
 };
 
 my $ext_tok;
@@ -254,13 +267,7 @@ MAIN: while ( <$input_fh> ){
           huge => 1
         );
 
-        # See notes on whitespace handling
-        my $param = XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_ATTRIBUTE_ARRAY;
-
-        # XCT_LINE_NUMBERS is only needed for debugging
-        # (see XML::CompactTree::XS)
-        $param |= XCT_LINE_NUMBERS if DEBUG;
-        my $tree_data = XML::CompactTree::XS::readSubtreeToPerl($reader, $param);
+        my $tree_data = XML::CompactTree::XS::readSubtreeToPerl($reader, XCT_PARAM);
 
         # ~ whitespace related issue ~
         $add_one = 0;
