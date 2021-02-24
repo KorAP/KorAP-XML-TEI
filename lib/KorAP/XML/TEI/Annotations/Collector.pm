@@ -1,7 +1,6 @@
 package KorAP::XML::TEI::Annotations::Collector;
 use base 'KorAP::XML::TEI::Annotations';
 use KorAP::XML::TEI::Annotations::Annotation;
-use Encode qw(encode decode);
 use Log::Any '$log';
 use strict;
 use warnings;
@@ -88,13 +87,6 @@ sub to_string {
 # Overwrite non-applicable boundary method
 sub boundaries {
   $log->warn('Not supported');
-};
-
-
-# Write data to zip stream (as utf8)
-sub to_zip {
-  my ($self, $zip, $text_id, $param) = @_;
-  $zip->print(encode('UTF-8', $self->to_string($text_id, $param)));
 };
 
 

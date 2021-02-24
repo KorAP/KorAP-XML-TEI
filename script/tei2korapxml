@@ -262,10 +262,6 @@ MAIN: while ( <$input_fh> ){
         $param |= XCT_LINE_NUMBERS if DEBUG;
         my $tree_data = XML::CompactTree::XS::readSubtreeToPerl($reader, $param);
 
-        $structures->reset;
-
-        $tokens->reset unless $skip_inline_tokens;
-
         # ~ whitespace related issue ~
         $add_one = 0;
         %ws = ();
@@ -304,15 +300,12 @@ MAIN: while ( <$input_fh> ){
           $cons_tok->tokenize($data->data)->to_zip(
             $zipper->new_stream("$dir/$base_dir/" . $cons_tok->name . '.xml'),
             $text_id_esc
-          );
+          )->reset;
 
           $aggr_tok->tokenize($data->data)->to_zip(
             $zipper->new_stream("$dir/$base_dir/" . $aggr_tok->name . '.xml'),
             $text_id_esc
-          );
-
-          $aggr_tok->reset;
-          $cons_tok->reset;
+          )->reset;
         };
 
         # ~ write structures ~
@@ -321,7 +314,7 @@ MAIN: while ( <$input_fh> ){
             $zipper->new_stream("$dir/$_structure_dir/${_structure_file}.xml"),
             $text_id_esc,
             2 # = structure serialization
-          );
+          )->reset;
         };
 
         # ~ write tokens ~
@@ -330,7 +323,7 @@ MAIN: while ( <$input_fh> ){
             $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}.xml"),
             $text_id_esc,
             $_INLINE_ANNOT # Either 0 = tokens without inline or 1 = tokens with inline
-          );
+          )->reset;
         };
 
         # reinit.
