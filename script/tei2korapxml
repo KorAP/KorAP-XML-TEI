@@ -141,10 +141,11 @@ my $zipper = KorAP::XML::TEI::Zipper->new($root_dir);
 # ~~~ variables ~~~
 #
 
-my $dir = '';                                        # text     directory (below $root_dir)
+# text directory (below $root_dir)
+my $dir = '';
 
-# '$text_id_esc' = escaped version of $text_id
-my ($text_id, $text_id_esc);
+# Escaped version of text id
+my $text_id_esc;
 
 # these are only used inside recursive function 'retr_info'
 # value is set dependent on DEBUG - for extracting array of
@@ -420,11 +421,10 @@ MAIN: while ( <$input_fh> ){
 
         # Remember dir and sigles
         $dir         = $header->dir;
-        $text_id     = $header->id;
         $text_id_esc = $header->id_esc;
 
         # log output for seeing progression
-        $log->notice("$0: text_id=$text_id");
+        $log->notice("$0: text_id=$text_id_esc");
 
         # Reset counter for text lines
         # (needed for whitespace handling)
@@ -535,7 +535,7 @@ sub retr_info {
       # in case this fails, check input
       if (($from - 1) > $pos) {
         die $log->fatal(
-          "text_id='$text_id', " .
+          "text_id='$text_id_esc', " .
             'processing of structures: ' .
             "from-value ($from) is 2 or more greater " .
             "than to-value ($pos) => please check. Aborting"
