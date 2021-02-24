@@ -33,7 +33,7 @@ eval {
   1;
 };
 
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
@@ -53,8 +53,8 @@ use constant {
 
 # Parse options from the command line
 GetOptions(
-  "root|r=s"              => \(my $root_dir = '.'),
-  "input|i=s"             => \(my $input_fname = ''),
+  'root|r=s'              => \(my $root_dir    = '.'),
+  'input|i=s'             => \(my $input_fname = ''),
   'tokenizer-call|tc=s'   => \(my $tokenizer_call),
   'tokenizer-korap|tk'    => \(my $tokenizer_korap),
   'tokenizer-internal|ti' => \(my $tokenizer_intern),
@@ -62,11 +62,11 @@ GetOptions(
   'inline-tokens=s'       => \(my $inline_tokens = 'tokens#morpho'),
   'inline-structures=s'   => \(my $inline_structures = 'struct#structure'),
   'skip-inline-tokens'    => \(my $skip_inline_tokens = 0),
-  'base-foundry=s'        => \(my $base_dir = 'base'),
-  'data-file=s'           => \(my $data_file = 'data'),
+  'base-foundry=s'        => \(my $base_dir    = 'base'),
+  'data-file=s'           => \(my $data_file   = 'data'),
   'header-file=s'         => \(my $header_file = 'header'),
   'tokens-file=s'         => \(my $tokens_file = 'tokens'),
-  'log|l=s'               => \(my $log_level = 'notice'),
+  'log|l=s'               => \(my $log_level   = 'notice'),
   'help|h' => sub {
     pod2usage(
       -verbose => 99,
@@ -80,15 +80,16 @@ GetOptions(
       -verbose => 0,
       -msg => $VERSION_MSG,
       -output => '-'
-    )
+    );
   }
 );
+
 
 # Establish logger
 binmode(STDERR, ':encoding(UTF-8)');
 Log::Any::Adapter->set('Stderr', log_level => $log_level);
-
 $log->notice('Debugging is activated') if DEBUG;
+
 
 # tag (without attributes), which contains the primary text
 my $_TEXT_BODY = 'text';
@@ -100,6 +101,8 @@ my $_HEADER_TAG = 'idsHeader';
 # name of the tag containing all information stored in $_tokens_file
 my $_TOKENS_TAG = 'w';
 
+
+# Define tokenizers
 if ($use_tokenizer_sentence_splits && !$tokenizer_korap) {
   die $log->fatal(
     'Sentence splitting is currently only supported by KorAP tokenizer ' .
@@ -107,6 +110,7 @@ if ($use_tokenizer_sentence_splits && !$tokenizer_korap) {
     );
 };
 
+# External tokenization
 my $ext_tok;
 if ($tokenizer_call) {
   $ext_tok = KorAP::XML::TEI::Tokenizer::External->new($tokenizer_call);
@@ -115,18 +119,12 @@ if ($tokenizer_call) {
 elsif ($tokenizer_korap) {
   $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new($use_tokenizer_sentence_splits);
 };
-##
 
 
-#
-# ~~~ constants ~~~
-#
-
-
-## intern tokenization
+# Internal tokenization
 my $aggr_tok = KorAP::XML::TEI::Tokenizer::Aggressive->new;
 my $cons_tok = KorAP::XML::TEI::Tokenizer::Conservative->new;
-##
+
 
 # Name of the directory and the file containing all inline structure informations
 # except for $_TOKENS_TAG information
@@ -149,10 +147,6 @@ my $data = KorAP::XML::TEI::Data->new;
 # Initialize zipper
 my $zipper = KorAP::XML::TEI::Zipper->new($root_dir);
 
-
-#
-# ~~~ variables ~~~
-#
 
 # text directory (below $root_dir)
 my $dir = '';
@@ -187,12 +181,6 @@ my $text_line = 0;
 my %ws;
 
 
-#
-# ~~~ main ~~~
-#
-
-# ~ read input and write output (text by text) ~
-
 # Input file handle (default: stdin)
 my $input_fh = *STDIN;
 
@@ -207,10 +195,10 @@ binmode $input_fh;
 
 
 # Reading input document
-MAIN: while ( <$input_fh> ){
+MAIN: while (<$input_fh>) {
 
   # remove HTML (multi-line) comments (<!--...-->)
-  $_ = remove_xml_comments( $input_fh, $_ );
+  $_ = remove_xml_comments($input_fh, $_);
 
   # Set input encoding
   if (index($_, '<?xml') == 0 && $_ =~ /\sencoding=(['"])([^\1]+?)\1/) {
@@ -221,9 +209,8 @@ MAIN: while ( <$input_fh> ){
   $_ = decode($input_enc, $_);
   $_ = replace_entities($_);
 
-  # Start of Text body
-  if (index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$#){
-
+  # Start of text body
+  if (index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$#) {
     my $suffix = $2;
 
     if ($1 !~ /^\s*$/ || $suffix !~ /^\s*$/) {
@@ -239,7 +226,7 @@ MAIN: while ( <$input_fh> ){
     # Iterate over all lines in the text body
     while (<$input_fh>) {
 
-      $_ = remove_xml_comments( $input_fh, $_ );
+      $_ = remove_xml_comments($input_fh, $_);
       $_ = decode($input_enc, $_);
       $_ = replace_entities($_);
 
@@ -273,8 +260,8 @@ MAIN: while ( <$input_fh> ){
         $add_one = 0;
         %ws = ();
 
-        # ~ recursion ~
-        descend(1, $tree_data->[2]); # parse input data
+        # Recursively parse all children
+        descend(1, $tree_data->[2]);
 
         if (DEBUG) {
           $log->debug("Writing (utf8-formatted) xml file $dir/${data_file}.xml");
@@ -381,10 +368,11 @@ MAIN: while ( <$input_fh> ){
       # add line to buffer
       $text_buffer .= $_;
     };
+  }
 
-  } elsif (m#^(.*)(\<${_HEADER_TAG}[^>]*?type=["'].*)$#) {
+  # Start of header section
+  elsif (m#^(.*)(\<${_HEADER_TAG}[^>]*?type=["'].*)$#) {
 
-    # ~ start of header ~
     my $content = "$2\n";
 
     if ($1 !~ /^\s*$/) {
@@ -447,28 +435,29 @@ sub descend {
   # see 'NODE TYPES' in manpage of XML::LibXML::Reader
   foreach $e (@{$_[0]}) {
 
+    # $e->[1] represents the tag name of an element node
+    # or the primary data of a text or ws node
+    my $node_info = $e->[1];
+
     # Element node
     if ($e->[0] == XML_READER_TYPE_ELEMENT) {
 
-      #~~~~
-      # from here: tag-node (opening)
-      #~~~~
+      # Deal with opening tag
 
       # Get the child index depending on the debug state.
       # This is likely to be optimized away by the compiler.
       my $children = $e->[DEBUG ? 5 : 4];
 
-      # $e->[1] represents the tag name
       # Skip sentences
-      if ($use_tokenizer_sentence_splits && $e->[1] eq "s") {
-        descend($depth+1, $children) if defined $children;
+      if ($use_tokenizer_sentence_splits && $node_info eq 's') {
+        descend($depth + 1, $children) if defined $children;
         next;
-      }
+      };
 
-      my $anno = $structures->add_new_annotation($e->[1]);
+      my $anno = $structures->add_new_annotation($node_info);
 
       # Add element also to token list
-      if (!$skip_inline_tokens && $e->[1] eq $_TOKENS_TAG) {
+      if (!$skip_inline_tokens && $node_info eq $_TOKENS_TAG) {
         $tokens->add_annotation($anno);
       };
 
@@ -476,11 +465,10 @@ sub descend {
       if (defined $e->[3]) {
 
         # with 'XCT_ATTRIBUTE_ARRAY', $node->[3] is an array reference of the form
-        #  [ name1, value1, name2, value2, ....] of attribute names and corresponding values.
-        # note: arrays are faster (see: http://makepp.sourceforge.net/2.0/perl_performance.html)
+        # [ name1, value1, name2, value2, ....] of attribute names and corresponding values.
+        # NOTE:
+        #   arrays are faster (see: http://makepp.sourceforge.net/2.0/perl_performance.html)
         for (local $_ = 0; $_ < @{$e->[3]}; $_ += 2) {
-
-          # '$_' references the 'key' and '$_+1' the 'value'
           $anno->add_attribute(
             @{$e->[3]}[$_, $_ + 1]
           );
@@ -491,23 +479,17 @@ sub descend {
       $anno->set_from($data->position + $add_one);
 
 
-      #~~~~
-      # until here: tag-node (opening)
-      #~~~~
-
-
       # Call function recursively
       # do no recursion, if $children is not defined
       # (because we have no array of child-nodes, e.g.: <back/>)
       descend($depth+1, $children) if defined $children;
 
 
-      #~~~~~
-      # from here: tag-node (closing)
-      #~~~~~
+      # Deal with closing tag
 
-      # NOTE: use $pos, because the offsets are _between_ the characters
-      # (e.g.: word = 'Hello' => from = 0 (before 'H'), to = 5 (after 'o'))
+      # NOTE:
+      #   use $pos, because the offsets are _between_ the characters
+      #   (e.g.: word = 'Hello' => from = 0 (before 'H'), to = 5 (after 'o'))
       my $pos = $data->position;
 
       # Handle structures and tokens
@@ -517,7 +499,7 @@ sub descend {
       # ~ whitespace related issue ~
       if ($from > 0 && not exists $ws{$from - 1}) {
 
-        # ~ previous node was a text-node ~
+        # Previous node was a text-node
         $anno->set_from($from - 1);
       };
 
@@ -546,18 +528,13 @@ sub descend {
 
       # Clean up whitespace
       delete $ws{$from  - 1} if $from > 0 && exists $ws{$from - 1};
-
-
-      #~~~~
-      # until here: tag-node (closing)
-      #~~~~
     }
 
     # Text node
-    elsif ($e->[0] == XML_READER_TYPE_TEXT){
+    elsif ($e->[0] == XML_READER_TYPE_TEXT) {
 
       $add_one = 1;
-      $data->append($e->[1]);
+      $data->append($node_info);
     }
 
     # Whitespace node
@@ -569,7 +546,7 @@ sub descend {
       $ws{$data->position}++;
 
       $add_one = 0;
-      $data->append($e->[1]);
+      $data->append($node_info);
     }
 
     # not yet handled type

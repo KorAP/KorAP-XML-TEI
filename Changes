@@ -3,12 +3,15 @@
         - Introduce --base-foundry, --data-file, and --header-file parameters
         - Introduce --tokens-file parameter
         - Introduce --skip-inline-tokens parameter
+        - Minor cleanups and improvements
 
 1.00 2021-02-18 Release
-        - -s option added that uses sentence boundaries provided by the KorAP tokenizer (-tk)
+        - -s option added that uses sentence boundaries
+          provided by the KorAP tokenizer (-tk)
         - Tokenizer invocation comments removed from KorAP XML output
         - Indentation of </span> tags fixed
-        - Character entities used in DeReKo are automatically replaced by their corresponding characters
+        - Character entities used in DeReKo are automatically
+          replaced by their corresponding characters
         - Resources defined in Makefile
         - Fixed possible IO deadlock with KorAP tokenizer
         - Simplified debugging by combining with X::C::T line numbers
