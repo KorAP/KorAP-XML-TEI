@@ -56,8 +56,9 @@ sub to_string {
 
 # Write data to zip stream
 sub to_zip {
-  my ($self, $zip, $text_id) = @_;
-  $zip->print(encode('UTF-8', $self->to_string($text_id)));
+  my ($self, $zip, $text_id, $param) = @_;
+  $zip->print(encode('UTF-8', $self->to_string($text_id, $param)));
+  return $self;
 };
 
 

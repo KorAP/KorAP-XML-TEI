@@ -93,6 +93,7 @@ sub to_zip {
   # which are counted as 1 (search for '&amp;' in data.xml and see
   # corresponding indices in $_tokens_file)
   $zip->print(encode('UTF-8', $self->to_string($text_id)));
+  return $self;
 };
 
 

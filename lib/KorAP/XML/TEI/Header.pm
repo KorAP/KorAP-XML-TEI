@@ -168,6 +168,7 @@ HEADER
 sub to_zip {
   my ($self, $zip) = @_;
   $zip->print(encode('UTF-8', $self->to_string));
+  return $self;
 };
 
 
