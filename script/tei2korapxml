@@ -11,9 +11,6 @@ use File::Basename qw(dirname);
 
 use Encode qw(decode);
 
-use XML::CompactTree::XS;
-use XML::LibXML::Reader;
-
 use FindBin;
 BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
@@ -27,6 +24,7 @@ use KorAP::XML::TEI::Annotations::Collector;
 use KorAP::XML::TEI::Data;
 use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
+use KorAP::XML::TEI::Inline;
 
 eval {
   require KorAP::XML::TEI::Tokenizer::KorAP;
@@ -39,16 +37,7 @@ our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
 use constant {
   # Set to 1 for minimal more debug output (no need to be parametrized)
-  DEBUG => $ENV{KORAPXMLTEI_DEBUG} // 0,
-
-  # XCT_LINE_NUMBERS is only needed for debugging
-  # (see XML::CompactTree::XS)
-  XCT_PARAM => (
-    XCT_DOCUMENT_ROOT
-      | XCT_IGNORE_COMMENTS
-      | XCT_ATTRIBUTE_ARRAY
-      | ($ENV{KORAPXMLTEI_DEBUG} ? XCT_LINE_NUMBERS : 0)
-  )
+  DEBUG => $ENV{KORAPXMLTEI_DEBUG} // 0
 };
 
 # Parse options from the command line
@@ -98,9 +87,6 @@ my $_TEXT_BODY = 'text';
 
 # TODO: IDS-specific (and redundant)
 my $_HEADER_TAG = 'idsHeader';
-
-# name of the tag containing all information stored in $_tokens_file
-my $_TOKENS_TAG = 'w';
 
 
 # Define tokenizers
@@ -166,27 +152,11 @@ my $dir = '';
 # Escaped version of text id
 my $text_id_esc;
 
-# element from $tree_data
-my $e;
-
 # Default encoding of the text
 my $input_enc = 'UTF-8';
 
-# variables for handling ~ whitespace related issue ~
-# (it is sometimes necessary, to correct the from-values for some tags)
-my $add_one;
-
 # text line (needed for whitespace handling)
 my $text_line = 0;
-
-# hash for indices of whitespace-nodes
-# (needed to recorrect from-values)
-# IDEA:
-#   when closing element, check if it's from-index minus 1 refers to a whitespace-node
-#  (means: 'from-index - 1' is a key in %ws).
-#  if this is _not_ the case, then the from-value is one
-#  to high => correct it by substracting 1
-my %ws;
 
 
 # Input file handle (default: stdin)
@@ -200,6 +170,16 @@ if ($input_fname ne '') {
 
 # Prevents segfaulting (see notes on segfault prevention)
 binmode $input_fh;
+
+
+# Create inline parser object
+my $inline = KorAP::XML::TEI::Inline->new(
+  data               => $data,
+  tokens             => $tokens,
+  structures         => $structures,
+  skip_inline_tokens => $skip_inline_tokens,
+  skip_inline_tags   => \%skip_inline_tags
+);
 
 
 # Reading input document
@@ -257,19 +237,8 @@ MAIN: while (<$input_fh>) {
           next MAIN;
         };
 
-        my $reader = XML::LibXML::Reader->new(
-          string => "<text>$text_buffer</text>",
-          huge => 1
-        );
-
-        my $tree_data = XML::CompactTree::XS::readSubtreeToPerl($reader, XCT_PARAM);
-
-        # ~ whitespace related issue ~
-        $add_one = 0;
-        %ws = ();
-
-        # Recursively parse all children
-        descend(1, $tree_data->[2]);
+        # Parse inline structure
+        $inline->parse($text_id_esc, \$text_buffer);
 
         if (DEBUG) {
           $log->debug("Writing (utf8-formatted) xml file $dir/${data_file}.xml");
@@ -426,144 +395,6 @@ $zipper->close;
 $ext_tok->close if $ext_tok;
 
 close $input_fh;
-
-exit(0);
-
-
-# Recursively called function to handle XML tree data
-sub descend {
-
-  # recursion level
-  # (1 = topmost level inside descend() = should always be level of tag $_TEXT_BODY)
-  my $depth = shift;
-
-  # Iteration through all array elements
-  # ($_[0] is a reference to an array reference)
-  # See notes on how 'XML::CompactTree::XS' works and
-  # see 'NODE TYPES' in manpage of XML::LibXML::Reader
-  foreach $e (@{$_[0]}) {
-
-    # $e->[1] represents the tag name of an element node
-    # or the primary data of a text or ws node
-    my $node_info = $e->[1];
-
-    # Element node
-    if ($e->[0] == XML_READER_TYPE_ELEMENT) {
-
-      # Deal with opening tag
-
-      # Get the child index depending on the debug state.
-      # This is likely to be optimized away by the compiler.
-      my $children = $e->[DEBUG ? 5 : 4];
-
-      # Skip certain tags
-      if ($skip_inline_tags{$node_info}) {
-        descend($depth + 1, $children) if defined $children;
-        next;
-      };
-
-      my $anno = $structures->add_new_annotation($node_info);
-
-      # Add element also to token list
-      if (!$skip_inline_tokens && $node_info eq $_TOKENS_TAG) {
-        $tokens->add_annotation($anno);
-      };
-
-      # Handle attributes (if attributes exist)
-      if (defined $e->[3]) {
-
-        # with 'XCT_ATTRIBUTE_ARRAY', $node->[3] is an array reference of the form
-        # [ name1, value1, name2, value2, ....] of attribute names and corresponding values.
-        # NOTE:
-        #   arrays are faster (see: http://makepp.sourceforge.net/2.0/perl_performance.html)
-        for (local $_ = 0; $_ < @{$e->[3]}; $_ += 2) {
-          $anno->add_attribute(
-            @{$e->[3]}[$_, $_ + 1]
-          );
-        };
-      };
-
-      # this is, where a normal tag or tokens-tag ($_TOKENS_TAG) starts
-      $anno->set_from($data->position + $add_one);
-
-
-      # Call function recursively
-      # do no recursion, if $children is not defined
-      # (because we have no array of child-nodes, e.g.: <back/>)
-      descend($depth+1, $children) if defined $children;
-
-
-      # Deal with closing tag
-
-      # NOTE:
-      #   use $pos, because the offsets are _between_ the characters
-      #   (e.g.: word = 'Hello' => from = 0 (before 'H'), to = 5 (after 'o'))
-      my $pos = $data->position;
-
-      # Handle structures and tokens
-
-      my $from = $anno->from;
-
-      # ~ whitespace related issue ~
-      if ($from > 0 && not exists $ws{$from - 1}) {
-
-        # Previous node was a text-node
-        $anno->set_from($from - 1);
-      };
-
-      # in case this fails, check input
-      if (($from - 1) > $pos) {
-        die $log->fatal(
-          "text_id='$text_id_esc', " .
-            'processing of structures: ' .
-            "from-value ($from) is 2 or more greater " .
-            "than to-value ($pos) => please check. Aborting"
-          );
-      };
-
-      # TODO:
-      #   find example for which this case applies
-      #   maybe this is not necessary anymore, because the
-      #   above recorrection of the from-value suffices
-      #
-      # TODO:
-      #   check, if it's better to remove this line and
-      #   change above check to 'if ($from - 1) >= $pos;
-      #   do testing with bigger corpus excerpt (wikipedia?)
-      $anno->set_from($pos) if $from == $pos + 1;
-      $anno->set_to($pos);
-      $anno->set_level($depth);
-
-      # Clean up whitespace
-      delete $ws{$from  - 1} if $from > 0 && exists $ws{$from - 1};
-    }
-
-    # Text node
-    elsif ($e->[0] == XML_READER_TYPE_TEXT) {
-
-      $add_one = 1;
-      $data->append($node_info);
-    }
-
-    # Whitespace node
-    # (See notes on whitespace handling - regarding XML_READER_TYPE_SIGNIFICANT_WHITESPACE)
-    elsif ($e->[0] == XML_READER_TYPE_SIGNIFICANT_WHITESPACE) {
-
-      # state, that this from-index belongs to a whitespace-node
-      #  ('++' doesn't mean a thing here - maybe it could be used for a consistency check)
-      $ws{$data->position}++;
-
-      $add_one = 0;
-      $data->append($node_info);
-    }
-
-    # not yet handled type
-    else {
-
-      die $log->fatal('Not yet handled type ($e->[0]=' . $e->[0] . ') ... => Aborting');
-    };
-  };
-};
 
 
 __END__
