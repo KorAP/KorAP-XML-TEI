@@ -117,7 +117,7 @@ approach.
 Boolean flag indicating that inline tokens should not
 be processed. Defaults to false (meaning inline tokens will be processed).
 
-=item B<--skip-inline-tags>
+=item B<--skip-inline-tags> <tags>
 
 Expects a comma-separated list of tags to be ignored when the structure
 is parsed. Content of these tags however will be processed.
