@@ -5,6 +5,7 @@
         - Introduce --skip-inline-tokens parameter
         - Minor cleanups and improvements
         - Introduce --skip-inline-tags parameter
+        - Introduce KorAP::XML::TEI::Inline class
 
 1.00 2021-02-18 Release
         - -s option added that uses sentence boundaries
