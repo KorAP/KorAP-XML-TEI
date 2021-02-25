@@ -504,13 +504,6 @@ sub descend {
 
       my $from = $anno->from;
 
-      # ~ whitespace related issue ~
-      if ($from > 0 && not exists $ws{$from - 1}) {
-
-        # Previous node was a text-node
-        $anno->set_from($from - 1);
-      };
-
       # in case this fails, check input
       if (($from - 1) > $pos) {
         die $log->fatal(
@@ -525,17 +518,30 @@ sub descend {
       #   find example for which this case applies
       #   maybe this is not necessary anymore, because the
       #   above recorrection of the from-value suffices
-      #
-      # TODO:
-      #   check, if it's better to remove this line and
-      #   change above check to 'if ($from - 1) >= $pos;
-      #   do testing with bigger corpus excerpt (wikipedia?)
-      $anno->set_from($pos) if $from == $pos + 1;
+
+      # ~ whitespace related issue ~
+      if ($from > 0) {
+
+        if (exists $ws{$from - 1}) {
+          # Clean up whitespace
+          delete $ws{$from  - 1};
+        }
+        else {
+          # Previous node was a text-node
+          $anno->set_from($from - 1);
+        };
+
+        # TODO:
+        #   check, if it's better to remove this line and
+        #   change above check to 'if ($from - 1) >= $pos;
+        #   do testing with bigger corpus excerpt (wikipedia?)
+        if ($from == $pos + 1) {
+          $anno->set_from($pos);
+        };
+      };
+
       $anno->set_to($pos);
       $anno->set_level($depth);
-
-      # Clean up whitespace
-      delete $ws{$from  - 1} if $from > 0 && exists $ws{$from - 1};
     }
 
     # Text node
