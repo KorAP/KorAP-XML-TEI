@@ -43,10 +43,10 @@ sub to_string {
   # Correct tokens
   # TODO:
   #   Check if this is also necessary for structures
-  if ($param != STRUCTURE) {
+  if ($param != STRUCTURE && !$self->empty) {
     # correct last from-value (if the 'second to last'
     # from-value refers to an s-tag, then the last from-value
-    # is one to big - see retr_info())
+    # is one to big - see _descend())
     my $last_token = $_[0]->[$#{$_[0]}];
     if ($last_token->from == $last_token->to + 1) {
       # TODO:
