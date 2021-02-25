@@ -157,16 +157,12 @@ my $text_id_esc;
 # element from $tree_data
 my $e;
 
-# Keeping track of the current positions in the text
-my $pos;
-
 # Default encoding of the text
 my $input_enc = 'UTF-8';
 
 # variables for handling ~ whitespace related issue ~
 # (it is sometimes necessary, to correct the from-values for some tags)
 my $add_one;
-my $from = 0;
 
 # text line (needed for whitespace handling)
 my $text_line = 0;
@@ -231,7 +227,7 @@ MAIN: while (<$input_fh>) {
       $_ = replace_entities($_);
 
       # End of text body
-      if (($pos = index($_, '</' . $_TEXT_BODY)) >= 0) {
+      if ((my $pos = index($_, '</' . $_TEXT_BODY)) >= 0) {
 
         # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files
 
@@ -494,7 +490,7 @@ sub descend {
 
       # Handle structures and tokens
 
-      $from = $anno->from;
+      my $from = $anno->from;
 
       # ~ whitespace related issue ~
       if ($from > 0 && not exists $ws{$from - 1}) {
