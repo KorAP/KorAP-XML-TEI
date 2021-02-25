@@ -420,6 +420,54 @@ subtest 'Check structure parsing with defined foundry and folder' => sub {
     ;
 };
 
+subtest 'Check structure parsing with skipped tags' => sub {
+  # Load example file
+  my $file = catfile($f, 'data', 'goe_sample.i5.xml');
+
+  my $t = test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '-ti'
+  )->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
+    ->file_exists('GOE/AGA/00000/struct/structure.xml', 'Structure generated')
+    ->unzip_xml('GOE/AGA/00000/struct/structure.xml')
+    ->text_is('layer spanList span fs f', 'text')
+    ->text_is('#s5 fs f[name=name]','head')
+    ->text_is('#s6 fs f[name=name]','s')
+    ->text_is('#s7 fs f[name=name]','head')
+    ->text_is('#s8 fs f[name=name]','s')
+    ->text_is('#s9 fs f[name=name]','quote')
+    ->text_is('#s10 fs f[name=name]','s')
+    ;
+
+  $t = test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '-ti --skip-inline-tags=head'
+  )->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
+    ->file_exists('GOE/AGA/00000/struct/structure.xml', 'Structure generated')
+    ->unzip_xml('GOE/AGA/00000/struct/structure.xml')
+    ->text_is('layer spanList span fs f', 'text')
+    ->text_is('#s5 fs f[name=name]','s')
+    ->text_is('#s6 fs f[name=name]','s')
+    ->text_is('#s7 fs f[name=name]','quote')
+    ->text_is('#s8 fs f[name=name]','s')
+    ;
+
+  $t = test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '-ti --skip-inline-tags=head,quote'
+  )->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
+    ->file_exists('GOE/AGA/00000/struct/structure.xml', 'Structure generated')
+    ->unzip_xml('GOE/AGA/00000/struct/structure.xml')
+    ->text_is('layer spanList span fs f', 'text')
+    ->text_is('#s5 fs f[name=name]','s')
+    ->text_is('#s6 fs f[name=name]','s')
+    ->text_is('#s7 fs f[name=name]','s')
+    ;
+};
+
 
 subtest 'Check parsing but skip inline tokens' => sub {
   # Load example file

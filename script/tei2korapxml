@@ -62,6 +62,7 @@ GetOptions(
   'inline-tokens=s'       => \(my $inline_tokens = 'tokens#morpho'),
   'inline-structures=s'   => \(my $inline_structures = 'struct#structure'),
   'skip-inline-tokens'    => \(my $skip_inline_tokens = 0),
+  'skip-inline-tags=s'    => \(my $skip_inline_tags_str = ''),
   'base-foundry=s'        => \(my $base_dir    = 'base'),
   'data-file=s'           => \(my $data_file   = 'data'),
   'header-file=s'         => \(my $header_file = 'header'),
@@ -110,6 +111,14 @@ if ($use_tokenizer_sentence_splits && !$tokenizer_korap) {
     );
 };
 
+# Remember to skip certain inline tags
+my %skip_inline_tags = ();
+if ($skip_inline_tags_str) {
+  foreach (split /\s*,\s*/, $skip_inline_tags_str) {
+    $skip_inline_tags{$_} = 1;
+  };
+};
+
 # External tokenization
 my $ext_tok;
 if ($tokenizer_call) {
@@ -118,6 +127,9 @@ if ($tokenizer_call) {
 
 elsif ($tokenizer_korap) {
   $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new($use_tokenizer_sentence_splits);
+  if ($use_tokenizer_sentence_splits) {
+    $skip_inline_tags{s} = 1;
+  };
 };
 
 
@@ -448,8 +460,8 @@ sub descend {
       # This is likely to be optimized away by the compiler.
       my $children = $e->[DEBUG ? 5 : 4];
 
-      # Skip sentences
-      if ($use_tokenizer_sentence_splits && $node_info eq 's') {
+      # Skip certain tags
+      if ($skip_inline_tags{$node_info}) {
         descend($depth + 1, $children) if defined $children;
         next;
       };
@@ -678,6 +690,11 @@ approach.
 
 Boolean flag indicating that inline tokens should not
 be processed. Defaults to false (meaning inline tokens will be processed).
+
+=item B<--skip-inline-tags>
+
+Expects a comma-separated list of tags to be ignored when the structure
+is parsed. Content of these tags however will be processed.
 
 =item B<--inline-tokens> <foundry>#[<file>]
 
