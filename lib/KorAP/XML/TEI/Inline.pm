@@ -386,41 +386,6 @@ When modifiying the previous example (see: Notes on how 'XML::CompactTree::XS' w
 echo '<node a="v"><node1>some <n/> text</node1> <node2>more-text</node2></node>' | perl -e 'use XML::CompactTree::XS; use XML::LibXML::Reader; $reader = XML::LibXML::Reader->new(IO => STDIN); $data = XML::CompactTree::XS::readSubtreeToPerl( $reader, XCT_DOCUMENT_ROOT | XCT_IGNORE_COMMENTS | XCT_LINE_NUMBERS ); print "node=\x27".$data->[2]->[0]->[5]->[1]->[1]."\x27, type=".$data->[2]->[0]->[5]->[1]->[0]."\n"'
 
 
-Example: '... <head type="main"><s>Campagne in Frankreich</s></head><head type="sub"> <s>1792</s> ...'
-
-Two text-nodes should normally be separated by a blank. In the above example, that would be the 2 text-nodes
- 'Campagne in Frankreich' and '1792', which are separated by the whitespace-node ' ' (see [2]).
-
-The text-node 'Campagne in Frankreich' leads to the setting of '$add_one' to 1, so that when opening the 2nd 'head'-tag,
- it's from-index gets set to the correct start-index of '1792' (and not to the start-index of the whitespace-node ' ').
-
-The assumption here is, that in most cases there _is_ a whitespace node between 2 text-nodes. The below code fragment
- enables a way, to check, if this really _was_ the case for the last 2 'non-tag'-nodes, when closing a tag:
-
-When a whitespace-node is read, its from-index is stored as a hash-key (in %ws), to state that it belongs to a ws-node.
- So when closing a tag, it can be checked, if the previous 'non-tag'-node (text or whitespace), which is the one before
- the last read 'non-tag'-node, was a actually _not_ a ws-node, but instead a text-node. In that case, the from-value of
- the last read 'non-tag'-node has to be corrected (see [1]),
-
-For whitespace-nodes $add_one is set to 0, so when opening the next tag (in the above example the 2nd 's'-tag), no
- additional 1 is added (because this was already done by the whitespace-node itself when incrementing the variable $pos).
-
-[1]
-Now, what happens, when 2 text-nodes are _not_ seperated by a whitespace-node (e.g.: <w>Augen<c>,</c></w>)?
- In this case, the falsely increased from-value has to be decreased again by 1 when closing the enclosing tag
- (see above code fragment '... not exists $ws{ $from - 1 } ...').
-
-[2]
-Comparing the 2 examples '<w>fu</w> <w>bar</w>' and '<w>fu</w><w> </w><w>bar</w>', is ' ' in both cases handled as a
- whitespace-node (XML_READER_TYPE_SIGNIFICANT_WHITESPACE).
-
-The from-index of the 2nd w-tag in the second example refers to 'bar', which may not have been the intention
- (even though '<w> </w>' doesn't make a lot of sense). TODO: could this be a bug?
-
-Empty tags also cling to the next text-token - e.g. in '<w>tok1</w> <w>tok2</w><a><b/></a> <w>tok3</w>' are the from-
- and to-indizes for the tags 'a' and 'b' both 12, which is the start-index of the token 'tok3'.
-
-
 ## Notes on whitespace fixing
 
 The idea for the below code fragment was to fix (recreate) missing whitespace in a poorly created corpus, in which linebreaks where inserted
