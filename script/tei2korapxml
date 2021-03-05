@@ -38,6 +38,10 @@ use constant {
   DEBUG => $ENV{KORAPXMLTEI_DEBUG} // 0
 };
 
+if ($ENV{KORAPXMLTEI_INLINE}) {
+  warn 'KORAPXMLTEI_INLINE is deprecated in favor of --skip-inline-token-annotations';
+};
+
 # Parse options from the command line
 GetOptions(
   'root|r=s'              => \(my $root_dir    = '.'),
@@ -49,6 +53,8 @@ GetOptions(
   'inline-tokens=s'       => \(my $inline_tokens = 'tokens#morpho'),
   'inline-structures=s'   => \(my $inline_structures = 'struct#structure'),
   'skip-inline-tokens'    => \(my $skip_inline_tokens = 0),
+  'skip-inline-token-annotations' => \(
+    my $skip_inline_token_annotations = ($ENV{KORAPXMLTEI_INLINE} ? 0 : 1)),
   'skip-inline-tags=s'    => \(my $skip_inline_tags_str = ''),
   'base-foundry=s'        => \(my $base_dir    = 'base'),
   'data-file=s'           => \(my $data_file   = 'data'),
@@ -129,9 +135,6 @@ my ($_structure_dir, $_structure_file) = split '#', $inline_structures . '#struc
 # Name of the directory and the file containing all inline token informations
 # i.e. tokens of the $_TOKENS_TAG, if $_TOKENS_PROC is set
 my ($_tokens_dir, $_tokens_file) = split '#', $inline_tokens . '#morpho';
-
-# Handling inline annotations (inside $_TOKENS_TAG)
-my $_INLINE_ANNOT = $ENV{KORAPXMLTEI_INLINE} ? 1 : 0;
 
 # Initialize zipper
 my $zipper = KorAP::XML::TEI::Zipper->new($root_dir);
@@ -282,7 +285,8 @@ MAIN: while (<$input_fh>) {
           $inline->tokens->to_zip(
             $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}.xml"),
             $text_id_esc,
-            $_INLINE_ANNOT # Either 0 = tokens without inline or 1 = tokens with inline
+            # Either 0 = tokens without inline or 1 = tokens with inline
+            !$skip_inline_token_annotations
           );
         };
 
@@ -504,6 +508,12 @@ approach.
 Boolean flag indicating that inline tokens should not
 be processed. Defaults to false (meaning inline tokens will be processed).
 
+=item B<--skip-inline-token-annotations>
+
+Boolean flag indicating that inline token annotations should not
+be processed. Defaults to true (meaning inline token annotations
+won't be processed).
+
 =item B<--skip-inline-tags> <tags>
 
 Expects a comma-separated list of tags to be ignored when the structure
@@ -567,11 +577,6 @@ Loglevel for I<Log::Any>. Defaults to C<notice>.
 =item B<KORAPXMLTEI_DEBUG>
 
 Activate minimal debugging.
-Defaults to C<false>.
-
-=item B<KORAPXMLTEI_INLINE>
-
-Process inline annotations, if present.
 Defaults to C<false>.
 
 =back

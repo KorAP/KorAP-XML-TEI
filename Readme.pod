@@ -117,6 +117,12 @@ approach.
 Boolean flag indicating that inline tokens should not
 be processed. Defaults to false (meaning inline tokens will be processed).
 
+=item B<--skip-inline-token-annotations>
+
+Boolean flag indicating that inline token annotations should not
+be processed. Defaults to true (meaning inline token annotations
+won't be processed).
+
 =item B<--skip-inline-tags> <tags>
 
 Expects a comma-separated list of tags to be ignored when the structure
@@ -180,11 +186,6 @@ Loglevel for I<Log::Any>. Defaults to C<notice>.
 =item B<KORAPXMLTEI_DEBUG>
 
 Activate minimal debugging.
-Defaults to C<false>.
-
-=item B<KORAPXMLTEI_INLINE>
-
-Process inline annotations, if present.
 Defaults to C<false>.
 
 =back

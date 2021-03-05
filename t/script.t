@@ -506,6 +506,7 @@ subtest 'Check Inline annotations' => sub {
     tmp => 'script_tagged'
   )
     ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
+    ->stderr_like(qr!KORAPXMLTEI_INLINE is deprecated!)
 
     # Check zip using xml loy
     ->unzip_xml('GOE/AGA/00000/tokens/morpho.xml')
@@ -584,11 +585,11 @@ subtest 'Check Inline annotations with defined foundry and folder' => sub {
 
   my $t = test_tei2korapxml(
     file => $file,
-    env => 'KORAPXMLTEI_INLINE=1',
     tmp => 'script_tagged',
-    param => '--inline-tokens=myfoundry#myfile'
+    param => '--inline-tokens=myfoundry#myfile --skip-inline-token-annotations=0'
   )
     ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
+    ->stderr_unlike(qr!KORAPXMLTEI_INLINE is deprecated!)
 
     ->file_exists_not('GOE/AGA/00000/tokens/morpho.xml', 'Morpho not generated')
 
@@ -604,9 +605,8 @@ subtest 'Check Inline annotations with defined foundry and folder' => sub {
 
   $t = test_tei2korapxml(
     file => $file,
-    env => 'KORAPXMLTEI_INLINE=1',
     tmp => 'script_tagged',
-    param => '--inline-tokens=myfoundry'
+    param => '--inline-tokens=myfoundry --skip-inline-token-annotations=0'
   )
     ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
 
@@ -632,14 +632,14 @@ subtest 'Check Inline annotations with untagged file' => sub {
 
   # Generate zip file (unportable!)
   stderr_like(
-    sub { `cat '$file' | KORAPXMLTEI_INLINE=1 perl '$script' > '$outzip'` },
+    sub { `cat '$file' | perl '$script' --skip-token-inline-annotations=0 > '$outzip'` },
     qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!,
     'Processing 1'
   );
 
   # TODO: there should be a better way to test this
   stderr_unlike(
-    sub { `cat '$file' | KORAPXMLTEI_INLINE=1 perl '$script' > '$outzip'` },
+    sub { `cat '$file' | perl '$script' --skip-token-inline-annotations=0 > '$outzip'` },
     qr!.*undefined value.*!,
     'Processing 2'
   );
@@ -666,8 +666,8 @@ subtest 'Check input encoding' => sub {
   # Load example file
   test_tei2korapxml(
     file => catfile($f, 'data', 'goe_sample.i5.xml'),
-    env => 'KORAPXMLTEI_INLINE=1',
-    tmp => 'script_utf8_enc'
+    tmp => 'script_utf8_enc',
+    param => '--skip-inline-token-annotations=0',
   )
     ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
     ->unzip_xml('GOE/AGA/00000/data.xml')
@@ -677,7 +677,7 @@ subtest 'Check input encoding' => sub {
 
   test_tei2korapxml(
     file => catfile($f, 'data', 'goe_sample.i5.iso.xml'),
-    env => 'KORAPXMLTEI_INLINE=1',
+    param => '--skip-inline-token-annotations=0',
     tmp => 'script_iso_enc'
   )
     ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
