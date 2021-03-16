@@ -33,6 +33,42 @@
       "message": "And is it common to not test dependencies? I think this is quite helpful (e.g. to find dependencies that are no longer maintained - or that require Perl version updates).",
       "revId": "7a09c15b952801588b569d065baf3b3e7fb95097",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "44a17c83_e89f1b40",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2021-03-16T14:45:48Z",
+      "side": 1,
+      "message": "Ah, for some reason I thought it\u0027s not on cpan",
+      "parentUuid": "42d02829_9a3a8ee6",
+      "revId": "7a09c15b952801588b569d065baf3b3e7fb95097",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "95965199_a8bf8bf9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2021-03-16T14:45:48Z",
+      "side": 1,
+      "message": "Right, I had just copied this from your Kalamar CI script https://github.com/KorAP/Kalamar/blob/83209f7ed414519b42b4a63c5bbf99d1f097b3c1/.github/workflows/linux-perl.yml#L30",
+      "parentUuid": "c3bbef56_b2f790e4",
+      "revId": "7a09c15b952801588b569d065baf3b3e7fb95097",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
