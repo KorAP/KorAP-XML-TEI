@@ -28,10 +28,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: perl -V
         run: perl -V
-      - name: cpanm -v
-        run: cpanm -v
+      - name: Install libxml
+        run: sudo apt-get install libxml2-dev
       - name: Install dependencies
-        run: cpanm -n --installdeps .
+        run: cpanm -v --installdeps .
       - name: Install
         run: |
           perl Makefile.PL
