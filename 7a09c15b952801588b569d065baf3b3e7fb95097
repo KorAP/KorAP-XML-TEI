@@ -16,6 +16,23 @@
       "message": "Why is XML::Loy separated?",
       "revId": "7a09c15b952801588b569d065baf3b3e7fb95097",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c3bbef56_b2f790e4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2021-03-16T14:32:28Z",
+      "side": 1,
+      "message": "And is it common to not test dependencies? I think this is quite helpful (e.g. to find dependencies that are no longer maintained - or that require Perl version updates).",
+      "revId": "7a09c15b952801588b569d065baf3b3e7fb95097",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
