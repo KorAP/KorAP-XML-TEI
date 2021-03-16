@@ -16,6 +16,24 @@
       "message": "Wasn\u0027t aware of this!",
       "revId": "495465200b2612fff42f2c817a800450202aac8c",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "28ff19d9_417cf9a9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2021-03-16T20:34:49Z",
+      "side": 1,
+      "message": "Sorry, I just forgot it, however it only works for cpan and not when installing from github.\n\ncpanm https://github.com/memowe/contenticious.git\n\nFor example doesn\u0027t work for me without having File::ShareDir::Install installed.\nWhile:\n\ncpanm Contenticious\n\nworks.",
+      "parentUuid": "4b0d72d6_112404c2",
+      "revId": "495465200b2612fff42f2c817a800450202aac8c",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
