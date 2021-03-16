@@ -7,34 +7,30 @@ on:
       - '*'
   pull_request:
 jobs:
-  perl:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        perl-version:
-          - '5.20'
-          - '5.22'
-          - '5.30'
-          - '5.32'
-        java: [ 8, 11 ]
-    name: Perl ${{ matrix.perl-version }} and Java ${{ matrix.java }} on Linux
-    container:
-      image: perl:${{ matrix.perl-version }}
+        java: [ 11, 8 ]
+        perl: [ '5.32', '5.30', '5.20' ]
+    name: Perl ${{ matrix.perl }} and ${{ matrix.java }}
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-          java-package: jre
-      - uses: actions/checkout@v2
-      - name: perl -V
-        run: perl -V
+      - name: Setup Perl environment
+        uses: shogo82148/actions-setup-perl@v1.10.0
+        with:
+          perl-version: ${{ matrix.perl }}
+      - run: perl -V
       - name: Install libxml
         run: sudo apt-get install libxml2-dev
       - name: Install dependencies
-        run: cpanm -v --installdeps .
+        run: cpanm --installdeps .
       - name: Install
         run: |
           perl Makefile.PL
           make install
       - name: Run tests
-        run: prove -lr t/
+        run: prove -lv t
