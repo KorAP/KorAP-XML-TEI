@@ -13,6 +13,10 @@ WriteMakefile(
   ABSTRACT     => 'Conversion of TEI P5 based formats to KorAP-XML',
   VERSION_FROM => 'script/tei2korapxml',
   LICENSE      => 'freebsd',
+  CONFIGURE_REQUIRES => {
+    "ExtUtils::MakeMaker"     => '6.52',
+    "File::ShareDir::Install" => '0.13',
+  },
   BUILD_REQUIRES => {
     'Test::More' => 0,
     'Test::Output' => 0,
