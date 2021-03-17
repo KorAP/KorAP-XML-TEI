@@ -53,7 +53,7 @@ newline seperated, because newlines are removed
 into blanks between 2 tokens could lead to additional blanks,
 where there should be none (e.g.: punctuation characters like C<,> or
 C<.> should not be seperated from their predecessor token).
-(see also code section C<~ whitespace handling ~>).
+(see also code section C<~ whitespace handling ~> in C<script/tei2korapxml>).
 
 =back
 
@@ -132,8 +132,8 @@ is parsed. Content of these tags however will be processed.
 
 Define the foundry and file (without extension)
 to store inline token information in.
-If L</KORAPXMLTEI_INLINE> is set, this will contain
-annotations as well.
+Unless C<--skip-inline-token-annotations> is set,
+this will contain annotations as well.
 Defaults to C<tokens> and C<morpho>.
 
 =item B<--inline-structures> <foundry>#[<file>]
