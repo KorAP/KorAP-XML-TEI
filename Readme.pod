@@ -70,8 +70,8 @@ zip file output (default on C<stdout>) with utf8 encoded entries
 
 =head1 INSTALLATION
 
-C<tei2korapxml> requires L<libxml2-dev> bindings to build. When
-these bindings are available, the preferred way to install the script is
+C<tei2korapxml> requires L<libxml2-dev> bindings and L<File::ShareDir::Install> to be installed.
+When these requirements are met, the preferred way to install the script is
 to use L<cpanm|App::cpanminus>.
 
   $ cpanm https://github.com/KorAP/KorAP-XML-TEI.git
