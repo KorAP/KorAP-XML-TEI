@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More;
+use Test::More tests => 32;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
 use Test::XML::Loy;
@@ -80,4 +80,26 @@ $t = Test::XML::Loy->new($str);
 $t->attr_is('layer spanList span:nth-child(3)', 'from', 13);
 $t->attr_is('layer spanList span:nth-child(3)', 'to', 29);
 $t->element_count_is('layer spanList span', 3);
+
+$string = "J'ai j'habite qu'il d'un jusqu'à Aujourd'hui D'accord Quelqu'un Presqu'île";
+$ext->reset;
+$ext->tokenize($string);
+$str = $ext->to_string('unknown');
+$t = Test::XML::Loy->new($str);
+$t->element_count_is('layer spanList span', 15);
+
+$string = "isn't I've we'll you're";
+$ext->reset;
+$ext->tokenize($string);
+$str = $ext->to_string('unknown');
+$t = Test::XML::Loy->new($str);
+$t->element_count_is('layer spanList span', 8);
+
+$string = "Lu'hafen W'schaft gibt's";
+$ext->reset;
+$ext->tokenize($string);
+$str = $ext->to_string('unknown');
+$t = Test::XML::Loy->new($str);
+$t->element_count_is('layer spanList span', 3);
+
 done_testing;
