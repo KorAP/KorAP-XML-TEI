@@ -13,7 +13,7 @@ tei2korapxml - Conversion of TEI P5 based formats to KorAP-XML
 =head1 DESCRIPTION
 
 C<tei2korapxml> is a script to convert TEI P5 and
-L<I5|https://www1.ids-mannheim.de/kl/projekte/korpora/textmodell.html>
+L<I5|https://www.ids-mannheim.de/digspra/kl/projekte/korpora/textmodell>
 based documents to the
 L<KorAP-XML format|https://github.com/KorAP/KorAP-XML-Krill#about-korap-xml>.
 If no specific input is defined, data is
@@ -200,7 +200,7 @@ Contributors: Nils Diewald, Marc Kupietz, Carsten Schnober
 
 L<KorAP::XML::TEI> is developed as part of the L<KorAP|https://korap.ids-mannheim.de/>
 Corpus Analysis Platform at the
-L<Leibniz Institute for the German Language (IDS)|http://ids-mannheim.de/>,
+L<Leibniz Institute for the German Language (IDS)|https://www.ids-mannheim.de/>,
 member of the
 L<Leibniz-Gemeinschaft|http://www.leibniz-gemeinschaft.de/>.
 
