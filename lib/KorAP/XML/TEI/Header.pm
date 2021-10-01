@@ -89,8 +89,8 @@ sub parse {
     # Check for sigle in line
     if (index($_, '<' . $sig_type) >= 0) {
 
-      unless (m!^\s*<$sig_type[^>]*>([^<]*)</$sig_type>\s*$!) {
-        die $log->fatal("line with '<$sig_type />' (L$.) is not in expected format");
+      unless (m!^\s*<$sig_type[^>]*>([^<./]+(?:[/_][^<./]+(?:[./][^<./]+)?)?)?</$sig_type>\s*$!) {
+        die $log->fatal("line with '<$sig_type />' (L$.) is not in expected format: $_");
       };
 
       $self->[SIGLE] = encode('UTF-8' , $1);
