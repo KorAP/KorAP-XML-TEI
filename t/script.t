@@ -735,4 +735,18 @@ subtest 'Test Log' => sub {
 };
 
 
+subtest 'Broken data testing' => sub {
+  my $file = catfile($f, 'data', 'wikipedia.txt');
+
+  my $t = test_tei2korapxml(
+    tmp => 'script_ginkgo',
+    file => $file,
+    param => '-ti',
+    env => 'KORAPXMLTEI_DEBUG=1'
+  )->stderr_like(qr!No opened zip file to close!)
+  ->stderr_like(qr!Debugging is activated!);
+};
+
+
+
 done_testing;

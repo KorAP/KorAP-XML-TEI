@@ -115,11 +115,13 @@ sub remove_xml_comments {
 
  CHECK:
 
+  return '' unless $html;
+
   $html =~ s/<!--.*?-->//g; # remove all comments in actual line
 
   # Remove comment spanning over several lines
   # No closing comment found
-  if ( index($html, '-->') == -1) {
+  if (index($html, '-->') == -1) {
 
     # Opening comment found
     $i = index($html, '<!--');

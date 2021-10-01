@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Log::Any qw($log);
 use IO::Compress::Zip qw($ZipError :constants);
+use Scalar::Util 'blessed';
 
 # man IO::Compress::Zip
 # At present three compression methods are supported by IO::Compress::Zip, namely
@@ -69,6 +70,10 @@ sub new_stream {
 
 # Close stream and reset zipper
 sub close {
+  unless (blessed $_[0]->[1]) {
+    $log->fatal("No opened zip file to close");
+    return;
+  };
   $_[0]->[1]->close;
   @{$_[0]} = ($_[0]->[0]);
 };

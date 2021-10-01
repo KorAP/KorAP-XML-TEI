@@ -9,6 +9,7 @@
         - Introduce --skip-inline-token-annotations parameter
         - Deprecate KORAPXMLTEI_INLINE environment variable
           in favor of --skip-inline-token-annotations
+        - Improve script handling of broken data
 
 1.00 2021-02-18 Release
         - -s option added that uses sentence boundaries
