@@ -96,6 +96,24 @@ HTML
   is($h->id_esc, 'GOE_&quot;AAA&quot;', 'Check sigle escaped');
   is($h->dir, 'GOE/"AAA"', 'Check dir');
   is($h->type, 'document', 'Check type');
+
+
+  ($fh, $filename) = korap_tempfile('header_2');
+
+  print $fh <<'HTML';
+  <fileDesc>
+   <titleStmt>
+    <dokumentSigle>ATZ10.</dokumentSigle>
+   </titleStmt>
+</idsHeader>
+Test
+HTML
+
+  seek($fh, 0, 0);
+
+  $h = KorAP::XML::TEI::Header->new('<idsHeader type="document">');
+  eval { $h->parse($fh) };
+  is($h->sigle, '', 'Check sigle');
 };
 
 
