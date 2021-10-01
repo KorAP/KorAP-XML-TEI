@@ -25,6 +25,7 @@ use constant {
 # convert header type to sigle type
 our %sig = (
   corpus   => 'korpusSigle',
+  doc      => 'dokumentSigle',
   document => 'dokumentSigle',
   text     => 'textSigle'
 );
@@ -39,6 +40,10 @@ sub new {
   # Check header types to distinguish between siglen types
   if ($text =~ m!^<${_HEADER_TAG}\s+[^<]*type="([^"]+)"!) {
     $self->[HEADTYPE] = $1;
+
+    unless (exists $sig{$1}) {
+      $log->error("Unknown header type '$1' - treated as textSigle");
+    };
   }
 
   # Unexpected header init

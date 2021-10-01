@@ -10,6 +10,7 @@
         - Deprecate KORAPXMLTEI_INLINE environment variable
           in favor of --skip-inline-token-annotations
         - Improve script handling of broken data
+        - Improve handling of unknown header types
 
 1.00 2021-02-18 Release
         - -s option added that uses sentence boundaries
