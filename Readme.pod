@@ -55,6 +55,11 @@ where there should be none (e.g.: punctuation characters like C<,> or
 C<.> should not be seperated from their predecessor token).
 (see also code section C<~ whitespace handling ~> in C<script/tei2korapxml>).
 
+=item
+
+Header types, like C<E<lt>idsHeader [...] type="document" [...] E<gt>>
+need to be defined in the same line as the header tag.
+
 =back
 
 =head2 Notes on the output
