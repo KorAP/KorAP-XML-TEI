@@ -250,4 +250,27 @@ subtest 'Examples from documentation' => sub {
       ;
 };
 
+
+subtest 'Treatment of tokens' => sub {
+  my $inline = KorAP::XML::TEI::Inline->new(0, {b => 1}, 1);
+
+  ok($inline->parse('aaa', \'<a>Der</a> <b>alte</b> <w pos="NN">Baum</w>'), 'Parsed');
+  is($inline->data->data, 'Der alte Baum');
+
+  # Only contains '<a>'
+  Test::XML::Loy->new($inline->structures->to_string('aaa', 1))
+      ->attr_is('#s1', 'to', 3)
+      ->element_exists_not('#s2')
+      ;
+
+  # Only contains 'w'
+  Test::XML::Loy->new($inline->tokens->to_string('aaa', 1))
+      ->attr_is('#s0', 'from', 9)
+      ->attr_is('#s0', 'to', 13)
+      ->attr_is('#s0 > fs > f > fs > f', 'name', 'pos')
+      ->text_is('#s0 > fs > f > fs > f[name=pos]', 'NN')
+      ->element_exists_not('#s1')
+      ;
+};
+
 done_testing;

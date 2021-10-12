@@ -141,6 +141,17 @@ Unless C<--skip-inline-token-annotations> is set,
 this will contain annotations as well.
 Defaults to C<tokens> and C<morpho>.
 
+The inline token data will also be stored in the
+inline structures file (see I<--inline-structures>),
+unless the inline token foundry is prepended
+by an B<!> exclamation mark, indicating that inline
+tokens are stored exclusively in the inline tokens
+file.
+
+Example:
+
+  tei2korapxml --inline-tokens '!gingko#morpho' < data.i5.xml > korapxml.zip
+
 =item B<--inline-structures> <foundry>#[<file>]
 
 Define the foundry and file (without extension)
