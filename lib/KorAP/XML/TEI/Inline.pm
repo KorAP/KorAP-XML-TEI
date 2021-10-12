@@ -37,13 +37,14 @@ use constant {
   TOKENS             => 5,
   STRUCTURES         => 6,
   SKIP_INLINE_TAGS   => 7,
-  SKIP_INLINE_TOKENS => 8
+  SKIP_INLINE_TOKENS => 8,
+  INLINE_TOKENS_EXCLUSIVE => 9
 };
 
 
 # Constructor
 sub new {
-  my ($class, $skip_inline_tokens, $skip_inline_tags) = @_;
+  my ($class, $skip_inline_tokens, $skip_inline_tags, $inline_tokens_exclusive) = @_;
 
   my @self = ();
 
@@ -67,9 +68,10 @@ sub new {
   $self[TOKENS] = KorAP::XML::TEI::Annotations::Collector->new;
 
   # Initialize structure collector
-  $self[STRUCTURES]         = KorAP::XML::TEI::Annotations::Collector->new;
-  $self[SKIP_INLINE_TOKENS] = $skip_inline_tokens // undef;
-  $self[SKIP_INLINE_TAGS]   = $skip_inline_tags   // {};
+  $self[STRUCTURES]              = KorAP::XML::TEI::Annotations::Collector->new;
+  $self[SKIP_INLINE_TOKENS]      = $skip_inline_tokens // undef;
+  $self[INLINE_TOKENS_EXCLUSIVE] = $inline_tokens_exclusive // 0;
+  $self[SKIP_INLINE_TAGS]        = $skip_inline_tags   // {};
 
   bless \@self, $class;
 };
@@ -137,12 +139,26 @@ sub _descend {
         next;
       };
 
-      my $anno = $self->[STRUCTURES]->add_new_annotation($node_info);
+      my $anno = KorAP::XML::TEI::Annotations::Annotation->new($node_info);
 
-      # Add element also to token list
-      if (!$self->[SKIP_INLINE_TOKENS] && $node_info eq $_TOKENS_TAG) {
-        $self->[TOKENS]->add_annotation($anno);
-      };
+      # Is token tag
+      if ($node_info eq $_TOKENS_TAG) {
+
+        # Do not add tokens to the structure file
+        unless ($self->[INLINE_TOKENS_EXCLUSIVE]) {
+          $self->[STRUCTURES]->add_annotation($anno);
+        }
+
+        # Add tokens to the token list
+        if (!$self->[SKIP_INLINE_TOKENS]) {
+          $self->[TOKENS]->add_annotation($anno);
+        };
+      }
+
+      # Not token tag
+      else {
+        $self->[STRUCTURES]->add_annotation($anno);
+      }
 
       # Handle attributes (if attributes exist)
       if (defined $e->[3]) {

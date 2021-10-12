@@ -42,6 +42,9 @@ if ($ENV{KORAPXMLTEI_INLINE}) {
   warn 'KORAPXMLTEI_INLINE is deprecated in favor of --skip-inline-token-annotations';
 };
 
+# Inline tokens won't be stored in the structure file
+my $inline_tokens_exclusive = 0;
+
 # Parse options from the command line
 GetOptions(
   'root|r=s'              => \(my $root_dir    = '.'),
@@ -136,6 +139,11 @@ my ($_structure_dir, $_structure_file) = split '#', $inline_structures . '#struc
 # i.e. tokens of the $_TOKENS_TAG, if $_TOKENS_PROC is set
 my ($_tokens_dir, $_tokens_file) = split '#', $inline_tokens . '#morpho';
 
+if (index($_tokens_dir, '!') == 0) {
+  $_tokens_dir = substr($_tokens_dir, 1);
+  $inline_tokens_exclusive = 1;
+};
+
 # Initialize zipper
 my $zipper = KorAP::XML::TEI::Zipper->new($root_dir);
 
@@ -168,7 +176,8 @@ binmode $input_fh;
 # Create inline parser object
 my $inline = KorAP::XML::TEI::Inline->new(
   $skip_inline_tokens,
-  \%skip_inline_tags
+  \%skip_inline_tags,
+  $inline_tokens_exclusive
 );
 
 
@@ -531,6 +540,13 @@ to store inline token information in.
 Unless C<--skip-inline-token-annotations> is set,
 this will contain annotations as well.
 Defaults to C<tokens> and C<morpho>.
+
+The inline token data will also be stored in the
+inline structures file (see I<--inline-structures>),
+unless the inline tokens foundry is prepended
+by an B<!> exclamation mark, indicating that inline
+tokens are stored exclusively in the inline tokens
+file.
 
 =item B<--inline-structures> <foundry>#[<file>]
 
