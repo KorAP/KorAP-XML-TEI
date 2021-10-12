@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4b60b0b7_1c5a6423",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2021-10-12T19:09:14Z",
+      "side": 1,
+      "message": "LGTM, but how will we apply it? \n\n```\ntei2korapxml  --inline-tokens \u0027!gingko#morpho\u0027 \u003c atz16.i5.xml \u003e atz16.zip\n```\n\nMaybe add an example.\n\n(Remember that the further tagging and parsing is based on the korapxml. Albeit, it\u0027s of course much more flexible there.)",
+      "revId": "75b5f401cb01ef94a5143efa95aaf839d4371b9b",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
