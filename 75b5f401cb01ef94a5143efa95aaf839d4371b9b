@@ -16,6 +16,24 @@
       "message": "LGTM, but how will we apply it? \n\n```\ntei2korapxml  --inline-tokens \u0027!gingko#morpho\u0027 \u003c atz16.i5.xml \u003e atz16.zip\n```\n\nMaybe add an example.\n\n(Remember that the further tagging and parsing is based on the korapxml. Albeit, it\u0027s of course much more flexible there.)",
       "revId": "75b5f401cb01ef94a5143efa95aaf839d4371b9b",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8bd55f60_8fa74114",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2021-10-13T09:15:18Z",
+      "side": 1,
+      "message": "I added the example to the man page.\n\nBut what do you mean regarding the further processing? Is the structure file used for further processing and the token information may be valuable there?\n\nI think the data shouldn\u0027t be unnecessarily duplicated here, as it will clutter the index and the KorAP-XML filesize.",
+      "parentUuid": "4b60b0b7_1c5a6423",
+      "revId": "75b5f401cb01ef94a5143efa95aaf839d4371b9b",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
