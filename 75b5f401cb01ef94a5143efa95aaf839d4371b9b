@@ -34,6 +34,24 @@
       "parentUuid": "4b60b0b7_1c5a6423",
       "revId": "75b5f401cb01ef94a5143efa95aaf839d4371b9b",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4220ee43_1915577d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2021-10-13T09:36:40Z",
+      "side": 1,
+      "message": "I was just referring on how we want to apply it, so that korapxm2krill and korapxml2(tt|marmot|malt|.*) work. The rest was already great :)",
+      "parentUuid": "8bd55f60_8fa74114",
+      "revId": "75b5f401cb01ef94a5143efa95aaf839d4371b9b",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
