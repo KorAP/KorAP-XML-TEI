@@ -116,7 +116,7 @@ sub test_tei2korapxml {
   # we pipe stdout through a temp file.
   my (undef, $fn) = korap_tempfile($pattern);
 
-  $call = "cat '$file' | $env $call $param > $fn";
+  $call = "$env $call $param -i '$file' > $fn";
   my $stderr = capture_stderr { `$call` };
 
   # Read from written file

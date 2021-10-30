@@ -29,7 +29,7 @@ eval {
   1;
 };
 
-our $VERSION = '2.2.0';
+our $VERSION = '2.3.0';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
@@ -64,6 +64,7 @@ GetOptions(
   'header-file=s'         => \(my $header_file = 'header'),
   'tokens-file=s'         => \(my $tokens_file = 'tokens'),
   'log|l=s'               => \(my $log_level   = 'notice'),
+  ''                      => \(my $stdio),
   'help|h' => sub {
     pod2usage(
       -verbose => 99,
@@ -161,12 +162,29 @@ my $text_line = 0;
 
 
 # Input file handle (default: stdin)
-my $input_fh = *STDIN;
+my $input_fh;
 
-if ($input_fname ne '') {
+# Single dash was set
+if ($stdio) {
+  $input_fh = *STDIN;
+}
+
+# Input flag was passed
+elsif ($input_fname ne '') {
   unless (open($input_fh, '<', $input_fname)) {
     die $log->fatal("File '$input_fname' could not be opened.");
   };
+}
+
+# No input to process
+else {
+  pod2usage(
+    -verbose => 99,
+    -sections => 'NAME|SYNOPSIS',
+    -msg => $VERSION_MSG,
+    -output => '-'
+  );
+  exit;
 };
 
 # Prevents segfaulting (see notes on segfault prevention)
@@ -408,7 +426,7 @@ tei2korapxml - Conversion of TEI P5 based formats to KorAP-XML
 
 =head1 SYNOPSIS
 
-  cat corpus.i5.xml | tei2korapxml > corpus.korapxml.zip
+  cat corpus.i5.xml | tei2korapxml - > corpus.korapxml.zip
 
 =head1 DESCRIPTION
 
@@ -416,9 +434,6 @@ C<tei2korapxml> is a script to convert TEI P5 and
 L<I5|https://www.ids-mannheim.de/digspra/kl/projekte/korpora/textmodell>
 based documents to the
 L<KorAP-XML format|https://github.com/KorAP/KorAP-XML-Krill#about-korap-xml>.
-If no specific input is defined, data is
-read from C<STDIN>. If no specific output is defined, data is written
-to C<STDOUT>.
 
 This program is usually called from inside another script.
 
@@ -489,6 +504,12 @@ Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
 =head1 OPTIONS
 
 =over 2
+
+=item B<--input|-i>
+
+The input file to process. If no specific input is defined and a single
+dash C<-> is passed as an argument, data is read from C<STDIN>.
+
 
 =item B<--root|-r>
 

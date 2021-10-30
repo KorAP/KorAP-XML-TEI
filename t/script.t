@@ -377,7 +377,7 @@ subtest 'Test utf-8 handling' => sub {
   binmode STDERR;
 
   stderr_like(
-    sub { `cat '$tplfile' | perl '$script' -ti > '$outzip'` },
+    sub { `cat '$tplfile' | perl '$script' -ti - > '$outzip'` },
     qr!tei2korapxml:.*? text_id=$text_sigle_esc!, # see above: print $fh encode_utf8($tpl);
   );
 };
@@ -632,14 +632,14 @@ subtest 'Check Inline annotations with untagged file' => sub {
 
   # Generate zip file (unportable!)
   stderr_like(
-    sub { `cat '$file' | perl '$script' --skip-token-inline-annotations=0 > '$outzip'` },
+    sub { `cat '$file' | perl '$script' --skip-token-inline-annotations=0 - > '$outzip'` },
     qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!,
     'Processing 1'
   );
 
   # TODO: there should be a better way to test this
   stderr_unlike(
-    sub { `cat '$file' | perl '$script' --skip-token-inline-annotations=0 > '$outzip'` },
+    sub { `cat '$file' | perl '$script' --skip-token-inline-annotations=0 - > '$outzip'` },
     qr!.*undefined value.*!,
     'Processing 2'
   );
@@ -746,7 +746,6 @@ subtest 'Broken data testing' => sub {
   )->stderr_like(qr!No opened zip file to close!)
   ->stderr_like(qr!Debugging is activated!);
 };
-
 
 
 done_testing;
