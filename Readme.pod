@@ -8,7 +8,7 @@ tei2korapxml - Conversion of TEI P5 based formats to KorAP-XML
 
 =head1 SYNOPSIS
 
-  cat corpus.i5.xml | tei2korapxml > corpus.korapxml.zip
+  cat corpus.i5.xml | tei2korapxml - > corpus.korapxml.zip
 
 =head1 DESCRIPTION
 
@@ -16,9 +16,6 @@ C<tei2korapxml> is a script to convert TEI P5 and
 L<I5|https://www.ids-mannheim.de/digspra/kl/projekte/korpora/textmodell>
 based documents to the
 L<KorAP-XML format|https://github.com/KorAP/KorAP-XML-Krill#about-korap-xml>.
-If no specific input is defined, data is
-read from C<STDIN>. If no specific output is defined, data is written
-to C<STDOUT>.
 
 This program is usually called from inside another script.
 
@@ -90,6 +87,12 @@ Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
 
 =over 2
 
+=item B<--input|-i>
+
+The input file to process. If no specific input is defined and a single
+dash C<-> is passed as an argument, data is read from C<STDIN>.
+
+
 =item B<--root|-r>
 
 The root directory for output. Defaults to C<.>.
@@ -105,7 +108,23 @@ Print version information.
 =item B<--tokenizer-call|-tc>
 
 Call an external tokenizer process, that will tokenize
-a single line from STDIN and outputs one token per line.
+from STDIN and outputs the offsets of all tokens.
+
+Texts are separated using C<\x04\n>. The external process
+should add a new line per text.
+
+If the L</--use-tokenizer-sentence-splits> option is activated,
+sentences are marked by offset as well in new lines.
+
+To use L<Datok|https://github.com/KorAP/Datok> including sentence
+splitting, call C<tei2korap> as follows:
+
+  $ cat corpus.i5.xml | tei2korapxml -s \
+  $   -tc 'datok tokenize \
+  $        -t ./tokenizer.matok \
+  $        -p --newline-after-eot --no-sentences \
+  $        --no-tokens --sentence-positions -' - \
+  $        > corpus.korapxml.zip
 
 =item B<--tokenizer-korap|-tk>
 
@@ -180,7 +199,9 @@ Defaults to C<header>.
 =item B<--use-tokenizer-sentence-splits|-s>
 
 Replace existing with, or add new, sentence boundary information
-provided by the KorAP tokenizer (currently supported only).
+provided by the tokenizer.
+Currently KorAP-tokenizer and certain external tokenizers support
+these boundaries.
 
 =item B<--tokens-file> <file>
 

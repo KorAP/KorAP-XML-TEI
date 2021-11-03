@@ -172,6 +172,14 @@ sub close {
   };
 };
 
+
+# Set sentence split option
+sub sentence_splits {
+  my ($self, $bool) = @_;
+  $self->{sentence_split} = !!$bool;
+};
+
+
 sub sentencize_from_previous_input {
   my ($self, $structures) = @_;
 

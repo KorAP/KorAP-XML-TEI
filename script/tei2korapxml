@@ -96,15 +96,6 @@ my $_TEXT_BODY = 'text';
 # TODO: IDS-specific (and redundant)
 my $_HEADER_TAG = 'idsHeader';
 
-
-# Define tokenizers
-if ($use_tokenizer_sentence_splits && !$tokenizer_korap) {
-  die $log->fatal(
-    'Sentence splitting is currently only supported by KorAP tokenizer ' .
-      '(use -tk to activate it)'
-    );
-};
-
 # Remember to skip certain inline tags
 my %skip_inline_tags = ();
 if ($skip_inline_tags_str) {
@@ -117,15 +108,16 @@ if ($skip_inline_tags_str) {
 my $ext_tok;
 if ($tokenizer_call) {
   $ext_tok = KorAP::XML::TEI::Tokenizer::External->new($tokenizer_call);
+  $ext_tok->sentence_splits(1) if $use_tokenizer_sentence_splits;
 }
 
 elsif ($tokenizer_korap) {
   $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new($use_tokenizer_sentence_splits);
-  if ($use_tokenizer_sentence_splits) {
-    $skip_inline_tags{s} = 1;
-  };
 };
 
+if ($use_tokenizer_sentence_splits) {
+  $skip_inline_tags{s} = 1;
+};
 
 # Internal tokenization
 my $aggr_tok = KorAP::XML::TEI::Tokenizer::Aggressive->new;
@@ -526,7 +518,23 @@ Print version information.
 =item B<--tokenizer-call|-tc>
 
 Call an external tokenizer process, that will tokenize
-a single line from STDIN and outputs one token per line.
+from STDIN and outputs the offsets of all tokens.
+
+Texts are separated using C<\x04\n>. The external process
+should add a new line per text.
+
+If the L</--use-tokenizer-sentence-splits> option is activated,
+sentences are marked by offset as well in new lines.
+
+To use L<Datok|https://github.com/KorAP/Datok> including sentence
+splitting, call C<tei2korap> as follows:
+
+  $ cat corpus.i5.xml | tei2korapxml -s \
+  $   -tc 'datok tokenize \
+  $        -t ./tokenizer.matok \
+  $        -p --newline-after-eot --no-sentences \
+  $        --no-tokens --sentence-positions -' - \
+  $        > corpus.korapxml.zip
 
 =item B<--tokenizer-korap|-tk>
 
@@ -601,7 +609,9 @@ Defaults to C<header>.
 =item B<--use-tokenizer-sentence-splits|-s>
 
 Replace existing with, or add new, sentence boundary information
-provided by the KorAP tokenizer (currently supported only).
+provided by the tokenizer.
+Currently KorAP-tokenizer and certain external tokenizers support
+these boundaries.
 
 =item B<--tokens-file> <file>
 
