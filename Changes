@@ -1,3 +1,4 @@
+2.3.1 2022-01-14 Release
         - Improve script handling of broken data
         - Improve handling of unknown header types
         - Check for valid sigles to avoid broken directories
