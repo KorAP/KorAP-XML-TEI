@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 32;
+use Test::More tests => 33;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
 use Test::XML::Loy;
@@ -101,5 +101,12 @@ $ext->tokenize($string);
 $str = $ext->to_string('unknown');
 $t = Test::XML::Loy->new($str);
 $t->element_count_is('layer spanList span', 3);
+
+$string = "'Luhafen 'Wschaft";
+$ext->reset;
+$ext->tokenize($string);
+$str = $ext->to_string('unknown');
+$t = Test::XML::Loy->new($str);
+$t->element_count_is('layer spanList span', 4);
 
 done_testing;

@@ -3,6 +3,7 @@
         - Check for valid sigles to avoid broken directories
         - Introduce exclusivity for inline tokens handling.
         - Use single dash for STDIN.
+        - Update KorAP-Tokenizer to v2.2.2 (single quote bug fix)
 
 2.2.0 2021-08-26 Release
         - Remove unnecessary branch in recursive call
