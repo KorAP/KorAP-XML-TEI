@@ -1,5 +1,7 @@
 2.3.2 2022-03-22
         - Do not reference metadata.xml
+        - Improve test suite for unability to use
+          KorAP-Tokenizer.
 
 2.3.1 2022-01-14 Release
         - Improve script handling of broken data
