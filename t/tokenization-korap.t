@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 33;
+use Test::More;
 use File::Basename 'dirname';
 use File::Spec::Functions qw/catfile/;
 use Test::XML::Loy;
@@ -15,7 +15,7 @@ BEGIN {
   } or do {
     plan skip_all => "KorAP::XML::TEI::Tokenizer::KorAP cannot be used";
   };
-}
+};
 
 use_ok('KorAP::XML::TEI::Annotations::Collector');
 require_ok('KorAP::XML::TEI::Tokenizer::KorAP');

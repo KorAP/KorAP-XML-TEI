@@ -17,12 +17,16 @@ if ($java eq '') {
   return 0;
 };
 
-
 my $tokenizer_jar = dist_file(
   'tei2korapxml',
   'KorAP-Tokenizer-2.2.2-standalone.jar'
 );
 
+unless (-f $tokenizer_jar) {
+  return 0;
+};
+
+no warnings 'redefine';
 
 # Construct a new KorAP Tokenizer
 sub new {
