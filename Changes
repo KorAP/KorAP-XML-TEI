@@ -1,3 +1,6 @@
+        - Improve test suite for unability to use
+          KorAP-Tokenizer.
+
 2.3.1 2022-01-14 Release
         - Improve script handling of broken data
         - Improve handling of unknown header types
