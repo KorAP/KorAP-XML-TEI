@@ -64,8 +64,6 @@ sub position {
 sub _header {
   my (undef, $text_id) = @_;
 
-  # TODO:
-  #   Can 'metadata.xml' change or is it constant?
   return <<"HEADER";
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="text.rng"
@@ -73,7 +71,6 @@ sub _header {
             schematypens="http://relaxng.org/ns/structure/1.0"?>
 <raw_text docid="$text_id"
           xmlns="http://ids-mannheim.de/ns/KorAP">
-  <metadata file="metadata.xml" />
 HEADER
 };
 
