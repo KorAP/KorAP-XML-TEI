@@ -160,11 +160,6 @@ sub _header {
   # TODO: IDS-specific
   return <<"HEADER";
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="header.rng"
-            type="application/xml"
-            schematypens="http://relaxng.org/ns/structure/1.0"?>
-<!DOCTYPE idsCorpus PUBLIC "-//IDS//DTD IDS-XCES 1.0//EN"
-          "http://corpora.ids-mannheim.de/idsxces1/DTD/ids.xcesdoc.dtd">
 HEADER
 };
 

@@ -1,3 +1,6 @@
+2.3.2 2022-03-23
+        - Remove schema references from header files.
+
 2.3.1 2022-01-14 Release
         - Improve script handling of broken data
         - Improve handling of unknown header types
