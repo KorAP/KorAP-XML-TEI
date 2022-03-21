@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bf6b6ab6_510760aa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2022-03-21T17:20:40Z",
+      "side": 1,
+      "message": "This references to https://github.com/KorAP/KorAP-XML-Krill/issues/10",
+      "revId": "85d62da7386919200862972486f4005ab242da68",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
