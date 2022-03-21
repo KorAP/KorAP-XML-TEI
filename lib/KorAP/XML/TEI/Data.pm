@@ -73,7 +73,6 @@ sub _header {
             schematypens="http://relaxng.org/ns/structure/1.0"?>
 <raw_text docid="$text_id"
           xmlns="http://ids-mannheim.de/ns/KorAP">
-  <metadata file="metadata.xml" />
 HEADER
 };
 
