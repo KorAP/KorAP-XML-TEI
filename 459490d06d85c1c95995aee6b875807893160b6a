@@ -16,6 +16,24 @@
       "message": "The comment can then be removed as well, I guess.",
       "revId": "459490d06d85c1c95995aee6b875807893160b6a",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bafc8349_a98b1ef2",
+        "filename": "lib/KorAP/XML/TEI/Data.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2022-03-22T19:04:52Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f79048fa_0deac446",
+      "revId": "459490d06d85c1c95995aee6b875807893160b6a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
