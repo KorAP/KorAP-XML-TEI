@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "23dedfc6_db3a5889",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2022-03-28T06:35:40Z",
+      "side": 1,
+      "message": "This is a bit annoyingly to test with docker - so the fix for non-java environments was not complete, because there is a script test checking for stderr that fails, because now the \"No java installed\" error pops up. This should prevent this error, if -tk is not requested.",
+      "revId": "bd4281e10c0fea21580c3edf6a35a4d4247835bb",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
