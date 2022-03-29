@@ -1,5 +1,7 @@
-2.3.3 2022-03-28
+2.3.3 2022-03-29
         - Load KorAP-Tokenizer only on request.
+        - Check version for KorAP-Tokenizer library
+          when requested.
 
 2.3.2 2022-03-23
         - Do not reference metadata.xml

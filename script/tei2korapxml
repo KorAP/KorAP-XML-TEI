@@ -111,6 +111,12 @@ elsif ($tokenizer_korap) {
     require KorAP::XML::TEI::Tokenizer::KorAP;
     1;
   };
+
+  my $korap_tok_ver = $KorAP::XML::TEI::Tokenizer::KorAP::VERSION;
+  if ($korap_tok_ver ne $VERSION) {
+    die 'KorAP-Tokenizer version (' . $korap_tok_ver . ') differs from the expected version (' . $VERSION . ')';
+  };
+
   $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new($use_tokenizer_sentence_splits);
 };
 
