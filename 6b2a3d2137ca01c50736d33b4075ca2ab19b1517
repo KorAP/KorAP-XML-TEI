@@ -16,6 +16,24 @@
       "message": "Somehow like that?",
       "revId": "6b2a3d2137ca01c50736d33b4075ca2ab19b1517",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "668f869c_c25afe9f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2022-03-29T19:59:15Z",
+      "side": 1,
+      "message": "Thanks, good start, but not enough to be helpful, yet. For our multi-node gnu-parallel scenario, the version of tei2korapxml should be checkable against a command line option. I know this is unusual, but saves some days and the actual version of the tokenizer should be checkable. Fun fact:\n\n$ java -jar ./share/KorAP-Tokenizer-2.2.2-standalone.jar --version\n2.2.1\n\n:D",
+      "parentUuid": "385a36f8_7f0ee5a9",
+      "revId": "6b2a3d2137ca01c50736d33b4075ca2ab19b1517",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
