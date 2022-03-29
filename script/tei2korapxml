@@ -59,6 +59,7 @@ GetOptions(
   'header-file=s'         => \(my $header_file = 'header'),
   'tokens-file=s'         => \(my $tokens_file = 'tokens'),
   'log|l=s'               => \(my $log_level   = 'notice'),
+  'required-version|rv=s' => \(my $required_version),
   ''                      => \(my $stdio),
   'help|h' => sub {
     pod2usage(
@@ -82,6 +83,15 @@ GetOptions(
 binmode(STDERR, ':encoding(UTF-8)');
 Log::Any::Adapter->set('Stderr', log_level => $log_level);
 $log->notice('Debugging is activated') if DEBUG;
+
+
+if ($required_version) {
+  $required_version =~ /^\s*(\d+\.\d+\.\d+)\s*$/;
+  if (!$1 || $1 ne $VERSION) {
+    $log->error("Required version $required_version mismatches version $VERSION");
+    exit(1);
+  };
+};
 
 
 # tag (without attributes), which contains the primary text
@@ -111,6 +121,13 @@ elsif ($tokenizer_korap) {
     require KorAP::XML::TEI::Tokenizer::KorAP;
     1;
   };
+
+  my $korap_tok_ver = $KorAP::XML::TEI::Tokenizer::KorAP::VERSION;
+  if ($korap_tok_ver ne $VERSION) {
+    $log->error("KorAP-Tokenizer version ($korap_tok_ver) differs from the expected version ($VERSION)");
+    exit(1);
+  };
+
   $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new($use_tokenizer_sentence_splits);
 };
 
@@ -513,6 +530,11 @@ Print help information.
 =item B<--version|-v>
 
 Print version information.
+
+=item B<--required-version|-rv>
+
+Version required for conversion. If the script doesn't match
+the version passed, it will exit immediately.
 
 =item B<--tokenizer-call|-tc>
 
