@@ -747,5 +747,31 @@ subtest 'Broken data testing' => sub {
   ->stderr_like(qr!Debugging is activated!);
 };
 
+subtest 'Required version testing' => sub {
+  test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '-rv=2.2.2'
+  )->stderr_like(qr!^Required version 2\.2\.2 mismatches version!);
+
+  test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '--required-version=2.2'
+  )->stderr_like(qr!^Required version 2\.2 mismatches version!);
+
+  test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '-rv=' . $KorAP::XML::TEI::Tokenizer::KorAP::VERSION
+  )->stderr_like(qr!GOE_AGA\.00000!);
+
+  test_tei2korapxml(
+    tmp => 'script_out',
+    file => $file,
+    param => '-rv=   "  ' . $KorAP::XML::TEI::Tokenizer::KorAP::VERSION . '  "'
+  )->stderr_like(qr!GOE_AGA\.00000!);
+};
+
 
 done_testing;
