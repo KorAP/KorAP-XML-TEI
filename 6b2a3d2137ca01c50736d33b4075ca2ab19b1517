@@ -34,6 +34,24 @@
       "parentUuid": "385a36f8_7f0ee5a9",
       "revId": "6b2a3d2137ca01c50736d33b4075ca2ab19b1517",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17f2b8bb_1f93ce53",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2022-03-30T06:29:49Z",
+      "side": 1,
+      "message": "Ah - okay, I guess now I understand the use case. I added a \"required-version\" parameter (probably better than a \"minimal-version\") for this purpose. Checking the KorAP-Tokenizer Version should probably be a different commit, but versionizing tei2korapxml should be better than versioning KorAP-Tokenizer. And because it calls a fixed version jar, there should be no problem.",
+      "parentUuid": "668f869c_c25afe9f",
+      "revId": "6b2a3d2137ca01c50736d33b4075ca2ab19b1517",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
