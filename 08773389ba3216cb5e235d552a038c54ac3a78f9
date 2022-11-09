@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40c48c9b_ca4cdffc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2022-11-09T16:28:01Z",
+      "side": 1,
+      "message": "There seems to something going wrong with stderr tests for me. Will have a closer look tomorrow (make test fails). But possibly this is exactly the problem I wanted to identify 😊",
+      "revId": "08773389ba3216cb5e235d552a038c54ac3a78f9",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
