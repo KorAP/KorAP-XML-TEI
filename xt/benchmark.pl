@@ -40,6 +40,7 @@ my $script = rel2abs(catfile($f, '..', 'script', $SCRIPT_NAME));
 # Load example files
 my $file = rel2abs(catfile($f, '..', 't', 'data', 'goe_sample.i5.xml'));
 my $goe_tagged = rel2abs(catfile($f, '..', 't', 'data', 'goe_sample_tagged.i5.xml'));
+my $icc_german = rel2abs(catfile($f, '..', 't', 'data', 'icc_german_sample.p5.xml'));
 
 # Create a new benchmark object
 my $bench = Dumbbench->new(
@@ -93,6 +94,12 @@ $bench->add_instances(
     name => 'Conversion-with-inline-annotations',
     code => sub {
       `cat '$goe_tagged' | KORAPXMLTEI_INLINE=1 perl '$script' > /dev/null 2>&1`
+    }
+  ),
+  Dumbbench::Instance::PerlSub->new(
+    name => 'Conversion of standard TEI',
+    code => sub {
+      `cat '$icc_german' | perl '$script' > /dev/null 2>&1`
     }
   ),
   Dumbbench::Instance::PerlSub->new(

@@ -152,6 +152,21 @@ won't be processed).
 Expects a comma-separated list of tags to be ignored when the structure
 is parsed. Content of these tags however will be processed.
 
+=item B<--xmlid-to-textsigle> <from-regex>@<to-c/to-d/to-t>
+
+Expects a regular replacement expression (separated by a B<@> between the
+search and the replacement) to convert text id attributes to text sigles
+with three parts (separated by B</>).
+
+Example:
+
+  tei2korapxml  \
+    --xmlid-to-textsigle 'ICC.German\.([^.]+\.[^.]+)\.(.+)@ICCGER/$1/$2' \
+    -tk - < t/data/icc_german_sample.p5.xml
+
+Converts text id `ICC.German.DeReKo.WPD17.G11.00238' to
+sigle `ICCGER/DeReKo.WPD17/G11.00238'.
+
 =item B<--inline-tokens> <foundry>#[<file>]
 
 Define the foundry and file (without extension)
