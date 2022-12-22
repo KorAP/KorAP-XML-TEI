@@ -58,6 +58,7 @@ GetOptions(
   'data-file=s'           => \(my $data_file   = 'data'),
   'header-file=s'         => \(my $header_file = 'header'),
   'tokens-file=s'         => \(my $tokens_file = 'tokens'),
+  'xmlid-to-textsigle|x=s'=> \(my $xmlid_to_textsigle = ''),
   'log|l=s'               => \(my $log_level   = 'notice'),
   'required-version|rv=s' => \(my $required_version),
   ''                      => \(my $stdio),
@@ -94,12 +95,15 @@ if ($required_version) {
 };
 
 
+my ($what, $with);
+if ($xmlid_to_textsigle ne '') {
+  ($what, $with) = split('@', $xmlid_to_textsigle);
+  $what = qr!$what!;
+};
+
 # tag (without attributes), which contains the primary text
 my $_TEXT_BODY = 'text';
 # optional
-
-# TODO: IDS-specific (and redundant)
-my $_HEADER_TAG = 'idsHeader';
 
 # Remember to skip certain inline tags
 my %skip_inline_tags = ();
@@ -372,9 +376,41 @@ MAIN: while (<$input_fh>) {
     };
   }
 
-  # Start of header section
-  elsif (m#^(.*)(\<${_HEADER_TAG}[^>]*?type=["'].*)$#) {
+  elsif (m#^(.*)\<TEI\s+[^>]*?xml:id=(["'])(.+?)\2#) {
+    my $leadin = $1;
+    my $id = $3;
+    my $sigle = $3;
 
+    if ($what) {
+      $_ = $id;
+      eval "s|$what|$with|";  # s@ICC.German\.([^.]+\.[^.]+)\.(.+)@ICCGER/$1/$2@;
+      $sigle = $_;
+      $log->debug("Converted text id `$id' to sigle `$sigle'");
+    };
+    $sigle =~ s/\./-/g;
+
+    my @parts = split(/[\/_]/, $sigle);
+    if (@parts != 3) {
+      die $log->fatal(
+          "input line number $.: " .
+              "ids must have exactly three parts split by '/', but `$id` only has " . scalar(@parts) . " ".
+              "=> Aborting (line=$_)");
+    };
+
+    $dir = join("/", @parts);
+    $text_id_esc = "$parts[0]/$parts[1].$parts[2]";
+    $log->notice("$0: text_id=$text_id_esc");
+
+    if ($leadin !~ /^\s*$/) {
+      die $log->fatal(
+          "input line number $.: " .
+              'line with opening header tag is not in expected format ... ' .
+              "=> Aborting (line=$_)");
+    };
+  }
+
+  # Start of header section
+  elsif (m#^(.*)(\<(?:ids|tei)Header.*)$#) {
     my $content = "$2\n";
 
     if ($1 !~ /^\s*$/) {
@@ -385,7 +421,7 @@ MAIN: while (<$input_fh>) {
     };
 
     # Parse header
-    my $header = KorAP::XML::TEI::Header->new($content, $input_enc)->parse($input_fh);
+    my $header = KorAP::XML::TEI::Header->new($content, $input_enc, $text_id_esc)->parse($input_fh);
 
     # Header was parseable
     if ($header) {
@@ -577,6 +613,18 @@ be processed. Defaults to false (meaning inline tokens will be processed).
 Boolean flag indicating that inline token annotations should not
 be processed. Defaults to true (meaning inline token annotations
 won't be processed).
+
+=item B<--xmlid-to-textsigle> <from-regex>@<to-c/to-d/to-t>
+
+Expects a regular replacement expression (separated by a B<@> between the search and
+the replacement) to convert text id attributes to text sigles with three parts
+(separated by B</>).
+
+Example:
+
+  tei2korapxml  --xmlid-to-textsigle 'ICC.German\.([^.]+\.[^.]+)\.(.+)@ICCGER/$1/$2' -tk - < t/data/icc_german_sample.p5.xml
+
+Converts text id `ICC.German.DeReKo.WPD17.G11.00238' to sigle `ICCGER/DeReKo.WPD17/G11.00238'.
 
 =item B<--skip-inline-tags> <tags>
 

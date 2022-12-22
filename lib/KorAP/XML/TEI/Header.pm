@@ -11,14 +11,12 @@ use KorAP::XML::TEI qw!remove_xml_comments replace_entities!;
 # Warning:
 # Opening and closing tags (without attributes) have to be in one line
 
-# TODO: IDS-specific (and redundant)
-my $_HEADER_TAG = 'idsHeader';
-
 use constant {
   TEXT      => 0,
   HEADTYPE  => 1,
   SIGLE     => 2,
-  INPUTENC  => 3
+  INPUTENC  => 3,
+  HEADTAG   => 4
 };
 
 
@@ -33,12 +31,22 @@ our %sig = (
 
 # Create new header object
 sub new {
-  my ($class, $text, $input_enc) = @_;
+  my ($class, $text, $input_enc, $text_id_esc) = @_;
 
-  my $self = bless [$text, undef, '', $input_enc // 'UTF-8'], $class;
+  my $self = bless [$text, undef, '', $input_enc // 'UTF-8', 'idsHeader'], $class;
+
+  if ($text_id_esc) {
+    $self->[SIGLE] = $text_id_esc;
+  };
+
+  # Expect teiHeader
+  if ($text =~ m!<teiHeader\b!) {
+    $self->[HEADTYPE] = 'text';
+    $self->[HEADTAG]  = 'teiHeader';
+  }
 
   # Check header types to distinguish between siglen types
-  if ($text =~ m!^<${_HEADER_TAG}\s+[^<]*type="([^"]+)"!) {
+  elsif ($text =~ m!^<idsHeader\s+[^>]*?type="([^"]+)"!) {
     $self->[HEADTYPE] = $1;
 
     unless (exists $sig{$1}) {
@@ -63,7 +71,7 @@ sub parse {
   my $sig_type = $sig{$self->[HEADTYPE]} // 'textSigle';
 
   my $pos;
-  my $l = length('</' . $_HEADER_TAG) + 1;
+  my $l = length('</' . $self->[HEADTAG]) + 1;
 
   # Iterate over file handle
   while (<$fh>) {
@@ -75,12 +83,12 @@ sub parse {
     #   This version keeps comments in header files
 
     # End of header found - finish parsing
-    if (($pos = index($_, '</' . $_HEADER_TAG)) >= 0) {
+    if (($pos = index($_, '</' . $self->[HEADTAG])) >= 0) {
 
       # Add to text
       $self->[TEXT] .= substr($_, 0, $l + $pos);
 
-      die $log->fatal("Line with tag '</${_HEADER_TAG}>' (L$.) contains additional information")
+      die $log->fatal(q!Line with tag '</! . $self->[HEADTAG] . q!>' (L$.) contains additional information!)
         if substr($_, $l + $pos) !~ /^\s*$/;
 
       if ($self->dir eq '') {
