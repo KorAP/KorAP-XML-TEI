@@ -773,5 +773,17 @@ subtest 'Required version testing' => sub {
   )->stderr_like(qr!GOE_AGA\.00000!);
 };
 
+subtest 'Standard TEI P5 testing' => sub {
+
+  test_tei2korapxml(
+      file => catfile($f, 'data', 'icc_german_sample.p5.xml'),
+      param => '--xmlid-to-textsigle \'ICC.German\.([^.]+\.[^.]+)\.(.+)@ICCGER/$1/$2\' -s -tk',
+      tmp => 'script_utf8_enc'
+  )
+      ->stderr_like(qr!tei2korapxml:.*? text_id=ICCGER_DeReKo.WPD17.S00.18619!)
+      ->unzip_xml('ICCGER/DeReKo.WPD17/E51.96136/data.xml')
+      ->content_like(qr/Recht auf persönliches Hab und Gut/)
+  ;
+};
 
 done_testing;
