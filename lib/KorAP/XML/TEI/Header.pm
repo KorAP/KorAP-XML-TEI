@@ -33,12 +33,20 @@ our %sig = (
 
 # Create new header object
 sub new {
-  my ($class, $text, $input_enc) = @_;
+  my ($class, $text, $input_enc, $text_id_esc) = @_;
 
   my $self = bless [$text, undef, '', $input_enc // 'UTF-8'], $class;
 
+  if ($text_id_esc) {
+    $self->[SIGLE] = $text_id_esc;
+  }
+
+  if ($text =~ m!<teiHeader\b!) {
+    $self->[HEADTYPE] = "text";
+    $_HEADER_TAG = "teiHeader";
+  }
   # Check header types to distinguish between siglen types
-  if ($text =~ m!^<${_HEADER_TAG}\s+[^<]*type="([^"]+)"!) {
+  elsif ($text =~ m!^<${_HEADER_TAG}\s+[^<]*type="([^"]+)"!) {
     $self->[HEADTYPE] = $1;
 
     unless (exists $sig{$1}) {
