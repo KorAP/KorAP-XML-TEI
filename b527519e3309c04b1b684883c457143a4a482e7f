@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8da14498_cbe95132",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2022-12-22T16:41:24Z",
+      "side": 1,
+      "message": "I don\u0027t know if the syntax is ideal and probably it should move to Header.pm, \nbut it does the job and seems to convert the German ICC part sample successfully.",
+      "revId": "b527519e3309c04b1b684883c457143a4a482e7f",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
