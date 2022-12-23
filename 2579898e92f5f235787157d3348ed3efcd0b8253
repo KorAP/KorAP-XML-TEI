@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ae7bc02c_b334079c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2022-12-23T11:17:59Z",
+      "side": 1,
+      "message": "Seems to work also with FOLK data, sigh.",
+      "revId": "2579898e92f5f235787157d3348ed3efcd0b8253",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
