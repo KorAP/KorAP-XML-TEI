@@ -52,6 +52,24 @@
       "parentUuid": "efc4b8d3_6c4e5af8",
       "revId": "b527519e3309c04b1b684883c457143a4a482e7f",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9c7f3a3_840ecdd3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2022-12-28T07:43:57Z",
+      "side": 1,
+      "message": "eval might make a little difference but nothing that would justify a workaround, here:\n\nBenchmark 10*ICC-German with eval:\n\nreal\t1m38.363s\nuser\t8m5.274s\nsys\t0m22.980s\n\nBenchmark 10*ICC-German with hardcoded regex:\n\nreal\t1m39.129s\nuser\t7m33.766s\nsys\t0m24.169s",
+      "parentUuid": "1976aa50_01b0ea82",
+      "revId": "b527519e3309c04b1b684883c457143a4a482e7f",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
