@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           cpanm File::ShareDir::Install
-          cpanm --installdeps .
+          cpanm --installdeps -v .
       - name: Install
         run: |
           perl Makefile.PL
