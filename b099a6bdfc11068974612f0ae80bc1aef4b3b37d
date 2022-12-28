@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e156248b_3e1cfd63",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2022-12-28T08:29:19Z",
+      "side": 1,
+      "message": "I think we can remove the my $_HEADER_TAG variable and simplify the regex by ignoring the type. It was Peter\u0027s way to switch between teiHeader and idsHeader, I guess.",
+      "revId": "b099a6bdfc11068974612f0ae80bc1aef4b3b37d",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
