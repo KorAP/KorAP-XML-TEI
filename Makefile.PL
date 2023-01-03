@@ -20,7 +20,7 @@ WriteMakefile(
   BUILD_REQUIRES => {
     'Test::More' => 0,
     'Test::Output' => 0,
-    'XML::Loy' => 0.49,
+    'XML::Loy' => 0.52,
     'IO::Uncompress::Unzip' => '2.091',
     'Pod::Usage'      => 0,
     'Dumbbench' => '0.111',
