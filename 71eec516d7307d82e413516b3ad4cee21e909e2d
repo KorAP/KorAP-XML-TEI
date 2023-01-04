@@ -33,6 +33,23 @@
       "message": "I wouldn\u0027t mind testing it before the CPAN testers",
       "revId": "71eec516d7307d82e413516b3ad4cee21e909e2d",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3722b679_cf47aaa5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-01-04T08:52:25Z",
+      "side": 1,
+      "message": "Looks good. Cpantesters still complain about List::Util, but I still think that this is because of a broken environment.",
+      "revId": "71eec516d7307d82e413516b3ad4cee21e909e2d",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
