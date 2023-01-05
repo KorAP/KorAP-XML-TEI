@@ -495,7 +495,8 @@ TEI P5 formatted input with certain restrictions:
 
 =item
 
-B<mandatory>: text-header with integrated textsigle, text-body
+B<mandatory>: text-header with integrated textsigle
+(or convertable identifier), text-body
 
 =item
 
@@ -567,10 +568,15 @@ Print help information.
 
 Print version information.
 
-=item B<--required-version|-rv>
+=item B<--tokenizer-korap|-tk>
 
-Version required for conversion. If the script doesn't match
-the version passed, it will exit immediately.
+Use the standard KorAP/DeReKo tokenizer.
+
+=item B<--tokenizer-internal|-ti>
+
+Tokenize the data using two embedded tokenizers,
+that will take an I<aggressive> and a I<conservative>
+approach.
 
 =item B<--tokenizer-call|-tc>
 
@@ -593,16 +599,6 @@ splitting, call C<tei2korap> as follows:
   $        --no-tokens --sentence-positions -' - \
   $        > corpus.korapxml.zip
 
-=item B<--tokenizer-korap|-tk>
-
-Use the standard KorAP/DeReKo tokenizer.
-
-=item B<--tokenizer-internal|-ti>
-
-Tokenize the data using two embedded tokenizers,
-that will take an I<Aggressive> and a I<conservative>
-approach.
-
 =item B<--skip-inline-tokens>
 
 Boolean flag indicating that inline tokens should not
@@ -621,7 +617,7 @@ is parsed. Content of these tags however will be processed.
 
 =item B<--xmlid-to-textsigle> <from-regex>@<to-c/to-d/to-t>
 
-Expects a regular replacement expression (separated by a B<@> between the
+Expects a regular replacement expression (separated by B<@> between the
 search and the replacement) to convert text id attributes to text sigles
 with three parts (separated by B</>).
 
@@ -631,8 +627,8 @@ Example:
     --xmlid-to-textsigle 'ICC.German\.([^.]+\.[^.]+)\.(.+)@ICCGER/$1/$2' \
     -tk - < t/data/icc_german_sample.p5.xml
 
-Converts text id `ICC.German.DeReKo.WPD17.G11.00238' to
-sigle `ICCGER/DeReKo.WPD17/G11.00238'.
+Converts text id C<ICC.German.DeReKo.WPD17.G11.00238> to
+sigle C<ICCGER/DeReKo.WPD17/G11.00238>.
 
 =item B<--inline-tokens> <foundry>#[<file>]
 
@@ -711,7 +707,7 @@ Defaults to C<false>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2021, L<IDS Mannheim|https://www.ids-mannheim.de/>
+Copyright (C) 2021-2023, L<IDS Mannheim|https://www.ids-mannheim.de/>
 
 Author: Peter Harders
 
