@@ -47,6 +47,7 @@ GetOptions(
   'tokenizer-call|tc=s'   => \(my $tokenizer_call),
   'tokenizer-korap|tk'    => \(my $tokenizer_korap),
   'tokenizer-internal|ti' => \(my $tokenizer_intern),
+  'no-tokenizer'          => \(my $no_tokenizer),
   'use-tokenizer-sentence-splits|s' => \(my $use_tokenizer_sentence_splits),
   'inline-tokens=s'       => \(my $inline_tokens = 'tokens#morpho'),
   'inline-structures=s'   => \(my $inline_structures = 'struct#structure'),
@@ -120,6 +121,7 @@ if ($tokenizer_call) {
   $ext_tok->sentence_splits(1) if $use_tokenizer_sentence_splits;
 }
 
+# KorAP tokenization
 elsif ($tokenizer_korap) {
   eval {
     require KorAP::XML::TEI::Tokenizer::KorAP;
@@ -133,6 +135,12 @@ elsif ($tokenizer_korap) {
   };
 
   $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new($use_tokenizer_sentence_splits);
+}
+
+# No internal tokenizer chosen
+elsif (!$tokenizer_intern && !$no_tokenizer) {
+  $log->error("No tokenizer chosen. If only internal tokens should be used, pass the --no-tokenizer flag");
+  exit(1);
 };
 
 if ($use_tokenizer_sentence_splits) {
@@ -598,6 +606,13 @@ splitting, call C<tei2korap> as follows:
   $        -p --newline-after-eot --no-sentences \
   $        --no-tokens --sentence-positions -' - \
   $        > corpus.korapxml.zip
+
+=item B<--no-tokenizer>
+
+Boolean flag indicating that no tokenizer should be used.
+This is meant to ensure that by default a final token layer always
+exists.
+If a separate tokenizer is chosen, this flag is ignored.
 
 =item B<--skip-inline-tokens>
 

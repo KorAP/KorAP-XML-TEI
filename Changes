@@ -3,6 +3,8 @@
         - Option --xmlid-to-textsigle <from-regex>@<to-c/to-d/to-t>
           added to convert standard P5 text id attributes to I5
           sigles with three parts.
+        - Add --no-tokenizer parameter as a requirement
+          for relying on inline tokens only.
 
 2.3.4 2022-11-09
         - Improve stability of XML entity replacement.

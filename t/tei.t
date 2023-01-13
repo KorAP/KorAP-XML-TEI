@@ -53,7 +53,8 @@ subtest 'remove_xml_comments in script' => sub {
       text => "<!--\nDies ist ein\nmehrzeiligerKommentar -->Text1",
       textSigle => 'A/B.1',
       pattern => 'xx'
-    }
+    },
+    param => '--no-tokenizer'
   )
     ->file_exists('A/B/1/data.xml')
     ->unzip_xml('A/B/1/data.xml')
@@ -67,7 +68,8 @@ subtest 'skip missing dir in script' => sub {
       text => "Nur ein Test",
       textSigle => '',
       pattern => 'missing_dir'
-    }
+    },
+    param => '--no-tokenizer'
   )
     ->file_exists_not('A/B/1/data.xml')
     ->stderr_like(qr!Empty '<textSigle />' \(L29\) in header!)
