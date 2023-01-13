@@ -503,7 +503,8 @@ subtest 'Check Inline annotations' => sub {
   my $t = test_tei2korapxml(
     file => $file,
     env => 'KORAPXMLTEI_INLINE=1',
-    tmp => 'script_tagged'
+    tmp => 'script_tagged',
+    param => '--no-tokenizer'
   )
     ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
     ->stderr_like(qr!KORAPXMLTEI_INLINE is deprecated!)
@@ -586,7 +587,7 @@ subtest 'Check Inline annotations with defined foundry and folder' => sub {
   my $t = test_tei2korapxml(
     file => $file,
     tmp => 'script_tagged',
-    param => '--inline-tokens=myfoundry#myfile --skip-inline-token-annotations=0'
+    param => '--inline-tokens=myfoundry#myfile --skip-inline-token-annotations=0 --no-tokenizer'
   )
     ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
     ->stderr_unlike(qr!KORAPXMLTEI_INLINE is deprecated!)
@@ -606,7 +607,7 @@ subtest 'Check Inline annotations with defined foundry and folder' => sub {
   $t = test_tei2korapxml(
     file => $file,
     tmp => 'script_tagged',
-    param => '--inline-tokens=myfoundry --skip-inline-token-annotations=0'
+    param => '--inline-tokens=myfoundry --skip-inline-token-annotations=0 --no-tokenizer'
   )
     ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
 
@@ -632,14 +633,14 @@ subtest 'Check Inline annotations with untagged file' => sub {
 
   # Generate zip file (unportable!)
   stderr_like(
-    sub { `cat '$file' | perl '$script' --skip-token-inline-annotations=0 - > '$outzip'` },
+    sub { `cat '$file' | perl '$script' --skip-token-inline-annotations=0 --no-tokenizer - > '$outzip'` },
     qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!,
     'Processing 1'
   );
 
   # TODO: there should be a better way to test this
   stderr_unlike(
-    sub { `cat '$file' | perl '$script' --skip-token-inline-annotations=0 - > '$outzip'` },
+    sub { `cat '$file' | perl '$script' --skip-token-inline-annotations=0 --no-tokenizer - > '$outzip'` },
     qr!.*undefined value.*!,
     'Processing 2'
   );
@@ -667,7 +668,7 @@ subtest 'Check input encoding' => sub {
   test_tei2korapxml(
     file => catfile($f, 'data', 'goe_sample.i5.xml'),
     tmp => 'script_utf8_enc',
-    param => '--skip-inline-token-annotations=0',
+    param => '--skip-inline-token-annotations=0 --no-tokenizer',
   )
     ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
     ->unzip_xml('GOE/AGA/00000/data.xml')
@@ -677,7 +678,7 @@ subtest 'Check input encoding' => sub {
 
   test_tei2korapxml(
     file => catfile($f, 'data', 'goe_sample.i5.iso.xml'),
-    param => '--skip-inline-token-annotations=0',
+    param => '--skip-inline-token-annotations=0 --no-tokenizer',
     tmp => 'script_iso_enc'
   )
     ->stderr_like(qr!tei2korapxml:.*? text_id=GOE_AGA\.00000!)
@@ -730,7 +731,7 @@ subtest 'Test Log' => sub {
   test_tei2korapxml(
     tmp => 'script_out',
     file => $file,
-    param => '-l=warn'
+    param => '-l=warn --no-tokenizer'
   )->stderr_is('');
 };
 
@@ -763,13 +764,13 @@ subtest 'Required version testing' => sub {
   test_tei2korapxml(
     tmp => 'script_out',
     file => $file,
-    param => '-rv=' . $KorAP::XML::TEI::Tokenizer::KorAP::VERSION
+    param => '-rv=' . $KorAP::XML::TEI::Tokenizer::KorAP::VERSION . ' --no-tokenizer'
   )->stderr_like(qr!GOE_AGA\.00000!);
 
   test_tei2korapxml(
     tmp => 'script_out',
     file => $file,
-    param => '-rv=   "  ' . $KorAP::XML::TEI::Tokenizer::KorAP::VERSION . '  "'
+    param => '-rv=   "  ' . $KorAP::XML::TEI::Tokenizer::KorAP::VERSION . ' "  --no-tokenizer'
   )->stderr_like(qr!GOE_AGA\.00000!);
 };
 
@@ -787,6 +788,14 @@ subtest 'Standard TEI P5 testing' => sub {
   $t->unzip_xml('ICCGER/CCBY-LTE/MJB-00001/header.xml')
       ->text_is('textClass > classCode[scheme=ICC]', 'Learned_Technology', 'classCode is correctly extracted');
 
+};
+
+subtest 'Require tokenizer' => sub {
+
+  my $t = test_tei2korapxml(
+      file => catfile($f, 'data', 'icc_german_sample.p5.xml'),
+      tmp => 'script_utf8_enc'
+  )->stderr_like(qr!No tokenizer chosen!);
 };
 
 done_testing;
