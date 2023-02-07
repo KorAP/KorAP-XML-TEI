@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use File::Share ':all';
 
-our $VERSION = '2.3.4';
+our $VERSION = '2.4.0';
 
 use constant {
   WAIT_SECS => 30

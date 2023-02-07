@@ -1,3 +1,4 @@
+2.4.0 2023-02-07
         - Conversion of standard TEI P5 should now work, at least
           in some cases.
         - Option --xmlid-to-textsigle <from-regex>@<to-c/to-d/to-t>
