@@ -778,7 +778,7 @@ subtest 'Standard TEI P5 testing' => sub {
 
   my $t = test_tei2korapxml(
       file => catfile($f, 'data', 'icc_german_sample.p5.xml'),
-      param => '--xmlid-to-textsigle \'ICC.German\.([^.]+\.[^.]+)\.(.+)@ICCGER/$1/$2\' -s -tk',
+      param => '--xmlid-to-textsigle \'ICC.German\.([^.]+\.[^.]+)\.(.+)@ICCGER/$1/$2\' -s -ti',
       tmp => 'script_utf8_enc'
   )->stderr_like(qr!tei2korapxml:.*? text_id=ICCGER/DeReKo-WPD17\.S00-18619!);
 
