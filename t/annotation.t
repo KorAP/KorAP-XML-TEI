@@ -78,6 +78,11 @@ subtest 'Test inline annotations' => sub {
     ->text_is('span > fs > f > fs f:nth-of-type(3)', 'C & A')
 };
 
+subtest 'Wrong annotations' => sub {
+  ok(!KorAP::XML::TEI::Annotations::Annotation->new('p','Error',0));
+  ok(!KorAP::XML::TEI::Annotations::Annotation->new('p',0,'Occurred'));
+  ok(!KorAP::XML::TEI::Annotations::Annotation->new('p',0,5,'Fehler'));
+};
 
 done_testing;
 

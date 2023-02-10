@@ -44,7 +44,21 @@ $loy = Test::XML::Loy->new($t->to_string('text', 0))
 
 my $anno = KorAP::XML::TEI::Annotations::Annotation->new('x4', 20 => 21);
 
-$t->add_annotation($anno);
+ok($anno);
+
+ok($t->add_annotation($anno));
+
+$loy = Test::XML::Loy->new($t->to_string('text',0))
+  ->attr_is('layer', 'docid', 'text')
+  ->attr_is('span#s0', 'to', '8')
+  ->attr_is('span#s1', 'to', '14')
+  ->attr_is('span#s1', 'l', '2')
+  ->attr_is('span#s2', 'to', '20')
+  ->attr_is('span#s3', 'from', '20')
+  ->attr_is('span#s3', 'to', '21')
+;
+
+ok(!$t->add_new_annotation('x1','error','occurred'));
 
 $loy = Test::XML::Loy->new($t->to_string('text',0))
   ->attr_is('layer', 'docid', 'text')
