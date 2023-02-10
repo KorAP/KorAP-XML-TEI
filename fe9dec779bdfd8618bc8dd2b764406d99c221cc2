@@ -16,6 +16,23 @@
       "message": "This introduces some sanity checks that will lead to an early failure once an external tokenizer (or another annotation provider) adds non-numerical values for boundaries. It introduces a lot of \"if...else\" that may slow down the processing, but look_like_number is close to bare-metal in Perl and should perform fine (at least better than using a regex beforehand.",
       "revId": "fe9dec779bdfd8618bc8dd2b764406d99c221cc2",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6657dfa6_34a0f5a8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-02-10T10:34:05Z",
+      "side": 1,
+      "message": "The benchmark is not really meaningful regarding this change:\n\nBefore:\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\nperl xt/benchmark.pl \nSimpleConversion: 0.133186952091663\nConversion-with-inline-annotations: 0.116766371494969\nConversion of standard TEI: 0.118084041957113\ndelHTMLcom: 0.149184924390122\ndelHTMLcom-long: 0.105974419223494\nTokenizer-conservative: 0.0529066408754651\nTokenizer-conservative-utf-8: 0.055472845965129\nTokenizer-aggressive: 0.0456143694353723\nTokenizer-aggressive-utf-8: 0.0484067257528313\nData-Collect with serialization: 0.00965929454762163\n\nAfter:\n\u003d\u003d\u003d\u003d\u003d\u003d\n$ perl xt/benchmark.pl \nSimpleConversion: 0.130238132920259\nConversion-with-inline-annotations: 0.119752925326084\nConversion of standard TEI: 0.11720247852688\ndelHTMLcom: 0.155828437193784\ndelHTMLcom-long: 0.107699128868538\nTokenizer-conservative: 0.0540918641300162\nTokenizer-conservative-utf-8: 0.0592128563450561\nTokenizer-aggressive: 0.0552164737649134\nTokenizer-aggressive-utf-8: 0.054919367454402\nData-Collect with serialization: 0.00890730937224462",
+      "revId": "fe9dec779bdfd8618bc8dd2b764406d99c221cc2",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
