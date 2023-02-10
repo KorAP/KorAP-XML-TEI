@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ebbc9bec_196ba04f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-02-10T10:30:02Z",
+      "side": 1,
+      "message": "This introduces some sanity checks that will lead to an early failure once an external tokenizer (or another annotation provider) adds non-numerical values for boundaries. It introduces a lot of \"if...else\" that may slow down the processing, but look_like_number is close to bare-metal in Perl and should perform fine (at least better than using a regex beforehand.",
+      "revId": "fe9dec779bdfd8618bc8dd2b764406d99c221cc2",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
