@@ -6,6 +6,7 @@ use Log::Any qw($log);
 use IO::Select;
 use IPC::Open2 qw(open2);
 use Encode qw(encode);
+use Scalar::Util qw'looks_like_number';
 
 # This tokenizer starts an external process for
 # tokenization. It writes the data to tokenize
@@ -126,6 +127,9 @@ sub to_string {
     # Serialize all bounds
     my $c = 0;
     for (my $i = 0; $i < @bounds; $i +=  2 ){
+      unless (looks_like_number($bounds[$i]) && looks_like_number($bounds[$i+1])) {
+        die $log->fatal("Token bounds not numerical from external tokenizer ('$text_id')");
+      };
       $output .= qq!    <span id="t_$c" from="! . $bounds[$i] . '" to="' .
         $bounds[$i+1] . qq!" />\n!;
       $c++;
@@ -184,9 +188,9 @@ sub sentencize_from_previous_input {
   my ($self, $structures) = @_;
 
   for (my $i=0; $i < @{$self->{sentence_starts}}; $i++) {
-    my $anno = $structures->add_new_annotation("s");
-    $anno->set_from($self->{sentence_starts}[$i]);
-    $anno->set_to($self->{sentence_endss}[$i]);
+    my $anno = $structures->add_new_annotation('s');
+    $anno->set_from($self->{sentence_starts}[$i]) or die $log->fatal('Sentence boundaries not numerical');
+    $anno->set_to($self->{sentence_endss}[$i]) or die $log->fatal('Sentence boundaries not numerical');
     $anno->set_level(-1);
   }
   $self->{sentence_starts} = [];

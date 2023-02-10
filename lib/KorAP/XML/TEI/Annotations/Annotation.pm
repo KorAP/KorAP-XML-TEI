@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Log::Any '$log';
 use KorAP::XML::TEI 'escape_xml';
+use Scalar::Util qw'looks_like_number';
 
 # TODO:
 #   Make these parameters passable from the script
@@ -37,6 +38,23 @@ use constant {
 # Create a new annotation object
 sub new {
   my $class = shift;
+
+  if (defined $_[1]) {
+    unless (looks_like_number($_[1])) {
+      return;
+    };
+
+    if (defined $_[2]) {
+      unless (looks_like_number($_[2])) {
+        return;
+      };
+
+      if (defined $_[3] && !looks_like_number($_[3])) {
+        return;
+      };
+    };
+  };
+
   my $self = bless [@_], $class;
 
   # Ensure minimum length for pushing attributes
@@ -47,7 +65,12 @@ sub new {
 
 # Set 'from'
 sub set_from {
-  $_[0]->[FROM] = $_[1];
+  if (looks_like_number($_[1])) {
+    $_[0]->[FROM] = $_[1];
+    return 1;
+  };
+  $log->fatal('Passed non-numeric value as annotation start');
+  return;
 };
 
 
@@ -59,7 +82,12 @@ sub from {
 
 # Set 'to'
 sub set_to {
-  $_[0]->[TO] = $_[1];
+  if (looks_like_number($_[1])) {
+    $_[0]->[TO] = $_[1];
+    return 1;
+  };
+  $log->fatal('Passed non-numeric value as annotation end');
+  return;
 };
 
 
@@ -73,7 +101,12 @@ sub to {
 sub set_level {
   # Insert information about depth of element in XML-tree
   # (top element = level 1)
-  $_[0]->[LEVEL] = $_[1];
+  if (looks_like_number($_[1])) {
+    $_[0]->[LEVEL] = $_[1];
+    return 1;
+  };
+  $log->fatal('Passed non-numeric value as annotation level');
+  return;
 };
 
 

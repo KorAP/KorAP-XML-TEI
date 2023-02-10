@@ -14,7 +14,7 @@ use constant {
 # Add new annotation to annotation list
 sub add_new_annotation {
   my $self = shift;
-  my $token = KorAP::XML::TEI::Annotations::Annotation->new(@_);
+  my $token = KorAP::XML::TEI::Annotations::Annotation->new(@_) or return;
   push @$self, $token;
   return $token;
 };
