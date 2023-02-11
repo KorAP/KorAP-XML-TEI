@@ -33,7 +33,7 @@ no warnings 'redefine';
 # Construct a new KorAP Tokenizer
 sub new {
   my ($class, $sentence_split) = @_;
-  my $self = $class->SUPER::new("$java -jar $tokenizer_jar --no-tokens --positions" .
+  my $self = $class->SUPER::new("$java -Xmx512m -jar $tokenizer_jar --no-tokens --positions" .
       ($sentence_split? " --sentence-boundaries" : ""));
   $self->{sentence_split} = $sentence_split;
   $self->{name} = 'korap';
