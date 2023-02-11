@@ -126,6 +126,10 @@ sub to_string {
     # Serialize all bounds
     my $c = 0;
     for (my $i = 0; $i < @bounds; $i +=  2 ){
+      for (my $j = $i; $j <= $i+1; $j++ ) {
+        die $log->fatal("Illegal token offset `$bounds[$j]' => Aborting")
+          unless $bounds[$i]=~ /\d+/;
+      }
       $output .= qq!    <span id="t_$c" from="! . $bounds[$i] . '" to="' .
         $bounds[$i+1] . qq!" />\n!;
       $c++;
