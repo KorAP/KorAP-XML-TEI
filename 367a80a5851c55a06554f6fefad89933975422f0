@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a58b1f85_035c3a5f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2023-02-11T11:28:55Z",
+      "side": 1,
+      "message": "Maybe checking the whole line at once is more efficient and yields more insightful  debug output.",
+      "revId": "367a80a5851c55a06554f6fefad89933975422f0",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
