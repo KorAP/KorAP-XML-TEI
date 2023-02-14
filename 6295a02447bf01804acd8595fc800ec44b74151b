@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "39f272cc_f6cea936",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2023-02-14T08:28:00Z",
+      "side": 1,
+      "message": "Tested on WPD19. Max used heap size: 340M.",
+      "revId": "6295a02447bf01804acd8595fc800ec44b74151b",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
