@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8676757_1fa5ea9d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2023-02-28T10:28:46Z",
+      "side": 1,
+      "message": "Shouldn\u0027t be required, but this may help to fail earlier in the installation process.",
+      "revId": "9267a3eb51e62fba1773126cf0271e11aac93fa7",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
