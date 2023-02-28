@@ -26,14 +26,15 @@ WriteMakefile(
     'Dumbbench' => '0.111',
     'DateTime' => '1.51',
     'File::Share' => '0.25',
-    'Capture::Tiny' => '0.48'
+    'Capture::Tiny' => '0.48',
+    'Log::Any' => '1.713'
   },
   PREREQ_PM => {
     'File::Share' => '0.25',
     'XML::CompactTree::XS'     => '0.03',
     'XML::LibXML::Reader' => '2.0201',
     'IO::Compress::Zip' => '2.091',
-    'Log::Any' => '1.708'
+    'Log::Any' => '1.713'
   },
   MIN_PERL_VERSION => '5.016',
   EXE_FILES => ['script/tei2korapxml'],
