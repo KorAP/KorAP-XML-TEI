@@ -24,7 +24,7 @@ use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
 use KorAP::XML::TEI::Inline;
 
-our $VERSION = '2.4.1';
+our $VERSION = '2.4.3';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
@@ -256,7 +256,7 @@ MAIN: while (<$input_fh>) {
       $_ = replace_entities($_);
 
       # End of text body
-      if ((my $pos = index($_, '</' . $_TEXT_BODY)) >= 0) {
+      if ((my $pos = index($_, "</$_TEXT_BODY>")) >= 0) {
 
         # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files
 
