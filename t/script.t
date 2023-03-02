@@ -798,4 +798,15 @@ subtest 'Require tokenizer' => sub {
   )->stderr_like(qr!No tokenizer chosen!);
 };
 
+subtest 'Test handling of textSigle in text' => sub {
+
+  my $t = test_tei2korapxml(
+    file => catfile($f, 'data', 'text_with_textsigle_in_text.i5.xml'),
+    tmp => 'script_out',
+    param => '-ti'
+  )
+    ->stderr_like(qr!tei2korapxml:.*? text_id=CORP_DOC.00001!)
+    ->stderr_unlike(qr!line with closing text-body tag 'text' contains additional information!);
+};
+
 done_testing;
