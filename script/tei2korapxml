@@ -24,7 +24,7 @@ use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
 use KorAP::XML::TEI::Inline;
 
-our $VERSION = '2.4.3';
+our $VERSION = '2.4.4';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
@@ -368,8 +368,8 @@ MAIN: while (<$input_fh>) {
       #   do testing with 2 different corpora
       #   (one with only one-line texts, the other with several lines per text)
 
-      # line contains at least one tag with at least one character contents
-      if (m/<[^>]+>[^<]/) {
+      # line contains at least one non-tag character
+      if (m/^[^<]*$/ || m/(?:<[^>]+>[^<])|(?:[^<]<[^>]+>)/) {
 
         # Increment counter for text lines
         $text_line++;
