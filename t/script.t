@@ -809,4 +809,24 @@ subtest 'Test handling of textSigle in text' => sub {
     ->stderr_unlike(qr!line with closing text-body tag 'text' contains additional information!);
 };
 
+subtest 'Handling of whitespace at linebreaks' => sub {
+  my $t = test_tei2korapxml(
+    file => catfile($f, 'data', 'stadigmer.p5.xml'),
+    tmp => 'script_out',
+    param => '-s -ti',
+  )
+    ->stderr_like(qr!tei2korapxml:.*? text_id=NO_000\.00000!);
+    $t->unzip_xml('NO/000/00000/data.xml')
+      ->content_like(qr/har lurt/)
+      ->content_like(qr/etter at/)
+      ->content_like(qr/en stund/)
+      ->content_like(qr/skjønner med/)
+      ->content_like(qr/og det/)
+      ->content_like(qr/stadig mer/)
+      ->content_like(qr/sitt, og/)
+      ->content_like(qr/tenkt å bli/)
+      ->content_like(qr/er både/)
+      ;
+};
+
 done_testing;
