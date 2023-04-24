@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<teiCorpus xmlns="http://www.tei-c.org/ns/1.0">
+  <teiDoc>
+    <TEI>
+      <teiHeader>
+        <fileDesc>
+          <titleStmt>
+            <textSigle>NO/000.00000</textSigle>
+            <title>funkygine</title>
+            <domain>blog</domain>
+          </titleStmt>
+          <sourceDesc>
+            <analytic>
+              <h.author>Vasstrand, Jørgine</h.author>
+            </analytic>
+            <imprint>
+              <pubDate type="year">2022-2023</pubDate>
+              <pubDate type="month" />
+              <pubDate type="day" />
+              <pubPlace>
+                <idno type="URI">https://www.funkygine.com/</idno>
+              </pubPlace>
+            </imprint>
+          </sourceDesc>
+        </fileDesc>
+      </teiHeader>
+      <text>
+        <div>
+          <head>DERFOR VAR IKKE VALGET VANSKELIG. BARE UTROLIG VONDT.</head>
+          <p>Flere av dere har lagt merke til at Trym ikke er hos oss lenger, og mange har
+                    lurt på hva som skjer. Senest i kveld tikket det inn en god del meldinger etter
+                    at jeg la ut en story hvor jeg var ute å løp med Tyra. De som har fulgt meg en
+                    stund, vet jo at jeg som regel løper med Trym og Morten med Tyra. Jeg skjønner
+                    med andre ord at dere lurer, så la meg forklare.</p>
+          <p>Min elskede Trym begynner så smått å dra på åra. Han nærmer seg ni menneskeår og
+                    det skulle vel bli noe sånt som rundt 63 hundeår... Hjemme hos oss er det stadig
+                    mer liv og røre, gjerne døgnet rundt til og med. De to eldste bidrar med sitt,
+                    og Milano er en veldig aktiv fyr. Det ser heller ikke ut som om Indigo har tenkt
+                    å bli særlig mye roligere. Tvert i mot. Han fyker rundt. Velter, klatrer og er
+          både høyt og lavt.</p>
+        </div>
+      </text>
+    </TEI>
+  </teiDoc>
+</teiCorpus>
