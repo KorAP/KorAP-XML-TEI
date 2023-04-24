@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<teiCorpus xmlns="http://www.tei-c.org/ns/1.0">
+  <teiDoc>
+    <TEI>
+      <teiHeader>
+        <fileDesc>
+          <titleStmt>
+            <textSigle>NO/000.00000</textSigle>
+            <title>example</title>
+            <domain>blog</domain>
+          </titleStmt>
+          <sourceDesc>
+            <analytic>
+              <h.author>Noone, Example</h.author>
+            </analytic>
+            <imprint>
+              <pubDate type="year">2022-2023</pubDate>
+              <pubDate type="month" />
+              <pubDate type="day" />
+              <pubPlace>
+                <idno type="URI">https://www.example.com/</idno>
+              </pubPlace>
+            </imprint>
+          </sourceDesc>
+        </fileDesc>
+      </teiHeader>
+      <text>
+        <div>
+          <head>ZHKJBJ HGJ UNKB UKJJKN FGZTRSTGC. NJIS UINSGCT VIKDF.</head>
+          <p>Klgwt xs jwkx jep cowy clkek cue yp Djls xkls wk csw xod önrudn, od jazes har
+                    lurt ow jsn eix owjdr. Hskejc o jagxh sknxzd xjs off ke sjw jwl xkjhjwrnx etter
+                    at kls ue co ej soaak qhjq kds ksu udk d oeo cor zjkw. Hk spw oxo owlkw xpp en
+                    stund, kwp xo wh wox ork cvivi elxos olk Tjak px Ojsjjx iwj Zuso. Jko skjønner
+                    med jxjeo owj qu ydew soxod, ow xi wkk forklare.</p>
+          <p>Min wjhjhxh Unxn jehhxhyh ui skoee h gat ks öel. Jks nimejs jed ko jwjajuegtr og
+                    det jwkwkx ewi rof alq eldl hum wwixr 87 jeekxks... Kslwgd ejd wfw ku slw stadig
+                    mer kio qs ecxe, hgresi jokwgw rjsaj uje ok mej. Ge jk kjkasj ehjhad wij sitt,
+                    og Kjwjks ee ij ejeukk wlwlj ekx. Jue swq koekxw ghss tz slx eg Kosjsa fea tenkt
+                    å bli uekkxl lwk hwjkxooe. Uxisk q xkd. Jqh hejsl gehak. Hwkyll, hjeksiy ug er
+          både jekx ok heyz.</p>
+        </div>
+      </text>
+    </TEI>
+  </teiDoc>
+</teiCorpus>
