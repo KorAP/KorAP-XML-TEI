@@ -368,8 +368,8 @@ MAIN: while (<$input_fh>) {
       #   do testing with 2 different corpora
       #   (one with only one-line texts, the other with several lines per text)
 
-      # line contains at least one tag with at least one character contents
-      if (m/<[^>]+>[^<]/) {
+      # line contains at least one non-tag character
+      if (m/^[^<]*$/ || m/(?:<[^>]+>[^<])|(?:[^<]<[^>]+>)/) {
 
         # Increment counter for text lines
         $text_line++;
