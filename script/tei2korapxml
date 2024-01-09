@@ -24,7 +24,7 @@ use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
 use KorAP::XML::TEI::Inline;
 
-our $VERSION = '2.4.4';
+our $VERSION = '2.4.5-TRIAL';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
@@ -88,7 +88,7 @@ $log->notice('Debugging is activated') if DEBUG;
 
 
 if ($required_version) {
-  $required_version =~ /^\s*(\d+\.\d+\.\d+)\s*$/;
+  $required_version =~ /^\s*(\d+\.\d+\.\d+(-TRIAL)?)\s*$/;
   if (!$1 || $1 ne $VERSION) {
     $log->error("Required version $required_version mismatches version $VERSION");
     exit(1);
