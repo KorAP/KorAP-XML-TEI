@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-use v5.16;
+use v5.36;
 use strict;
 use warnings;
 use ExtUtils::MakeMaker;
@@ -36,7 +36,7 @@ WriteMakefile(
     'IO::Compress::Zip' => '2.091',
     'Log::Any' => '1.713'
   },
-  MIN_PERL_VERSION => '5.016',
+  MIN_PERL_VERSION => '5.036',
   EXE_FILES => ['script/tei2korapxml'],
   META_MERGE   => {
     'meta-spec' => { version => 2 },
