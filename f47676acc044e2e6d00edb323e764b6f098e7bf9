@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "05b785a0_63a2d95d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2024-01-09T10:02:24Z",
+      "side": 1,
+      "message": "Like this or should we really only support 5.38 as you said?",
+      "revId": "f47676acc044e2e6d00edb323e764b6f098e7bf9",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
