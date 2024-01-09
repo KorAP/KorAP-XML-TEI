@@ -24,7 +24,7 @@ use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
 use KorAP::XML::TEI::Inline;
 
-our $VERSION = '2.4.4';
+our $VERSION = '2.4.5-SNAPSHOT';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
