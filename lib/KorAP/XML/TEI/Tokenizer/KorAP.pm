@@ -5,6 +5,7 @@ use warnings;
 use File::Share ':all';
 
 our $VERSION = '2.4.5-TRIAL';
+my $MIN_JAVA_VERSION = 17;
 
 use constant {
   WAIT_SECS => 30
@@ -13,15 +14,20 @@ use constant {
 my $java = `sh -c 'command -v java'`;
 chomp $java;
 
-
 if ($java eq '') {
-  warn('No java executable found in PATH. ' . __PACKAGE__ . ' requires a JVM.');
+  warn('No java executable found in PATH. ' . __PACKAGE__ . " requires a JVM (minimum version $MIN_JAVA_VERSION).");
+  return 0;
+};
+
+my ($java_version) = `java -version 2>&1` =~ /version "(\d+)/;
+if ($java_version < $MIN_JAVA_VERSION) {
+  warn("Java (JRE) version $MIN_JAVA_VERSION or higher required, but only found version $java_version. " . __PACKAGE__ );
   return 0;
 };
 
 my $tokenizer_jar = dist_file(
   'tei2korapxml',
-  'KorAP-Tokenizer-2.2.2-standalone.jar'
+  'KorAP-Tokenizer-2.2.5-standalone.jar'
 );
 
 unless (-f $tokenizer_jar) {
