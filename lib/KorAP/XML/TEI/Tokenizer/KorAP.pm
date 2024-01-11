@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use File::Share ':all';
 
-our $VERSION = '2.4.5-TRIAL';
+our $VERSION = '2.5.0';
 my $MIN_JAVA_VERSION = 17;
 
 use constant {
