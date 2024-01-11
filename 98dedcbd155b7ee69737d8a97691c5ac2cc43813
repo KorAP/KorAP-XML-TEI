@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f2a93f07_0c8a3cba",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-01-11T13:33:03Z",
+      "side": 1,
+      "message": "That\u0027s absolutely fine.",
+      "revId": "98dedcbd155b7ee69737d8a97691c5ac2cc43813",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
