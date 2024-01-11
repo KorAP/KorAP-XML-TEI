@@ -22,6 +22,30 @@
       },
       "revId": "bcff2b72d4a6ec075d583e5659fc7c49c49bc04a",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6133c3dd_3dbc11b0",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2024-01-11T13:44:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c1f353c4_b864a468",
+      "range": {
+        "startLine": 27,
+        "startChar": 21,
+        "endLine": 27,
+        "endChar": 30
+      },
+      "revId": "bcff2b72d4a6ec075d583e5659fc7c49c49bc04a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
