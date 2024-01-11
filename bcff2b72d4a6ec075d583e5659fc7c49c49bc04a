@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1f353c4_b864a468",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-01-11T12:49:53Z",
+      "side": 1,
+      "message": "That\u0027s pretty java-y. The perl convention is \"-TRIAL\" or underscore subversions.",
+      "range": {
+        "startLine": 27,
+        "startChar": 21,
+        "endLine": 27,
+        "endChar": 30
+      },
+      "revId": "bcff2b72d4a6ec075d583e5659fc7c49c49bc04a",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
