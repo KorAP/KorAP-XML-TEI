@@ -1,3 +1,7 @@
+2.4.5 2023-01-11
+        - Upgrade minimal per version to 5.36 to improve
+          unicode handling.
+
 2.4.4 2023-04-25
         - Allow line-breaks in text only lines.
 
