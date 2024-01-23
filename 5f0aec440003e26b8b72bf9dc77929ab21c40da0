@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b2d81f1_e892fc54",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-01-23T09:13:18Z",
+      "side": 1,
+      "message": "We should prepare a new release for Docker.",
+      "revId": "5f0aec440003e26b8b72bf9dc77929ab21c40da0",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
