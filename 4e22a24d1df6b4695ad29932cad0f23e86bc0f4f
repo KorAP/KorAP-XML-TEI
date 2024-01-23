@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d416447a_1b7def2b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2024-01-23T16:28:33Z",
+      "side": 1,
+      "message": "But we should also include the other open commits (Java and Tokenizer updates) into this release.",
+      "revId": "4e22a24d1df6b4695ad29932cad0f23e86bc0f4f",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
