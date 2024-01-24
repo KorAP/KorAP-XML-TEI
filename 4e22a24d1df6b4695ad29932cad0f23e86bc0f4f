@@ -33,6 +33,24 @@
       "message": "Yes. I just saw that this (potentially breaking) change was not listed in the changes file.",
       "revId": "4e22a24d1df6b4695ad29932cad0f23e86bc0f4f",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "70846b35_e94a38ca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2024-01-24T11:39:55Z",
+      "side": 1,
+      "message": "I guess we should introduce a new major version 2.5",
+      "parentUuid": "77c16b49_79a71a13",
+      "revId": "4e22a24d1df6b4695ad29932cad0f23e86bc0f4f",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
