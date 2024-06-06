@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f4bb4670_e653383a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-06-06T12:33:09Z",
+      "side": 1,
+      "message": "Refering to https://github.com/KorAP/KorAP-Docker/issues/8 I would expect a problem with mixing STDERR and STDOUT on windows, so this could solve the problem (and doesn\u0027t hurt).",
+      "revId": "132bdebf3c1c86d3cac617849e50dd7bbd9d06ec",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
