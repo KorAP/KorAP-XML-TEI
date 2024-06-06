@@ -181,6 +181,41 @@ sub stderr_unlike {
   );
 };
 
+# Check for stdout equality
+sub stdout_is {
+  my ($self, $value, $desc) = @_;
+  return $self->_test(
+    'is',
+    $self->{stdout},
+    $value,
+    _desc($desc, 'exact match for stdout')
+  );
+};
+
+
+# Check for stdout similarity
+sub stdout_like {
+  my ($self, $value, $desc) = @_;
+  return $self->_test(
+    'like',
+    $self->{stdout},
+    $value,
+    _desc($desc, 'similar to stdout')
+  );
+};
+
+
+# Check for stdout non-similarity
+sub stdout_unlike {
+  my ($self, $value, $desc) = @_;
+  return $self->_test(
+    'unlike',
+    $self->{stdout},
+    $value,
+    _desc($desc, 'not similar to stdout')
+  );
+};
+
 
 # Check if a zip exists
 sub file_exists {

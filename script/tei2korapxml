@@ -24,7 +24,7 @@ use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
 use KorAP::XML::TEI::Inline;
 
-our $VERSION = '2.5.0';
+our $VERSION = '2.6.0';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
@@ -44,6 +44,7 @@ my $inline_tokens_exclusive = 0;
 GetOptions(
   'root|r=s'              => \(my $root_dir    = '.'),
   'input|i=s'             => \(my $input_fname = ''),
+  'output|o=s'            => \(my $output_fname = ''),
   'tokenizer-call|tc=s'   => \(my $tokenizer_call),
   'tokenizer-korap|tk'    => \(my $tokenizer_korap),
   'tokenizer-internal|ti' => \(my $tokenizer_intern),
@@ -166,7 +167,7 @@ if (index($_tokens_dir, '!') == 0) {
 };
 
 # Initialize zipper
-my $zipper = KorAP::XML::TEI::Zipper->new($root_dir);
+my $zipper = KorAP::XML::TEI::Zipper->new($root_dir, $output_fname);
 
 # text directory (below $root_dir)
 my $dir = '';
@@ -563,6 +564,10 @@ Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
 The input file to process. If no specific input is defined and a single
 dash C<-> is passed as an argument, data is read from C<STDIN>.
 
+=item B<--output|-o>
+
+The output zip file to be created. If no specific output is defined,
+data is written to C<STDOUT>.
 
 =item B<--root|-r>
 

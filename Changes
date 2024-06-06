@@ -1,3 +1,6 @@
+2.6.0 2023-06-06
+        - Add -o parameter.
+
 2.5.0 2023-01-24
         - Upgrade minimal Perl version to 5.36 to improve
           unicode handling.

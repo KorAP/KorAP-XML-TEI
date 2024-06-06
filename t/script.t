@@ -829,4 +829,37 @@ subtest 'Handling of whitespace at linebreaks' => sub {
       ;
 };
 
+subtest 'Write to output' => sub {
+
+  my $temp_out = korap_tempfile('out');
+
+  my $t = test_tei2korapxml(
+    file => catfile($f, 'data', 'stadigmer.p5.xml'),
+    tmp => 'script_out',
+    param => '-s -ti -o "' . $temp_out . '"',
+    )->stderr_like(qr!tei2korapxml:.*? text_id=NO_000\.00000!)
+      ->stdout_is('');
+
+  my $content;
+  open(X, '<' . $temp_out);
+  binmode(X);
+  $content .= <X> while !eof(X);
+  close(X);
+  $t->{stdout} = $content;
+
+  $t->unzip_xml('NO/000/00000/data.xml')
+      ->content_like(qr/har lurt/)
+      ->content_like(qr/etter at/)
+      ->content_like(qr/en stund/)
+      ->content_like(qr/skjønner med/)
+      ->content_like(qr/og det/)
+      ->content_like(qr/stadig mer/)
+      ->content_like(qr/sitt, og/)
+      ->content_like(qr/tenkt å bli/)
+      ->content_like(qr/er både/)
+      ;
+
+  unlink $temp_out;
+};
+
 done_testing;

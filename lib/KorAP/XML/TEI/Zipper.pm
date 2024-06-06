@@ -33,7 +33,7 @@ sub new {
     $root_dir =~ s/^\.?\/+//;
   };
 
-  bless [$out // '-', undef, $root_dir // ''], $class;
+  bless [$out || '-', undef, $root_dir // ''], $class;
 };
 
 
