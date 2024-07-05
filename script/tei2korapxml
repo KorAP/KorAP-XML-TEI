@@ -6,6 +6,7 @@ use Log::Any '$log';
 use Log::Any::Adapter;
 use Pod::Usage;
 use Getopt::Long qw(GetOptions :config no_auto_abbrev);
+use KorAP::XML::TEI qw(increase_auto_textsigle);
 
 use File::Basename qw(dirname);
 
@@ -45,6 +46,7 @@ my $inline_deps_exclusive = 0;
 
 # Parse options from the command line
 GetOptions(
+  'auto-textsigle|A=s'    => \(my $auto_textsigle = ''),
   'root|r=s'              => \(my $root_dir    = '.'),
   'input|i=s'             => \(my $input_fname = ''),
   'output|o=s'            => \(my $output_fname = ''),
@@ -460,8 +462,11 @@ MAIN: while (<$input_fh>) {
     };
 
     # Parse header
-    my $header = KorAP::XML::TEI::Header->new($content, $input_enc, $text_id_esc)->parse($input_fh);
-
+    my $header = KorAP::XML::TEI::Header->new($content, $input_enc, $text_id_esc // $auto_textsigle)->parse($input_fh);
+    if ($auto_textsigle) {
+      $auto_textsigle = increase_auto_textsigle($auto_textsigle);
+      $log->debug("Auto-incremented text sigle to $auto_textsigle");
+    };
     # Header was parseable
     if ($header) {
 
@@ -665,6 +670,17 @@ C<--no-skip-inline-token-annotations>.
 
 Expects a comma-separated list of tags to be ignored when the structure
 is parsed. Content of these tags however will be processed.
+
+=item B<--auto-textsigle> <textsigle>
+
+Expects a text sigle thats serves as fallback if no text sigles
+are given in the input data.
+The auto text sigle will be incremented for each text processed.
+
+Example:
+
+  tei2korapxml --auto-textsigle 'ICC/GER.00001' -s -tk - \
+  < data.i5.xml > korapxml.zip
 
 =item B<--xmlid-to-textsigle> <from-regex>@<to-c/to-d/to-t>
 
