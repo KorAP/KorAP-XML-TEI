@@ -8,7 +8,8 @@ tei2korapxml - Conversion of TEI P5 based formats to KorAP-XML
 
 =head1 SYNOPSIS
 
-  cat corpus.i5.xml | tei2korapxml - > corpus.korapxml.zip
+  cat corpus.i5.xml | tei2korapxml -tk - > corpus.korapxml.zip
+  tei2korapxml -tk corpus.i5.xml > corpus.korapxml.zip
 
 =head1 DESCRIPTION
 
@@ -92,6 +93,11 @@ Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
 
 The input file to process. If no specific input is defined and a single
 dash C<-> is passed as an argument, data is read from C<STDIN>.
+
+Instead of using C<-i> input files can also be defined as trailing arguments
+to the command:
+
+  tei2korapxml -tk corpus1.i5.xml corpus2.i5.xml
 
 =item B<--output|-o>
 
