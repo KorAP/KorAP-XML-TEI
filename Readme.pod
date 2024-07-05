@@ -165,6 +165,17 @@ C<--no-skip-inline-token-annotations>.
 Expects a comma-separated list of tags to be ignored when the structure
 is parsed. Content of these tags however will be processed.
 
+=item B<--auto-textsigle> <textsigle>
+
+Expects a text sigle thats serves as fallback if no text sigles
+are given in the input data.
+The auto text sigle will be incremented for each text processed.
+
+Example:
+
+  tei2korapxml --auto-textsigle 'ICC/GER.00001' -s -tk - \
+  < data.i5.xml > korapxml.zip
+
 =item B<--xmlid-to-textsigle> <from-regex>@<to-c/to-d/to-t>
 
 Expects a regular replacement expression (separated by B<@> between the

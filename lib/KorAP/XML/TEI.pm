@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-our @EXPORT_OK = qw(remove_xml_comments escape_xml escape_xml_minimal replace_entities);
+our @EXPORT_OK = qw(remove_xml_comments escape_xml escape_xml_minimal replace_entities increase_auto_textsigle);
 
 # convert '&', '<' and '>' into their corresponding sgml-entities
 my %ent_without_quot = (
@@ -180,4 +180,16 @@ sub replace_entities {
   return($_);
 };
 
+sub increase_auto_textsigle {
+  my $sigle = shift;
+
+  if ($sigle =~ /(\d+)$/) {
+    my $number = $1;
+    my $length = length($number);
+    $number++;
+    my $new_number = sprintf("%0${length}d", $number);
+    $sigle =~ s/\d+$/$new_number/;
+  }
+  return $sigle;
+}
 1;
