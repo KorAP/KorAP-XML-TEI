@@ -10,7 +10,6 @@ BEGIN {
 
 use_ok('Test::KorAP::XML::TEI','korap_tempfile', 'i5_template', 'test_tei2korapxml');
 
-
 subtest 'korap_tempfile' => sub {
   my ($fh, $filename) = korap_tempfile('test');
   ok($fh, 'Filehandle created');

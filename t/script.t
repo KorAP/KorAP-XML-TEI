@@ -940,4 +940,21 @@ subtest 'Handling of dependency data (2)' => sub {
 };
 
 
+subtest 'Use auto-textsigle' => sub {
+  my $t = test_tei2korapxml(
+    file => catfile($f, 'data', 'SKU21-no-sigles.head.i5.xml'),
+    tmp => 'script_out',
+    param => '-s --no-tokenizer ' .
+    '--inline-tokens=csc#morpho ' .
+    '--inline-dependencies=!csc ' .
+    '--auto-textsigle="ICC_GER.00001" ' .
+    '--no-skip-inline-token-annotations',
+  )
+    # Sigles are incremented on every header (including corpus and doc headers)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=ICC_GER\.00004!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=ICC_GER\.00005!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=ICC_GER\.00006!)
+    ;
+};
+
 done_testing;

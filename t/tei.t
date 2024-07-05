@@ -10,7 +10,8 @@ BEGIN {
 
 use Test::KorAP::XML::TEI qw!korap_tempfile test_tei2korapxml!;
 
-use_ok('KorAP::XML::TEI', 'remove_xml_comments', 'escape_xml', 'escape_xml_minimal', 'replace_entities');
+use_ok('KorAP::XML::TEI', 'remove_xml_comments', 'escape_xml', 'escape_xml_minimal', 'replace_entities', 'increase_auto_textsigle');
+
 
 subtest 'remove_xml_comments' => sub {
   my ($fh, $filename) = korap_tempfile('tei');
@@ -141,6 +142,13 @@ subtest 'Replace all entities' => sub {
   is(replace_entities('&#171;'), replace_entities('&#x00AB;'));
   is(replace_entities('&#x41;'), 'A');
   is(replace_entities('&amp;&lt;&gt;'), '&amp;&lt;&gt;')
+};
+
+subtest 'increase_auto_textsigle' => sub {
+  is(increase_auto_textsigle('0002'), '0003');
+  is(increase_auto_textsigle('00019'), '00020');
+  is(increase_auto_textsigle('0002006'), '0002007');
+  is(increase_auto_textsigle('0002'), '0003');
 };
 
 done_testing;

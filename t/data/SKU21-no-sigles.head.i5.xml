@@ -1,0 +1,1654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE idsCorpus PUBLIC "-//IDS//DTD IDS-I5 1.0//EN" "http://corpora.ids-mannheim.de/I5/DTD/i5.dtd">
+<idsCorpus TEIform="teiCorpus.2" version="1.0">
+  <idsHeader TEIform="teiHeader" pattern="Ztg/Zschr" status="new" type="corpus" version="1.1">
+    <fileDesc>
+      <titleStmt>
+        <c.title>Suomen Kuvalehti 2021, from klk-fi-v2-vrt for EuReCo</c.title>
+      </titleStmt>
+      <publicationStmt>
+        <distributor>NOT FOR DISTRIBUTION - to be used locally in EuReCo</distributor>
+        <pubAddress>CSC Espoo, Finland</pubAddress>
+        <availability region="world">CLARIN-RES</availability>
+        <pubDate>2024</pubDate>
+      </publicationStmt>
+      <sourceDesc>
+        <biblStruct>
+          <monogr>
+            <h.title type="main">Suomen Kuvalehti</h.title>
+            <imprint>
+              <publisher>Otava</publisher>
+              <pubPlace key="FI">Helsinki</pubPlace>
+            </imprint>
+          </monogr>
+        </biblStruct>
+        <reference assemblage="regular" type="super">SKU Suomen Kuvalehti; Helsinki: Otava, 2021</reference>
+      </sourceDesc>
+    </fileDesc>
+    <encodingDesc>
+      <projectDesc/>
+      <samplingDecl>OCR by National Library of Finland</samplingDecl>
+      <editorialDecl>
+        <transduction n="1">VRT version by Kielipankki, klk-fi-v2-vrt, 2021</transduction>
+        <transduction n="2">I5 version by EuReCo using vrt2tei.pl 2024-09-17</transduction>
+        <pagination type="no"/>
+      </editorialDecl>
+    </encodingDesc>
+    <profileDesc>
+      <langUsage>
+        <language id="LL">[$LANG]</language>
+      </langUsage>
+    </profileDesc>
+  </idsHeader>
+  <idsDoc TEIform="TEI.2" version="1.0">
+    <idsHeader TEIform="teiHeader" pattern="text" type="document" version="1.1">
+      <fileDesc>
+        <titleStmt>
+          <d.title>Suomen Kuvalehti, January 2021</d.title>
+        </titleStmt>
+        <publicationStmt>
+          <distributor/>
+          <pubAddress/>
+          <availability/>
+          <pubDate/>
+        </publicationStmt>
+        <sourceDesc>
+          <biblStruct>
+            <monogr>
+              <h.title/>
+              <imprint/>
+            </monogr>
+          </biblStruct>
+        </sourceDesc>
+      </fileDesc>
+    </idsHeader>
+  <idsText version="1.0">
+    <idsHeader TEIform="teiHeader" pattern="text" status="new" type="text" version="1.1">
+      <fileDesc n="EuReCo-klk-fi-v2-vrt-t-bcd0f3fa-bbd3dac4">
+        <titleStmt>
+          <t.title assemblage="external">Suomen Kuvalehti no. SK0221 15.01.2021, Text #1</t.title>
+        </titleStmt>
+        <publicationStmt>
+          <distributor>NOT FOR DISTRIBUTION - to be used locally in EuReCo</distributor>
+          <pubAddress/>
+          <availability region="world">CLARIN-RES</availability>
+          <pubDate/>
+        </publicationStmt>
+        <sourceDesc>
+          <biblStruct>
+            <analytic>
+              <h.title type="main">Suomen Kuvalehti no. SK0221 15.01.2021, Text #1</h.title>
+              <h.author/>
+              <imprint/>
+            </analytic>
+            <monogr>
+              <h.title type="main">Suomen Kuvalehti</h.title>
+              <imprint>
+                <pubPlace key="FI">Helsinki</pubPlace>
+                <publisher>Otava</publisher>
+                <pubDate type="year">2021</pubDate>
+                <pubDate type="month">01</pubDate>
+                <pubDate type="day">15</pubDate>
+              </imprint>
+            </monogr>
+          </biblStruct>
+          <reference assemblage="regular" type="complete">SKU21/JAN.00001 Suomen Kuvalehti no. SK0221, [aikakausi], 15.01.2021</reference>
+          <reference assemblage="regular" type="short">SKU21/JAN.00001 Suomen Kuvalehti, 15.01.2021</reference>
+        </sourceDesc>
+      </fileDesc>
+      <encodingDesc>
+        <tagsDecl>
+          <tagUsage gi="s" occurs="70"/>
+          <tagUsage gi="w" occurs="304"/>
+        </tagsDecl>
+      </encodingDesc>
+      <profileDesc>
+        <creation>
+          <creatDate>2021.01.15</creatDate>
+        </creation>
+        <textClass>
+          <classCode scheme="kielipankki_klk">aikakausi</classCode>
+          <classCode scheme="kielipankki_klk_mapped">Zeitschrift</classCode>
+        </textClass>
+      </profileDesc>
+      <revisionDesc>
+        <change when="2024-09-17" who="HL">I5 version for EuReCo</change>
+      </revisionDesc>
+    </idsHeader>
+    <text xml:lang="fi">
+      <body>
+        <div type="page">
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="name" head="2" lemma="kfjZ" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">kfjZ</w>
+              <w deprel="name" head="3" lemma="kCXD" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">kCXD</w>
+              <w deprel="ROOT" head="0" lemma="eaLdL" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="3" pos="N">eaLdL</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="PToysRgXjKIQNkCifc" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">PToysRgXjKIQNkCifc</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="nommod" head="3" lemma="cgICpWb" msd="SUBCAT_Interr|NUM_Sg|CASE_Ela|CASECHANGE_Up" n="1" pos="Pron">cgICpWb</w>
+              <w deprel="nsubj" head="3" lemma="AQNFU" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">AQNFU</w>
+              <w deprel="ROOT" head="0" lemma="vZsZA" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="3" pos="V">vZsZA</w>
+              <w deprel="advmod" head="3" lemma="BMcBIV" msd="_" n="4" pos="Adv">BMcBIV</w>
+              <w deprel="punct" head="3" lemma="r" msd="_" n="5" pos="Punct">r</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="MMKCB" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">MMKCB</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:2|">
+            <s xml:lang="fin">
+              <w deprel="nn" head="2" lemma="lJgkPOGUBSFSRQlx" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">lJgkPOGUBSFSRQlx</w>
+              <w deprel="nsubj" head="3" lemma="rYuqciR" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">rYuqciR</w>
+              <w deprel="ROOT" head="0" lemma="RcidTBqv" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="3" pos="V">RcidTBqv</w>
+              <w deprel="poss" head="5" lemma="cHIf" msd="SUBCAT_Acro|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="4" pos="N">cHIf</w>
+              <w deprel="nommod" head="3" lemma="reuvyWZtUhN" msd="NUM_Sg|CASE_Ela" n="5" pos="N">reuvyWZtUhN</w>
+              <w deprel="nsubj" head="7" lemma="KsaXYaFo" msd="NUM_Sg|CASE_Gen" n="6" pos="N">KsaXYaFo</w>
+              <w deprel="iccomp" head="3" lemma="qJhgSDNOYpWg" msd="NUM_Sg|CASE_Ill|VOICE_Act|INF_Inf3" n="7" pos="V">qJhgSDNOYpWg</w>
+              <w deprel="name" head="9" lemma="xtRyGN" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="8" pos="N">xtRyGN</w>
+              <w deprel="poss" head="10" lemma="XCVuQwU" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="9" pos="N">XCVuQwU</w>
+              <w deprel="poss" head="11" lemma="hYwEsYDUbYHmJ" msd="NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="10" pos="N">hYwEsYDUbYHmJ</w>
+              <w deprel="dobj" head="7" lemma="yYXOYOqX" msd="NUM_Sg|CASE_Gen" n="11" pos="N">yYXOYOqX</w>
+              <w deprel="nommod" head="7" lemma="LkrLYiYgRSC" msd="NUM_Sg|CASE_Ade" n="12" pos="N">LkrLYiYgRSC</w>
+              <w deprel="num" head="12" lemma="erRenLjillGtDCaRLIx" msd="_" n="13" pos="Num">erRenLjillGtDCaRLIx</w>
+              <w deprel="punct" head="3" lemma="c" msd="_" n="14" pos="Punct">c</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nommod" head="3" lemma="LSymCdojKTj" msd="SUBCAT_Prop|NUM_Sg|CASE_Ine|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">LSymCdojKTj</w>
+              <w deprel="auxpass" head="3" lemma="vQ" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="2" pos="V">vQ</w>
+              <w deprel="ROOT" head="0" lemma="nHfBTtne" msd="NUM_Sg|CASE_Nom|VOICE_Pass|PCP_PrfPrc|CMP_Pos" n="3" pos="V">nHfBTtne</w>
+              <w deprel="preconj" head="6" lemma="fmcz" msd="SUBCAT_CC" n="4" pos="C">fmcz</w>
+              <w deprel="poss" head="6" lemma="lHlPTQv" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="5" pos="N">lHlPTQv</w>
+              <w deprel="dobj" head="3" lemma="IXxgORnMc" msd="NUM_Pl|CASE_Par|OTHER_UNK" n="6" pos="N">IXxgORnMc</w>
+              <w deprel="cc" head="6" lemma="QdjQ" msd="SUBCAT_CC" n="7" pos="C">QdjQ</w>
+              <w deprel="conj" head="6" lemma="luYMmwBGSUbXCMxqFzeZv" msd="NUM_Pl|CASE_Par|OTHER_UNK" n="8" pos="N">luYMmwBGSUbXCMxqFzeZv</w>
+              <w deprel="punct" head="3" lemma="E" msd="_" n="9" pos="Punct">E</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:2|">
+            <s xml:lang="fin">
+              <w deprel="mark" head="4" lemma="YAJ" msd="SUBCAT_CS|CASECHANGE_Up" n="1" pos="C">YAJ</w>
+              <w deprel="amod" head="3" lemma="MdtxzI" msd="NUM_Pl|CASE_Nom|CMP_Pos" n="2" pos="A">MdtxzI</w>
+              <w deprel="nsubj" head="4" lemma="jHEEb" msd="NUM_Pl|CASE_Nom" n="3" pos="N">jHEEb</w>
+              <w deprel="advcl" head="9" lemma="pGgyUikPMK" msd="PRS_Pl3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="4" pos="V">pGgyUikPMK</w>
+              <w deprel="amod" head="6" lemma="oXdypTBH" msd="NUM_Sg|CASE_Ine|CMP_Pos" n="5" pos="A">oXdypTBH</w>
+              <w deprel="nommod" head="4" lemma="YvWwWGBWWZ" msd="NUM_Sg|CASE_Ine" n="6" pos="N">YvWwWGBWWZ</w>
+              <w deprel="punct" head="4" lemma="U" msd="_" n="7" pos="Punct">U</w>
+              <w deprel="nsubj" head="9" lemma="zcrpJaC" msd="NUM_Sg|CASE_Nom" n="8" pos="N">zcrpJaC</w>
+              <w deprel="ROOT" head="0" lemma="CODoLHiS" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="9" pos="V">CODoLHiS</w>
+              <w deprel="dobj" head="9" lemma="iE" msd="SUBCAT_Dem|NUM_Pl|CASE_Nom" n="10" pos="Pron">iE</w>
+              <w deprel="nommod" head="9" lemma="pRbQLOQbYTCHxU" msd="NUM_Sg|CASE_Tra" n="11" pos="N">pRbQLOQbYTCHxU</w>
+              <w deprel="punct" head="9" lemma="i" msd="_" n="12" pos="Punct">i</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="dobj" head="2" lemma="iRwhls" msd="NUM_Pl|CASE_Nom|CASECHANGE_Up" n="1" pos="N">iRwhls</w>
+              <w deprel="ROOT" head="0" lemma="NLzfaDD" msd="PRS_Pe4|VOICE_Pass|TENSE_Prt|MOOD_Ind" n="2" pos="V">NLzfaDD</w>
+              <w deprel="prt" head="2" lemma="kksz" msd="NUM_Sg|CASE_Nom" n="3" pos="N">kksz</w>
+              <w deprel="nommod" head="2" lemma="RNvfY" msd="NUM_Pl|CASE_Ins" n="4" pos="N">RNvfY</w>
+              <w deprel="punct" head="2" lemma="I" msd="_" n="5" pos="Punct">I</w>
+              <w deprel="dobj" head="9" lemma="LlSoKZTZGV" msd="NUM_Pl|CASE_Nom" n="6" pos="N">LlSoKZTZGV</w>
+              <w deprel="cc" head="6" lemma="RE" msd="SUBCAT_CC" n="7" pos="C">RE</w>
+              <w deprel="conj" head="6" lemma="ZZMwrGVsN" msd="NUM_Pl|CASE_Nom" n="8" pos="N">ZZMwrGVsN</w>
+              <w deprel="conj" head="2" lemma="RBxQpNDUyB" msd="PRS_Pe4|VOICE_Pass|TENSE_Prt|MOOD_Ind" n="9" pos="V">RBxQpNDUyB</w>
+              <w deprel="advmod" head="9" lemma="Nxhw" msd="_" n="10" pos="Adv">Nxhw</w>
+              <w deprel="cc" head="9" lemma="bH" msd="SUBCAT_CC" n="11" pos="C">bH</w>
+              <w deprel="advmod" head="13" lemma="YqhTtaiV" msd="_" n="12" pos="Adv">YqhTtaiV</w>
+              <w deprel="partmod" head="14" lemma="VjoadmL" msd="NUM_Pl|CASE_Nom|VOICE_Act|PCP_PrfPrc|CMP_Pos" n="13" pos="V">VjoadmL</w>
+              <w deprel="dobj" head="15" lemma="FjagsD" msd="NUM_Pl|CASE_Nom" n="14" pos="N">FjagsD</w>
+              <w deprel="conj" head="9" lemma="mPfUrHSeW" msd="PRS_Pe4|VOICE_Pass|TENSE_Prt|MOOD_Ind" n="15" pos="V">mPfUrHSeW</w>
+              <w deprel="punct" head="2" lemma="l" msd="_" n="16" pos="Punct">l</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="advmod" head="3" lemma="OZRAo" msd="CASECHANGE_Up" n="1" pos="Adv">OZRAo</w>
+              <w deprel="nsubj" head="3" lemma="uFfBz" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">uFfBz</w>
+              <w deprel="ROOT" head="0" lemma="NetmsiEzz" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind|OTHER_UNK" n="3" pos="V">NetmsiEzz</w>
+              <w deprel="punct" head="3" lemma="Y" msd="_" n="4" pos="Punct">Y</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="ZaXBaeEQSjRs" msd="NUM_Pl|CASE_Nom|CASECHANGE_Up" n="1" pos="N">ZaXBaeEQSjRs</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="poss" head="2" lemma="JOaixc" msd="NUM_Sg|CASE_Gen|CASECHANGE_Up" n="1" pos="N">JOaixc</w>
+              <w deprel="ROOT" head="0" lemma="KDrnX" msd="NUM_Sg|CASE_Nom" n="2" pos="N">KDrnX</w>
+              <w deprel="det" head="5" lemma="UKAmqDFQ" msd="SUBCAT_Indef|NUM_Sg|CASE_Ela" n="3" pos="Pron">UKAmqDFQ</w>
+              <w deprel="poss" head="5" lemma="ZxIWnyc" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">ZxIWnyc</w>
+              <w deprel="nommod" head="2" lemma="GbvSHUNpUKrvK" msd="NUM_Sg|CASE_Ela|OTHER_UNK" n="5" pos="N">GbvSHUNpUKrvK</w>
+              <w deprel="punct" head="2" lemma="V" msd="_" n="6" pos="Punct">V</w>
+              <w deprel="punct" head="2" lemma="P" msd="_" n="7" pos="Punct">P</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="Bp" msd="_" n="1" pos="Num">Bp</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="tq" msd="_" n="1" pos="Num">tq</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="Hs" msd="_" n="1" pos="Num">Hs</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="k" msd="_" n="1" pos="Num">k</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="E" msd="_" n="1" pos="Num">E</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="name" head="2" lemma="ryUnCLH" msd="OTHER_UNK" n="1" pos="Foreign">ryUnCLH</w>
+              <w deprel="name" head="3" lemma="CIcHdPJ" msd="OTHER_UNK" n="2" pos="Foreign">CIcHdPJ</w>
+              <w deprel="name" head="4" lemma="OweViXL" msd="OTHER_UNK" n="3" pos="Foreign">OweViXL</w>
+              <w deprel="name" head="5" lemma="JqYczVO" msd="OTHER_UNK" n="4" pos="Foreign">JqYczVO</w>
+              <w deprel="name" head="6" lemma="bTANwht" msd="OTHER_UNK" n="5" pos="Foreign">bTANwht</w>
+              <w deprel="name" head="7" lemma="WqvaULg" msd="OTHER_UNK" n="6" pos="Foreign">WqvaULg</w>
+              <w deprel="name" head="8" lemma="odtZBbv" msd="OTHER_UNK" n="7" pos="Foreign">odtZBbv</w>
+              <w deprel="ROOT" head="0" lemma="moqJBpp" msd="OTHER_UNK" n="8" pos="Foreign">moqJBpp</w>
+              <w deprel="intj" head="8" lemma="gQALaMy" msd="OTHER_UNK" n="9" pos="Symb">gQALaMy</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="DW" msd="_" n="1" pos="Num">DW</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="ir" msd="_" n="1" pos="Num">ir</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="HD" msd="_" n="1" pos="Num">HD</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="g" msd="_" n="1" pos="Num">g</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="O" msd="_" n="1" pos="Num">O</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="mf" msd="_" n="1" pos="Num">mf</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="Xf" msd="_" n="1" pos="Num">Xf</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="Op" msd="_" n="1" pos="Num">Op</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="r" msd="_" n="1" pos="Num">r</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="H" msd="_" n="1" pos="Num">H</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="XG" msd="_" n="1" pos="Num">XG</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="St" msd="_" n="1" pos="Num">St</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="PU" msd="_" n="1" pos="Num">PU</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="O" msd="_" n="1" pos="Num">O</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="v" msd="_" n="1" pos="Num">v</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="number" head="2" lemma="aeMB" msd="_" n="1" pos="Num">aeMB</w>
+              <w deprel="number" head="3" lemma="OmKY" msd="_" n="2" pos="Num">OmKY</w>
+              <w deprel="number" head="4" lemma="IzNc" msd="_" n="3" pos="Num">IzNc</w>
+              <w deprel="number" head="5" lemma="pmGJ" msd="_" n="4" pos="Num">pmGJ</w>
+              <w deprel="ROOT" head="0" lemma="bNTZ" msd="_" n="5" pos="Num">bNTZ</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="number" head="2" lemma="lUVf" msd="_" n="1" pos="Num">lUVf</w>
+              <w deprel="number" head="3" lemma="PrdD" msd="_" n="2" pos="Num">PrdD</w>
+              <w deprel="number" head="4" lemma="RoSe" msd="_" n="3" pos="Num">RoSe</w>
+              <w deprel="number" head="5" lemma="anZl" msd="_" n="4" pos="Num">anZl</w>
+              <w deprel="ROOT" head="0" lemma="lSZg" msd="_" n="5" pos="Num">lSZg</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="number" head="2" lemma="tcVd" msd="_" n="1" pos="Num">tcVd</w>
+              <w deprel="number" head="3" lemma="yOFl" msd="_" n="2" pos="Num">yOFl</w>
+              <w deprel="number" head="4" lemma="JbRK" msd="_" n="3" pos="Num">JbRK</w>
+              <w deprel="number" head="5" lemma="exiW" msd="_" n="4" pos="Num">exiW</w>
+              <w deprel="ROOT" head="0" lemma="CZxE" msd="_" n="5" pos="Num">CZxE</w>
+            </s>
+          </p>
+          <p xml:lang="x-|eng:1|">
+            <s xml:lang="eng">
+              <w deprel="name" head="2" lemma="TJpJ" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">TJpJ</w>
+              <w deprel="name" head="3" lemma="FugcKsf" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">FugcKsf</w>
+              <w deprel="name" head="4" lemma="kACdO" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="3" pos="N">kACdO</w>
+              <w deprel="ROOT" head="0" lemma="ZJcor" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">ZJcor</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="jAmccHk" msd="NUM_Pl|CASE_Par|CASECHANGE_Up" n="1" pos="N">jAmccHk</w>
+              <w deprel="punct" head="1" lemma="Q" msd="_" n="2" pos="Punct">Q</w>
+              <w deprel="nommod" head="5" lemma="BOpnzu" msd="NUM_Pl|CASE_Ela" n="3" pos="N">BOpnzu</w>
+              <w deprel="nsubj" head="5" lemma="WNnUe" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">WNnUe</w>
+              <w deprel="parataxis" head="1" lemma="UdazVwRhN" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind|OTHER_UNK" n="5" pos="V">UdazVwRhN</w>
+              <w deprel="amod" head="8" lemma="QtLT" msd="NUM_Sg|CASE_Nom" n="6" pos="Pron">QtLT</w>
+              <w deprel="poss" head="8" lemma="dKIsYFvz" msd="NUM_Sg|CASE_Gen|POSS_Px3" n="7" pos="N">dKIsYFvz</w>
+              <w deprel="nommod" head="5" lemma="lOIr" msd="NUM_Sg|CASE_Gen" n="8" pos="N">lOIr</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="2" lemma="gJelO" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">gJelO</w>
+              <w deprel="ROOT" head="0" lemma="CbWdDcfYe" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="2" pos="V">CbWdDcfYe</w>
+              <w deprel="amod" head="4" lemma="UnrM" msd="NUM_Sg|CASE_Nom" n="3" pos="Pron">UnrM</w>
+              <w deprel="nommod" head="2" lemma="NiYdssLh" msd="NUM_Sg|CASE_Gen|POSS_Px3" n="4" pos="N">NiYdssLh</w>
+              <w deprel="det" head="4" lemma="aAdsamv" msd="SUBCAT_Refl|NUM_Pl|CASE_Gen|POSS_Px3" n="5" pos="Pron">aAdsamv</w>
+              <w deprel="adpos" head="4" lemma="bBQrrImr" msd="SUBCAT_Po" n="6" pos="Adp">bBQrrImr</w>
+              <w deprel="punct" head="2" lemma="n" msd="_" n="7" pos="Punct">n</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="Qs" msd="_" n="1" pos="Num">Qs</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="UZ" msd="_" n="1" pos="Num">UZ</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="uo" msd="_" n="1" pos="Num">uo</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="c" msd="_" n="1" pos="Num">c</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="number" head="2" lemma="FfJTL" msd="OTHER_UNK" n="1" pos="Symb">FfJTL</w>
+              <w deprel="ROOT" head="0" lemma="w" msd="_" n="2" pos="Num">w</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="number" head="2" lemma="hrQF" msd="_" n="1" pos="Num">hrQF</w>
+              <w deprel="number" head="3" lemma="smSJ" msd="_" n="2" pos="Num">smSJ</w>
+              <w deprel="number" head="4" lemma="rlFP" msd="_" n="3" pos="Num">rlFP</w>
+              <w deprel="ROOT" head="0" lemma="llNi" msd="_" n="4" pos="Num">llNi</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="2" lemma="jnHQk" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">jnHQk</w>
+              <w deprel="ROOT" head="0" lemma="jnBDfwygg" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="2" pos="V">jnBDfwygg</w>
+              <w deprel="amod" head="4" lemma="PTIO" msd="NUM_Sg|CASE_Nom" n="3" pos="Pron">PTIO</w>
+              <w deprel="nommod" head="2" lemma="fCwUKxSK" msd="NUM_Sg|CASE_Gen|POSS_Px3" n="4" pos="N">fCwUKxSK</w>
+              <w deprel="det" head="4" lemma="jhvpyCl" msd="SUBCAT_Refl|NUM_Pl|CASE_Gen|POSS_Px3" n="5" pos="Pron">jhvpyCl</w>
+              <w deprel="adpos" head="4" lemma="ZnYkhVQN" msd="SUBCAT_Po" n="6" pos="Adp">ZnYkhVQN</w>
+              <w deprel="punct" head="2" lemma="C" msd="_" n="7" pos="Punct">C</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="fSkIUDMMgCLzHs" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">fSkIUDMMgCLzHs</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="pn" msd="_" n="1" pos="Num">pn</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="BG" msd="_" n="1" pos="Num">BG</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="Si" msd="_" n="1" pos="Num">Si</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="x" msd="_" n="1" pos="Num">x</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="number" head="2" lemma="kvIWm" msd="OTHER_UNK" n="1" pos="Symb">kvIWm</w>
+              <w deprel="ROOT" head="0" lemma="u" msd="_" n="2" pos="Num">u</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="number" head="2" lemma="cCvw" msd="_" n="1" pos="Num">cCvw</w>
+              <w deprel="number" head="3" lemma="dhQF" msd="_" n="2" pos="Num">dhQF</w>
+              <w deprel="number" head="4" lemma="GJTs" msd="_" n="3" pos="Num">GJTs</w>
+              <w deprel="ROOT" head="0" lemma="jFLA" msd="_" n="4" pos="Num">jFLA</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="mark" head="3" lemma="hQq" msd="SUBCAT_CS|CASECHANGE_Up" n="1" pos="C">hQq</w>
+              <w deprel="nsubj" head="3" lemma="iRCUG" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">iRCUG</w>
+              <w deprel="advcl" head="7" lemma="afA" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="3" pos="V">afA</w>
+              <w deprel="nommod" head="3" lemma="YuSYeJzrnwhO" msd="NUM_Pl|CASE_Ine" n="4" pos="N">YuSYeJzrnwhO</w>
+              <w deprel="punct" head="3" lemma="F" msd="_" n="5" pos="Punct">F</w>
+              <w deprel="nsubj" head="7" lemma="nNs" msd="SUBCAT_Pers|NUM_Sg|CASE_Nom" n="6" pos="Pron">nNs</w>
+              <w deprel="ROOT" head="0" lemma="EYaMm" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="7" pos="V">EYaMm</w>
+              <w deprel="advmod" head="7" lemma="beMyYFqvyN" msd="_" n="8" pos="Adv">beMyYFqvyN</w>
+              <w deprel="nommod" head="7" lemma="FqoaogarLLOMmDfyLD" msd="NUM_Sg|CASE_Ela" n="9" pos="N">FqoaogarLLOMmDfyLD</w>
+              <w deprel="cc" head="9" lemma="lp" msd="SUBCAT_CC" n="10" pos="C">lp</w>
+              <w deprel="conj" head="9" lemma="OQGccJLcmG" msd="NUM_Sg|CASE_Ela" n="11" pos="N">OQGccJLcmG</w>
+              <w deprel="punct" head="7" lemma="q" msd="_" n="12" pos="Punct">q</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="kxiLqS" msd="NUM_Pl|CASE_Nom|CASECHANGE_Up" n="1" pos="N">kxiLqS</w>
+              <w deprel="cc" head="1" lemma="hN" msd="SUBCAT_CC" n="2" pos="C">hN</w>
+              <w deprel="conj" head="1" lemma="JTGkMAXIiGIl" msd="NUM_Sg|CASE_Nom|DRV_Der_minen" n="3" pos="N">JTGkMAXIiGIl</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="AZ" msd="_" n="1" pos="Num">AZ</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="Ky" msd="_" n="1" pos="Num">Ky</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="gi" msd="_" n="1" pos="Num">gi</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="u" msd="_" n="1" pos="Num">u</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="number" head="2" lemma="WotZv" msd="OTHER_UNK" n="1" pos="Symb">WotZv</w>
+              <w deprel="ROOT" head="0" lemma="t" msd="_" n="2" pos="Num">t</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="number" head="2" lemma="WAvS" msd="_" n="1" pos="Num">WAvS</w>
+              <w deprel="number" head="3" lemma="DHKX" msd="_" n="2" pos="Num">DHKX</w>
+              <w deprel="number" head="4" lemma="LhyS" msd="_" n="3" pos="Num">LhyS</w>
+              <w deprel="ROOT" head="0" lemma="OLHV" msd="_" n="4" pos="Num">OLHV</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:2|">
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="2" lemma="nMhLDIeMcBF" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">nMhLDIeMcBF</w>
+              <w deprel="ROOT" head="0" lemma="msyMyr" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="2" pos="V">msyMyr</w>
+              <w deprel="xcomp" head="2" lemma="YiFXZmYZn" msd="NUM_Sg|CASE_Lat|VOICE_Act|INF_Inf1" n="3" pos="V">YiFXZmYZn</w>
+              <w deprel="poss" head="7" lemma="eQKlSkpsFY" msd="NUM_Sg|CASE_Gen" n="4" pos="N">eQKlSkpsFY</w>
+              <w deprel="cc" head="4" lemma="iW" msd="SUBCAT_CC" n="5" pos="C">iW</w>
+              <w deprel="conj" head="4" lemma="ztsnapFgQPS" msd="NUM_Pl|CASE_Gen" n="6" pos="N">ztsnapFgQPS</w>
+              <w deprel="nommod" head="3" lemma="UcdTyjFeAmjWANVVTt" msd="NUM_Pl|CASE_Ill" n="7" pos="N">UcdTyjFeAmjWANVVTt</w>
+              <w deprel="punct" head="2" lemma="Q" msd="_" n="8" pos="Punct">Q</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="2" lemma="twwhc" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">twwhc</w>
+              <w deprel="ROOT" head="0" lemma="MWrTQ" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="2" pos="V">MWrTQ</w>
+              <w deprel="amod" head="4" lemma="vgVdjcuYH" msd="NUM_Sg|CASE_Tra|CMP_Pos" n="3" pos="A">vgVdjcuYH</w>
+              <w deprel="nommod" head="2" lemma="QHkQFNFd" msd="NUM_Sg|CASE_Tra" n="4" pos="N">QHkQFNFd</w>
+              <w deprel="punct" head="8" lemma="y" msd="_" n="5" pos="Punct">y</w>
+              <w deprel="mark" head="8" lemma="aKE" msd="SUBCAT_CS" n="6" pos="C">aKE</w>
+              <w deprel="nsubj" head="8" lemma="AEkQrgtwk" msd="NUM_Sg|CASE_Nom" n="7" pos="N">AEkQrgtwk</w>
+              <w deprel="advcl" head="2" lemma="oImAp" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="8" pos="V">oImAp</w>
+              <w deprel="dobj" head="8" lemma="hqkPbgYfDr" msd="NUM_Pl|CASE_Par" n="9" pos="N">hqkPbgYfDr</w>
+              <w deprel="nommod" head="8" lemma="AkTIgEkMEfddqtxF" msd="NUM_Pl|CASE_Ine" n="10" pos="N">AkTIgEkMEfddqtxF</w>
+              <w deprel="punct" head="2" lemma="N" msd="_" n="11" pos="Punct">N</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="2" lemma="XKrES" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">XKrES</w>
+              <w deprel="ROOT" head="0" lemma="RUMWunGAi" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="2" pos="V">RUMWunGAi</w>
+              <w deprel="amod" head="5" lemma="NOCT" msd="NUM_Sg|CASE_Nom" n="3" pos="Pron">NOCT</w>
+              <w deprel="poss" head="5" lemma="pONghqxW" msd="NUM_Sg|CASE_Gen|POSS_Px3" n="4" pos="N">pONghqxW</w>
+              <w deprel="nommod" head="2" lemma="kNriHV" msd="NUM_Sg|CASE_Par" n="5" pos="N">kNriHV</w>
+              <w deprel="adpos" head="5" lemma="mSCRkuB" msd="SUBCAT_Po" n="6" pos="Adp">mSCRkuB</w>
+              <w deprel="punct" head="2" lemma="L" msd="_" n="7" pos="Punct">L</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="poss" head="3" lemma="jGrmqS" msd="NUM_Sg|CASE_Gen|CASECHANGE_Up" n="1" pos="N">jGrmqS</w>
+              <w deprel="num" head="1" lemma="Xrpp" msd="_" n="2" pos="Num">Xrpp</w>
+              <w deprel="nommod" head="10" lemma="FWdQHro" msd="NUM_Sg|CASE_Ine" n="3" pos="N">FWdQHro</w>
+              <w deprel="advmod" head="10" lemma="yMRe" msd="_" n="4" pos="Adv">yMRe</w>
+              <w deprel="advmod" head="10" lemma="gyxwk" msd="_" n="5" pos="Adv">gyxwk</w>
+              <w deprel="det" head="7" lemma="jksB" msd="SUBCAT_Rel|NUM_Sg|CASE_Nom" n="6" pos="Pron">jksB</w>
+              <w deprel="nsubj" head="10" lemma="ehvILO" msd="SUBCAT_Ord|NUM_Sg|CASE_Nom" n="7" pos="Num">ehvILO</w>
+              <w deprel="poss" head="9" lemma="tJjhrKO" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="8" pos="N">tJjhrKO</w>
+              <w deprel="nommod" head="7" lemma="GywGjsESfZ" msd="NUM_Pl|CASE_Ela|OTHER_UNK" n="9" pos="N">GywGjsESfZ</w>
+              <w deprel="ROOT" head="0" lemma="YUzQZu" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="10" pos="V">YUzQZu</w>
+              <w deprel="dobj" head="10" lemma="OtdRBbPaOQGPTNcfBni" msd="NUM_Sg|CASE_Par" n="11" pos="N">OtdRBbPaOQGPTNcfBni</w>
+              <w deprel="punct" head="10" lemma="t" msd="_" n="12" pos="Punct">t</w>
+            </s>
+          </p>
+          <p xml:lang="x-|eng:2|">
+            <s xml:lang="eng">
+              <w deprel="punct" head="18" lemma="S" msd="_" n="1" pos="Punct">S</w>
+              <w deprel="name" head="3" lemma="Dp" msd="CASECHANGE_Up|OTHER_UNK" n="2" pos="Foreign">Dp</w>
+              <w deprel="name" head="4" lemma="nde" msd="OTHER_UNK" n="3" pos="Foreign">nde</w>
+              <w deprel="name" head="5" lemma="IhzbaPilHM" msd="OTHER_UNK" n="4" pos="Foreign">IhzbaPilHM</w>
+              <w deprel="name" head="6" lemma="zCjvf" msd="OTHER_UNK" n="5" pos="Foreign">zCjvf</w>
+              <w deprel="name" head="7" lemma="EnZ" msd="OTHER_UNK" n="6" pos="Foreign">EnZ</w>
+              <w deprel="name" head="8" lemma="tCFTShfoC" msd="OTHER_UNK" n="7" pos="Foreign">tCFTShfoC</w>
+              <w deprel="name" head="9" lemma="OCBdvidx" msd="CASECHANGE_Up|OTHER_UNK" n="8" pos="Foreign">OCBdvidx</w>
+              <w deprel="name" head="10" lemma="Z" msd="_" n="9" pos="Punct">Z</w>
+              <w deprel="name" head="11" lemma="KH" msd="OTHER_UNK" n="10" pos="Foreign">KH</w>
+              <w deprel="name" head="12" lemma="nbG" msd="OTHER_UNK" n="11" pos="Foreign">nbG</w>
+              <w deprel="name" head="13" lemma="SwFTS" msd="OTHER_UNK" n="12" pos="Foreign">SwFTS</w>
+              <w deprel="name" head="14" lemma="dQZo" msd="OTHER_UNK" n="13" pos="Foreign">dQZo</w>
+              <w deprel="name" head="15" lemma="rCFQ" msd="OTHER_UNK" n="14" pos="Foreign">rCFQ</w>
+              <w deprel="name" head="16" lemma="vLKGmo" msd="OTHER_UNK" n="15" pos="Foreign">vLKGmo</w>
+              <w deprel="name" head="17" lemma="GQv" msd="OTHER_UNK" n="16" pos="Foreign">GQv</w>
+              <w deprel="name" head="18" lemma="FJeZ" msd="OTHER_UNK" n="17" pos="Foreign">FJeZ</w>
+              <w deprel="ROOT" head="0" lemma="IDlpPGsf" msd="OTHER_UNK" n="18" pos="Foreign">IDlpPGsf</w>
+              <w deprel="punct" head="18" lemma="V" msd="_" n="19" pos="Punct">V</w>
+            </s>
+            <s xml:lang="eng">
+              <w deprel="name" head="2" lemma="qO" msd="CASECHANGE_Up|OTHER_UNK" n="1" pos="Foreign">qO</w>
+              <w deprel="ROOT" head="0" lemma="PqcEbZM" msd="OTHER_UNK" n="2" pos="Foreign">PqcEbZM</w>
+              <w deprel="punct" head="2" lemma="m" msd="_" n="3" pos="Punct">m</w>
+              <w deprel="punct" head="2" lemma="Z" msd="_" n="4" pos="Punct">Z</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="dobj" head="4" lemma="CelFiJTqr" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">CelFiJTqr</w>
+              <w deprel="nommod" head="1" lemma="isRXyQVdh" msd="NUM_Sg|CASE_Ela|OTHER_UNK" n="2" pos="N">isRXyQVdh</w>
+              <w deprel="rel" head="4" lemma="Wera" msd="SUBCAT_Rel|NUM_Sg|CASE_Nom" n="3" pos="Pron">Wera</w>
+              <w deprel="ROOT" head="0" lemma="OIyxyaybmCwm" msd="PRS_Pe4|VOICE_Pass|TENSE_Prt|MOOD_Ind" n="4" pos="V">OIyxyaybmCwm</w>
+              <w deprel="nommod" head="4" lemma="NTkQJIBY" msd="NUM_Sg|CASE_Ill" n="5" pos="N">NTkQJIBY</w>
+              <w deprel="dobj" head="4" lemma="TSAEXsJmjnNs" msd="NUM_Pl|CASE_Nom" n="6" pos="N">TSAEXsJmjnNs</w>
+              <w deprel="punct" head="4" lemma="a" msd="_" n="7" pos="Punct">a</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:2|">
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="2" lemma="SFtgiWP" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">SFtgiWP</w>
+              <w deprel="ROOT" head="0" lemma="zMGdlW" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="2" pos="V">zMGdlW</w>
+              <w deprel="punct" head="7" lemma="z" msd="_" n="3" pos="Punct">z</w>
+              <w deprel="rel" head="7" lemma="fQElI" msd="SUBCAT_Rel|NUM_Sg|CASE_Ine" n="4" pos="Pron">fQElI</w>
+              <w deprel="nommod" head="7" lemma="ziDSGAdrC" msd="NUM_Sg|CASE_Ine" n="5" pos="N">ziDSGAdrC</w>
+              <w deprel="nsubj" head="7" lemma="rILrnxfNLCJp" msd="NUM_Pl|CASE_Nom" n="6" pos="N">rILrnxfNLCJp</w>
+              <w deprel="ccomp" head="2" lemma="KFTwEVbVAud" msd="PRS_Pl3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="7" pos="V">KFTwEVbVAud</w>
+              <w deprel="nommod" head="7" lemma="rLqGkYEKDx" msd="NUM_Pl|CASE_Ine|OTHER_UNK" n="8" pos="N">rLqGkYEKDx</w>
+              <w deprel="amod" head="10" lemma="jgM" msd="_" n="9" pos="Adv">jgM</w>
+              <w deprel="nommod" head="7" lemma="ERjAvLK" msd="NUM_Pl|CASE_Ess" n="10" pos="N">ERjAvLK</w>
+              <w deprel="punct" head="2" lemma="v" msd="_" n="11" pos="Punct">v</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="advmod" head="3" lemma="FjIKoCmKUDH" msd="CASECHANGE_Up" n="1" pos="Adv">FjIKoCmKUDH</w>
+              <w deprel="nsubj" head="3" lemma="hzgjDqOLQKdN" msd="NUM_Pl|CASE_Nom" n="2" pos="N">hzgjDqOLQKdN</w>
+              <w deprel="ROOT" head="0" lemma="OQjrsHvb" msd="PRS_Pl3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="3" pos="V">OQjrsHvb</w>
+              <w deprel="poss" head="5" lemma="SbEBMuSJTfl" msd="NUM_Sg|CASE_Gen" n="4" pos="N">SbEBMuSJTfl</w>
+              <w deprel="nommod" head="3" lemma="GBmmNIkgvfmtVC" msd="NUM_Sg|CASE_Tra" n="5" pos="N">GBmmNIkgvfmtVC</w>
+              <w deprel="advmod" head="3" lemma="PFEPICsRd" msd="_" n="6" pos="Adv">PFEPICsRd</w>
+              <w deprel="punct" head="10" lemma="u" msd="_" n="7" pos="Punct">u</w>
+              <w deprel="mark" head="10" lemma="dbm" msd="SUBCAT_CS" n="8" pos="C">dbm</w>
+              <w deprel="nommod" head="10" lemma="ftVoNUufxzmqzZ" msd="SUBCAT_Prop|NUM_Pl|CASE_Ine|CASECHANGE_Up" n="9" pos="N">ftVoNUufxzmqzZ</w>
+              <w deprel="advcl" head="3" lemma="pcLuJ" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="10" pos="V">pcLuJ</w>
+              <w deprel="nsubj" head="10" lemma="ryLRgKnXXhsfEZT" msd="NUM_Sg|CASE_Nom" n="11" pos="N">ryLRgKnXXhsfEZT</w>
+              <w deprel="punct" head="3" lemma="J" msd="_" n="12" pos="Punct">J</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="name" head="2" lemma="qEu" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">qEu</w>
+              <w deprel="name" head="3" lemma="BlUFs" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">BlUFs</w>
+              <w deprel="nn" head="4" lemma="Xka" msd="_" n="3" pos="Num">Xka</w>
+              <w deprel="nn" head="6" lemma="hSLaRKPV" msd="NUM_Sg|CASE_Par|OTHER_UNK" n="4" pos="N">hSLaRKPV</w>
+              <w deprel="name" head="6" lemma="ywqyTW" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="5" pos="N">ywqyTW</w>
+              <w deprel="ROOT" head="0" lemma="yWWli" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="6" pos="N">yWWli</w>
+              <w deprel="num" head="8" lemma="spc" msd="_" n="7" pos="Num">spc</w>
+              <w deprel="nommod" head="24" lemma="DlxjNbqM" msd="NUM_Sg|CASE_Par|OTHER_UNK" n="8" pos="N">DlxjNbqM</w>
+              <w deprel="name" head="10" lemma="TbGyV" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="9" pos="N">TbGyV</w>
+              <w deprel="name" head="11" lemma="PQlWEY" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="10" pos="N">PQlWEY</w>
+              <w deprel="name" head="12" lemma="BtH" msd="_" n="11" pos="Num">BtH</w>
+              <w deprel="name" head="13" lemma="dOhYbpYQ" msd="SUBCAT_Prop|OTHER_UNK" n="12" pos="N">dOhYbpYQ</w>
+              <w deprel="name" head="14" lemma="bTCxnrq" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="13" pos="N">bTCxnrq</w>
+              <w deprel="nommod" head="24" lemma="aFZNsVR" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="14" pos="N">aFZNsVR</w>
+              <w deprel="num" head="16" lemma="jyr" msd="_" n="15" pos="Num">jyr</w>
+              <w deprel="nommod" head="24" lemma="rHrVoaYj" msd="SUBCAT_Abbr|OTHER_UNK" n="16" pos="N">rHrVoaYj</w>
+              <w deprel="name" head="18" lemma="NHdkc" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="17" pos="N">NHdkc</w>
+              <w deprel="conj" head="14" lemma="KGOhq" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="18" pos="N">KGOhq</w>
+              <w deprel="num" head="18" lemma="lVg" msd="_" n="19" pos="Num">lVg</w>
+              <w deprel="name" head="21" lemma="lpZYOhrm" msd="OTHER_UNK" n="20" pos="Foreign">lpZYOhrm</w>
+              <w deprel="name" head="22" lemma="hanhEN" msd="CASECHANGE_Up|OTHER_UNK" n="21" pos="Foreign">hanhEN</w>
+              <w deprel="name" head="23" lemma="FNvFK" msd="CASECHANGE_Up|OTHER_UNK" n="22" pos="Foreign">FNvFK</w>
+              <w deprel="name" head="24" lemma="kdQVs" msd="OTHER_UNK" n="23" pos="Foreign">kdQVs</w>
+              <w deprel="conj" head="6" lemma="hunIRQIN" msd="OTHER_UNK" n="24" pos="Foreign">hunIRQIN</w>
+            </s>
+          </p>
+        </div>
+      </body>
+    </text>
+  </idsText>
+  <idsText version="1.0">
+    <idsHeader TEIform="teiHeader" pattern="text" status="new" type="text" version="1.1">
+      <fileDesc n="EuReCo-klk-fi-v2-vrt-t-bcd0f3fa-80fbcb44">
+        <titleStmt>
+          <t.title assemblage="external">Suomen Kuvalehti no. SK0221 15.01.2021, Text #2</t.title>
+        </titleStmt>
+        <publicationStmt>
+          <distributor>NOT FOR DISTRIBUTION - to be used locally in EuReCo</distributor>
+          <pubAddress/>
+          <availability region="world">CLARIN-RES</availability>
+          <pubDate/>
+        </publicationStmt>
+        <sourceDesc>
+          <biblStruct>
+            <analytic>
+              <h.title type="main">Suomen Kuvalehti no. SK0221 15.01.2021, Text #2</h.title>
+              <h.author/>
+              <imprint/>
+            </analytic>
+            <monogr>
+              <h.title type="main">Suomen Kuvalehti</h.title>
+              <imprint>
+                <pubPlace key="FI">Helsinki</pubPlace>
+                <publisher>Otava</publisher>
+                <pubDate type="year">2021</pubDate>
+                <pubDate type="month">01</pubDate>
+                <pubDate type="day">15</pubDate>
+              </imprint>
+            </monogr>
+          </biblStruct>
+          <reference assemblage="regular" type="complete">SKU21/JAN.00002 Suomen Kuvalehti no. SK0221, [aikakausi], 15.01.2021</reference>
+          <reference assemblage="regular" type="short">SKU21/JAN.00002 Suomen Kuvalehti, 15.01.2021</reference>
+        </sourceDesc>
+      </fileDesc>
+      <encodingDesc>
+        <tagsDecl>
+          <tagUsage gi="s" occurs="61"/>
+          <tagUsage gi="w" occurs="549"/>
+        </tagsDecl>
+      </encodingDesc>
+      <profileDesc>
+        <creation>
+          <creatDate>2021.01.15</creatDate>
+        </creation>
+        <textClass>
+          <classCode scheme="kielipankki_klk">aikakausi</classCode>
+          <classCode scheme="kielipankki_klk_mapped">Zeitschrift</classCode>
+        </textClass>
+      </profileDesc>
+      <revisionDesc>
+        <change when="2024-09-17" who="HL">I5 version for EuReCo</change>
+      </revisionDesc>
+    </idsHeader>
+    <text xml:lang="fi">
+      <body>
+        <div type="page">
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="name" head="2" lemma="eVx" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">eVx</w>
+              <w deprel="poss" head="3" lemma="m" msd="SUBCAT_Acro|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="2" pos="N">m</w>
+              <w deprel="ROOT" head="0" lemma="egYSMT" msd="NUM_Pl|CASE_Nom|CASECHANGE_Up" n="3" pos="N">egYSMT</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="amod" head="2" lemma="EePJNvrSO" msd="NUM_Sg|CASE_Nom|DRV_Der_ton|CASECHANGE_Up" n="1" pos="A">EePJNvrSO</w>
+              <w deprel="ROOT" head="0" lemma="hhOIj" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">hhOIj</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:5|">
+            <s xml:lang="fin">
+              <w deprel="name" head="2" lemma="nfKrcnXPe" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">nfKrcnXPe</w>
+              <w deprel="nsubj-cop" head="7" lemma="Agm" msd="SUBCAT_Ord|CASECHANGE_Up" n="2" pos="Num">Agm</w>
+              <w deprel="cop" head="7" lemma="Zs" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="3" pos="V">Zs</w>
+              <w deprel="amod" head="7" lemma="hipuKFQNhj" msd="NUM_Sg|CASE_Nom|CMP_Pos" n="4" pos="A">hipuKFQNhj</w>
+              <w deprel="punct" head="7" lemma="o" msd="_" n="5" pos="Punct">o</w>
+              <w deprel="amod" head="7" lemma="fQOeD" msd="NUM_Sg|CASE_Nom|CMP_Pos" n="6" pos="A">fQOeD</w>
+              <w deprel="ROOT" head="0" lemma="iJli" msd="NUM_Sg|CASE_Nom" n="7" pos="N">iJli</w>
+              <w deprel="amod" head="9" lemma="RauheFLW" msd="NUM_Sg|CASE_Abl|CMP_Pos" n="8" pos="A">RauheFLW</w>
+              <w deprel="nommod" head="7" lemma="RUhemjOF" msd="NUM_Sg|CASE_Abl" n="9" pos="N">RUhemjOF</w>
+              <w deprel="punct" head="7" lemma="I" msd="_" n="10" pos="Punct">I</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="amod" head="2" lemma="TZWjU" msd="NUM_Sg|CASE_Nom|CMP_Pos|CASECHANGE_Up" n="1" pos="A">TZWjU</w>
+              <w deprel="nn" head="4" lemma="YOjlGmzqc" msd="NUM_Sg|CASE_Nom" n="2" pos="N">YOjlGmzqc</w>
+              <w deprel="name" head="4" lemma="QSji" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="3" pos="N">QSji</w>
+              <w deprel="nsubj" head="8" lemma="XLAuvzaSk" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">XLAuvzaSk</w>
+              <w deprel="punct" head="6" lemma="a" msd="_" n="5" pos="Punct">a</w>
+              <w deprel="nommod" head="4" lemma="Rq" msd="_" n="6" pos="Num">Rq</w>
+              <w deprel="punct" head="6" lemma="o" msd="_" n="7" pos="Punct">o</w>
+              <w deprel="ROOT" head="0" lemma="afjYDvvBH" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="8" pos="V">afjYDvvBH</w>
+              <w deprel="amod" head="10" lemma="HeZJFIHjhzL" msd="NUM_Sg|CASE_Gen|CMP_Pos" n="9" pos="A">HeZJFIHjhzL</w>
+              <w deprel="acomp" head="8" lemma="RWzxgVBoiQSwp" msd="NUM_Sg|CASE_Abl|CMP_Pos" n="10" pos="A">RWzxgVBoiQSwp</w>
+              <w deprel="punct" head="8" lemma="n" msd="_" n="11" pos="Punct">n</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="2" lemma="ELb" msd="SUBCAT_Pers|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="Pron">ELb</w>
+              <w deprel="ROOT" head="0" lemma="qqVsTEz" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="2" pos="V">qqVsTEz</w>
+              <w deprel="advmod" head="4" lemma="ARVTM" msd="_" n="3" pos="Adv">ARVTM</w>
+              <w deprel="det" head="5" lemma="RYLHoRkb" msd="NUM_Sg|CASE_Gen" n="4" pos="Pron">RYLHoRkb</w>
+              <w deprel="poss" head="6" lemma="nuAsH" msd="NUM_Sg|CASE_Gen" n="5" pos="N">nuAsH</w>
+              <w deprel="dobj" head="2" lemma="IhLxRJ" msd="NUM_Sg|CASE_Gen" n="6" pos="N">IhLxRJ</w>
+              <w deprel="cc" head="2" lemma="nT" msd="SUBCAT_CC" n="7" pos="C">nT</w>
+              <w deprel="conj" head="2" lemma="rtjCcN" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="8" pos="V">rtjCcN</w>
+              <w deprel="xcomp" head="8" lemma="xHMuVZDIn" msd="NUM_Sg|CASE_Gen|VOICE_Act|PCP_PrsPrc|CMP_Pos" n="9" pos="V">xHMuVZDIn</w>
+              <w deprel="det" head="11" lemma="UEOr" msd="SUBCAT_Rel|NUM_Sg|CASE_Nom" n="10" pos="Pron">UEOr</w>
+              <w deprel="nommod" head="9" lemma="QcbybfmK" msd="NUM_Sg|CASE_Ela" n="11" pos="N">QcbybfmK</w>
+              <w deprel="nommod" head="9" lemma="GNKWZGPbOQUrGDg" msd="NUM_Sg|CASE_Ine|POSS_Px3" n="12" pos="N">GNKWZGPbOQUrGDg</w>
+              <w deprel="nommod" head="9" lemma="noEcuHiEWl" msd="SUBCAT_Prop|NUM_Sg|CASE_Ine|CASECHANGE_Up|OTHER_UNK" n="13" pos="N">noEcuHiEWl</w>
+              <w deprel="punct" head="2" lemma="C" msd="_" n="14" pos="Punct">C</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="amod" head="2" lemma="KoIKDTGwLElQMw" msd="NUM_Sg|CASE_Gen|CMP_Comp|CASECHANGE_Up" n="1" pos="A">KoIKDTGwLElQMw</w>
+              <w deprel="nommod" head="8" lemma="koBJh" msd="NUM_Sg|CASE_Gen" n="2" pos="N">koBJh</w>
+              <w deprel="cc" head="2" lemma="Dg" msd="SUBCAT_CC" n="3" pos="C">Dg</w>
+              <w deprel="conj" head="2" lemma="SPvWcF" msd="NUM_Sg|CASE_Gen" n="4" pos="N">SPvWcF</w>
+              <w deprel="adpos" head="2" lemma="YYhJpEP" msd="SUBCAT_Po" n="5" pos="Adp">YYhJpEP</w>
+              <w deprel="adpos" head="2" lemma="BOogvM" msd="SUBCAT_Po" n="6" pos="Adp">BOogvM</w>
+              <w deprel="advmod" head="8" lemma="tjeL" msd="_" n="7" pos="Adv">tjeL</w>
+              <w deprel="ROOT" head="0" lemma="NyBCILkBxSNpg" msd="NUM_Pl|CASE_Par|VOICE_Act|PCP_PrsPrc|CMP_Comp" n="8" pos="V">NyBCILkBxSNpg</w>
+              <w deprel="dobj" head="8" lemma="kJnmlcX" msd="NUM_Pl|CASE_Par" n="9" pos="N">kJnmlcX</w>
+              <w deprel="punct" head="15" lemma="b" msd="_" n="10" pos="Punct">b</w>
+              <w deprel="advmod" head="12" lemma="pqKVA" msd="_" n="11" pos="Adv">pqKVA</w>
+              <w deprel="amod" head="15" lemma="rWaGGt" msd="NUM_Sg|CASE_Nom|CMP_Pos" n="12" pos="A">rWaGGt</w>
+              <w deprel="name" head="14" lemma="qzNK" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="13" pos="N">qzNK</w>
+              <w deprel="name" head="15" lemma="TPhi" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="14" pos="N">TPhi</w>
+              <w deprel="appos" head="9" lemma="uizHwrh" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="15" pos="N">uizHwrh</w>
+              <w deprel="punct" head="8" lemma="d" msd="_" n="16" pos="Punct">d</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="amod" head="3" lemma="vLxMq" msd="NUM_Sg|CASE_Nom|CMP_Pos|CASECHANGE_Up" n="1" pos="A">vLxMq</w>
+              <w deprel="amod" head="3" lemma="XhvnDZjbIhJn" msd="NUM_Sg|CASE_Nom|CMP_Pos" n="2" pos="A">XhvnDZjbIhJn</w>
+              <w deprel="nsubj" head="4" lemma="kwoUcDf" msd="NUM_Sg|CASE_Nom" n="3" pos="N">kwoUcDf</w>
+              <w deprel="ROOT" head="0" lemma="qcIqty" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="4" pos="V">qcIqty</w>
+              <w deprel="xcomp" head="4" lemma="LywjzxjlWPgd" msd="NUM_Sg|CASE_Ill|VOICE_Act|INF_Inf3" n="5" pos="V">LywjzxjlWPgd</w>
+              <w deprel="dobj" head="5" lemma="gosft" msd="NUM_Sg|CASE_Par" n="6" pos="N">gosft</w>
+              <w deprel="adpos" head="8" lemma="rMOSP" msd="SUBCAT_Pr" n="7" pos="Adp">rMOSP</w>
+              <w deprel="nommod" head="5" lemma="ACBIPLCcnGAhNbUYSe" msd="NUM_Sg|CASE_Par" n="8" pos="N">ACBIPLCcnGAhNbUYSe</w>
+              <w deprel="punct" head="4" lemma="P" msd="_" n="9" pos="Punct">P</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:2|">
+            <s xml:lang="xxx">
+              <w deprel="name" head="2" lemma="ankZ" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">ankZ</w>
+              <w deprel="ROOT" head="0" lemma="KOwpwgzHU" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">KOwpwgzHU</w>
+              <w deprel="punct" head="2" lemma="n" msd="_" n="3" pos="Punct">n</w>
+              <w deprel="name" head="5" lemma="WOaLiyswk" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">WOaLiyswk</w>
+              <w deprel="conj" head="2" lemma="HIe" msd="SUBCAT_Ord|CASECHANGE_Up" n="5" pos="Num">HIe</w>
+              <w deprel="punct" head="2" lemma="R" msd="_" n="6" pos="Punct">R</w>
+            </s>
+            <s xml:lang="xxx">
+              <w deprel="name" head="2" lemma="WwxpOAq" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">WwxpOAq</w>
+              <w deprel="ROOT" head="0" lemma="hvPonfb" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">hvPonfb</w>
+              <w deprel="punct" head="2" lemma="v" msd="_" n="3" pos="Punct">v</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="ceHIIF" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">ceHIIF</w>
+              <w deprel="cc" head="1" lemma="bM" msd="SUBCAT_CC" n="2" pos="C">bM</w>
+              <w deprel="conj" head="1" lemma="nUWYzA" msd="NUM_Sg|CASE_Nom" n="3" pos="N">nUWYzA</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:5|eng:1|xxx:1|">
+            <s xml:lang="fin">
+              <w deprel="nommod" head="8" lemma="cjXDEAhS" msd="NUM_Sg|CASE_Ade|CASECHANGE_Up" n="1" pos="N">cjXDEAhS</w>
+              <w deprel="name" head="3" lemma="SKh" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">SKh</w>
+              <w deprel="nn" head="4" lemma="altQG" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="3" pos="N">altQG</w>
+              <w deprel="nommod" head="1" lemma="sBsoMyyjAp" msd="NUM_Sg|CASE_Ela" n="4" pos="N">sBsoMyyjAp</w>
+              <w deprel="amod" head="7" lemma="rwVZWkBX" msd="NUM_Sg|CASE_Nom|CMP_Pos" n="5" pos="A">rwVZWkBX</w>
+              <w deprel="name" head="7" lemma="rFsNCrBE" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="6" pos="N">rFsNCrBE</w>
+              <w deprel="nsubj" head="8" lemma="ELyafA" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="7" pos="N">ELyafA</w>
+              <w deprel="ROOT" head="0" lemma="RkcTzq" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="8" pos="V">RkcTzq</w>
+              <w deprel="poss" head="10" lemma="nVgiIMAmjOx" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="9" pos="N">nVgiIMAmjOx</w>
+              <w deprel="nommod" head="8" lemma="YHVSlCxpCb" msd="NUM_Sg|CASE_Ill" n="10" pos="N">YHVSlCxpCb</w>
+              <w deprel="dobj" head="8" lemma="CHuhqzuRF" msd="NUM_Sg|CASE_Par" n="11" pos="N">CHuhqzuRF</w>
+              <w deprel="cc" head="11" lemma="nW" msd="SUBCAT_CC" n="12" pos="C">nW</w>
+              <w deprel="conj" head="11" lemma="BGvVgOFVHJB" msd="NUM_Pl|CASE_Par" n="13" pos="N">BGvVgOFVHJB</w>
+              <w deprel="punct" head="8" lemma="U" msd="_" n="14" pos="Punct">U</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="amod" head="6" lemma="yEEqJDU" msd="NUM_Sg|CASE_Nom|CMP_Pos|CASECHANGE_Up" n="1" pos="A">yEEqJDU</w>
+              <w deprel="cc" head="1" lemma="sX" msd="SUBCAT_CC" n="2" pos="C">sX</w>
+              <w deprel="conj" head="1" lemma="UwajuVkM" msd="NUM_Sg|CASE_Nom|VOICE_Pass|PCP_PrfPrc|CMP_Pos" n="3" pos="V">UwajuVkM</w>
+              <w deprel="name" head="5" lemma="yKcPv" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">yKcPv</w>
+              <w deprel="name" head="6" lemma="uTH" msd="SUBCAT_Prop|OTHER_UNK" n="5" pos="N">uTH</w>
+              <w deprel="nn" head="7" lemma="jaHbNakxKetms" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="6" pos="N">jaHbNakxKetms</w>
+              <w deprel="dobj" head="8" lemma="SMIlhWDTQq" msd="NUM_Sg|CASE_Nom" n="7" pos="N">SMIlhWDTQq</w>
+              <w deprel="ROOT" head="0" lemma="TDYVGCaZqWO" msd="PRS_Pe4|VOICE_Pass|TENSE_Prt|MOOD_Ind" n="8" pos="V">TDYVGCaZqWO</w>
+              <w deprel="nommod" head="8" lemma="yHCviaz" msd="NUM_Sg|CASE_Ine" n="9" pos="N">yHCviaz</w>
+              <w deprel="nommod" head="8" lemma="FOhNSnMgvmOfKl" msd="NUM_Sg|CASE_All" n="10" pos="N">FOhNSnMgvmOfKl</w>
+              <w deprel="punct" head="8" lemma="a" msd="_" n="11" pos="Punct">a</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nsubj-cop" head="3" lemma="HVjD" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">HVjD</w>
+              <w deprel="cop" head="3" lemma="AC" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="2" pos="V">AC</w>
+              <w deprel="ROOT" head="0" lemma="OcTAvV" msd="_" n="3" pos="Adv">OcTAvV</w>
+              <w deprel="amod" head="5" lemma="zOuWaA" msd="NUM_Sg|CASE_Par|CMP_Pos" n="4" pos="A">zOuWaA</w>
+              <w deprel="nommod" head="3" lemma="aAcqcTBZD" msd="NUM_Sg|CASE_Par" n="5" pos="N">aAcqcTBZD</w>
+              <w deprel="punct" head="3" lemma="X" msd="_" n="6" pos="Punct">X</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nommod" head="3" lemma="WNwesqRYs" msd="NUM_Sg|CASE_Ade|CASECHANGE_Up" n="1" pos="N">WNwesqRYs</w>
+              <w deprel="aux" head="3" lemma="Nxw" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="2" pos="V">Nxw</w>
+              <w deprel="ROOT" head="0" lemma="qQZCRU" msd="NUM_Sg|CASE_Lat|VOICE_Act|INF_Inf1" n="3" pos="V">qQZCRU</w>
+              <w deprel="nsubj" head="5" lemma="BQDJYQ" msd="NUM_Sg|CASE_Gen" n="4" pos="N">BQDJYQ</w>
+              <w deprel="ccomp" head="3" lemma="RrYvlmkt" msd="NUM_Sg|CASE_Gen|VOICE_Act|PCP_PrsPrc|CMP_Pos" n="5" pos="V">RrYvlmkt</w>
+              <w deprel="punct" head="3" lemma="Q" msd="_" n="6" pos="Punct">Q</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nommod" head="2" lemma="BFzeImfiM" msd="NUM_Sg|CASE_Ine|CASECHANGE_Up" n="1" pos="N">BFzeImfiM</w>
+              <w deprel="ROOT" head="0" lemma="dg" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="2" pos="V">dg</w>
+              <w deprel="advmod" head="2" lemma="YSegmkxZz" msd="_" n="3" pos="Adv">YSegmkxZz</w>
+              <w deprel="nsubj" head="2" lemma="SiBBtx" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">SiBBtx</w>
+              <w deprel="punct" head="4" lemma="P" msd="_" n="5" pos="Punct">P</w>
+              <w deprel="partmod" head="7" lemma="XFHHyKXKzyFZ" msd="NUM_Sg|CASE_Nom|VOICE_Act|PCP_PrfPrc|CMP_Pos" n="6" pos="V">XFHHyKXKzyFZ</w>
+              <w deprel="conj" head="4" lemma="MAheKaGnZg" msd="NUM_Sg|CASE_Nom" n="7" pos="N">MAheKaGnZg</w>
+              <w deprel="nommod" head="7" lemma="HLaoeEtCxXm" msd="CASE_Com|POSS_Px3" n="8" pos="N">HLaoeEtCxXm</w>
+              <w deprel="punct" head="2" lemma="Y" msd="_" n="9" pos="Punct">Y</w>
+            </s>
+            <s xml:lang="eng">
+              <w deprel="name" head="2" lemma="MOipfdEE" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">MOipfdEE</w>
+              <w deprel="ROOT" head="0" lemma="vjJowT" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">vjJowT</w>
+              <w deprel="punct" head="2" lemma="i" msd="_" n="3" pos="Punct">i</w>
+              <w deprel="name" head="5" lemma="XgYFC" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">XgYFC</w>
+              <w deprel="name" head="6" lemma="hPy" msd="SUBCAT_Prop|OTHER_UNK" n="5" pos="N">hPy</w>
+              <w deprel="conj" head="2" lemma="LsfuDLnlOaSot" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|OTHER_UNK" n="6" pos="N">LsfuDLnlOaSot</w>
+              <w deprel="punct" head="2" lemma="S" msd="_" n="7" pos="Punct">S</w>
+            </s>
+            <s xml:lang="xxx">
+              <w deprel="num" head="2" lemma="B" msd="_" n="1" pos="Num">B</w>
+              <w deprel="ROOT" head="0" lemma="vX" msd="CASECHANGE_Up|OTHER_UNK" n="2" pos="Symb">vX</w>
+              <w deprel="punct" head="2" lemma="n" msd="_" n="3" pos="Punct">n</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="fPiEzBMKxoUy" msd="NUM_Sg|CASE_Par|CASECHANGE_Up" n="1" pos="N">fPiEzBMKxoUy</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:2|eng:1|">
+            <s xml:lang="fin">
+              <w deprel="name" head="2" lemma="UDzRET" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">UDzRET</w>
+              <w deprel="poss" head="7" lemma="KjkyaQn" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up" n="2" pos="N">KjkyaQn</w>
+              <w deprel="punct" head="4" lemma="y" msd="_" n="3" pos="Punct">y</w>
+              <w deprel="nommod" head="2" lemma="SIzhQwoML" msd="_" n="4" pos="Num">SIzhQwoML</w>
+              <w deprel="punct" head="4" lemma="Q" msd="_" n="5" pos="Punct">Q</w>
+              <w deprel="amod" head="7" lemma="rPOVtkzT" msd="NUM_Sg|CASE_Nom|CMP_Pos" n="6" pos="A">rPOVtkzT</w>
+              <w deprel="nsubj" head="11" lemma="oJQQETtO" msd="NUM_Sg|CASE_Nom" n="7" pos="N">oJQQETtO</w>
+              <w deprel="advmod" head="9" lemma="omvk" msd="CASECHANGE_Up" n="8" pos="Adv">omvk</w>
+              <w deprel="nsubj" head="11" lemma="NtoyieP" msd="CASECHANGE_Up|OTHER_UNK" n="9" pos="Foreign">NtoyieP</w>
+              <w deprel="advmod" head="11" lemma="kA" msd="CASECHANGE_Up" n="10" pos="Adv">kA</w>
+              <w deprel="ROOT" head="0" lemma="DTiDUbK" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="11" pos="V">DTiDUbK</w>
+              <w deprel="nommod" head="11" lemma="ZMJnCVr" msd="NUM_Pl|CASE_Gen" n="12" pos="N">ZMJnCVr</w>
+              <w deprel="adpos" head="12" lemma="jcsaavxw" msd="_" n="13" pos="Adv">jcsaavxw</w>
+              <w deprel="partmod" head="15" lemma="IXpQvhToUzuoPQ" msd="NUM_Pl|CASE_Ela|VOICE_Pass|PCP_PrfPrc|CMP_Pos" n="14" pos="V">IXpQvhToUzuoPQ</w>
+              <w deprel="nommod" head="11" lemma="ftyoSBYBeC" msd="NUM_Pl|CASE_Ela|OTHER_UNK" n="15" pos="N">ftyoSBYBeC</w>
+              <w deprel="punct" head="11" lemma="z" msd="_" n="16" pos="Punct">z</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="dobj" head="4" lemma="UwsIr" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">UwsIr</w>
+              <w deprel="cc" head="1" lemma="OE" msd="SUBCAT_CC" n="2" pos="C">OE</w>
+              <w deprel="conj" head="1" lemma="XqzajuVXvaZNu" msd="NUM_Sg|CASE_Par|OTHER_UNK" n="3" pos="N">XqzajuVXvaZNu</w>
+              <w deprel="ROOT" head="0" lemma="wXSsqAFm" msd="PRS_Pe4|VOICE_Pass|TENSE_Prs|MOOD_Ind" n="4" pos="V">wXSsqAFm</w>
+              <w deprel="dep" head="6" lemma="mMNX" msd="NUM_Sg|CASE_Gen|CMP_Pos" n="5" pos="A">mMNX</w>
+              <w deprel="advmod" head="7" lemma="CKWnhS" msd="SUBCAT_Po" n="6" pos="Adp">CKWnhS</w>
+              <w deprel="poss" head="14" lemma="btyGbIS" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="7" pos="N">btyGbIS</w>
+              <w deprel="punct" head="7" lemma="S" msd="_" n="8" pos="Punct">S</w>
+              <w deprel="name" head="10" lemma="kzgym" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="9" pos="N">kzgym</w>
+              <w deprel="conj" head="7" lemma="pmHHlpchZ" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up" n="10" pos="N">pmHHlpchZ</w>
+              <w deprel="cc" head="7" lemma="XQ" msd="SUBCAT_CC" n="11" pos="C">XQ</w>
+              <w deprel="name" head="13" lemma="XMaJE" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="12" pos="N">XMaJE</w>
+              <w deprel="conj" head="7" lemma="OBcixDXg" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="13" pos="N">OBcixDXg</w>
+              <w deprel="nommod" head="4" lemma="bnjpespuNqZb" msd="NUM_Pl|CASE_Ela" n="14" pos="N">bnjpespuNqZb</w>
+              <w deprel="punct" head="4" lemma="Y" msd="_" n="15" pos="Punct">Y</w>
+            </s>
+            <s xml:lang="eng">
+              <w deprel="name" head="2" lemma="rwF" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">rwF</w>
+              <w deprel="ROOT" head="0" lemma="MEylyyBHP" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">MEylyyBHP</w>
+              <w deprel="poss" head="4" lemma="ZzEAoBsc" msd="NUM_Sg|CASE_Gen" n="3" pos="N">ZzEAoBsc</w>
+              <w deprel="nn" head="2" lemma="OaBAwIXPpuc" msd="NUM_Sg|CASE_Nom" n="4" pos="N">OaBAwIXPpuc</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|xxx:1|">
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="bWaeH" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="1" pos="V">bWaeH</w>
+              <w deprel="advmod" head="3" lemma="IFeQuaI" msd="_" n="2" pos="Adv">IFeQuaI</w>
+              <w deprel="nommod" head="1" lemma="FloSfmNZI" msd="NUM_Sg|CASE_Ela" n="3" pos="N">FloSfmNZI</w>
+              <w deprel="punct" head="1" lemma="i" msd="_" n="4" pos="Punct">i</w>
+            </s>
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="B" msd="SUBCAT_Acro|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">B</w>
+            </s>
+          </p>
+          <p xml:lang="x-|eng:2|">
+            <s xml:lang="eng">
+              <w deprel="name" head="2" lemma="hnMcsX" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">hnMcsX</w>
+              <w deprel="name" head="3" lemma="SDciY" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="2" pos="N">SDciY</w>
+              <w deprel="name" head="4" lemma="ywGNT" msd="_" n="3" pos="Punct">ywGNT</w>
+              <w deprel="name" head="5" lemma="AVf" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">AVf</w>
+              <w deprel="ROOT" head="0" lemma="xOfxoikyT" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="5" pos="N">xOfxoikyT</w>
+              <w deprel="punct" head="8" lemma="V" msd="_" n="6" pos="Punct">V</w>
+              <w deprel="advmod" head="8" lemma="bTQJ" msd="CASECHANGE_Up" n="7" pos="Adv">bTQJ</w>
+              <w deprel="appos" head="5" lemma="OAoFfrw" msd="CASECHANGE_Up|OTHER_UNK" n="8" pos="Foreign">OAoFfrw</w>
+              <w deprel="advmod" head="8" lemma="iN" msd="CASECHANGE_Up" n="9" pos="Adv">iN</w>
+              <w deprel="punct" head="17" lemma="R" msd="_" n="10" pos="Punct">R</w>
+              <w deprel="name" head="12" lemma="eh" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="11" pos="N">eh</w>
+              <w deprel="name" head="13" lemma="LfD" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="12" pos="N">LfD</w>
+              <w deprel="name" head="14" lemma="mzlD" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="13" pos="N">mzlD</w>
+              <w deprel="name" head="15" lemma="OAgyiPCPe" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="14" pos="N">OAgyiPCPe</w>
+              <w deprel="name" head="16" lemma="Ss" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="15" pos="N">Ss</w>
+              <w deprel="name" head="17" lemma="FGGmDJceP" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="16" pos="N">FGGmDJceP</w>
+              <w deprel="appos" head="5" lemma="rtR" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="17" pos="N">rtR</w>
+              <w deprel="advmod" head="17" lemma="kU" msd="CASECHANGE_Up" n="18" pos="Adv">kU</w>
+              <w deprel="punct" head="17" lemma="F" msd="_" n="19" pos="Punct">F</w>
+              <w deprel="punct" head="5" lemma="h" msd="_" n="20" pos="Punct">h</w>
+            </s>
+            <s xml:lang="eng">
+              <w deprel="name" head="2" lemma="hSdmBRj" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">hSdmBRj</w>
+              <w deprel="ROOT" head="0" lemma="GgkQnvs" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">GgkQnvs</w>
+              <w deprel="punct" head="2" lemma="K" msd="_" n="3" pos="Punct">K</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="name" head="2" lemma="zbDse" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">zbDse</w>
+              <w deprel="ROOT" head="0" lemma="JGjKYZNJgC" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">JGjKYZNJgC</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="jRcZ" msd="NUM_Sg|CASE_Nom|CMP_Pos|CASECHANGE_Up" n="1" pos="A">jRcZ</w>
+              <w deprel="punct" head="1" lemma="H" msd="_" n="2" pos="Punct">H</w>
+              <w deprel="conj" head="1" lemma="jJvrYQU" msd="NUM_Sg|CASE_Nom|CMP_Comp" n="3" pos="A">jJvrYQU</w>
+              <w deprel="punct" head="1" lemma="M" msd="_" n="4" pos="Punct">M</w>
+              <w deprel="conj" head="1" lemma="lMdIeD" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="5" pos="N">lMdIeD</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="SQUJ" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">SQUJ</w>
+              <w deprel="advmod" head="1" lemma="ZLF" msd="CASECHANGE_Up" n="2" pos="Adv">ZLF</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="z" msd="SUBCAT_Acro|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">z</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:14|">
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="2" lemma="WWrX" msd="NUM_Sg|CASE_Nom|OTHER_UNK" n="1" pos="N">WWrX</w>
+              <w deprel="ROOT" head="0" lemma="PpiFp" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="2" pos="V">PpiFp</w>
+              <w deprel="nommod" head="2" lemma="EwquvvL" msd="NUM_Sg|CASE_Ill" n="3" pos="N">EwquvvL</w>
+              <w deprel="nommod" head="2" lemma="jYoYnzivwx" msd="NUM_Sg|CASE_Ela" n="4" pos="N">jYoYnzivwx</w>
+              <w deprel="punct" head="2" lemma="c" msd="_" n="5" pos="Punct">c</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="amod" head="2" lemma="lCKMfxvknDYhB" msd="NUM_Sg|CASE_Gen|CMP_Pos|CASECHANGE_Up" n="1" pos="A">lCKMfxvknDYhB</w>
+              <w deprel="poss" head="3" lemma="UMluixo" msd="NUM_Sg|CASE_Gen" n="2" pos="N">UMluixo</w>
+              <w deprel="nommod" head="5" lemma="ekfHrDDGNJRMJ" msd="NUM_Pl|CASE_Ine" n="3" pos="N">ekfHrDDGNJRMJ</w>
+              <w deprel="nsubj" head="5" lemma="tneais" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">tneais</w>
+              <w deprel="ROOT" head="0" lemma="bb" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="5" pos="V">bb</w>
+              <w deprel="csubj" head="5" lemma="HDDadlcQ" msd="NUM_Sg|CASE_Lat|VOICE_Act|INF_Inf1" n="6" pos="V">HDDadlcQ</w>
+              <w deprel="dobj" head="6" lemma="zWwMFdYf" msd="NUM_Pl|CASE_Nom|POSS_Px3" n="7" pos="N">zWwMFdYf</w>
+              <w deprel="cc" head="5" lemma="yjUmD" msd="SUBCAT_CC" n="8" pos="C">yjUmD</w>
+              <w deprel="conj" head="5" lemma="cSXyJfMnI" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="9" pos="V">cSXyJfMnI</w>
+              <w deprel="xcomp" head="9" lemma="tOlocWZbz" msd="NUM_Sg|CASE_Ill|VOICE_Act|INF_Inf3" n="10" pos="V">tOlocWZbz</w>
+              <w deprel="punct" head="5" lemma="K" msd="_" n="11" pos="Punct">K</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="gobj" head="2" lemma="FnZhOX" msd="NUM_Pl|CASE_Gen|CASECHANGE_Up" n="1" pos="N">FnZhOX</w>
+              <w deprel="nsubj" head="4" lemma="pZcxmUyJCI" msd="NUM_Sg|CASE_Par|DRV_Der_minen" n="2" pos="N">pZcxmUyJCI</w>
+              <w deprel="neg" head="4" lemma="ny" msd="SUBCAT_Neg|PRS_Sg3|VOICE_Act" n="3" pos="V">ny</w>
+              <w deprel="ROOT" head="0" lemma="PzsH" msd="TENSE_Prs|MOOD_Ind|NEG_ConNeg" n="4" pos="V">PzsH</w>
+              <w deprel="advmod" head="6" lemma="lcAs" msd="_" n="5" pos="Adv">lcAs</w>
+              <w deprel="nsubj" head="4" lemma="bQ" msd="SUBCAT_Dem|NUM_Sg|CASE_Nom" n="6" pos="Pron">bQ</w>
+              <w deprel="punct" head="11" lemma="V" msd="_" n="7" pos="Punct">V</w>
+              <w deprel="complm" head="11" lemma="cUON" msd="SUBCAT_CS" n="8" pos="C">cUON</w>
+              <w deprel="det" head="10" lemma="QGWVGS" msd="SUBCAT_Recipr|NUM_Sg|CASE_Nom" n="9" pos="Pron">QGWVGS</w>
+              <w deprel="nsubj" head="11" lemma="VdSuiBk" msd="NUM_Sg|CASE_Nom" n="10" pos="N">VdSuiBk</w>
+              <w deprel="ccomp" head="6" lemma="Vi" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="11" pos="V">Vi</w>
+              <w deprel="amod" head="13" lemma="YKl" msd="NUM_Sg|CASE_Nom|CMP_Pos" n="12" pos="A">YKl</w>
+              <w deprel="nsubj" head="11" lemma="hXtWN" msd="NUM_Sg|CASE_Nom" n="13" pos="N">hXtWN</w>
+              <w deprel="cc" head="11" lemma="lT" msd="SUBCAT_CC" n="14" pos="C">lT</w>
+              <w deprel="nsubj" head="16" lemma="RdfwCl" msd="NUM_Sg|CASE_Nom" n="15" pos="N">RdfwCl</w>
+              <w deprel="conj" head="11" lemma="Klbswz" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="16" pos="V">Klbswz</w>
+              <w deprel="nommod" head="16" lemma="gPxObMvrOySYFc" msd="NUM_Sg|CASE_Ill|CASECHANGE_Up" n="17" pos="N">gPxObMvrOySYFc</w>
+              <w deprel="punct" head="22" lemma="f" msd="_" n="18" pos="Punct">f</w>
+              <w deprel="poss" head="22" lemma="nwchQAHVWXcg" msd="SUBCAT_Prop|NUM_Pl|CASE_Gen|CASECHANGE_Up" n="19" pos="N">nwchQAHVWXcg</w>
+              <w deprel="amod" head="22" lemma="hZTnLuMvFt" msd="NUM_Sg|CASE_Ill|CMP_Pos" n="20" pos="A">hZTnLuMvFt</w>
+              <w deprel="amod" head="22" lemma="AEjvkKFFGvfl" msd="NUM_Sg|CASE_Ill|CMP_Pos" n="21" pos="A">AEjvkKFFGvfl</w>
+              <w deprel="appos" head="17" lemma="bDisivRkOc" msd="NUM_Sg|CASE_Ill" n="22" pos="N">bDisivRkOc</w>
+              <w deprel="punct" head="4" lemma="L" msd="_" n="23" pos="Punct">L</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="poss" head="2" lemma="FZkMOYqC" msd="NUM_Sg|CASE_Gen|CASECHANGE_Up" n="1" pos="N">FZkMOYqC</w>
+              <w deprel="nsubj" head="3" lemma="YINmAH" msd="NUM_Pl|CASE_Nom" n="2" pos="N">YINmAH</w>
+              <w deprel="ROOT" head="0" lemma="ObDoHNEO" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="3" pos="V">ObDoHNEO</w>
+              <w deprel="dep" head="5" lemma="hPnn" msd="NUM_Sg|CASE_Gen" n="4" pos="N">hPnn</w>
+              <w deprel="advmod" head="3" lemma="vKiDA" msd="_" n="5" pos="Adv">vKiDA</w>
+              <w deprel="nommod" head="3" lemma="hhHzaX" msd="NUM_Sg|CASE_Ess" n="6" pos="N">hhHzaX</w>
+              <w deprel="num" head="6" lemma="dOKT" msd="_" n="7" pos="Num">dOKT</w>
+              <w deprel="amod" head="9" lemma="jHWGjN" msd="SUBCAT_Abbr|OTHER_UNK" n="8" pos="N">jHWGjN</w>
+              <w deprel="nn" head="11" lemma="b" msd="SUBCAT_Acro|NUM_Sg|CASE_Nom" n="9" pos="N">b</w>
+              <w deprel="name" head="11" lemma="Cuc" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="10" pos="N">Cuc</w>
+              <w deprel="nsubj" head="3" lemma="fSEyay" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="11" pos="N">fSEyay</w>
+              <w deprel="punct" head="3" lemma="P" msd="_" n="12" pos="Punct">P</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="num" head="2" lemma="bPjMiqxAXwR" msd="SUBCAT_Ord|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="Num">bPjMiqxAXwR</w>
+              <w deprel="nsubj" head="3" lemma="WygGrHbHFmVIS" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">WygGrHbHFmVIS</w>
+              <w deprel="ROOT" head="0" lemma="gGHZRJ" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="3" pos="V">gGHZRJ</w>
+              <w deprel="dobj" head="3" lemma="gRSJwfVU" msd="NUM_Sg|CASE_Par" n="4" pos="N">gRSJwfVU</w>
+              <w deprel="poss" head="6" lemma="ysLhIPuSBvAoFZbRjA" msd="NUM_Pl|CASE_Gen" n="5" pos="N">ysLhIPuSBvAoFZbRjA</w>
+              <w deprel="nommod" head="3" lemma="HxcURWuchWov" msd="NUM_Sg|CASE_Ela" n="6" pos="N">HxcURWuchWov</w>
+              <w deprel="punct" head="3" lemma="Y" msd="_" n="7" pos="Punct">Y</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="dobj" head="2" lemma="GAKdZXj" msd="NUM_Sg|CASE_Par|CASECHANGE_Up" n="1" pos="N">GAKdZXj</w>
+              <w deprel="ROOT" head="0" lemma="zfjgRnA" msd="PRS_Pe4|VOICE_Pass|TENSE_Prs|MOOD_Ind" n="2" pos="V">zfjgRnA</w>
+              <w deprel="nommod" head="2" lemma="eMbDnSUQL" msd="NUM_Pl|CASE_Ade" n="3" pos="N">eMbDnSUQL</w>
+              <w deprel="punct" head="3" lemma="f" msd="_" n="4" pos="Punct">f</w>
+              <w deprel="conj" head="3" lemma="hSrsUcSD" msd="NUM_Sg|CASE_Ade" n="5" pos="N">hSrsUcSD</w>
+              <w deprel="punct" head="3" lemma="c" msd="_" n="6" pos="Punct">c</w>
+              <w deprel="conj" head="3" lemma="JCAntykfsLR" msd="NUM_Pl|CASE_Ade" n="7" pos="N">JCAntykfsLR</w>
+              <w deprel="cc" head="3" lemma="FQ" msd="SUBCAT_CC" n="8" pos="C">FQ</w>
+              <w deprel="conj" head="3" lemma="XdZBBRf" msd="NUM_Sg|CASE_Lat|VOICE_Act|INF_Inf1|OTHER_UNK" n="9" pos="V">XdZBBRf</w>
+              <w deprel="nommod" head="9" lemma="gpfvW" msd="NUM_Sg|CASE_Ade|OTHER_UNK" n="10" pos="N">gpfvW</w>
+              <w deprel="punct" head="9" lemma="Q" msd="_" n="11" pos="Punct">Q</w>
+              <w deprel="nsubj" head="15" lemma="GGvIgr" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="12" pos="N">GGvIgr</w>
+              <w deprel="advmod" head="12" lemma="EAII" msd="_" n="13" pos="Adv">EAII</w>
+              <w deprel="aux" head="15" lemma="NB" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="14" pos="V">NB</w>
+              <w deprel="conj" head="9" lemma="IqRuKNFfzTiE" msd="NUM_Sg|CASE_Nom|VOICE_Act|PCP_PrfPrc|CMP_Pos" n="15" pos="V">IqRuKNFfzTiE</w>
+              <w deprel="poss" head="17" lemma="sBQjHwIcXBOBtOpdkcKQ" msd="NUM_Pl|CASE_Gen" n="16" pos="N">sBQjHwIcXBOBtOpdkcKQ</w>
+              <w deprel="nommod" head="15" lemma="VGLmbJYtiM" msd="NUM_Pl|CASE_Ill" n="17" pos="N">VGLmbJYtiM</w>
+              <w deprel="cc" head="17" lemma="DC" msd="SUBCAT_CC" n="18" pos="C">DC</w>
+              <w deprel="conj" head="17" lemma="YZNKeMIAzXMbGqPn" msd="NUM_Pl|CASE_Ill" n="19" pos="N">YZNKeMIAzXMbGqPn</w>
+              <w deprel="punct" head="2" lemma="t" msd="_" n="20" pos="Punct">t</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="dobj" head="3" lemma="PqdrB" msd="SUBCAT_Dem|NUM_Pl|CASE_Par|CASECHANGE_Up" n="1" pos="Pron">PqdrB</w>
+              <w deprel="nsubj" head="3" lemma="LDu" msd="SUBCAT_Pers|NUM_Sg|CASE_Nom" n="2" pos="Pron">LDu</w>
+              <w deprel="ROOT" head="0" lemma="EFPkF" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="3" pos="V">EFPkF</w>
+              <w deprel="advmod" head="5" lemma="aEMLbvOzBmE" msd="_" n="4" pos="Adv">aEMLbvOzBmE</w>
+              <w deprel="nommod" head="3" lemma="kcwvah" msd="NUM_Sg|CASE_Gen" n="5" pos="N">kcwvah</w>
+              <w deprel="nommod" head="3" lemma="kjIkwzzC" msd="NUM_Sg|CASE_Ine" n="6" pos="N">kjIkwzzC</w>
+              <w deprel="punct" head="3" lemma="u" msd="_" n="7" pos="Punct">u</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nommod" head="3" lemma="KMLlTBgQCzQFCA" msd="NUM_Pl|CASE_Ade|CASECHANGE_Up" n="1" pos="N">KMLlTBgQCzQFCA</w>
+              <w deprel="nsubj" head="3" lemma="kbyRwD" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">kbyRwD</w>
+              <w deprel="ROOT" head="0" lemma="oLpp" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="3" pos="V">oLpp</w>
+              <w deprel="nommod" head="3" lemma="GSULFCuOB" msd="NUM_Pl|CASE_Tra" n="4" pos="N">GSULFCuOB</w>
+              <w deprel="nommod" head="3" lemma="bStYFTyJBXNbvyT" msd="NUM_Pl|CASE_Ine" n="5" pos="N">bStYFTyJBXNbvyT</w>
+              <w deprel="nommod" head="3" lemma="GwSkCFmJ" msd="SUBCAT_Prop|NUM_Sg|CASE_Ela|CASECHANGE_Up" n="6" pos="N">GwSkCFmJ</w>
+              <w deprel="name" head="8" lemma="ckus" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="7" pos="N">ckus</w>
+              <w deprel="nommod" head="3" lemma="kMHFQeElcu" msd="SUBCAT_Prop|NUM_Sg|CASE_Ill|CASECHANGE_Up|OTHER_UNK" n="8" pos="N">kMHFQeElcu</w>
+              <w deprel="punct" head="3" lemma="o" msd="_" n="9" pos="Punct">o</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="mark" head="3" lemma="nvx" msd="SUBCAT_CS|CASECHANGE_Up" n="1" pos="C">nvx</w>
+              <w deprel="nsubj" head="3" lemma="kYgwBJfQ" msd="NUM_Sg|CASE_Nom" n="2" pos="N">kYgwBJfQ</w>
+              <w deprel="advcl" head="7" lemma="RrfgG" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="3" pos="V">RrfgG</w>
+              <w deprel="xcomp" head="3" lemma="dJzJOPElI" msd="NUM_Sg|CASE_Lat|VOICE_Act|INF_Inf1" n="4" pos="V">dJzJOPElI</w>
+              <w deprel="punct" head="3" lemma="w" msd="_" n="5" pos="Punct">w</w>
+              <w deprel="cop" head="7" lemma="tO" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="6" pos="V">tO</w>
+              <w deprel="ROOT" head="0" lemma="IbqU" msd="NUM_Sg|CASE_Nom" n="7" pos="N">IbqU</w>
+              <w deprel="iccomp" head="7" lemma="xuJiX" msd="NUM_Sg|CASE_Lat|VOICE_Act|INF_Inf1" n="8" pos="V">xuJiX</w>
+              <w deprel="advmod" head="8" lemma="RMQyyEbJK" msd="_" n="9" pos="Adv">RMQyyEbJK</w>
+              <w deprel="punct" head="7" lemma="c" msd="_" n="10" pos="Punct">c</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nsubj-cop" head="15" lemma="qdDHNC" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">qdDHNC</w>
+              <w deprel="cop" head="15" lemma="Ip" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="2" pos="V">Ip</w>
+              <w deprel="name" head="4" lemma="ejjFPHr" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="3" pos="N">ejjFPHr</w>
+              <w deprel="nn" head="5" lemma="fVNHL" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">fVNHL</w>
+              <w deprel="nommod" head="7" lemma="wTweUudtOUhG" msd="NUM_Sg|CASE_Ade" n="5" pos="N">wTweUudtOUhG</w>
+              <w deprel="dobj" head="7" lemma="LykVTxFZLdmtS" msd="NUM_Sg|CASE_Par" n="6" pos="N">LykVTxFZLdmtS</w>
+              <w deprel="partmod" head="10" lemma="fIftxKaPKV" msd="NUM_Sg|CASE_Gen|VOICE_Act|PCP_PrfPrc|CMP_Pos" n="7" pos="V">fIftxKaPKV</w>
+              <w deprel="name" head="9" lemma="TRpnnH" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="8" pos="N">TRpnnH</w>
+              <w deprel="name" head="10" lemma="vj" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="9" pos="N">vj</w>
+              <w deprel="poss" head="14" lemma="GXyKTHBey" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="10" pos="N">GXyKTHBey</w>
+              <w deprel="punct" head="12" lemma="l" msd="_" n="11" pos="Punct">l</w>
+              <w deprel="nommod" head="3" lemma="VjMPTIAtf" msd="_" n="12" pos="Num">VjMPTIAtf</w>
+              <w deprel="punct" head="12" lemma="N" msd="_" n="13" pos="Punct">N</w>
+              <w deprel="amod" head="15" lemma="dQCBvfvFR" msd="NUM_Sg|CASE_Nom|CMP_Superl" n="14" pos="A">dQCBvfvFR</w>
+              <w deprel="ROOT" head="0" lemma="AwcLqf" msd="NUM_Sg|CASE_Nom" n="15" pos="N">AwcLqf</w>
+              <w deprel="punct" head="15" lemma="P" msd="_" n="16" pos="Punct">P</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="2" lemma="eRa" msd="SUBCAT_Pers|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="Pron">eRa</w>
+              <w deprel="ROOT" head="0" lemma="kGUPZfeGr" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="2" pos="V">kGUPZfeGr</w>
+              <w deprel="dobj" head="2" lemma="iuxpwn" msd="NUM_Sg|CASE_Par" n="3" pos="N">iuxpwn</w>
+              <w deprel="num" head="3" lemma="fn" msd="_" n="4" pos="Num">fn</w>
+              <w deprel="amod" head="6" lemma="yhxMkfUnWTG" msd="NUM_Sg|CASE_Par|DRV_Der_llinen" n="5" pos="A">yhxMkfUnWTG</w>
+              <w deprel="nommod" head="2" lemma="TKJwQQd" msd="NUM_Pl|CASE_Ess" n="6" pos="N">TKJwQQd</w>
+              <w deprel="num" head="6" lemma="JEqzUjeim" msd="_" n="7" pos="Num">JEqzUjeim</w>
+              <w deprel="punct" head="7" lemma="r" msd="_" n="8" pos="Punct">r</w>
+              <w deprel="cc" head="7" lemma="EE" msd="SUBCAT_CC" n="9" pos="C">EE</w>
+              <w deprel="advmod" head="12" lemma="vXEBtpSlF" msd="_" n="10" pos="Adv">vXEBtpSlF</w>
+              <w deprel="conj" head="7" lemma="E" msd="_" n="11" pos="Num">E</w>
+              <w deprel="advmod" head="2" lemma="jAtYC" msd="_" n="12" pos="Adv">jAtYC</w>
+              <w deprel="punct" head="2" lemma="A" msd="_" n="13" pos="Punct">A</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="advmod" head="2" lemma="xMZYRN" msd="CASECHANGE_Up" n="1" pos="Adv">xMZYRN</w>
+              <w deprel="ROOT" head="0" lemma="ZlEUTI" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="2" pos="V">ZlEUTI</w>
+              <w deprel="amod" head="4" lemma="zjCmAC" msd="NUM_Sg|CASE_Ade|CMP_Pos" n="3" pos="A">zjCmAC</w>
+              <w deprel="nommod" head="2" lemma="osUPwym" msd="NUM_Sg|CASE_Ade" n="4" pos="N">osUPwym</w>
+              <w deprel="cc" head="2" lemma="bW" msd="SUBCAT_CC" n="5" pos="C">bW</w>
+              <w deprel="amod" head="7" lemma="eyZtJzq" msd="NUM_Pl|CASE_Ade" n="6" pos="Pron">eyZtJzq</w>
+              <w deprel="nommod" head="8" lemma="XTsZODQbbfvqURT" msd="NUM_Pl|CASE_Ade" n="7" pos="N">XTsZODQbbfvqURT</w>
+              <w deprel="conj" head="2" lemma="FkcFYfatM" msd="NUM_Sg|CASE_Nom" n="8" pos="N">FkcFYfatM</w>
+              <w deprel="nommod" head="8" lemma="joheTPssGOlZChvF" msd="NUM_Sg|CASE_Par" n="9" pos="N">joheTPssGOlZChvF</w>
+              <w deprel="cc" head="9" lemma="MeND" msd="SUBCAT_CC" n="10" pos="C">MeND</w>
+              <w deprel="conj" head="9" lemma="LAvOmcpEG" msd="NUM_Pl|CASE_Par" n="11" pos="N">LAvOmcpEG</w>
+              <w deprel="punct" head="11" lemma="S" msd="_" n="12" pos="Punct">S</w>
+              <w deprel="conj" head="11" lemma="BdGPKRudlvVk" msd="NUM_Pl|CASE_Par" n="13" pos="N">BdGPKRudlvVk</w>
+              <w deprel="cc" head="11" lemma="JW" msd="SUBCAT_CC" n="14" pos="C">JW</w>
+              <w deprel="conj" head="11" lemma="oKreLEMMRnbRckRwlGqpklA" msd="NUM_Pl|CASE_Par" n="15" pos="N">oKreLEMMRnbRckRwlGqpklA</w>
+              <w deprel="punct" head="2" lemma="g" msd="_" n="16" pos="Punct">g</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="amod" head="4" lemma="YlZzIaC" msd="NUM_Sg|CASE_Nom|CMP_Pos|CASECHANGE_Up" n="1" pos="A">YlZzIaC</w>
+              <w deprel="cc" head="1" lemma="Nu" msd="SUBCAT_CC" n="2" pos="C">Nu</w>
+              <w deprel="conj" head="1" lemma="mgCEtcbetNmttWIx" msd="NUM_Sg|CASE_Nom|CMP_Pos" n="3" pos="A">mgCEtcbetNmttWIx</w>
+              <w deprel="nsubj" head="6" lemma="hrzzRbHgCZvDwrHSU" msd="NUM_Sg|CASE_Nom" n="4" pos="N">hrzzRbHgCZvDwrHSU</w>
+              <w deprel="aux" head="6" lemma="CB" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="5" pos="V">CB</w>
+              <w deprel="ROOT" head="0" lemma="lJtLHdGc" msd="NUM_Sg|CASE_Nom|VOICE_Act|PCP_PrfPrc|CMP_Pos" n="6" pos="V">lJtLHdGc</w>
+              <w deprel="advmod" head="8" lemma="YZGO" msd="_" n="7" pos="Adv">YZGO</w>
+              <w deprel="amod" head="9" lemma="QmSCYJd" msd="NUM_Sg|CASE_Ill|CMP_Pos" n="8" pos="A">QmSCYJd</w>
+              <w deprel="nommod" head="6" lemma="tNnjEXyH" msd="NUM_Sg|CASE_Ill" n="9" pos="N">tNnjEXyH</w>
+              <w deprel="punct" head="14" lemma="x" msd="_" n="10" pos="Punct">x</w>
+              <w deprel="complm" head="14" lemma="xlpM" msd="SUBCAT_CS" n="11" pos="C">xlpM</w>
+              <w deprel="nommod" head="14" lemma="gUeAUBx" msd="SUBCAT_Pers|NUM_Sg|CASE_Ela" n="12" pos="Pron">gUeAUBx</w>
+              <w deprel="auxpass" head="14" lemma="FY" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="13" pos="V">FY</w>
+              <w deprel="advcl" head="6" lemma="yMTTZulHO" msd="NUM_Sg|CASE_Nom|VOICE_Pass|PCP_PrfPrc|CMP_Pos" n="14" pos="V">yMTTZulHO</w>
+              <w deprel="advmod" head="14" lemma="xgLe" msd="_" n="15" pos="Adv">xgLe</w>
+              <w deprel="nsubj" head="13" lemma="yqQT" msd="NUM_Sg|CASE_Nom" n="16" pos="N">yqQT</w>
+              <w deprel="comparator" head="18" lemma="AYqP" msd="SUBCAT_CS" n="17" pos="C">AYqP</w>
+              <w deprel="compar" head="15" lemma="WsiuiAGoAY" msd="NUM_Pl|CASE_Par" n="18" pos="N">WsiuiAGoAY</w>
+              <w deprel="punct" head="6" lemma="Q" msd="_" n="19" pos="Punct">Q</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nommod" head="4" lemma="PPixDdUDkWYGbt" msd="NUM_Sg|CASE_Ade|CASECHANGE_Up" n="1" pos="N">PPixDdUDkWYGbt</w>
+              <w deprel="nsubj" head="4" lemma="ZQkYfbxw" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">ZQkYfbxw</w>
+              <w deprel="aux" head="4" lemma="nZUF" msd="PRS_Pl3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="3" pos="V">nZUF</w>
+              <w deprel="ROOT" head="0" lemma="KVEDLJciHD" msd="NUM_Pl|CASE_Nom|VOICE_Act|PCP_PrfPrc|CMP_Pos" n="4" pos="V">KVEDLJciHD</w>
+              <w deprel="poss" head="7" lemma="kbKhgIC" msd="NUM_Sg|CASE_Gen|POSS_Px3" n="5" pos="N">kbKhgIC</w>
+              <w deprel="amod" head="7" lemma="fvDAIlWZ" msd="NUM_Pl|CASE_Nom|CMP_Pos" n="6" pos="A">fvDAIlWZ</w>
+              <w deprel="dobj" head="4" lemma="dcetUpzQSM" msd="NUM_Pl|CASE_Nom" n="7" pos="N">dcetUpzQSM</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:3|fin:1|">
+            <s xml:lang="xxx">
+              <w deprel="name" head="2" lemma="uVFTiVQ" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">uVFTiVQ</w>
+              <w deprel="nommod" head="5" lemma="xHMaF" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">xHMaF</w>
+              <w deprel="punct" head="2" lemma="g" msd="_" n="3" pos="Punct">g</w>
+              <w deprel="poss" head="5" lemma="FXHwYfeL" msd="NUM_Sg|CASE_Gen|CASECHANGE_Up" n="4" pos="N">FXHwYfeL</w>
+              <w deprel="ROOT" head="0" lemma="viYBmN" msd="NUM_Pl|CASE_Nom" n="5" pos="N">viYBmN</w>
+              <w deprel="punct" head="5" lemma="E" msd="_" n="6" pos="Punct">E</w>
+            </s>
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="AheduK" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">AheduK</w>
+              <w deprel="num" head="1" lemma="N" msd="_" n="2" pos="Num">N</w>
+              <w deprel="punct" head="1" lemma="o" msd="_" n="3" pos="Punct">o</w>
+            </s>
+            <s xml:lang="xxx">
+              <w deprel="name" head="2" lemma="UcRsC" msd="SUBCAT_Abbr|CASECHANGE_Up" n="1" pos="N">UcRsC</w>
+              <w deprel="name" head="3" lemma="AwAs" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="2" pos="N">AwAs</w>
+              <w deprel="ROOT" head="0" lemma="cDUNCItN" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="3" pos="N">cDUNCItN</w>
+              <w deprel="punct" head="3" lemma="L" msd="_" n="4" pos="Punct">L</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="num" head="2" lemma="cJW" msd="_" n="1" pos="Num">cJW</w>
+              <w deprel="ROOT" head="0" lemma="cm" msd="SUBCAT_Abbr" n="2" pos="N">cm</w>
+              <w deprel="amod" head="4" lemma="vlBuq" msd="NUM_Sg|CASE_Nom|CMP_Pos|CASECHANGE_Up" n="3" pos="A">vlBuq</w>
+              <w deprel="number" head="5" lemma="WfaG" msd="NUM_Sg|CASE_Nom" n="4" pos="N">WfaG</w>
+              <w deprel="number" head="6" lemma="k" msd="_" n="5" pos="Punct">k</w>
+              <w deprel="nommod" head="2" lemma="GBZs" msd="_" n="6" pos="Num">GBZs</w>
+              <w deprel="punct" head="2" lemma="N" msd="_" n="7" pos="Punct">N</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:2|eng:1|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="name" head="2" lemma="vUx" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">vUx</w>
+              <w deprel="name" head="3" lemma="ZNTcIlqZHf" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">ZNTcIlqZHf</w>
+              <w deprel="ROOT" head="0" lemma="APqKKa" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="3" pos="N">APqKKa</w>
+              <w deprel="nommod" head="3" lemma="SmrmeZmok" msd="SUBCAT_Prop|NUM_Sg|CASE_Ill|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">SmrmeZmok</w>
+              <w deprel="cc" head="4" lemma="zg" msd="SUBCAT_CC" n="5" pos="C">zg</w>
+              <w deprel="name" head="7" lemma="WvL" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="6" pos="N">WvL</w>
+              <w deprel="conj" head="4" lemma="lUdkBgBoBF" msd="SUBCAT_Prop|NUM_Sg|CASE_Ela|CASECHANGE_Up" n="7" pos="N">lUdkBgBoBF</w>
+              <w deprel="name" head="9" lemma="lIRXd" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="8" pos="N">lIRXd</w>
+              <w deprel="nommod" head="4" lemma="xScBGuWgis" msd="SUBCAT_Prop|NUM_Sg|CASE_Ill|CASECHANGE_Up|OTHER_UNK" n="9" pos="N">xScBGuWgis</w>
+              <w deprel="punct" head="3" lemma="s" msd="_" n="10" pos="Punct">s</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nommod" head="3" lemma="eyxSIjvHjqNv" msd="NUM_Pl|CASE_Ela|CASECHANGE_Up" n="1" pos="N">eyxSIjvHjqNv</w>
+              <w deprel="advmod" head="1" lemma="FhBG" msd="_" n="2" pos="Adv">FhBG</w>
+              <w deprel="ROOT" head="0" lemma="XjYDKzeRTX" msd="PRS_Pe4|VOICE_Pass|TENSE_Prs|MOOD_Ind" n="3" pos="V">XjYDKzeRTX</w>
+              <w deprel="nommod" head="3" lemma="lJrAT" msd="SUBCAT_Dem|NUM_Sg|CASE_Ill" n="4" pos="Pron">lJrAT</w>
+              <w deprel="adpos" head="4" lemma="WdvWEcAo" msd="SUBCAT_Po" n="5" pos="Adp">WdvWEcAo</w>
+              <w deprel="advmod" head="3" lemma="jbgLBByMf" msd="_" n="6" pos="Adv">jbgLBByMf</w>
+              <w deprel="amod" head="9" lemma="bejBxhnqjQIV" msd="NUM_Sg|CASE_Gen|CMP_Pos" n="7" pos="A">bejBxhnqjQIV</w>
+              <w deprel="name" head="9" lemma="FgpZWU" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="8" pos="N">FgpZWU</w>
+              <w deprel="poss" head="12" lemma="LRHNXQ" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="9" pos="N">LRHNXQ</w>
+              <w deprel="amod" head="12" lemma="knNqZzs" msd="NUM_Pl|CASE_Nom|CMP_Pos" n="10" pos="A">knNqZzs</w>
+              <w deprel="amod" head="12" lemma="IluFbgWDh" msd="NUM_Pl|CASE_Nom|CMP_Pos" n="11" pos="A">IluFbgWDh</w>
+              <w deprel="dobj" head="3" lemma="AJXxuUUm" msd="NUM_Pl|CASE_Nom" n="12" pos="N">AJXxuUUm</w>
+              <w deprel="punct" head="3" lemma="t" msd="_" n="13" pos="Punct">t</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="3" lemma="wO" msd="SUBCAT_Dem|NUM_Pl|CASE_Nom|CASECHANGE_Up" n="1" pos="Pron">wO</w>
+              <w deprel="aux" head="3" lemma="ycjj" msd="PRS_Pl3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="2" pos="V">ycjj</w>
+              <w deprel="ROOT" head="0" lemma="gIUHEWPlx" msd="NUM_Pl|CASE_Nom|VOICE_Act|PCP_PrfPrc|CMP_Pos" n="3" pos="V">gIUHEWPlx</w>
+              <w deprel="nommod" head="3" lemma="ySQLDvlORXmhaE" msd="SUBCAT_Prop|NUM_Pl|CASE_Ine|CASECHANGE_Up" n="4" pos="N">ySQLDvlORXmhaE</w>
+              <w deprel="num" head="6" lemma="PZDNyFNKJKTLUv" msd="SUBCAT_Card|NUM_Sg|CASE_Par|OTHER_UNK" n="5" pos="Num">PZDNyFNKJKTLUv</w>
+              <w deprel="poss" head="13" lemma="QaDe" msd="NUM_Sg|CASE_Gen" n="6" pos="N">QaDe</w>
+              <w deprel="appos" head="6" lemma="YwBSFuf" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="7" pos="N">YwBSFuf</w>
+              <w deprel="punct" head="7" lemma="N" msd="_" n="8" pos="Punct">N</w>
+              <w deprel="conj" head="7" lemma="Tkqqthi" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="9" pos="N">Tkqqthi</w>
+              <w deprel="cc" head="7" lemma="AE" msd="SUBCAT_CC" n="10" pos="C">AE</w>
+              <w deprel="name" head="12" lemma="inu" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="11" pos="N">inu</w>
+              <w deprel="conj" head="7" lemma="zqGNxjg" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="12" pos="N">zqGNxjg</w>
+              <w deprel="dobj" head="3" lemma="ihLbvjshLF" msd="NUM_Sg|CASE_Par" n="13" pos="N">ihLbvjshLF</w>
+              <w deprel="punct" head="3" lemma="q" msd="_" n="14" pos="Punct">q</w>
+            </s>
+            <s xml:lang="eng">
+              <w deprel="dobj" head="3" lemma="xwkmPqpK" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">xwkmPqpK</w>
+              <w deprel="advmod" head="3" lemma="qoEd" msd="_" n="2" pos="Adv">qoEd</w>
+              <w deprel="ROOT" head="0" lemma="uPOfZcRlDhW" msd="PRS_Pe4|VOICE_Pass|TENSE_Prt|MOOD_Ind|OTHER_UNK" n="3" pos="V">uPOfZcRlDhW</w>
+              <w deprel="name" head="5" lemma="lbgUVkI" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="4" pos="N">lbgUVkI</w>
+              <w deprel="name" head="6" lemma="LIAebHn" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="5" pos="N">LIAebHn</w>
+              <w deprel="name" head="7" lemma="HB" msd="SUBCAT_Prop|OTHER_UNK" n="6" pos="N">HB</w>
+              <w deprel="nn" head="8" lemma="ZUkKOez" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="7" pos="N">ZUkKOez</w>
+              <w deprel="poss" head="9" lemma="jKRQRJFkeyJW" msd="NUM_Sg|CASE_Gen" n="8" pos="N">jKRQRJFkeyJW</w>
+              <w deprel="amod" head="10" lemma="DngQIlSjdwYn" msd="NUM_Sg|CASE_Ade|CMP_Superl" n="9" pos="A">DngQIlSjdwYn</w>
+              <w deprel="nommod" head="3" lemma="yjqxSOrDuExdWYLRwtTT" msd="NUM_Sg|CASE_Ade" n="10" pos="N">yjqxSOrDuExdWYLRwtTT</w>
+              <w deprel="punct" head="14" lemma="K" msd="_" n="11" pos="Punct">K</w>
+              <w deprel="name" head="13" lemma="QOLJU" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="12" pos="N">QOLJU</w>
+              <w deprel="poss" head="14" lemma="PyhwRiYv" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="13" pos="N">PyhwRiYv</w>
+              <w deprel="appos" head="10" lemma="fGSHkebZhnF" msd="NUM_Sg|CASE_Ade" n="14" pos="N">fGSHkebZhnF</w>
+              <w deprel="num" head="14" lemma="QUdZ" msd="_" n="15" pos="Num">QUdZ</w>
+              <w deprel="punct" head="3" lemma="d" msd="_" n="16" pos="Punct">d</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:7|">
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="2" lemma="uXwPfh" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">uXwPfh</w>
+              <w deprel="ROOT" head="0" lemma="zNGEDdj" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="2" pos="V">zNGEDdj</w>
+              <w deprel="name" head="4" lemma="emuo" msd="OTHER_UNK" n="3" pos="Foreign">emuo</w>
+              <w deprel="parataxis" head="8" lemma="Qgmmkeetf" msd="OTHER_UNK" n="4" pos="Foreign">Qgmmkeetf</w>
+              <w deprel="punct" head="4" lemma="d" msd="_" n="5" pos="Punct">d</w>
+              <w deprel="amod" head="8" lemma="lKhcS" msd="NUM_Sg|CASE_Par|CMP_Pos" n="6" pos="A">lKhcS</w>
+              <w deprel="amod" head="8" lemma="lcVdLNATZapR" msd="NUM_Sg|CASE_Par|CMP_Pos" n="7" pos="A">lcVdLNATZapR</w>
+              <w deprel="dobj" head="2" lemma="NNMRpeMeMmUaRiWyrDnZ" msd="NUM_Sg|CASE_Par" n="8" pos="N">NNMRpeMeMmUaRiWyrDnZ</w>
+              <w deprel="punct" head="2" lemma="p" msd="_" n="9" pos="Punct">p</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="poss" head="2" lemma="Ann" msd="SUBCAT_Dem|NUM_Sg|CASE_Gen|CASECHANGE_Up" n="1" pos="Pron">Ann</w>
+              <w deprel="nommod" head="4" lemma="EGBsdCODmfQIBzAW" msd="NUM_Sg|CASE_Ela" n="2" pos="N">EGBsdCODmfQIBzAW</w>
+              <w deprel="aux" head="4" lemma="ua" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="3" pos="V">ua</w>
+              <w deprel="ROOT" head="0" lemma="CzsqrUZSgg" msd="NUM_Sg|CASE_Nom|VOICE_Act|PCP_PrfPrc|CMP_Pos" n="4" pos="V">CzsqrUZSgg</w>
+              <w deprel="amod" head="6" lemma="JZeoqVlZa" msd="NUM_Pl|CASE_Nom|CMP_Pos" n="5" pos="A">JZeoqVlZa</w>
+              <w deprel="dobj" head="4" lemma="OWNPePb" msd="NUM_Pl|CASE_Nom|POSS_Px3" n="6" pos="N">OWNPePb</w>
+              <w deprel="dep" head="8" lemma="QMbg" msd="NUM_Sg|CASE_Gen|CMP_Pos" n="7" pos="A">QMbg</w>
+              <w deprel="advmod" head="10" lemma="HMLSnT" msd="SUBCAT_Po" n="8" pos="Adp">HMLSnT</w>
+              <w deprel="name" head="10" lemma="ZCsUoys" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="9" pos="N">ZCsUoys</w>
+              <w deprel="nommod" head="6" lemma="hJFwesgsO" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="10" pos="N">hJFwesgsO</w>
+              <w deprel="punct" head="4" lemma="y" msd="_" n="11" pos="Punct">y</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="poss" head="2" lemma="fAZCMnbZpHmOiDO" msd="NUM_Sg|CASE_Gen|CASECHANGE_Up" n="1" pos="N">fAZCMnbZpHmOiDO</w>
+              <w deprel="nsubj" head="4" lemma="DhRSwxPEM" msd="NUM_Pl|CASE_Nom" n="2" pos="N">DhRSwxPEM</w>
+              <w deprel="advmod" head="4" lemma="wxSQR" msd="_" n="3" pos="Adv">wxSQR</w>
+              <w deprel="ROOT" head="0" lemma="mIJleoOsKR" msd="PRS_Pl3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="4" pos="V">mIJleoOsKR</w>
+              <w deprel="amod" head="6" lemma="ZvwBkUsAYIZn" msd="NUM_Sg|CASE_Ela|CMP_Pos" n="5" pos="A">ZvwBkUsAYIZn</w>
+              <w deprel="nommod" head="4" lemma="uIbxHOEN" msd="NUM_Sg|CASE_Ela|OTHER_UNK" n="6" pos="N">uIbxHOEN</w>
+              <w deprel="nommod" head="4" lemma="PAHHC" msd="SUBCAT_Dem|NUM_Sg|CASE_Ine" n="7" pos="Pron">PAHHC</w>
+              <w deprel="punct" head="12" lemma="Z" msd="_" n="8" pos="Punct">Z</w>
+              <w deprel="complm" head="12" lemma="BISM" msd="SUBCAT_CS" n="9" pos="C">BISM</w>
+              <w deprel="poss" head="11" lemma="PZAef" msd="SUBCAT_Pers|NUM_Sg|CASE_Gen" n="10" pos="Pron">PZAef</w>
+              <w deprel="nsubj" head="12" lemma="aSfAnmoPogkHr" msd="NUM_Pl|CASE_Nom|POSS_Px3" n="11" pos="N">aSfAnmoPogkHr</w>
+              <w deprel="ccomp" head="7" lemma="ahVubIgVNI" msd="PRS_Pl3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="12" pos="V">ahVubIgVNI</w>
+              <w deprel="advmod" head="12" lemma="AyClZkFChg" msd="_" n="13" pos="Adv">AyClZkFChg</w>
+              <w deprel="punct" head="12" lemma="C" msd="_" n="14" pos="Punct">C</w>
+              <w deprel="conj" head="12" lemma="NagCIFIJ" msd="PRS_Pl3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="15" pos="V">NagCIFIJ</w>
+              <w deprel="dobj" head="15" lemma="SSBaEeK" msd="NUM_Pl|CASE_Par" n="16" pos="N">SSBaEeK</w>
+              <w deprel="cc" head="12" lemma="xU" msd="SUBCAT_CC" n="17" pos="C">xU</w>
+              <w deprel="conj" head="12" lemma="FOYKKSffN" msd="PRS_Pl3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="18" pos="V">FOYKKSffN</w>
+              <w deprel="amod" head="20" lemma="PhbgHRzrua" msd="NUM_Pl|CASE_Par|CMP_Pos" n="19" pos="A">PhbgHRzrua</w>
+              <w deprel="dobj" head="18" lemma="vZveqPSV" msd="NUM_Pl|CASE_Par" n="20" pos="N">vZveqPSV</w>
+              <w deprel="nommod" head="18" lemma="zcHwDMIOnE" msd="NUM_Pl|CASE_Ade|POSS_Px3" n="21" pos="N">zcHwDMIOnE</w>
+              <w deprel="punct" head="4" lemma="t" msd="_" n="22" pos="Punct">t</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="nsubj" head="4" lemma="dmjADA" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">dmjADA</w>
+              <w deprel="nommod" head="4" lemma="EMV" msd="SUBCAT_Dem|NUM_Sg|CASE_Gen" n="2" pos="Pron">EMV</w>
+              <w deprel="adpos" head="2" lemma="DdMKgw" msd="SUBCAT_Po" n="3" pos="Adp">DdMKgw</w>
+              <w deprel="ROOT" head="0" lemma="eTMRGy" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="4" pos="V">eTMRGy</w>
+              <w deprel="advmod" head="4" lemma="HhwoHmVEjLcyUoOd" msd="_" n="5" pos="Adv">HhwoHmVEjLcyUoOd</w>
+              <w deprel="cc" head="5" lemma="qz" msd="SUBCAT_CC" n="6" pos="C">qz</w>
+              <w deprel="conj" head="5" lemma="mePukQ" msd="NUM_Sg|CASE_Gen|CMP_Pos" n="7" pos="A">mePukQ</w>
+              <w deprel="conj" head="5" lemma="KXfxhNgbhK" msd="_" n="8" pos="Adv">KXfxhNgbhK</w>
+              <w deprel="punct" head="4" lemma="k" msd="_" n="9" pos="Punct">k</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="advmod" head="2" lemma="znyo" msd="CASECHANGE_Up" n="1" pos="Adv">znyo</w>
+              <w deprel="nsubj" head="3" lemma="LQQKqfYY" msd="NUM_Sg|CASE_Nom" n="2" pos="N">LQQKqfYY</w>
+              <w deprel="ROOT" head="0" lemma="exO" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="3" pos="V">exO</w>
+              <w deprel="dobj" head="3" lemma="uKHHwGetkW" msd="NUM_Sg|CASE_Par" n="4" pos="N">uKHHwGetkW</w>
+              <w deprel="amod" head="6" lemma="pjTBGFGg" msd="NUM_Sg|CASE_Ill|CMP_Pos" n="5" pos="A">pjTBGFGg</w>
+              <w deprel="nommod" head="3" lemma="BdabRd" msd="NUM_Sg|CASE_Ill" n="6" pos="N">BdabRd</w>
+              <w deprel="punct" head="3" lemma="N" msd="_" n="7" pos="Punct">N</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="mark" head="4" lemma="HqY" msd="SUBCAT_CS|CASECHANGE_Up" n="1" pos="C">HqY</w>
+              <w deprel="nsubj" head="4" lemma="inlasc" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">inlasc</w>
+              <w deprel="aux" head="4" lemma="jDppb" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="3" pos="V">jDppb</w>
+              <w deprel="advcl" head="13" lemma="TyIMmU" msd="NUM_Sg|CASE_Lat|VOICE_Act|INF_Inf1" n="4" pos="V">TyIMmU</w>
+              <w deprel="name" head="6" lemma="cwAa" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="5" pos="N">cwAa</w>
+              <w deprel="poss" head="8" lemma="soDvlYg" msd="NUM_Sg|CASE_Gen|CASECHANGE_Up" n="6" pos="N">soDvlYg</w>
+              <w deprel="amod" head="8" lemma="EmMKrLRo" msd="NUM_Sg|CASE_Ine|CMP_Pos|OTHER_UNK" n="7" pos="A">EmMKrLRo</w>
+              <w deprel="nommod" head="4" lemma="KWFBEnbTWt" msd="NUM_Sg|CASE_Ine" n="8" pos="N">KWFBEnbTWt</w>
+              <w deprel="punct" head="4" lemma="w" msd="_" n="9" pos="Punct">w</w>
+              <w deprel="nsubj-cop" head="13" lemma="utSKDlIK" msd="NUM_Sg|CASE_Nom" n="10" pos="N">utSKDlIK</w>
+              <w deprel="nommod" head="10" lemma="wIlzDAfbSG" msd="NUM_Sg|CASE_Ela" n="11" pos="N">wIlzDAfbSG</w>
+              <w deprel="cop" head="13" lemma="eW" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="12" pos="V">eW</w>
+              <w deprel="ROOT" head="0" lemma="Cacupetx" msd="NUM_Sg|CASE_Nom|CMP_Pos" n="13" pos="A">Cacupetx</w>
+              <w deprel="punct" head="13" lemma="K" msd="_" n="14" pos="Punct">K</w>
+              <w deprel="punct" head="16" lemma="U" msd="_" n="15" pos="Punct">U</w>
+              <w deprel="nn" head="17" lemma="YYyJUvYM" msd="CASECHANGE_Up|OTHER_UNK" n="16" pos="Foreign">YYyJUvYM</w>
+              <w deprel="parataxis" head="13" lemma="rwxwyoFqwoix" msd="NUM_Sg|CASE_Ade" n="17" pos="N">rwxwyoFqwoix</w>
+              <w deprel="punct" head="13" lemma="I" msd="_" n="18" pos="Punct">I</w>
+              <w deprel="num" head="20" lemma="IjClOvQSxPEbKRrhUaWZkV" msd="SUBCAT_Card|NUM_Sg|CASE_Nom" n="19" pos="Num">IjClOvQSxPEbKRrhUaWZkV</w>
+              <w deprel="conj" head="13" lemma="IAkGGQM" msd="NUM_Sg|CASE_Par" n="20" pos="N">IAkGGQM</w>
+              <w deprel="punct" head="13" lemma="i" msd="_" n="21" pos="Punct">i</w>
+              <w deprel="cc" head="13" lemma="hLom" msd="SUBCAT_Neg|PRS_Sg3|VOICE_Act|CLIT_Foc_ka" n="22" pos="V">hLom</w>
+              <w deprel="advmod" head="24" lemma="wzqu" msd="_" n="23" pos="Adv">wzqu</w>
+              <w deprel="conj" head="13" lemma="WvufE" msd="NUM_Pl|CASE_Par" n="24" pos="N">WvufE</w>
+              <w deprel="punct" head="13" lemma="P" msd="_" n="25" pos="Punct">P</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="amod" head="2" lemma="VEODzJPbO" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="Pron">VEODzJPbO</w>
+              <w deprel="ROOT" head="0" lemma="ECgzYF" msd="NUM_Sg|CASE_Nom" n="2" pos="N">ECgzYF</w>
+              <w deprel="punct" head="2" lemma="e" msd="_" n="3" pos="Punct">e</w>
+              <w deprel="name" head="5" lemma="V" msd="_" n="4" pos="Punct">V</w>
+              <w deprel="appos" head="2" lemma="J" msd="SUBCAT_Acro|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="5" pos="N">J</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="amod" head="2" lemma="soiPQ" msd="NUM_Sg|CASE_Nom|CMP_Pos|CASECHANGE_Up" n="1" pos="A">soiPQ</w>
+              <w deprel="ROOT" head="0" lemma="EUUedVkThN" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="2" pos="N">EUUedVkThN</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="advmod" head="3" lemma="OFtxFa" msd="OTHER_UNK" n="1" pos="Adv">OFtxFa</w>
+              <w deprel="name" head="3" lemma="BmaRma" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up" n="2" pos="N">BmaRma</w>
+              <w deprel="ROOT" head="0" lemma="hTsnMYGEw" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="3" pos="N">hTsnMYGEw</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="ROOT" head="0" lemma="MW" msd="_" n="1" pos="Num">MW</w>
+            </s>
+          </p>
+        </div>
+      </body>
+    </text>
+  </idsText>
+  <idsText version="1.0">
+    <idsHeader TEIform="teiHeader" pattern="text" status="new" type="text" version="1.1">
+      <fileDesc n="EuReCo-klk-fi-v2-vrt-t-bcd0f3fa-72fd3d6c">
+        <titleStmt>
+          <t.title assemblage="external">Suomen Kuvalehti no. SK0221 15.01.2021, Text #3</t.title>
+        </titleStmt>
+        <publicationStmt>
+          <distributor>NOT FOR DISTRIBUTION - to be used locally in EuReCo</distributor>
+          <pubAddress/>
+          <availability region="world">CLARIN-RES</availability>
+          <pubDate/>
+        </publicationStmt>
+        <sourceDesc>
+          <biblStruct>
+            <analytic>
+              <h.title type="main">Suomen Kuvalehti no. SK0221 15.01.2021, Text #3</h.title>
+              <h.author/>
+              <imprint/>
+            </analytic>
+            <monogr>
+              <h.title type="main">Suomen Kuvalehti</h.title>
+              <imprint>
+                <pubPlace key="FI">Helsinki</pubPlace>
+                <publisher>Otava</publisher>
+                <pubDate type="year">2021</pubDate>
+                <pubDate type="month">01</pubDate>
+                <pubDate type="day">15</pubDate>
+              </imprint>
+            </monogr>
+          </biblStruct>
+          <reference assemblage="regular" type="complete">SKU21/JAN.00003 Suomen Kuvalehti no. SK0221, [aikakausi], 15.01.2021</reference>
+          <reference assemblage="regular" type="short">SKU21/JAN.00003 Suomen Kuvalehti, 15.01.2021</reference>
+        </sourceDesc>
+      </fileDesc>
+      <encodingDesc>
+        <tagsDecl>
+          <tagUsage gi="s" occurs="9"/>
+          <tagUsage gi="w" occurs="93"/>
+        </tagsDecl>
+      </encodingDesc>
+      <profileDesc>
+        <creation>
+          <creatDate>2021.01.15</creatDate>
+        </creation>
+        <textClass>
+          <classCode scheme="kielipankki_klk">aikakausi</classCode>
+          <classCode scheme="kielipankki_klk_mapped">Zeitschrift</classCode>
+        </textClass>
+      </profileDesc>
+      <revisionDesc>
+        <change when="2024-09-17" who="HL">I5 version for EuReCo</change>
+      </revisionDesc>
+    </idsHeader>
+    <text xml:lang="fi">
+      <body>
+        <div type="page">
+          <p xml:lang="x-|fin:1|">
+            <s xml:lang="fin">
+              <w deprel="neg" head="4" lemma="ryr" msd="SUBCAT_Neg|PRS_Sg2|VOICE_Act|MOOD_Imprt|CASECHANGE_Up" n="1" pos="V">ryr</w>
+              <w deprel="cop" head="4" lemma="jSF" msd="PRS_Sg2|VOICE_Act|MOOD_Imprt" n="2" pos="V">jSF</w>
+              <w deprel="det" head="4" lemma="Hi" msd="SUBCAT_Dem|NUM_Sg|CASE_Nom" n="3" pos="Pron">Hi</w>
+              <w deprel="ROOT" head="0" lemma="PRfBPx" msd="SUBCAT_Ord|NUM_Sg|CASE_Nom" n="4" pos="Num">PRfBPx</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:2|">
+            <s xml:lang="fin">
+              <w deprel="advmod" head="5" lemma="dgpGF" msd="CASECHANGE_Up" n="1" pos="Adv">dgpGF</w>
+              <w deprel="det" head="3" lemma="gaVE" msd="SUBCAT_Rel|NUM_Sg|CASE_Nom" n="2" pos="Pron">gaVE</w>
+              <w deprel="num" head="4" lemma="cvchkU" msd="SUBCAT_Ord|NUM_Sg|CASE_Nom" n="3" pos="Num">cvchkU</w>
+              <w deprel="nsubj" head="5" lemma="YkGPyMluBdWyZaVFPRgu" msd="NUM_Sg|CASE_Nom" n="4" pos="N">YkGPyMluBdWyZaVFPRgu</w>
+              <w deprel="ROOT" head="0" lemma="hHv" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="5" pos="V">hHv</w>
+              <w deprel="nsubj" head="7" lemma="AqbAwF" msd="NUM_Sg|CASE_Gen" n="6" pos="N">AqbAwF</w>
+              <w deprel="advcl" head="5" lemma="hmmLENEt" msd="NUM_Sg|CASE_Ine|VOICE_Act|INF_Inf2" n="7" pos="V">hmmLENEt</w>
+              <w deprel="det" head="9" lemma="RVPylv" msd="SUBCAT_Recipr|NUM_Sg|CASE_Gen" n="8" pos="Pron">RVPylv</w>
+              <w deprel="dobj" head="7" lemma="hzRjAyTeu" msd="NUM_Sg|CASE_Gen" n="9" pos="N">hzRjAyTeu</w>
+              <w deprel="punct" head="5" lemma="c" msd="_" n="10" pos="Punct">c</w>
+              <w deprel="punct" head="5" lemma="s" msd="_" n="11" pos="Punct">s</w>
+              <w deprel="amod" head="13" lemma="AkwVjT" msd="NUM_Sg|CASE_Nom|CMP_Pos|CASECHANGE_Up" n="12" pos="A">AkwVjT</w>
+              <w deprel="nsubj" head="14" lemma="NmXdCDwlGxSrstByjqWloGSW" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="13" pos="N">NmXdCDwlGxSrstByjqWloGSW</w>
+              <w deprel="parataxis" head="5" lemma="DXWqM" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="14" pos="V">DXWqM</w>
+              <w deprel="poss" head="18" lemma="GtcvtqQKDjfaWn" msd="NUM_Sg|CASE_Gen" n="15" pos="N">GtcvtqQKDjfaWn</w>
+              <w deprel="cc" head="15" lemma="UW" msd="SUBCAT_CC" n="16" pos="C">UW</w>
+              <w deprel="conj" head="15" lemma="LqZrzdojBmTYS" msd="NUM_Sg|CASE_Gen" n="17" pos="N">LqZrzdojBmTYS</w>
+              <w deprel="dobj" head="14" lemma="iePUXV" msd="NUM_Sg|CASE_Par" n="18" pos="N">iePUXV</w>
+              <w deprel="punct" head="5" lemma="V" msd="_" n="19" pos="Punct">V</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="mark" head="4" lemma="OTh" msd="SUBCAT_CS|CASECHANGE_Up" n="1" pos="C">OTh</w>
+              <w deprel="poss" head="3" lemma="AQKUPbUusXlzzJkj" msd="NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">AQKUPbUusXlzzJkj</w>
+              <w deprel="nsubj" head="4" lemma="QNrQL" msd="NUM_Sg|CASE_Nom" n="3" pos="N">QNrQL</w>
+              <w deprel="advcl" head="9" lemma="NCXcST" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="4" pos="V">NCXcST</w>
+              <w deprel="punct" head="4" lemma="e" msd="_" n="5" pos="Punct">e</w>
+              <w deprel="advmod" head="7" lemma="XJZP" msd="_" n="6" pos="Adv">XJZP</w>
+              <w deprel="nsubj" head="9" lemma="SiuXf" msd="NUM_Sg|CASE_Nom" n="7" pos="N">SiuXf</w>
+              <w deprel="nommod" head="7" lemma="RNHFARKdNdyaxG" msd="NUM_Sg|CASE_Ill|DRV_Der_minen" n="8" pos="N">RNHFARKdNdyaxG</w>
+              <w deprel="ROOT" head="0" lemma="ZIcLMxUB" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="9" pos="V">ZIcLMxUB</w>
+              <w deprel="punct" head="9" lemma="X" msd="_" n="10" pos="Punct">X</w>
+            </s>
+          </p>
+          <p xml:lang="x-|fin:2|">
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="OBs" msd="PRS_Sg2|VOICE_Act|MOOD_Imprt|CASECHANGE_Up" n="1" pos="V">OBs</w>
+              <w deprel="dobj" head="1" lemma="wdDnp" msd="NUM_Sg|CASE_Nom" n="2" pos="N">wdDnp</w>
+              <w deprel="advmod" head="1" lemma="ECmxTMJzy" msd="_" n="3" pos="Adv">ECmxTMJzy</w>
+              <w deprel="punct" head="1" lemma="P" msd="_" n="4" pos="Punct">P</w>
+              <w deprel="conj" head="1" lemma="kli" msd="SUBCAT_Neg|PRS_Sg2|VOICE_Act|MOOD_Imprt" n="5" pos="V">kli</w>
+              <w deprel="cop" head="8" lemma="Kzj" msd="PRS_Sg2|VOICE_Act|MOOD_Imprt" n="6" pos="V">Kzj</w>
+              <w deprel="det" head="8" lemma="rU" msd="SUBCAT_Dem|NUM_Sg|CASE_Nom" n="7" pos="Pron">rU</w>
+              <w deprel="ccomp" head="5" lemma="IJZLxz" msd="SUBCAT_Ord|NUM_Sg|CASE_Nom" n="8" pos="Num">IJZLxz</w>
+              <w deprel="punct" head="1" lemma="y" msd="_" n="9" pos="Punct">y</w>
+            </s>
+            <s xml:lang="fin">
+              <w deprel="ROOT" head="0" lemma="HOe" msd="TENSE_Prs|MOOD_Ind|NEG_ConNeg|CASECHANGE_Up" n="1" pos="V">HOe</w>
+              <w deprel="punct" head="6" lemma="q" msd="_" n="2" pos="Punct">q</w>
+              <w deprel="dobj" head="6" lemma="EqSD" msd="SUBCAT_Rel|NUM_Sg|CASE_Par" n="3" pos="Pron">EqSD</w>
+              <w deprel="aux" head="6" lemma="JRgV" msd="PRS_Sg2|VOICE_Act|TENSE_Prs|MOOD_Ind" n="4" pos="V">JRgV</w>
+              <w deprel="advmod" head="6" lemma="QPDP" msd="_" n="5" pos="Adv">QPDP</w>
+              <w deprel="ccomp" head="1" lemma="KyULY" msd="NUM_Sg|CASE_Lat|VOICE_Act|INF_Inf1" n="6" pos="V">KyULY</w>
+              <w deprel="punct" head="8" lemma="n" msd="_" n="7" pos="Punct">n</w>
+              <w deprel="voc" head="1" lemma="yzQykGUoMxVdSVfICQgl" msd="NUM_Sg|CASE_Nom|OTHER_UNK" n="8" pos="N">yzQykGUoMxVdSVfICQgl</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:2|eng:1|">
+            <s xml:lang="xxx">
+              <w deprel="punct" head="4" lemma="z" msd="_" n="1" pos="Punct">z</w>
+              <w deprel="name" head="3" lemma="S" msd="_" n="2" pos="Punct">S</w>
+              <w deprel="name" head="4" lemma="JVvadPWG" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="3" pos="N">JVvadPWG</w>
+              <w deprel="ROOT" head="0" lemma="rcf" msd="SUBCAT_Abbr|OTHER_UNK" n="4" pos="N">rcf</w>
+              <w deprel="punct" head="6" lemma="g" msd="_" n="5" pos="Punct">g</w>
+              <w deprel="appos" head="4" lemma="SfiO" msd="_" n="6" pos="Num">SfiO</w>
+              <w deprel="punct" head="6" lemma="M" msd="_" n="7" pos="Punct">M</w>
+              <w deprel="punct" head="4" lemma="h" msd="_" n="8" pos="Punct">h</w>
+            </s>
+            <s xml:lang="eng">
+              <w deprel="name" head="2" lemma="ClliIFGOQdVzpu" msd="CASECHANGE_Up|OTHER_UNK" n="1" pos="Foreign">ClliIFGOQdVzpu</w>
+              <w deprel="name" head="4" lemma="yoyD" msd="OTHER_UNK" n="2" pos="Foreign">yoyD</w>
+              <w deprel="advmod" head="13" lemma="CL" msd="_" n="3" pos="Adv">CL</w>
+              <w deprel="name" head="5" lemma="mNLuafXniTqdNWp" msd="OTHER_UNK" n="4" pos="Foreign">mNLuafXniTqdNWp</w>
+              <w deprel="name" head="6" lemma="ZnfSoKLmzH" msd="OTHER_UNK" n="5" pos="Foreign">ZnfSoKLmzH</w>
+              <w deprel="name" head="7" lemma="CqCibUcc" msd="OTHER_UNK" n="6" pos="Foreign">CqCibUcc</w>
+              <w deprel="name" head="8" lemma="w" msd="_" n="7" pos="Punct">w</w>
+              <w deprel="name" head="9" lemma="UiYMlxbOkp" msd="OTHER_UNK" n="8" pos="Foreign">UiYMlxbOkp</w>
+              <w deprel="name" head="10" lemma="Klgz" msd="OTHER_UNK" n="9" pos="Foreign">Klgz</w>
+              <w deprel="name" head="19" lemma="TIEbL" msd="OTHER_UNK" n="10" pos="Foreign">TIEbL</w>
+              <w deprel="nn" head="13" lemma="wIlP" msd="NUM_Sg|CASE_Nom" n="11" pos="N">wIlP</w>
+              <w deprel="name" head="13" lemma="AnTOMjHQWtg" msd="OTHER_UNK" n="12" pos="Foreign">AnTOMjHQWtg</w>
+              <w deprel="name" head="14" lemma="FmI" msd="OTHER_UNK" n="13" pos="Foreign">FmI</w>
+              <w deprel="name" head="15" lemma="ukkQuprerQ" msd="OTHER_UNK" n="14" pos="Foreign">ukkQuprerQ</w>
+              <w deprel="name" head="17" lemma="UK" msd="OTHER_UNK" n="15" pos="Foreign">UK</w>
+              <w deprel="nn" head="18" lemma="B" msd="SUBCAT_Acro|NUM_Sg|CASE_Nom" n="16" pos="N">B</w>
+              <w deprel="name" head="18" lemma="qRmsyLxgR" msd="OTHER_UNK" n="17" pos="Foreign">qRmsyLxgR</w>
+              <w deprel="ROOT" head="0" lemma="vnTmYSKBfZY" msd="OTHER_UNK" n="18" pos="Foreign">vnTmYSKBfZY</w>
+              <w deprel="punct" head="18" lemma="m" msd="_" n="19" pos="Punct">m</w>
+            </s>
+            <s xml:lang="xxx">
+              <w deprel="name" head="2" lemma="KPE" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">KPE</w>
+              <w deprel="name" head="3" lemma="EjOeV" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">EjOeV</w>
+              <w deprel="name" head="4" lemma="e" msd="SUBCAT_Acro|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="3" pos="N">e</w>
+              <w deprel="number" head="5" lemma="Q" msd="_" n="4" pos="Punct">Q</w>
+              <w deprel="number" head="6" lemma="TR" msd="_" n="5" pos="Num">TR</w>
+              <w deprel="number" head="7" lemma="n" msd="_" n="6" pos="Punct">n</w>
+              <w deprel="ROOT" head="0" lemma="TR" msd="_" n="7" pos="Num">TR</w>
+              <w deprel="punct" head="9" lemma="u" msd="_" n="8" pos="Punct">u</w>
+              <w deprel="appos" head="7" lemma="Pv" msd="_" n="9" pos="Num">Pv</w>
+              <w deprel="punct" head="9" lemma="X" msd="_" n="10" pos="Punct">X</w>
+              <w deprel="punct" head="7" lemma="M" msd="_" n="11" pos="Punct">M</w>
+              <w deprel="conj" head="7" lemma="hpfJEBT" msd="_" n="12" pos="Num">hpfJEBT</w>
+              <w deprel="punct" head="7" lemma="v" msd="_" n="13" pos="Punct">v</w>
+            </s>
+          </p>
+          <p xml:lang="x-|xxx:1|">
+            <s xml:lang="xxx">
+              <w deprel="number" head="2" lemma="TCEubpGDSoTtdHFZqEsT" msd="CASECHANGE_Up|OTHER_UNK" n="1" pos="Symb">TCEubpGDSoTtdHFZqEsT</w>
+              <w deprel="number" head="3" lemma="U" msd="_" n="2" pos="Punct">U</w>
+              <w deprel="ROOT" head="0" lemma="Sbkt" msd="_" n="3" pos="Num">Sbkt</w>
+            </s>
+          </p>
+        </div>
+      </body>
+    </text>
+  </idsText>
+  </idsDoc>
+</idsCorpus>
