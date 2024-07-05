@@ -208,9 +208,11 @@ my $input_fh;
 if ($stdio) {
   $input_fh = *STDIN;
 }
-
 # Input flag was passed
-elsif ($input_fname ne '') {
+elsif (@ARGV || $input_fname ne '') {
+  unless ($input_fname ne '') {
+    $input_fname = shift @ARGV;
+  };
   unless (open($input_fh, '<', $input_fname)) {
     die $log->fatal("File '$input_fname' could not be opened.");
   };
@@ -239,262 +241,265 @@ my $inline = KorAP::XML::TEI::Inline->new(
   $inline_dependencies
 );
 
+do {
+  $log->notice("Reading input document $input_fname") if ($input_fname ne '');
+  MAIN:
+  while (<$input_fh>) {
 
-# Reading input document
-MAIN: while (<$input_fh>) {
+    # remove HTML (multi-line) comments (<!--...-->)
+    $_ = remove_xml_comments($input_fh, $_);
 
-  # remove HTML (multi-line) comments (<!--...-->)
-  $_ = remove_xml_comments($input_fh, $_);
-
-  # Set input encoding
-  if (index($_, '<?xml') == 0 && $_ =~ /\sencoding=(['"])([^\1]+?)\1/) {
-    $input_enc = $2;
-    next;
-  };
-
-  $_ = decode($input_enc, $_);
-  $_ = replace_entities($_);
-
-  # Start of text body
-  if (index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$#) {
-    my $suffix = $2;
-
-    if ($1 !~ /^\s*$/ || $suffix !~ /^\s*$/) {
-      die $log->fatal("input line number $.: " .
-                        "line with opening text-body tag '${_TEXT_BODY}' " .
-                        "contains additional information ... => Aborting (line=$_)");
+    # Set input encoding
+    if (index($_, '<?xml') == 0 && $_ =~ /\sencoding=(['"])([^\1]+?)\1/) {
+      $input_enc = $2;
+      next;
     };
 
-    # Text body data extracted from input document ($input_fh),
-    # further processed by XML::LibXML::Reader
-    my $text_buffer = '';
+    $_ = decode($input_enc, $_);
+    $_ = replace_entities($_);
 
-    # Iterate over all lines in the text body
-    while (<$input_fh>) {
+    # Start of text body
+    if (index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$#) {
+      my $suffix = $2;
 
-      $_ = remove_xml_comments($input_fh, $_);
-      $_ = decode($input_enc, $_);
-      $_ = replace_entities($_);
+      if ($1 !~ /^\s*$/ || $suffix !~ /^\s*$/) {
+        die $log->fatal("input line number $.: " .
+          "line with opening text-body tag '${_TEXT_BODY}' " .
+          "contains additional information ... => Aborting (line=$_)");
+      };
 
-      # End of text body
-      if ((my $pos = index($_, "</$_TEXT_BODY>")) >= 0) {
+      # Text body data extracted from input document ($input_fh),
+      # further processed by XML::LibXML::Reader
+      my $text_buffer = '';
 
-        # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files
+      # Iterate over all lines in the text body
+      while (<$input_fh>) {
 
-        if ((substr($_, 0, $pos) . substr($_, length("</$_TEXT_BODY>") + $pos)) !~ /^\s*$/) {
-          die $log->fatal("input line number $.: " .
-                            "line with closing text-body tag '${_TEXT_BODY}'".
-                            " contains additional information ... => Aborting (line=$_)");
-        };
+        $_ = remove_xml_comments($input_fh, $_);
+        $_ = decode($input_enc, $_);
+        $_ = replace_entities($_);
 
-        if ($dir eq '') {
-          $log->warn(
-            "Maybe empty textSigle => skipping this text ...\n" .
-              'data=' . substr($inline->data->data, 0, 200)
+        # End of text body
+        if ((my $pos = index($_, "</$_TEXT_BODY>")) >= 0) {
+
+          # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files
+
+          if ((substr($_, 0, $pos) . substr($_, length("</$_TEXT_BODY>") + $pos)) !~ /^\s*$/) {
+            die $log->fatal("input line number $.: " .
+              "line with closing text-body tag '${_TEXT_BODY}'" .
+              " contains additional information ... => Aborting (line=$_)");
+          };
+
+          if ($dir eq '') {
+            $log->warn(
+              "Maybe empty textSigle => skipping this text ...\n" .
+                'data=' . substr($inline->data->data, 0, 200)
             );
+            next MAIN;
+          };
+
+          # Parse inline structure
+          $inline->parse($text_id_esc, \$text_buffer);
+
+          if (DEBUG) {
+            $log->debug("Writing (utf8-formatted) xml file $dir/${data_file}.xml");
+          };
+
+          my $data = $inline->data;
+
+          # Write data.xml
+          $data->to_zip(
+            $zipper->new_stream("$dir/${data_file}.xml"),
+            $text_id_esc
+          );
+
+          # Tokenize with external tokenizer
+          if ($ext_tok) {
+
+            # Tokenize and output
+            $ext_tok->tokenize($data->data)->to_zip(
+              $zipper->new_stream("$dir/$base_dir/${tokens_file}.xml"),
+              $text_id_esc
+            );
+
+            if ($use_tokenizer_sentence_splits) {
+              $ext_tok->sentencize_from_previous_input($inline->structures);
+            };
+          };
+
+          # Tokenize with internal tokenizer
+          if ($tokenizer_intern) {
+
+            # Tokenize and output
+            $cons_tok->tokenize($data->data)->to_zip(
+              $zipper->new_stream("$dir/$base_dir/" . $cons_tok->name . '.xml'),
+              $text_id_esc
+            )->reset;
+
+            $aggr_tok->tokenize($data->data)->to_zip(
+              $zipper->new_stream("$dir/$base_dir/" . $aggr_tok->name . '.xml'),
+              $text_id_esc
+            )->reset;
+          };
+
+          # ~ write structures ~
+          unless ($inline->structures->empty) {
+            $inline->structures->to_zip(
+              $zipper->new_stream("$dir/$_structure_dir/${_structure_file}.xml"),
+              $text_id_esc,
+              2 # = structure serialization
+            );
+          };
+
+          # ~ write tokens ~
+          unless ($skip_inline_tokens || $inline->tokens->empty) {
+            $inline->tokens->to_zip(
+              $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}.xml"),
+              $text_id_esc,
+              # Either 0 = tokens without inline or
+              # 1 = tokens with inline
+              # !$skip_inline_token_annotations
+              ($skip_inline_token_annotations ? 0 : ($inline_deps_exclusive ? 4 : 1))
+            );
+          };
+
+          # ~ write dependencies ~
+          unless ($inline->dependencies->empty) {
+            $inline->dependencies->to_zip(
+              $zipper->new_stream("$dir/$_dep_dir/${_dep_file}.xml"),
+              $text_id_esc,
+              3 # = dependency serialization
+            );
+          };
+
+
+          # reinit.
+          $dir = '';
+
           next MAIN;
         };
 
-        # Parse inline structure
-        $inline->parse($text_id_esc, \$text_buffer);
 
-        if (DEBUG) {
-          $log->debug("Writing (utf8-formatted) xml file $dir/${data_file}.xml");
-        };
+        # ~ whitespace handling ~
 
-        my $data = $inline->data;
+        # Fix whitespaces (see notes on whitespace fixing)
 
-        # Write data.xml
-        $data->to_zip(
-          $zipper->new_stream("$dir/${data_file}.xml"),
-          $text_id_esc
-        );
+        # TODO:
+        #   Maybe it's best, to keep the stripping of whitespace and
+        #   to just remove the if-clause and to insert a blank by default
+        #   (with possibly an option on how newlines in primary text should
+        #   be handled (stripped or replaced by a whitespace)).
 
-        # Tokenize with external tokenizer
-        if ($ext_tok) {
+        # Remove consecutive whitespace at beginning and end (mostly one newline)
+        s/^\s+//;
+        s/\s+$//;
 
-          # Tokenize and output
-          $ext_tok->tokenize($data->data)->to_zip(
-            $zipper->new_stream("$dir/$base_dir/${tokens_file}.xml"),
-            $text_id_esc
-          );
+        # NOTE:
+        #   this is only relevant, if a text consists of more than one line
 
-          if ($use_tokenizer_sentence_splits) {
-            $ext_tok->sentencize_from_previous_input($inline->structures);
-          };
-        };
+        # TODO:
+        #   find a better solution, or create a warning, if a text has more
+        #   than one line ($text_line > 1)
 
-        # Tokenize with internal tokenizer
-        if ($tokenizer_intern) {
+        # TODO:
+        #   do testing with 2 different corpora
+        #   (one with only one-line texts, the other with several lines per text)
 
-          # Tokenize and output
-          $cons_tok->tokenize($data->data)->to_zip(
-            $zipper->new_stream("$dir/$base_dir/" . $cons_tok->name . '.xml'),
-            $text_id_esc
-          )->reset;
+        # line contains at least one non-tag character
+        if (m/^[^<]*$/ || m/(?:<[^>]+>[^<])|(?:[^<]<[^>]+>)/) {
 
-          $aggr_tok->tokenize($data->data)->to_zip(
-            $zipper->new_stream("$dir/$base_dir/" . $aggr_tok->name . '.xml'),
-            $text_id_esc
-          )->reset;
-        };
+          # Increment counter for text lines
+          $text_line++;
 
-        # ~ write structures ~
-        unless ($inline->structures->empty) {
-          $inline->structures->to_zip(
-            $zipper->new_stream("$dir/$_structure_dir/${_structure_file}.xml"),
-            $text_id_esc,
-            2 # = structure serialization
-          );
-        };
+          # insert blank before 1st character
+          # (for 2nd line and consecutive lines)
+          $_ = ' ' . $_ if $text_line > 1;
+        }
 
-        # ~ write tokens ~
-        unless ($skip_inline_tokens || $inline->tokens->empty) {
-          $inline->tokens->to_zip(
-            $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}.xml"),
-            $text_id_esc,
-            # Either 0 = tokens without inline or
-            # 1 = tokens with inline
-            # !$skip_inline_token_annotations
-            ($skip_inline_token_annotations ? 0 : ($inline_deps_exclusive ? 4 : 1))
-          );
-        };
+        # add line to buffer
+        $text_buffer .= $_;
+      };
+    }
+    elsif (m#^(.*)\<TEI\s+[^>]*?xml:id=(["'])(.+?)\2#) {
+      my $leadin = $1;
+      my $id = $3;
+      my $sigle = $3;
 
-        # ~ write dependencies ~
-        unless ($inline->dependencies->empty) {
-          $inline->dependencies->to_zip(
-            $zipper->new_stream("$dir/$_dep_dir/${_dep_file}.xml"),
-            $text_id_esc,
-            3 # = dependency serialization
-          );
-        };
+      if ($what) {
+        $_ = $id;
+        eval "s|$what|$with|"; # s@ICC.German\.([^.]+\.[^.]+)\.(.+)@ICCGER/$1/$2@;
+        $sigle = $_;
+        $log->debug("Converted text id `$id' to sigle `$sigle'");
+      };
+      $sigle =~ s/\./-/g;
 
-
-        # reinit.
-        $dir = '';
-
-        next MAIN;
+      my @parts = split(/[\/_]/, $sigle);
+      if (@parts != 3) {
+        die $log->fatal(
+          "input line number $.: " .
+            "ids must have exactly three parts split by '/', but `$id` only has " . scalar(@parts) . " " .
+            "=> Aborting (line=$_)");
       };
 
+      $dir = join("/", @parts);
+      $text_id_esc = "$parts[0]/$parts[1].$parts[2]";
+      $log->notice("$0: text_id=$text_id_esc");
 
-      # ~ whitespace handling ~
-
-      # Fix whitespaces (see notes on whitespace fixing)
-
-      # TODO:
-      #   Maybe it's best, to keep the stripping of whitespace and
-      #   to just remove the if-clause and to insert a blank by default
-      #   (with possibly an option on how newlines in primary text should
-      #   be handled (stripped or replaced by a whitespace)).
-
-      # Remove consecutive whitespace at beginning and end (mostly one newline)
-      s/^\s+//; s/\s+$//;
-
-      # NOTE:
-      #   this is only relevant, if a text consists of more than one line
-
-      # TODO:
-      #   find a better solution, or create a warning, if a text has more
-      #   than one line ($text_line > 1)
-
-      # TODO:
-      #   do testing with 2 different corpora
-      #   (one with only one-line texts, the other with several lines per text)
-
-      # line contains at least one non-tag character
-      if (m/^[^<]*$/ || m/(?:<[^>]+>[^<])|(?:[^<]<[^>]+>)/) {
-
-        # Increment counter for text lines
-        $text_line++;
-
-        # insert blank before 1st character
-        # (for 2nd line and consecutive lines)
-        $_ = ' ' . $_ if $text_line > 1;
-      }
-
-      # add line to buffer
-      $text_buffer .= $_;
-    };
-  }
-
-  elsif (m#^(.*)\<TEI\s+[^>]*?xml:id=(["'])(.+?)\2#) {
-    my $leadin = $1;
-    my $id = $3;
-    my $sigle = $3;
-
-    if ($what) {
-      $_ = $id;
-      eval "s|$what|$with|";  # s@ICC.German\.([^.]+\.[^.]+)\.(.+)@ICCGER/$1/$2@;
-      $sigle = $_;
-      $log->debug("Converted text id `$id' to sigle `$sigle'");
-    };
-    $sigle =~ s/\./-/g;
-
-    my @parts = split(/[\/_]/, $sigle);
-    if (@parts != 3) {
-      die $log->fatal(
+      if ($leadin !~ /^\s*$/) {
+        die $log->fatal(
           "input line number $.: " .
-              "ids must have exactly three parts split by '/', but `$id` only has " . scalar(@parts) . " ".
-              "=> Aborting (line=$_)");
-    };
+            'line with opening header tag is not in expected format ... ' .
+            "=> Aborting (line=$_)");
+      };
+    }
 
-    $dir = join("/", @parts);
-    $text_id_esc = "$parts[0]/$parts[1].$parts[2]";
-    $log->notice("$0: text_id=$text_id_esc");
+    # Start of header section
+    elsif (m#^(.*)(\<(?:ids|tei)Header.*)$#) {
+      my $content = "$2\n";
 
-    if ($leadin !~ /^\s*$/) {
-      die $log->fatal(
+      if ($1 !~ /^\s*$/) {
+        die $log->fatal(
           "input line number $.: " .
-              'line with opening header tag is not in expected format ... ' .
-              "=> Aborting (line=$_)");
-    };
-  }
+            'line with opening header tag is not in expected format ... ' .
+            "=> Aborting (line=$_)");
+      };
 
-  # Start of header section
-  elsif (m#^(.*)(\<(?:ids|tei)Header.*)$#) {
-    my $content = "$2\n";
+      # Parse header
+      my $header = KorAP::XML::TEI::Header->new($content, $input_enc, $text_id_esc // $auto_textsigle)->parse($input_fh);
+      if ($auto_textsigle) {
+        $auto_textsigle = increase_auto_textsigle($auto_textsigle);
+        $log->debug("Auto-incremented text sigle to $auto_textsigle");
+      };
 
-    if ($1 !~ /^\s*$/) {
-      die $log->fatal(
-        "input line number $.: " .
-          'line with opening header tag is not in expected format ... ' .
-          "=> Aborting (line=$_)");
-    };
+      # Header was parseable
+      if ($header) {
 
-    # Parse header
-    my $header = KorAP::XML::TEI::Header->new($content, $input_enc, $text_id_esc // $auto_textsigle)->parse($input_fh);
-    if ($auto_textsigle) {
-      $auto_textsigle = increase_auto_textsigle($auto_textsigle);
-      $log->debug("Auto-incremented text sigle to $auto_textsigle");
-    };
-    # Header was parseable
-    if ($header) {
+        # Write header to zip
+        my $file = $header->dir . '/' . $header_file . '.xml';
 
-      # Write header to zip
-      my $file = $header->dir . '/' . $header_file . '.xml';
+        $log->debug("Writing file $file") if DEBUG;
 
-      $log->debug("Writing file $file") if DEBUG;
+        $header->to_zip($zipper->new_stream($file));
 
-      $header->to_zip($zipper->new_stream($file));
+        # Header is for text level
+        if ($header->type eq 'text') {
 
-      # Header is for text level
-      if ($header->type eq 'text') {
+          # Remember dir and sigles
+          $dir = $header->dir;
+          $text_id_esc = $header->id_esc;
 
-        # Remember dir and sigles
-        $dir         = $header->dir;
-        $text_id_esc = $header->id_esc;
+          # log output for seeing progression
+          $log->notice("$0: text_id=$text_id_esc");
 
-        # log output for seeing progression
-        $log->notice("$0: text_id=$text_id_esc");
-
-        # Reset counter for text lines
-        # (needed for whitespace handling)
-        $text_line = 0;
+          # Reset counter for text lines
+          # (needed for whitespace handling)
+          $text_line = 0;
+        };
       };
     };
   };
-};
-
+  $text_id_esc = $auto_textsigle if ($auto_textsigle);
+} while (($input_fname = shift(@ARGV)) && open($input_fh, '<', $input_fname));
 $zipper->close;
 
 $ext_tok->close if $ext_tok;
@@ -514,7 +519,8 @@ tei2korapxml - Conversion of TEI P5 based formats to KorAP-XML
 
 =head1 SYNOPSIS
 
-  cat corpus.i5.xml | tei2korapxml - > corpus.korapxml.zip
+  cat corpus.i5.xml | tei2korapxml -tk - > corpus.korapxml.zip
+  tei2korapxml -tk corpus.i5.xml > corpus.korapxml.zip
 
 =head1 DESCRIPTION
 
@@ -598,6 +604,11 @@ Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
 
 The input file to process. If no specific input is defined and a single
 dash C<-> is passed as an argument, data is read from C<STDIN>.
+
+Instead of using C<-i> input files can also be defined as trailing arguments
+to the command:
+
+  tei2korapxml -tk corpus1.i5.xml corpus2.i5.xml
 
 =item B<--output|-o>
 
