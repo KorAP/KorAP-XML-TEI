@@ -16,6 +16,24 @@
       "message": "Maybe this can be combined with xmlid-to-textsigle. I think parsing the pattern everytime an increment needs to be done is wasteful. A pattern producing subroutine is probably more efficient.",
       "revId": "d8129a6d810bdc13a477451fef01eeec2130f6e9",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4a19cd4_5beffa5f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2024-07-11T09:35:27Z",
+      "side": 1,
+      "message": "I was also thinking about re-using `xmlid-to-textsigle` for this, but didn\u0027t find any solution simple enough to use.\n\nI agree that it\u0027s probably a waste of time parsing the string more than once, but OTOH it\u0027s even more a waste of time to even think about optimizing this :), see:\n\nhttp://klinux10/intern/nytprof/index-subs-excl.html",
+      "parentUuid": "936e1e15_80c025d4",
+      "revId": "d8129a6d810bdc13a477451fef01eeec2130f6e9",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
