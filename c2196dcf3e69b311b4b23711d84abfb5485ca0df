@@ -22,6 +22,30 @@
       },
       "revId": "c2196dcf3e69b311b4b23711d84abfb5485ca0df",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d8a32386_d4f5f47c",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2024-07-11T07:36:15Z",
+      "side": 1,
+      "message": "Why should it break getopt? After calling getopt, @ARGV contains the positional arguments.\n\nI would like to call tei2korapxml just like other tools:\n```\ntei2korapxml -s -tk -A DNA.DIS.00001 -o dna.zip *.p5.xml\n```\n\nI think this makes plain P5 ingestion into KorAP much easier.",
+      "parentUuid": "bbe822e9_7b98576a",
+      "range": {
+        "startLine": 195,
+        "startChar": 6,
+        "endLine": 195,
+        "endChar": 37
+      },
+      "revId": "c2196dcf3e69b311b4b23711d84abfb5485ca0df",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
