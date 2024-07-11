@@ -34,6 +34,24 @@
       "parentUuid": "936e1e15_80c025d4",
       "revId": "d8129a6d810bdc13a477451fef01eeec2130f6e9",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "383c6d59_a7f411f8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-07-11T10:39:51Z",
+      "side": 1,
+      "message": "Fair point, though I don\u0027t think it would take much time to improve it. And it\u0027s on the text level - so for short texts it may have an impact.\n\n(Btw. I was surprised that length check has such an impact, but I guess it really rechecks UTF codepoints every time called.)",
+      "parentUuid": "b4a19cd4_5beffa5f",
+      "revId": "d8129a6d810bdc13a477451fef01eeec2130f6e9",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
