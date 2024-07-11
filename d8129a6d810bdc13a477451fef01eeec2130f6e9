@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "936e1e15_80c025d4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-07-11T06:26:48Z",
+      "side": 1,
+      "message": "Maybe this can be combined with xmlid-to-textsigle. I think parsing the pattern everytime an increment needs to be done is wasteful. A pattern producing subroutine is probably more efficient.",
+      "revId": "d8129a6d810bdc13a477451fef01eeec2130f6e9",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
