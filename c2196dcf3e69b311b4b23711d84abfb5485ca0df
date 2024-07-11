@@ -46,6 +46,30 @@
       },
       "revId": "c2196dcf3e69b311b4b23711d84abfb5485ca0df",
       "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5f6a541_aeaac0af",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-07-11T09:54:33Z",
+      "side": 1,
+      "message": "Ah - okay, got it. Well I don\u0027t run the pipeline, so I can\u0027t judge if this is useful. Personally I would rather use a glob on -i for portability and to not have multiple ways of providing filenames, but this is not a big issue.",
+      "parentUuid": "d8a32386_d4f5f47c",
+      "range": {
+        "startLine": 195,
+        "startChar": 6,
+        "endLine": 195,
+        "endChar": 37
+      },
+      "revId": "c2196dcf3e69b311b4b23711d84abfb5485ca0df",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
     }
   ]
 }
