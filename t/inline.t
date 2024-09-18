@@ -93,6 +93,35 @@ Test::XML::Loy->new($inline->tokens->to_string('aaa', 1))
   ->text_is('#s2 fs f[name="type"]', 'NN')
   ;
 
+subtest 'Parse msd from inline' => sub {
+  ok($inline->parse('aaa', \'<w lemma="die" pos="det" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK">Die</w> <w
+ lemma="alt" pos="ADJ" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK">alte</w> <w lemma="frau" pos="NN" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up">Frau</w>'), 'Parsed');
+
+  is($inline->data->data, 'Die alte Frau');
+
+  Test::XML::Loy->new($inline->tokens->to_string('aaa', 1))
+      ->attr_is('#s0', 'l', "2")
+      ->attr_is('#s0', 'to', 3)
+      ->text_is('#s0 fs f[name="lemma"]', 'die')
+      ->text_is('#s0 fs f[name="pos"]', 'det')
+      ->text_is('#s2 fs f[name="msd"]', 'NUM_Sg|CASE_Nom|CASECHANGE_Up')
+
+      ->attr_is('#s1', 'l', "2")
+      ->attr_is('#s1', 'from', 4)
+      ->attr_is('#s1', 'to', 8)
+      ->text_is('#s1 fs f[name="lemma"]', 'alt')
+      ->text_is('#s1 fs f[name="pos"]', 'ADJ')
+      ->text_is('#s2 fs f[name="msd"]', 'NUM_Sg|CASE_Nom|CASECHANGE_Up')
+
+      ->attr_is('#s2', 'l', "2")
+      ->attr_is('#s2', 'from', 9)
+      ->attr_is('#s2', 'to', 13)
+      ->text_is('#s2 fs f[name="lemma"]', 'frau')
+      ->text_is('#s2 fs f[name="pos"]', 'NN')
+      ->text_is('#s2 fs f[name="msd"]', 'NUM_Sg|CASE_Nom|CASECHANGE_Up')
+      ;
+};
+
 subtest 'Examples from documentation' => sub {
   plan skip_all => 'Expected behaviour not finalized';
 
