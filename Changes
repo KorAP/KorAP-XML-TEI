@@ -1,7 +1,8 @@
-2.6.0 2023-06-06
+2.6.0 2024-09-19
         - Add -o parameter.
+        - Add support for inline dependency relations.
 
-2.5.0 2023-01-24
+2.5.0 2024-01-24
         - Upgrade minimal Perl version to 5.36 to improve
           unicode handling.
         - Upgrade KorAP-Tokenizer to v2.2.5 and Java to 17 to

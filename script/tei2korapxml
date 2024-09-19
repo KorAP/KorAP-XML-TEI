@@ -40,6 +40,9 @@ if ($ENV{KORAPXMLTEI_INLINE}) {
 # Inline tokens won't be stored in the structure file
 my $inline_tokens_exclusive = 0;
 
+# Inline dependencies won't be stored in the tokens file
+my $inline_deps_exclusive = 0;
+
 # Parse options from the command line
 GetOptions(
   'root|r=s'              => \(my $root_dir    = '.'),
@@ -52,8 +55,9 @@ GetOptions(
   'use-tokenizer-sentence-splits|s' => \(my $use_tokenizer_sentence_splits),
   'inline-tokens=s'       => \(my $inline_tokens = 'tokens#morpho'),
   'inline-structures=s'   => \(my $inline_structures = 'struct#structure'),
+  'inline-dependencies=s' => \(my $inline_dependencies),
   'skip-inline-tokens'    => \(my $skip_inline_tokens = 0),
-  'skip-inline-token-annotations' => \(
+  'skip-inline-token-annotations!' => \(
     my $skip_inline_token_annotations = ($ENV{KORAPXMLTEI_INLINE} ? 0 : 1)),
   'skip-inline-tags=s'    => \(my $skip_inline_tags_str = ''),
   'base-foundry=s'        => \(my $base_dir    = 'base'),
@@ -144,7 +148,7 @@ elsif (!$tokenizer_intern && !$no_tokenizer) {
   exit(1);
 };
 
-if ($use_tokenizer_sentence_splits) {
+if (!$no_tokenizer && $use_tokenizer_sentence_splits) {
   $skip_inline_tags{s} = 1;
 };
 
@@ -165,6 +169,19 @@ if (index($_tokens_dir, '!') == 0) {
   $_tokens_dir = substr($_tokens_dir, 1);
   $inline_tokens_exclusive = 1;
 };
+
+
+my ($_dep_dir, $_dep_file);
+if ($inline_dependencies) {
+  ($_dep_dir, $_dep_file) = split '#', $inline_dependencies . '#dependency';
+  $inline_dependencies = 1;
+
+  if ($_dep_dir && index($_dep_dir, '!') == 0) {
+    $_dep_dir = substr($_dep_dir, 1);
+    $inline_deps_exclusive = 1;
+  };
+};
+
 
 # Initialize zipper
 my $zipper = KorAP::XML::TEI::Zipper->new($root_dir, $output_fname);
@@ -216,7 +233,8 @@ binmode $input_fh;
 my $inline = KorAP::XML::TEI::Inline->new(
   $skip_inline_tokens,
   \%skip_inline_tags,
-  $inline_tokens_exclusive
+  $inline_tokens_exclusive,
+  $inline_dependencies
 );
 
 
@@ -320,7 +338,7 @@ MAIN: while (<$input_fh>) {
         };
 
         # ~ write structures ~
-        if (!$inline->structures->empty) {
+        unless ($inline->structures->empty) {
           $inline->structures->to_zip(
             $zipper->new_stream("$dir/$_structure_dir/${_structure_file}.xml"),
             $text_id_esc,
@@ -333,10 +351,22 @@ MAIN: while (<$input_fh>) {
           $inline->tokens->to_zip(
             $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}.xml"),
             $text_id_esc,
-            # Either 0 = tokens without inline or 1 = tokens with inline
-            !$skip_inline_token_annotations
+            # Either 0 = tokens without inline or
+            # 1 = tokens with inline
+            # !$skip_inline_token_annotations
+            ($skip_inline_token_annotations ? 0 : ($inline_deps_exclusive ? 4 : 1))
           );
         };
+
+        # ~ write dependencies ~
+        unless ($inline->dependencies->empty) {
+          $inline->dependencies->to_zip(
+            $zipper->new_stream("$dir/$_dep_dir/${_dep_file}.xml"),
+            $text_id_esc,
+            3 # = dependency serialization
+          );
+        };
+
 
         # reinit.
         $dir = '';
@@ -628,7 +658,8 @@ be processed. Defaults to false (meaning inline tokens will be processed).
 
 Boolean flag indicating that inline token annotations should not
 be processed. Defaults to true (meaning inline token annotations
-won't be processed).
+won't be processed). Can be negated with
+C<--no-skip-inline-token-annotations>.
 
 =item B<--skip-inline-tags> <tags>
 
@@ -667,7 +698,30 @@ file.
 
 Example:
 
-  tei2korapxml --inline-tokens '!gingko#morpho' < data.i5.xml > korapxml.zip
+  tei2korapxml --no-tokenizer --inline-tokens \
+    '!gingko#morpho' < data.i5.xml > korapxml.zip
+
+=item B<--inline-dependencies> <foundry>#[<file>]
+
+Define the foundry and file (without extension)
+to store inline dependency information in.
+Defaults to the layer of C<dependency> and
+will be ignored if not set (which means, dependency
+attributes will be stored in the inline tokens file,
+if not skipped).
+
+The dependency data will also be stored in the
+inline token file (see I<--inline-tokens>),
+unless the inline dependencies foundry is prepended
+by an B<!> exclamation mark, indicating that inline
+dependency data is stored exclusively in the inline
+dependencies file.
+
+Example:
+
+  tei2korapxml --no-tokenizer --inline-dependencies \
+    'gingko#dependency' < data.i5.xml > korapxml.zip
+
 
 =item B<--inline-structures> <foundry>#[<file>]
 
