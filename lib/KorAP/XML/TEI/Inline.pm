@@ -13,6 +13,9 @@ use KorAP::XML::TEI::Annotations::Collector;
 # name of the tag containing all information stored in $_tokens_file
 our $_TOKENS_TAG = 'w';
 
+# name of the tag to reset dependency relations
+our $_SENTENCE_TAG = 's';
+
 # TODO:
 #   Replace whitespace handling with Bit::Vector
 
@@ -30,21 +33,27 @@ use constant {
   DEBUG => $ENV{KORAPXMLTEI_DEBUG} // 0,
 
   # Array constants
-  ADD_ONE            => 0,
-  WS                 => 1,
-  TEXT_ID            => 2,
-  DATA               => 3,
-  TOKENS             => 5,
-  STRUCTURES         => 6,
-  SKIP_INLINE_TAGS   => 7,
-  SKIP_INLINE_TOKENS => 8,
-  INLINE_TOKENS_EXCLUSIVE => 9
+  ADD_ONE             => 0,
+  WS                  => 1,
+  TEXT_ID             => 2,
+  DATA                => 3,
+  TOKENS              => 5,
+  DEPENDENCIES        => 6,
+  STRUCTURES          => 7,
+  SKIP_INLINE_TAGS    => 8,
+  SKIP_INLINE_TOKENS  => 9,
+  INLINE_TOKENS_EXCLUSIVE => 10,
+  INLINE_DEPENDENCIES => 11
 };
 
 
 # Constructor
 sub new {
-  my ($class, $skip_inline_tokens, $skip_inline_tags, $inline_tokens_exclusive) = @_;
+  my ($class,
+      $skip_inline_tokens,
+      $skip_inline_tags,
+      $inline_tokens_exclusive,
+      $inline_dependencies) = @_;
 
   my @self = ();
 
@@ -67,10 +76,14 @@ sub new {
   # Initialize token collector
   $self[TOKENS] = KorAP::XML::TEI::Annotations::Collector->new;
 
+  # Inline dependency structures
+  $self[DEPENDENCIES] = KorAP::XML::TEI::Annotations::Collector->new;
+
   # Initialize structure collector
   $self[STRUCTURES]              = KorAP::XML::TEI::Annotations::Collector->new;
   $self[SKIP_INLINE_TOKENS]      = $skip_inline_tokens // undef;
   $self[INLINE_TOKENS_EXCLUSIVE] = $inline_tokens_exclusive // 0;
+  $self[INLINE_DEPENDENCIES]     = $inline_dependencies // 0;
   $self[SKIP_INLINE_TAGS]        = $skip_inline_tags   // {};
 
   bless \@self, $class;
@@ -90,6 +103,7 @@ sub parse {
   # Reset all collectors
   $self->[DATA]->reset;
   $self->[STRUCTURES]->reset;
+  $self->[DEPENDENCIES]->reset;
   $self->[TOKENS]->reset;
 
   # Create XML::LibXML::Reader
@@ -152,7 +166,17 @@ sub _descend {
         # Add tokens to the token list
         if (!$self->[SKIP_INLINE_TOKENS]) {
           $self->[TOKENS]->add_annotation($anno);
+
+          # Add dependency information based on inline values
+          if ($self->[INLINE_DEPENDENCIES]) {
+            $self->[DEPENDENCIES]->add_annotation($anno);
+          };
         };
+      }
+
+      # Reset dependencies
+      elsif ($node_info eq $_SENTENCE_TAG && $self->[INLINE_DEPENDENCIES]) {
+        $self->[DEPENDENCIES]->add_reset_marker;
       }
 
       # Not token tag
@@ -283,6 +307,12 @@ sub structures {
 # Return tokens collector
 sub tokens {
   $_[0]->[TOKENS];
+};
+
+
+# Return dependency collector
+sub dependencies {
+  $_[0]->[DEPENDENCIES];
 };
 
 

@@ -862,4 +862,19 @@ subtest 'Write to output' => sub {
   unlink $temp_out;
 };
 
+subtest 'Handling of dependency data' => sub {
+  my $t = test_tei2korapxml(
+    file => catfile($f, 'data', 'SKU21.head.i5.xml'),
+    tmp => 'script_out',
+    param => '-s -ti',
+  )
+    ->stderr_like(qr!tei2korapxml:.*? text_id=SKU21_JAN\.00001!);
+  $t->unzip_xml('SKU21/JAN/00001/data.xml')
+    ->content_like(qr/cgICpWb AQNFU/)
+    ->content_like(qr/LhyS OLHV/)
+    ->content_like(qr/kdQVs hunIRQIN/)
+    ;
+};
+
+
 done_testing;

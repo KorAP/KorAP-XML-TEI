@@ -93,6 +93,60 @@ Test::XML::Loy->new($inline->tokens->to_string('aaa', 1))
   ->text_is('#s2 fs f[name="type"]', 'NN')
   ;
 
+
+subtest 'Support dependency parsing' => sub {
+  $inline = KorAP::XML::TEI::Inline->new(0,{},0,1);
+  ok($inline->parse('Fake News Media',
+                    \'<s><w n="1" lemma="Fake"  pos="N" head="2" deprel="name" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK">Fake</w> <w n="2" lemma="News"  pos="N" head="3" deprel="name" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK">News</w> <w n="3" lemma="media" pos="N" head="0" deprel="ROOT" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up">Media</w></s> '
+                  ), 'Parsed');
+
+  is($inline->data->data, 'Fake News Media ');
+
+  Test::XML::Loy->new($inline->tokens->to_string('aaa', 1))
+      ->attr_is('#s0', 'l', "3")
+      ->attr_is('#s0', 'to', 4)
+      ->text_is('#s0 fs f[name="lemma"]', 'Fake')
+      ->text_is('#s0 fs f[name="pos"]', 'N')
+      ->element_exists_not('#s0 fs f[name="n"]')
+
+      ->attr_is('#s1', 'l', "3")
+      ->attr_is('#s1', 'from', 5)
+      ->attr_is('#s1', 'to', 9)
+      ->text_is('#s1 fs f[name="lemma"]', 'News')
+      ->text_is('#s1 fs f[name="pos"]', 'N')
+
+      ->attr_is('#s2', 'l', "3")
+      ->attr_is('#s2', 'from', 10)
+      ->attr_is('#s2', 'to', 15)
+      ->text_is('#s2 fs f[name="lemma"]', 'media')
+      ->text_is('#s2 fs f[name="pos"]', 'N')
+      ;
+
+  Test::XML::Loy->new($inline->dependencies->to_string('aaa', 3))
+      ->attr_is('#s1_n1', 'l', "3")
+      ->element_exists('#s1_n1[from="0"]')
+      ->attr_is('#s1_n1', 'to', 4)
+      ->attr_is('#s1_n1 rel', 'label', 'name')
+      ->attr_is('#s1_n1 rel span', 'from', 5)
+      ->attr_is('#s1_n1 rel span', 'to', 9)
+      ->element_exists_not('#s1_n1 fs')
+
+      ->attr_is('#s1_n2', 'l', "3")
+      ->attr_is('#s1_n2', 'from', 5)
+      ->attr_is('#s1_n2', 'to', 9)
+      ->attr_is('#s1_n2 rel', 'label', 'name')
+      ->attr_is('#s1_n2 rel span', 'from', 10)
+      ->attr_is('#s1_n2 rel span', 'to', 15)
+
+      ->attr_is('#s1_n3', 'l', "3")
+      ->attr_is('#s1_n3', 'from', 10)
+      ->attr_is('#s1_n3', 'to', 15)
+      ->attr_is('#s1_n3 rel', 'label', 'ROOT')
+      ->element_exists('#s1_n3 rel span[from="0"]')
+      ->attr_is('#s1_n3 rel span', 'to', 15)
+      ;
+};
+
 subtest 'Examples from documentation' => sub {
   plan skip_all => 'Expected behaviour not finalized';
 
