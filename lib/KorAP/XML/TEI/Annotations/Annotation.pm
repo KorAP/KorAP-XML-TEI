@@ -23,6 +23,12 @@ my $_INLINE_POS_WR   = "pos";
 my $_INLINE_MSD_WR   = "msd";
 my $_INLINE_LEM_WR   = "lemma";
 
+our $_INLINE_DEP_N   = "n";
+our $_INLINE_DEP_REL = "deprel";
+our $_INLINE_DEP_SRC = "head";
+our $_INLINE_DEP_ATTS =
+  qr/^($_INLINE_DEP_N|$_INLINE_DEP_REL|$_INLINE_DEP_SRC)$/;
+
 # An annotation is represented as an array reference of information
 # with variable length.
 
@@ -175,7 +181,14 @@ sub _att {
   # ... <w lemma="&gt;" ana="PUNCTUATION">&gt;</w> ...
   # the '&gt;' is translated to '>' and hence the result would be '<f name="lemma">></f>'
   '            <f name="' . $_[0] . '">' . escape_xml($_[1] // '') . "</f>\n";
-}
+};
+
+
+# Get attributes from annotation
+sub get_attributes {
+  my $self = shift;
+  return @{$self}[ATTR_OFFSET..$#$self];
+};
 
 
 # Stringify without inline annotations
@@ -205,7 +218,7 @@ sub to_string {
 
 # Stringify with inline annotations
 sub to_string_with_inline_annotations {
-  my ($self, $id) = @_;
+  my ($self, $id, $without_deps) = @_;
 
   my $out = $self->_header_lex($id);
 
@@ -240,16 +253,21 @@ sub to_string_with_inline_annotations {
           };
           $out .= _att($_INLINE_MSD_WR, $2);
         };
+      }
 
+      # Ignore dependency annotations for tokens
+      elsif ($without_deps &&
+             $self->[$att_idx] =~ $_INLINE_DEP_ATTS) {
+        # Do nothing
       }
 
       # Inline lemmata are expected
       # TODO:
       #   As $_INLINE_LEM_RD == $_INLINE_LEM_WR this
       #   currently does nothing special.
-      elsif ($_INLINE_LEM_RD && $self->[$att_idx] eq $_INLINE_LEM_RD){
-        $out .= _att($_INLINE_LEM_WR, $self->[$att_idx + 1]);
-      }
+      # elsif ($_INLINE_LEM_RD && $self->[$att_idx] eq $_INLINE_LEM_RD){
+      #   $out .= _att($_INLINE_LEM_WR, $self->[$att_idx + 1]);
+      # }
 
       # Add all other attributes
       else {
@@ -285,6 +303,21 @@ sub to_string_as_struct  {
   };
 
   return $out . $self->_footer;
+};
+
+
+# Stringify with inline dependencies
+sub to_string_with_dependencies {
+  my ($self, $id, $from, $to, $rel) = @_;
+
+  my $out = $self->_header_span($id);
+
+  my %att = $self->get_attributes;
+
+  $out .= '      <rel label="' . $rel . '">' . "\n";
+  $out .= '        <span from="' . $from . '" to="' . $to . '"/>' . "\n";
+  $out .= "      </rel>\n";
+  return $out . "    </span>\n";
 };
 
 

@@ -82,7 +82,7 @@ to use L<cpanm|App::cpanminus>.
 In case everything went well, the C<tei2korapxml> tool will
 be available on your command line immediately.
 
-Minimum requirement for L<KorAP::XML::TEI> is Perl 5.36.
+Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
 
 =head1 OPTIONS
 
@@ -93,6 +93,10 @@ Minimum requirement for L<KorAP::XML::TEI> is Perl 5.36.
 The input file to process. If no specific input is defined and a single
 dash C<-> is passed as an argument, data is read from C<STDIN>.
 
+=item B<--output|-o>
+
+The output zip file to be created. If no specific output is defined,
+data is written to C<STDOUT>.
 
 =item B<--root|-r>
 
@@ -137,6 +141,13 @@ splitting, call C<tei2korap> as follows:
   $        --no-tokens --sentence-positions -' - \
   $        > corpus.korapxml.zip
 
+=item B<--no-tokenizer>
+
+Boolean flag indicating that no tokenizer should be used.
+This is meant to ensure that by default a final token layer always
+exists.
+If a separate tokenizer is chosen, this flag is ignored.
+
 =item B<--skip-inline-tokens>
 
 Boolean flag indicating that inline tokens should not
@@ -146,7 +157,8 @@ be processed. Defaults to false (meaning inline tokens will be processed).
 
 Boolean flag indicating that inline token annotations should not
 be processed. Defaults to true (meaning inline token annotations
-won't be processed).
+won't be processed). Can be negated with
+C<--no-skip-inline-token-annotations>.
 
 =item B<--skip-inline-tags> <tags>
 
@@ -185,7 +197,30 @@ file.
 
 Example:
 
-  tei2korapxml --inline-tokens '!gingko#morpho' < data.i5.xml > korapxml.zip
+  tei2korapxml --no-tokenizer --inline-tokens \
+    '!gingko#morpho' < data.i5.xml > korapxml.zip
+
+=item B<--inline-dependencies> <foundry>#[<file>]
+
+Define the foundry and file (without extension)
+to store inline dependency information in.
+Defaults to the layer of C<dependency> and
+will be ignored if not set (which means, dependency
+attributes will be stored in the inline tokens file,
+if not skipped).
+
+The dependency data will also be stored in the
+inline token file (see I<--inline-tokens>),
+unless the inline dependencies foundry is prepended
+by an B<!> exclamation mark, indicating that inline
+dependency data is stored exclusively in the inline
+dependencies file.
+
+Example:
+
+  tei2korapxml --no-tokenizer --inline-dependencies \
+    'gingko#dependency' < data.i5.xml > korapxml.zip
+
 
 =item B<--inline-structures> <foundry>#[<file>]
 
@@ -245,7 +280,7 @@ Defaults to C<false>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2021-2024, L<IDS Mannheim|https://www.ids-mannheim.de/>
+Copyright (C) 2021-2023, L<IDS Mannheim|https://www.ids-mannheim.de/>
 
 Author: Peter Harders
 

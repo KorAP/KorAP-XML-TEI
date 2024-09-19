@@ -93,6 +93,171 @@ Test::XML::Loy->new($inline->tokens->to_string('aaa', 1))
   ->text_is('#s2 fs f[name="type"]', 'NN')
   ;
 
+
+subtest 'Support dependency parsing' => sub {
+  $inline = KorAP::XML::TEI::Inline->new(0,{},0,1);
+  ok($inline->parse('Fake News Media',
+                    \'<s><w n="1" lemma="Fake"  pos="N" head="2" deprel="name" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK">Fake</w> <w n="2" lemma="News"  pos="N" head="3" deprel="name" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK">News</w> <w n="3" lemma="media" pos="N" head="0" deprel="ROOT" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up">Media</w></s> '
+                  ), 'Parsed');
+
+  is($inline->data->data, 'Fake News Media ');
+
+  Test::XML::Loy->new($inline->tokens->to_string('aaa', 1))
+      ->attr_is('#s0', 'l', "3")
+      ->attr_is('#s0', 'to', 4)
+      ->text_is('#s0 fs f[name="lemma"]', 'Fake')
+      ->text_is('#s0 fs f[name="pos"]', 'N')
+      ->text_is('#s0 fs f[name="n"]','1')
+
+      ->attr_is('#s1', 'l', "3")
+      ->attr_is('#s1', 'from', 5)
+      ->attr_is('#s1', 'to', 9)
+      ->text_is('#s1 fs f[name="lemma"]', 'News')
+      ->text_is('#s1 fs f[name="pos"]', 'N')
+      ->text_is('#s1 fs f[name="n"]','2')
+
+      ->attr_is('#s2', 'l', "3")
+      ->attr_is('#s2', 'from', 10)
+      ->attr_is('#s2', 'to', 15)
+      ->text_is('#s2 fs f[name="lemma"]', 'media')
+      ->text_is('#s2 fs f[name="pos"]', 'N')
+      ->text_is('#s2 fs f[name="n"]','3')
+      ;
+
+  Test::XML::Loy->new($inline->tokens->to_string('aaa', 4))
+      ->attr_is('#s0', 'l', "3")
+      ->attr_is('#s0', 'to', 4)
+      ->text_is('#s0 fs f[name="lemma"]', 'Fake')
+      ->text_is('#s0 fs f[name="pos"]', 'N')
+      ->element_exists_not('#s0 fs f[name="n"]')
+
+      ->attr_is('#s1', 'l', "3")
+      ->attr_is('#s1', 'from', 5)
+      ->attr_is('#s1', 'to', 9)
+      ->text_is('#s1 fs f[name="lemma"]', 'News')
+      ->text_is('#s1 fs f[name="pos"]', 'N')
+
+      ->attr_is('#s2', 'l', "3")
+      ->attr_is('#s2', 'from', 10)
+      ->attr_is('#s2', 'to', 15)
+      ->text_is('#s2 fs f[name="lemma"]', 'media')
+      ->text_is('#s2 fs f[name="pos"]', 'N')
+      ;
+
+  Test::XML::Loy->new($inline->dependencies->to_string('aaa', 3))
+      ->attr_is('#s1_n1', 'l', "3")
+      ->element_exists('#s1_n1[from="0"]')
+      ->attr_is('#s1_n1', 'to', 4)
+      ->attr_is('#s1_n1 rel', 'label', 'name')
+      ->attr_is('#s1_n1 rel span', 'from', 5)
+      ->attr_is('#s1_n1 rel span', 'to', 9)
+      ->element_exists_not('#s1_n1 fs')
+
+      ->attr_is('#s1_n2', 'l', "3")
+      ->attr_is('#s1_n2', 'from', 5)
+      ->attr_is('#s1_n2', 'to', 9)
+      ->attr_is('#s1_n2 rel', 'label', 'name')
+      ->attr_is('#s1_n2 rel span', 'from', 10)
+      ->attr_is('#s1_n2 rel span', 'to', 15)
+
+      ->attr_is('#s1_n3', 'l', "3")
+      ->attr_is('#s1_n3', 'from', 10)
+      ->attr_is('#s1_n3', 'to', 15)
+      ->attr_is('#s1_n3 rel', 'label', 'ROOT')
+      ->element_exists('#s1_n3 rel span[from="0"]')
+      ->attr_is('#s1_n3 rel span', 'to', 15)
+      ;
+
+  $inline = KorAP::XML::TEI::Inline->new(0,{},0,1);
+  ok($inline->parse('Fake News Media',
+                    \('<p xml:lang="x-|fin:2|"><s xml:lang="fin">'.
+                    '<w deprel="nn" head="2" lemma="lJgkPOGUBSFSRQlx" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up" n="1" pos="N">lJgkPOGUBSFSRQlx</w> '.
+                    '<w deprel="nsubj" head="3" lemma="rYuqciR" msd="SUBCAT_Prop|NUM_Sg|CASE_Nom|CASECHANGE_Up|OTHER_UNK" n="2" pos="N">rYuqciR</w> '.
+                    '<w deprel="ROOT" head="0" lemma="RcidTBqv" msd="PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind" n="3" pos="V">RcidTBqv</w> '.
+                    '<w deprel="poss" head="5" lemma="cHIf" msd="SUBCAT_Acro|NUM_Sg|CASE_Nom|CASECHANGE_Up" n="4" pos="N">cHIf</w> '.
+                    '<w deprel="nommod" head="3" lemma="reuvyWZtUhN" msd="NUM_Sg|CASE_Ela" n="5" pos="N">reuvyWZtUhN</w> '.
+                    '<w deprel="nsubj" head="7" lemma="KsaXYaFo" msd="NUM_Sg|CASE_Gen" n="6" pos="N">KsaXYaFo</w> '.
+                    '<w deprel="iccomp" head="3" lemma="qJhgSDNOYpWg" msd="NUM_Sg|CASE_Ill|VOICE_Act|INF_Inf3" n="7" pos="V">qJhgSDNOYpWg</w> '.
+                    '<w deprel="name" head="9" lemma="xtRyGN" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK" n="8" pos="N">xtRyGN</w> '.
+                    '<w deprel="poss" head="10" lemma="XCVuQwU" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="9" pos="N">XCVuQwU</w> '.
+                    '<w deprel="poss" head="11" lemma="hYwEsYDUbYHmJ" msd="NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="10" pos="N">hYwEsYDUbYHmJ</w> '.
+                    '<w deprel="dobj" head="7" lemma="yYXOYOqX" msd="NUM_Sg|CASE_Gen" n="11" pos="N">yYXOYOqX</w> '.
+                    '<w deprel="nommod" head="7" lemma="LkrLYiYgRSC" msd="NUM_Sg|CASE_Ade" n="12" pos="N">LkrLYiYgRSC</w> '.
+                    '<w deprel="num" head="12" lemma="erRenLjillGtDCaRLIx" msd="_" n="13" pos="Num">erRenLjillGtDCaRLIx</w> '.
+                    '<w deprel="punct" head="3" lemma="c" msd="_" n="14" pos="Punct">c</w> '.
+                    '</s>'."\n".
+                    '<s xml:lang="fin">'.
+                    '<w deprel="nommod" head="3" lemma="LSymCdojKTj" msd="SUBCAT_Prop|NUM_Sg|CASE_Ine|CASECHANGE_Up|OTHER_UNK" n="1" pos="N">LSymCdojKTj</w> '.
+                    '<w deprel="auxpass" head="3" lemma="vQ" msd="PRS_Sg3|VOICE_Act|TENSE_Prs|MOOD_Ind" n="2" pos="V">vQ</w> '.
+                    '<w deprel="ROOT" head="0" lemma="nHfBTtne" msd="NUM_Sg|CASE_Nom|VOICE_Pass|PCP_PrfPrc|CMP_Pos" n="3" pos="V">nHfBTtne</w> '.
+                    '<w deprel="preconj" head="6" lemma="fmcz" msd="SUBCAT_CC" n="4" pos="C">fmcz</w> '.
+                    '<w deprel="poss" head="6" lemma="lHlPTQv" msd="SUBCAT_Prop|NUM_Sg|CASE_Gen|CASECHANGE_Up|OTHER_UNK" n="5" pos="N">lHlPTQv</w> '.
+                    '<w deprel="dobj" head="3" lemma="IXxgORnMc" msd="NUM_Pl|CASE_Par|OTHER_UNK" n="6" pos="N">IXxgORnMc</w> '.
+                    '<w deprel="cc" head="6" lemma="QdjQ" msd="SUBCAT_CC" n="7" pos="C">QdjQ</w> '.
+                    '<w deprel="conj" head="6" lemma="luYMmwBGSUbXCMxqFzeZv" msd="NUM_Pl|CASE_Par|OTHER_UNK" n="8" pos="N">luYMmwBGSUbXCMxqFzeZv</w> '.
+                    '<w deprel="punct" head="3" lemma="E" msd="_" n="9" pos="Punct">E</w>'.
+                    '</s>'.
+                    '</p>')
+                  ), 'Parsed');
+
+  is($inline->data->data, 'lJgkPOGUBSFSRQlx rYuqciR RcidTBqv cHIf reuvyWZtUhN KsaXYaFo qJhgSDNOYpWg xtRyGN XCVuQwU hYwEsYDUbYHmJ yYXOYOqX LkrLYiYgRSC erRenLjillGtDCaRLIx c  LSymCdojKTj vQ nHfBTtne fmcz lHlPTQv IXxgORnMc QdjQ luYMmwBGSUbXCMxqFzeZv E');
+
+  Test::XML::Loy->new($inline->dependencies->to_string('aaa', 3))
+      ->attr_is('#s1_n3', 'l', "4")
+      ->attr_is('#s1_n3', 'from', 25)
+      ->attr_is('#s1_n3', 'to', 33)
+      ->attr_is('#s1_n3 rel', 'label', 'ROOT')
+      ->element_exists('#s1_n3 rel span[from=0]')
+      ->attr_is('#s1_n3 rel span', 'to', 144)
+      ->element_exists_not('#s1_n3 fs')
+
+      ->attr_is('#s1_n14', 'l', "4")
+      ->attr_is('#s1_n14', 'from', 143)
+      ->attr_is('#s1_n14', 'to', 144)
+      ->attr_is('#s1_n14 rel', 'label', 'punct')
+      ->attr_is('#s1_n14 rel span', 'from', 25)
+      ->attr_is('#s1_n14 rel span', 'to', 33)
+
+      ->attr_is('#s2_n1', 'l', "4")
+      ->attr_is('#s2_n1', 'from', 146)
+      ->attr_is('#s2_n1', 'to', 157)
+      ->attr_is('#s2_n1 rel', 'label', 'nommod')
+      ->attr_is('#s2_n1 rel span', 'from', 161)
+      ->attr_is('#s2_n1 rel span', 'to', 169)
+
+      ->attr_is('#s2_n9', 'l', "4")
+      ->attr_is('#s2_n9', 'from', 220)
+      ->attr_is('#s2_n9', 'to', 221)
+      ->attr_is('#s2_n9 rel', 'label', 'punct')
+      ->attr_is('#s2_n9 rel span', 'from', 161)
+      ->attr_is('#s2_n9 rel span', 'to', 169)
+
+      ->attr_is('#s2_n3', 'l', "4")
+      ->attr_is('#s2_n3', 'from', 161)
+      ->attr_is('#s2_n3', 'to', 169)
+      ->attr_is('#s2_n3 rel', 'label', 'ROOT')
+      ->attr_is('#s2_n3 rel span', 'from', 146)
+      ->attr_is('#s2_n3 rel span', 'to', 221)
+      ;
+
+  Test::XML::Loy->new($inline->tokens->to_string('aaa', 1))
+      ->attr_is('#s2', 'l', "4")
+      ->attr_is('#s2', 'from', 25)
+      ->attr_is('#s2', 'to', 33)
+      ->text_is('#s2 fs f[name="lemma"]', 'RcidTBqv')
+      ->text_is('#s2 fs f[name="pos"]', 'V')
+      ->text_is('#s2 fs f[name="msd"]', 'PRS_Sg3|VOICE_Act|TENSE_Prt|MOOD_Ind')
+
+      ->attr_is('#s22', 'l', "4")
+      ->attr_is('#s22', 'from', 220)
+      ->attr_is('#s22', 'to', 221)
+      ->text_is('#s22 fs f[name="lemma"]', 'E')
+      ->text_is('#s22 fs f[name="pos"]', 'Punct')
+      ->text_is('#s22 fs f[name="msd"]', '_')
+      ;
+
+};
+
 subtest 'Examples from documentation' => sub {
   plan skip_all => 'Expected behaviour not finalized';
 
