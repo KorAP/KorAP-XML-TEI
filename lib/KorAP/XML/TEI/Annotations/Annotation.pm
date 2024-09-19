@@ -23,6 +23,15 @@ my $_INLINE_POS_WR   = "pos";
 my $_INLINE_MSD_WR   = "msd";
 my $_INLINE_LEM_WR   = "lemma";
 
+# Ignore dependency information inline
+my $_INLINE_DEP_IGNORE = 1;
+
+our $_INLINE_DEP_N   = "n";
+our $_INLINE_DEP_REL = "deprel";
+our $_INLINE_DEP_SRC = "head";
+my $_INLINE_DEP_ATTS =
+  qr/$_INLINE_DEP_N|$_INLINE_DEP_REL|$_INLINE_DEP_SRC/;
+
 # An annotation is represented as an array reference of information
 # with variable length.
 
@@ -202,6 +211,10 @@ sub to_string {
   return $out . "        </f>\n" . $self->_footer;
 };
 
+sub get_attributes {
+  my $self = shift;
+  return @{$self}[ATTR_OFFSET..$#$self];
+};
 
 # Stringify with inline annotations
 sub to_string_with_inline_annotations {
@@ -240,7 +253,12 @@ sub to_string_with_inline_annotations {
           };
           $out .= _att($_INLINE_MSD_WR, $2);
         };
+      }
 
+      # Ignore dependency annotations for tokens
+      elsif ($_INLINE_DEP_IGNORE &&
+             $self->[$att_idx] =~ $_INLINE_DEP_ATTS) {
+        # Do nothing
       }
 
       # Inline lemmata are expected
@@ -285,6 +303,19 @@ sub to_string_as_struct  {
   };
 
   return $out . $self->_footer;
+};
+
+
+# Stringify with inline dependencies
+sub to_string_with_dependencies {
+  my ($self, $id) = @_;
+
+  my $out = $self->_header_span($id);
+
+  print '      <rel label="CJ">',"\n";
+  print '        <span from="8" to="11"/>',"\n";
+  print "      </rel>\n";
+  return $out . "    </span>\n";
 };
 
 

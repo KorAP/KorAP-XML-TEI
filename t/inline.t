@@ -93,6 +93,38 @@ Test::XML::Loy->new($inline->tokens->to_string('aaa', 1))
   ->text_is('#s2 fs f[name="type"]', 'NN')
   ;
 
+subtest 'Support dependency parsing' => sub {
+
+  $inline = KorAP::XML::TEI::Inline->new(0,{},0,1);
+  ok($inline->parse('Fake News Media',
+                    \'<w n="1" lemma="Fake"  pos="N" head="2" deprel="name" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK">Fake</w> <w n="2" lemma="News"  pos="N" head="3" deprel="name" msd="SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK">News</w> <w n="3" lemma="media" pos="N" head="0" deprel="ROOT" msd="NUM_Sg|CASE_Nom|CASECHANGE_Up">Media</w> '
+                  ), 'Parsed');
+
+  is($inline->data->data, 'Fake News Media ');
+
+  Test::XML::Loy->new($inline->tokens->to_string('aaa', 1))
+      ->attr_is('#s0', 'l', "2")
+      ->attr_is('#s0', 'to', 4)
+      ->text_is('#s0 fs f[name="lemma"]', 'Fake')
+      ->text_is('#s0 fs f[name="pos"]', 'N')
+      ->element_exists_not('#s0 fs f[name="n"]')
+
+      ->attr_is('#s1', 'l', "2")
+      ->attr_is('#s1', 'from', 5)
+      ->attr_is('#s1', 'to', 9)
+      ->text_is('#s1 fs f[name="lemma"]', 'News')
+      ->text_is('#s1 fs f[name="pos"]', 'N')
+
+      ->attr_is('#s2', 'l', "2")
+      ->attr_is('#s2', 'from', 10)
+      ->attr_is('#s2', 'to', 15)
+      ->text_is('#s2 fs f[name="lemma"]', 'media')
+      ->text_is('#s2 fs f[name="pos"]', 'N')
+      ;
+
+  diag $inline->dependencies->to_string('aaa', 3)
+};
+
 subtest 'Examples from documentation' => sub {
   plan skip_all => 'Expected behaviour not finalized';
 
