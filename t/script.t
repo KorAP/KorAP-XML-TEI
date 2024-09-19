@@ -862,4 +862,69 @@ subtest 'Write to output' => sub {
   unlink $temp_out;
 };
 
+subtest 'Handling of dependency data (1)' => sub {
+  my $t = test_tei2korapxml(
+    file => catfile($f, 'data', 'SKU21.head.i5.xml'),
+    tmp => 'script_out',
+    param => '-s --no-tokenizer --inline-tokens=csc#morpho',
+  )
+    ->stderr_like(qr!tei2korapxml:.*? text_id=SKU21_JAN\.00001!);
+  $t->unzip_xml('SKU21/JAN/00001/data.xml')
+    ->content_like(qr/cgICpWb AQNFU/)
+    ->content_like(qr/LhyS OLHV/)
+    ->content_like(qr/kdQVs hunIRQIN/)
+    ;
+
+  $t->unzip_xml('SKU21/JAN/00001/csc/morpho.xml')
+    ->attr_is('spanList span:nth-child(2)', 'id', 's1')
+    ->attr_is('#s1', 'from', '5')
+    ->attr_is('#s1', 'to', '9')
+    ->text_is('#s1 fs f fs f[name="deprel"]', 'name')
+    ->text_is('#s1 fs f fs f[name="head"]', '3')
+    ->text_is('#s1 fs f fs f[name="lemma"]', 'kCXD')
+    ->text_is('#s1 fs f fs f[name="msd"]', 'SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK')
+    ->text_is('#s1 fs f fs f[name="n"]', '2')
+    ->text_is('#s1 fs f fs f[name="pos"]', 'N')
+    ;
+};
+
+subtest 'Handling of dependency data (2)' => sub {
+  my $t = test_tei2korapxml(
+    file => catfile($f, 'data', 'SKU21.head.i5.xml'),
+    tmp => 'script_out',
+    param => '-s --no-tokenizer --inline-tokens=csc#morpho ' .
+    '--inline-dependencies=csc',
+  )
+    ->stderr_like(qr!tei2korapxml:.*? text_id=SKU21_JAN\.00001!)
+    ;
+
+  $t->unzip_xml('SKU21/JAN/00001/data.xml')
+    ->content_like(qr/cgICpWb AQNFU/)
+    ->content_like(qr/LhyS OLHV/)
+    ->content_like(qr/kdQVs hunIRQIN/)
+    ;
+
+  $t->unzip_xml('SKU21/JAN/00001/csc/morpho.xml')
+    ->attr_is('spanList span:nth-child(2)', 'id', 's1')
+    ->attr_is('#s1', 'from', '5')
+    ->attr_is('#s1', 'to', '9')
+    ->text_is('#s1 fs f fs f[name="deprel"]', 'name')
+    ->text_is('#s1 fs f fs f[name="head"]', '3')
+    ->text_is('#s1 fs f fs f[name="lemma"]', 'kCXD')
+    ->text_is('#s1 fs f fs f[name="msd"]', 'SUBCAT_Prop|CASECHANGE_Up|OTHER_UNK')
+    ->text_is('#s1 fs f fs f[name="n"]', '2')
+    ->text_is('#s1 fs f fs f[name="pos"]', 'N')
+    ;
+
+  $t->unzip_xml('SKU21/JAN/00001/csc/dependency.xml')
+    ->attr_is('spanList span:nth-child(2)', 'id', 's1_n2')
+    ->attr_is('#s1_n2', "from", "5")
+    ->attr_is('#s1_n2', "to", "9")
+    ->attr_is('#s1_n2 rel', "label", "name")
+    ->attr_is('#s1_n2 rel span', "from", '10')
+    ->attr_is('#s1_n2 rel span', "to", '15')
+    ;
+};
+
+
 done_testing;
