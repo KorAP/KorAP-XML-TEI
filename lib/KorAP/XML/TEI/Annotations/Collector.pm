@@ -1,13 +1,17 @@
 package KorAP::XML::TEI::Annotations::Collector;
 use base 'KorAP::XML::TEI::Annotations';
 use KorAP::XML::TEI::Annotations::Annotation;
+use KorAP::XML::TEI::Annotations::Dependencies;
 use Log::Any '$log';
 use strict;
 use warnings;
 
 use constant {
-  WITH_INLINE => 1,
-  STRUCTURE   => 2
+  WITH_INLINE  => 1,
+  STRUCTURE    => 2,
+  DEPENDENCIES => 3,
+  WITH_INLINE_WITHOUT_DEPS => 4,
+  RESET_MARKER => 'RESET'
 };
 
 
@@ -23,6 +27,12 @@ sub add_new_annotation {
 # Add existing annotation to annotation list
 sub add_annotation {
   push @{$_[0]}, $_[1];
+};
+
+
+# Add reset marker to parser
+sub add_reset_marker {
+  push @{$_[0]}, RESET_MARKER;
 };
 
 
@@ -64,12 +74,35 @@ sub to_string {
     };
   }
 
+  # Serialize tokens with respect to inline annotations
+  # but exclude dependency information
+  elsif ($param == WITH_INLINE_WITHOUT_DEPS) {
+    # Iterate over all tokens
+    foreach (@$self) {
+      $output .= $_->to_string_with_inline_annotations($c++, 1);
+    };
+  }
+
   # Serialize structures
   elsif ($param == STRUCTURE) {
     # Iterate over all structures
     foreach (@$self) {
       $output .= $_->to_string_as_struct($c++);
     };
+  }
+
+  # Serialize dependencies
+  elsif ($param == DEPENDENCIES) {
+
+    # Create dependency builder
+    my $deps = KorAP::XML::TEI::Annotations::Dependencies->new;
+
+    # Iterate over all dependencies
+    foreach (@$self) {
+      $output .= $deps->add_annotation_and_flush_to_string($_);
+    };
+
+    $output .= $deps->flush_to_string;
   }
 
   # Serialize tokens without respect to inline annotations
