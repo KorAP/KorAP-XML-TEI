@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "efb5d0b8_a1d5505d",
+        "filename": "script/tei2korapxml",
+        "patchSetId": 7
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-09-20T09:39:50Z",
+      "side": 1,
+      "message": "This one took me hours ...",
+      "range": {
+        "startLine": 151,
+        "startChar": 4,
+        "endLine": 151,
+        "endChar": 18
+      },
+      "revId": "0db1ea51145aa19229bfaa038ae639658703aa2d",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
