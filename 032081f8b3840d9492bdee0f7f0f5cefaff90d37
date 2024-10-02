@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9ff55c2_48daad99",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2024-10-02T14:30:57Z",
+      "side": 1,
+      "message": "Actually this required a change to work for me. Added a test.\nUnfortunately this increments also corpus and text headers.",
+      "revId": "032081f8b3840d9492bdee0f7f0f5cefaff90d37",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
