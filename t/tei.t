@@ -140,7 +140,11 @@ subtest 'Replace all entities' => sub {
   is(replace_entities('&#65;'), 'A');
   is(replace_entities('&#171;'), replace_entities('&#x00AB;'));
   is(replace_entities('&#x41;'), 'A');
-  is(replace_entities('&amp;&lt;&gt;'), '&amp;&lt;&gt;')
+  is(replace_entities('&amp;&lt;&gt;'), '&amp;&lt;&gt;');
+  is(replace_entities('&#34;'), '&quot;');
+  is(replace_entities('&#38;'), '&amp;');
+  is(replace_entities('&#39;'), '&apos;');
+  is(replace_entities('&#60;'), '&lt;');
 };
 
 done_testing;
