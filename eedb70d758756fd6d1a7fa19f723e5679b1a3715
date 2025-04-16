@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c12634d8_83328c1f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2025-04-16T15:21:22Z",
+      "side": 1,
+      "message": "This makes the error reproducible. But what is the best way to solve it?",
+      "revId": "eedb70d758756fd6d1a7fa19f723e5679b1a3715",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
