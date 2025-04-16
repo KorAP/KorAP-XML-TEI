@@ -1,3 +1,6 @@
+        - Make KorAP-Tokenizer heap size configurable via environment
+          variable KORAPXMLTEI_TOKENIZER_HEAP_SIZE.
+
 2.6.0 2024-11-11
         - Add -o parameter.
         - Add support for inline dependency relations.

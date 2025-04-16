@@ -804,6 +804,11 @@ Loglevel for I<Log::Any>. Defaults to C<notice>.
 Activate minimal debugging.
 Defaults to C<false>.
 
+=item B<KORAPXMLTEI_TOKENIZER_HEAP_SIZE>
+
+Set the heap size for the tokenizer process.
+Defaults to C<512m>.
+
 =back
 
 =head1 COPYRIGHT AND LICENSE
