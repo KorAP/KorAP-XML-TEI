@@ -25,7 +25,7 @@ use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
 use KorAP::XML::TEI::Inline;
 
-our $VERSION = '2.6.0';
+our $VERSION = '2.6.1';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
@@ -808,7 +808,7 @@ Defaults to C<false>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2021-2024, L<IDS Mannheim|https://www.ids-mannheim.de/>
+Copyright (C) 2021-2025, L<IDS Mannheim|https://www.ids-mannheim.de/>
 
 Author: Peter Harders
 

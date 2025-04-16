@@ -302,7 +302,7 @@ Defaults to C<512m>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2021-2024, L<IDS Mannheim|https://www.ids-mannheim.de/>
+Copyright (C) 2021-2025, L<IDS Mannheim|https://www.ids-mannheim.de/>
 
 Author: Peter Harders
 
