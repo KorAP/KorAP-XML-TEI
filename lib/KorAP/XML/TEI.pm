@@ -169,11 +169,12 @@ sub escape_xml_minimal {
 # Replace all entities, except %ent
 sub replace_entities {
   $_= shift;
-  s/&#x22;/&quot;/gi;
-  s/&#x26;/&amp;/gi;
-  s/&#x27;/&apos;/gi;
-  s/&#x3c;/&lt;/gi;
-  s/&#x3e;/&gt;/gi;
+  return ($_) if index($_,'&') < 0;
+  s/&#(?:34|x22);/&quot;/gi;
+  s/&#(?:38|x26);/&amp;/gi;
+  s/&#(?:39|x27);/&apos;/gi;
+  s/&#(?:60|x3c);/&lt;/gi;
+  s/&#(?:62|x3e);/&gt;/gi;
   s/[&]#(x[0-9A-Fa-f]+);/chr(hex("0$1"))/ge;
   s/[&]#(\d+);/chr($1)/ge;
   s/\&(alpha|ap|bdquo|blk12|blk14|blk34|block|boxDL|boxdl|boxdr|boxDR|boxH|boxh|boxhd|boxHD|boxhu|boxHU|boxUL|boxul|boxur|boxUR|boxv|boxV|boxvh|boxVH|boxvl|boxVL|boxVR|boxvr|bull|caron|ccaron|circ|dagger|Dagger|ecaron|euro|fnof|hellip|Horbar|inodot|iota|ldquo|ldquor|lhblk|lsaquo|lsquo|lsquor|mdash|ndash|nu|oelig|OElig|omega|Omega|permil|phi|pi|piv|rcaron|rdquo|rho|rsaquo|rsquo|rsquor|scaron|Scaron|sigma|squ|squb|squf|sub|tilde|trade|uhblk|Yuml|zcaron|Zcaron);/$html_entities{$1}/ge;
