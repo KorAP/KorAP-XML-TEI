@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1fff4da4_40480b90",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2025-04-16T17:11:20Z",
+      "side": 1,
+      "message": "Should do it. I wasnÄt able to test it on my new machine - had to return to my old one. There are currently problems with recent versions of XML::LibXML.",
+      "revId": "de9042ff528ece2f01d82e34e98e413be4d3c5c9",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
