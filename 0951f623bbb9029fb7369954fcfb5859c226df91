@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4082a82_9c729679",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6
+      },
+      "writtenOn": "2025-04-16T08:44:28Z",
+      "side": 1,
+      "message": "Is the env variable name OK and consistent?\nHow would you document the variable?",
+      "revId": "0951f623bbb9029fb7369954fcfb5859c226df91",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
