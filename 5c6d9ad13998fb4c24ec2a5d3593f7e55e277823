@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "024d9c62_ea9f6d68",
+        "filename": "lib/KorAP/XML/TEI/Tokenizer/KorAP.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2025-04-22T14:00:10Z",
+      "side": 1,
+      "message": "Should have the `KORAPXMLTEI_` prefix. It can be documented directly in the POD.",
+      "range": {
+        "startLine": 42,
+        "startChar": 23,
+        "endLine": 42,
+        "endChar": 48
+      },
+      "revId": "5c6d9ad13998fb4c24ec2a5d3593f7e55e277823",
+      "serverId": "626241b7-b7d0-4197-b843-1ee23887649c"
+    }
+  ]
+}
