@@ -2,6 +2,7 @@
         - Upgrade KorAP-Tokenizer to v2.3.0 (resolves issues with
           gendersternchen after hyphens, emoji clusters, and Wikipedia templates).
         - Upgrade Java dependency to 21.
+        - Added --progress option.
 
 2.6.1 2025-04-16
         - Fix ASCII entity resolution.
