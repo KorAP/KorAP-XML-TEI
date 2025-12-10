@@ -99,6 +99,11 @@ to the command:
 
   tei2korapxml -tk corpus1.i5.xml corpus2.i5.xml
 
+=item B<--progress|-p>
+
+Show a progress bar (including ETA).
+This option is ignored if valid input is not read from a file.
+
 =item B<--output|-o>
 
 The output zip file to be created. If no specific output is defined,

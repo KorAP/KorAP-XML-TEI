@@ -27,14 +27,16 @@ WriteMakefile(
     'DateTime' => '1.51',
     'File::Share' => '0.25',
     'Capture::Tiny' => '0.48',
-    'Log::Any' => '1.713'
+    'Log::Any' => '1.713',
+    'Time::Progress' => 0
   },
   PREREQ_PM => {
     'File::Share' => '0.25',
     'XML::CompactTree::XS'     => '0.03',
     'XML::LibXML::Reader' => '2.0201',
     'IO::Compress::Zip' => '2.091',
-    'Log::Any' => '1.713'
+    'Log::Any' => '1.713',
+    'Time::Progress' => 0
   },
   MIN_PERL_VERSION => '5.036',
   EXE_FILES => ['script/tei2korapxml'],
