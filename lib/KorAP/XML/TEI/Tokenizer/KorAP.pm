@@ -4,8 +4,8 @@ use strict;
 use warnings;
 use File::Share ':all';
 
-our $VERSION = '2.6.1';
-my $MIN_JAVA_VERSION = 17;
+our $VERSION = '2.6.2';
+my $MIN_JAVA_VERSION = 21;
 
 use constant {
   WAIT_SECS => 30
@@ -27,7 +27,7 @@ if ($java_version < $MIN_JAVA_VERSION) {
 
 my $tokenizer_jar = dist_file(
   'tei2korapxml',
-  'KorAP-Tokenizer-2.2.5-standalone.jar'
+  'KorAP-Tokenizer-2.3.0-standalone.jar'
 );
 
 unless (-f $tokenizer_jar) {

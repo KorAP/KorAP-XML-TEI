@@ -83,7 +83,7 @@ to use L<cpanm|App::cpanminus>.
 In case everything went well, the C<tei2korapxml> tool will
 be available on your command line immediately.
 
-Minimum requirement for L<KorAP::XML::TEI> is Perl 5.16.
+Minimum requirement for L<KorAP::XML::TEI> is Perl 5.38.
 
 =head1 OPTIONS
 

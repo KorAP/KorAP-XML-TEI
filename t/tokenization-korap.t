@@ -109,4 +109,55 @@ $str = $ext->to_string('unknown');
 $t = Test::XML::Loy->new($str);
 $t->element_count_is('layer spanList span', 4);
 
+
+# Tests for issue #115
+$string = "Die Serb*innen wie die Kosovo-Albaner*innen";
+$ext->reset;
+$ext->tokenize($string);
+$str = $ext->to_string('issue-115');
+$t = Test::XML::Loy->new($str);
+$t->element_count_is('layer spanList span', 5, 'Issue #115 - token count');
+$t->attr_is('layer spanList span:nth-child(2)', 'from', 4, 'Issue #115 - Serb*innen from');
+$t->attr_is('layer spanList span:nth-child(2)', 'to', 14, 'Issue #115 - Serb*innen to');
+$t->attr_is('layer spanList span:nth-child(5)', 'from', 23, 'Issue #115 - Kosovo-Albaner*innen from');
+$t->attr_is('layer spanList span:nth-child(5)', 'to', 43, 'Issue #115 - Kosovo-Albaner*innen to');
+
+# Tests for issue #114
+$string = "[_EMOJI:{{S|;)}}_]";
+$ext->reset;
+$ext->tokenize($string);
+$str = $ext->to_string('issue-114');
+$t = Test::XML::Loy->new($str);
+$t->element_count_is('layer spanList span', 1, 'Issue #114 - token count');
+$t->element_exists('layer spanList span:nth-child(1)[from="0"]', 'Issue #114 - EMOJI from');
+$t->attr_is('layer spanList span:nth-child(1)', 'to', 18, 'Issue #114 - EMOJI to');
+
+# Tests for issue #113
+$string = "✊🏿";
+$ext->reset;
+$ext->tokenize($string);
+$str = $ext->to_string('issue-113-1');
+$t = Test::XML::Loy->new($str);
+$t->element_count_is('layer spanList span', 1, 'Issue #113 - emoji modifier count');
+$t->element_exists('layer spanList span:nth-child(1)[from="0"]', 'Issue #113 - emoji modifier from');
+$t->attr_is('layer spanList span:nth-child(1)', 'to', 2, 'Issue #113 - emoji modifier to');
+
+$string = "👨‍👨‍👦"; # U+1F468 U+200D U+1F468 U+200D U+1F466
+$ext->reset;
+$ext->tokenize($string);
+$str = $ext->to_string('issue-113-2');
+$t = Test::XML::Loy->new($str);
+$t->element_count_is('layer spanList span', 1, 'Issue #113 - emoji ZWJ family 1 count');
+$t->element_exists('layer spanList span:nth-child(1)[from="0"]', 'Issue #113 - emoji ZWJ family 1 from');
+$t->attr_is('layer spanList span:nth-child(1)', 'to', 5, 'Issue #113 - emoji ZWJ family 1 to');
+
+$string = "👨‍👦‍👦"; # U+1F468 U+200D U+1F466 U+200D U+1F466
+$ext->reset;
+$ext->tokenize($string);
+$str = $ext->to_string('issue-113-3');
+$t = Test::XML::Loy->new($str);
+$t->element_count_is('layer spanList span', 1, 'Issue #113 - emoji ZWJ family 2 count');
+$t->element_exists('layer spanList span:nth-child(1)[from="0"]', 'Issue #113 - emoji ZWJ family 2 from');
+$t->attr_is('layer spanList span:nth-child(1)', 'to', 5, 'Issue #113 - emoji ZWJ family 2 to');
+
 done_testing;
