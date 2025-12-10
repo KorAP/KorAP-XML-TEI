@@ -69,6 +69,7 @@ GetOptions(
   'xmlid-to-textsigle|x=s'=> \(my $xmlid_to_textsigle = ''),
   'log|l=s'               => \(my $log_level   = 'notice'),
   'required-version|rv=s' => \(my $required_version),
+  'progress|p'            => \(my $progress),
   ''                      => \(my $stdio),
   'help|h' => sub {
     pod2usage(
@@ -107,6 +108,16 @@ my ($what, $with);
 if ($xmlid_to_textsigle ne '') {
   ($what, $with) = split('@', $xmlid_to_textsigle);
   $what = qr!$what!;
+};
+
+if ($progress) {
+  eval {
+    require Time::Progress;
+    1;
+  } or do {
+     $log->warn('Time::Progress not installed. Progress bar disabled.');
+     $progress = 0;
+  }
 };
 
 # tag (without attributes), which contains the primary text
@@ -242,9 +253,24 @@ my $inline = KorAP::XML::TEI::Inline->new(
 );
 
 do {
-  $log->notice("Reading input document $input_fname") if ($input_fname ne '');
+  my $p;
+  if ($progress && $input_fname ne '') {
+    my $file_size = -s $input_fname;
+    if ($file_size) {
+        $p = Time::Progress->new(min => 0, max => $file_size);
+        $log->notice("Reading input document $input_fname (Size: $file_size bytes)");
+    }
+  } elsif ($input_fname ne '') {
+      $log->notice("Reading input document $input_fname");
+  };
+
+  my $i = 0;
   MAIN:
   while (<$input_fh>) {
+
+    if ($p && ($i++ % 500 == 0)) {
+        print STDERR $p->report("\r%20b %p  ETA: %E", tell($input_fh));
+    };
 
     # remove HTML (multi-line) comments (<!--...-->)
     $_ = remove_xml_comments($input_fh, $_);
@@ -499,6 +525,10 @@ do {
     };
   };
   $text_id_esc = $auto_textsigle if ($auto_textsigle);
+
+  if ($p) {
+      print STDERR $p->report("\r%20b %p  ETA: %E\n", tell($input_fh));
+  };
 } while (($input_fname = shift(@ARGV)) && open($input_fh, '<', $input_fname));
 $zipper->close;
 
