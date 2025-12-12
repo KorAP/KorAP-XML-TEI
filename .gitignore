@@ -1,11 +1,13 @@
 blib
 MYMETA*
 Makefile
-Dockerfile
+!Dockerfile
 pm_to_blib
 \#*
 *~
 .*
 !.gitignore
 !.github
+!.dockerignore
+!.gitlab-ci.yml
 /sandbox

@@ -74,6 +74,44 @@ zip file output (default on C<stdout>) with utf8 encoded entries
 
 =head1 INSTALLATION
 
+=head2 Docker (Recommended)
+
+The easiest way to use C<tei2korapxml> is via Docker, which bundles all dependencies
+(Perl 5.42, Java 21, and required libraries) in a single container image.
+
+B<Pull from Docker Hub:>
+
+  $ docker pull korap/tei2korapxml:latest
+
+B<Usage examples:>
+
+  # Convert a file
+  $ docker run --rm -v $(pwd):/data korap/tei2korapxml:latest \
+      -s -tk /data/input.i5.xml > output.zip
+
+  # Convert from stdin
+  $ cat input.i5.xml | docker run --rm -i korap/tei2korapxml:latest \
+     -s -tk - > output.zip
+
+  # Using docker-compose
+  $ docker-compose run --rm tei2korapxml -s -tk input.i5.xml > output.zip
+
+B<Build locally:>
+
+  $ docker build -t korap/tei2korapxml:latest .
+
+For a slimmed-down image (using L<mintoolkit|https://github.com/mintoolkit/mint>):
+
+  $ docker build -t korap/tei2korapxml:large .
+  $ mint --crt-api-version 1.46 build --http-probe=false \
+    --exec='PERL5LIB=/tei2korapxml/script/tei2korapxml -v || test $? -eq 2 && java -jar /tei2korapxml/share/KorAP-Tokenizer-2.3.0-standalone.jar -V' \
+    --include-path=/tei2korapxml/lib --include-path=/usr/local/share/perl5 \
+    --include-path=/usr/share/perl5 --include-path=/usr/lib/perl5 \
+    --tag korap/tei2korapxml:latest \
+    korap/tei2korapxml:large
+
+=head2 Traditional Installation
+
 C<tei2korapxml> requires C<libxml2-dev> bindings and L<File::ShareDir::Install> to be installed.
 When these requirements are met, the preferred way to install the script is
 to use L<cpanm|App::cpanminus>.

@@ -1,0 +1,54 @@
+image: docker:latest
+
+variables:
+  FF_NETWORK_PER_BUILD: true
+
+services:
+  - name: docker:dind
+    command: [--dns=127.0.0.11]
+
+stages:
+  - build
+  - deploy
+
+build-docker:
+  rules:
+    - if: $CI_COMMIT_TAG =~ /.+/
+      variables:
+        VID: $CI_COMMIT_TAG
+    - when: manual
+      variables:
+        VID: $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
+  stage: build
+  before_script:
+    - apk update
+    - apk add --no-cache git
+  script:
+    - docker build -f Dockerfile -t korap/tei2korapxml:$VID-large --target tei2korapxml .
+    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock mintoolkit/mint --crt-api-version 1.46 build --http-probe=false --exec='PERL5LIB=/tei2korapxml/lib /tei2korapxml/script/tei2korapxml -v || test $? -eq 2 && java -jar /tei2korapxml/share/KorAP-Tokenizer-2.3.0-standalone.jar -V' --include-path=/tei2korapxml/lib --include-path=/usr/local/share/perl5 --include-path=/usr/share/perl5 --include-path=/usr/lib/perl5 --tag korap/tei2korapxml:$VID --tag korap/tei2korapxml:latest korap/tei2korapxml:$VID-large || true
+    - ARTIFACT=tei2korapxml-${VID}.tar.xz
+    - docker save korap/tei2korapxml:$VID | xz -T0 -M16G -9 > "$ARTIFACT"
+  artifacts:
+    paths:
+      - tei2korapxml-*.tar.xz
+
+push-dockerhub:
+  stage: deploy
+  needs:
+    - job: build-docker
+      artifacts: true
+  dependencies:
+    - build-docker
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v.+/
+      when: manual
+    - when: never
+  script:
+    - apk update
+    - apk add --no-cache xz
+    - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+    - ARTIFACT=tei2korapxml-${CI_COMMIT_TAG}.tar.xz
+    - xz -d -c "$ARTIFACT" | docker load
+    - docker tag korap/tei2korapxml:$CI_COMMIT_TAG korap/tei2korapxml:latest
+    - docker push korap/tei2korapxml:$CI_COMMIT_TAG
+    - docker push korap/tei2korapxml:latest
