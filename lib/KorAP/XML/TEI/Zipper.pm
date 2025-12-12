@@ -2,7 +2,7 @@ package KorAP::XML::TEI::Zipper;
 use strict;
 use warnings;
 use Log::Any qw($log);
-use IO::Compress::Zip qw($ZipError :constants);
+use IO::Compress::Zip qw($ZipError :constants :zip_method);
 use Scalar::Util 'blessed';
 
 # man IO::Compress::Zip
