@@ -25,7 +25,7 @@ build-docker:
     - apk add --no-cache git
   script:
     - docker build -f Dockerfile -t korap/tei2korapxml:$VID-large --target tei2korapxml .
-    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock mintoolkit/mint --crt-api-version 1.46 build --http-probe=false --exec='PERL5LIB=/tei2korapxml/lib /tei2korapxml/script/tei2korapxml -v || test $? -eq 2 && java -jar /tei2korapxml/share/KorAP-Tokenizer-2.3.0-standalone.jar -V' --include-path=/tei2korapxml/lib --include-path=/usr/local/share/perl5 --include-path=/usr/share/perl5 --include-path=/usr/lib/perl5 --tag korap/tei2korapxml:$VID --tag korap/tei2korapxml:latest korap/tei2korapxml:$VID-large || true
+    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock mintoolkit/mint --crt-api-version 1.46 build --http-probe=false --exec='PERL5LIB=/tei2korapxml/lib /tei2korapxml/script/tei2korapxml -v || test $? -eq 2 && java -jar /tei2korapxml/share/KorAP-Tokenizer-*-standalone.jar -V' --include-path=/tei2korapxml/lib --include-path=/usr/local/share/perl5 --include-path=/usr/share/perl5 --include-path=/usr/lib/perl5 --tag korap/tei2korapxml:$VID --tag korap/tei2korapxml:latest korap/tei2korapxml:$VID-large || true
     - ARTIFACT=tei2korapxml-${VID}.tar.xz
     - docker save korap/tei2korapxml:$VID | xz -T0 -M16G -9 > "$ARTIFACT"
   artifacts:
