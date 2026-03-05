@@ -110,13 +110,18 @@ if ($xmlid_to_textsigle ne '') {
   $what = qr!$what!;
 };
 
+my $progress_fh;
 if ($progress) {
   eval {
     require Time::Progress;
+    my $tty = $^O eq 'MSWin32' ? 'CON' : '/dev/tty';
+    open($progress_fh, '>', $tty)
+      or die "Cannot open $tty";
+    $progress_fh->autoflush(1);
     1;
   } or do {
-     $log->warn('Time::Progress not installed. Progress bar disabled.');
-     $progress = 0;
+    $log->warn('Progress bar disabled: ' . ($@ =~ s/ at .*//sr));
+    $progress = 0;
   }
 };
 
@@ -269,7 +274,7 @@ do {
   while (<$input_fh>) {
 
     if ($p && ($i++ % 500 == 0)) {
-        print STDERR $p->report("\r%20b %p  ETA: %E", tell($input_fh));
+        print $progress_fh $p->report("\r%20b %p  ETA: %E", tell($input_fh));
     };
 
     # remove HTML (multi-line) comments (<!--...-->)
@@ -550,7 +555,7 @@ do {
   $text_id_esc = $auto_textsigle if ($auto_textsigle);
 
   if ($p) {
-      print STDERR $p->report("\r%20b %p  ETA: %E\n", tell($input_fh));
+      print $progress_fh $p->report("\r%20b %p  ETA: %E\n", tell($input_fh));
   };
 } while (($input_fname = shift(@ARGV)) && open($input_fh, '<', $input_fname));
 $zipper->close;

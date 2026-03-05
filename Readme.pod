@@ -139,8 +139,11 @@ to the command:
 
 =item B<--progress|-p>
 
-Show a progress bar (including ETA).
-This option is ignored if valid input is not read from a file.
+Show a progress bar (including ETA) written directly to C</dev/tty>,
+so it always appears on the terminal regardless of C<stderr> redirection.
+This option is ignored if valid input is not read from a file,
+or if no controlling terminal is available (e.g. in a detached container
+or CI environment).
 
 =item B<--output|-o>
 
