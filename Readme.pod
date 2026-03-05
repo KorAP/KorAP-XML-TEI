@@ -104,7 +104,7 @@ For a slimmed-down image (using L<mintoolkit|https://github.com/mintoolkit/mint>
 
   $ docker build -t korap/tei2korapxml:large .
   $ mint --crt-api-version 1.46 build --http-probe=false \
-    --exec='PERL5LIB=/tei2korapxml/script/tei2korapxml -v || test $? -eq 2 && java -jar /tei2korapxml/share/KorAP-Tokenizer-2.3.0-standalone.jar -V' \
+    --exec='PERL5LIB=/tei2korapxml/script/tei2korapxml -v || test $? -eq 2 && java -jar /tei2korapxml/share/KorAP-Tokenizer-*-standalone.jar -V' \
     --include-path=/tei2korapxml/lib --include-path=/usr/local/share/perl5 \
     --include-path=/usr/share/perl5 --include-path=/usr/lib/perl5 \
     --tag korap/tei2korapxml:latest \
