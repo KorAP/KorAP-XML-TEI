@@ -809,6 +809,54 @@ subtest 'Test handling of textSigle in text' => sub {
     ->stderr_unlike(qr!line with closing text-body tag 'text' contains additional information!);
 };
 
+subtest 'Handling of closing body and text tags on same line' => sub {
+
+  # Create a custom test file where </body> and </text> are on the same line
+  my ($fh, $testfile) = korap_tempfile('script_closing_tags');
+  print $fh <<'XML';
+<?xml version="1.0" encoding="UTF-8"?>
+<idsCorpus>
+  <idsHeader type="corpus">
+    <fileDesc>
+      <titleStmt>
+        <korpusSigle>AAA</korpusSigle>
+      </titleStmt>
+    </fileDesc>
+  </idsHeader>
+  <idsDoc version="1.0">
+    <idsHeader type="document">
+      <fileDesc>
+        <titleStmt>
+          <dokumentSigle>AAA/BBB</dokumentSigle>
+        </titleStmt>
+      </fileDesc>
+    </idsHeader>
+    <idsText version="1.0">
+      <idsHeader type="text">
+        <fileDesc>
+          <titleStmt>
+            <textSigle>AAA/BBB.00000</textSigle>
+          </titleStmt>
+        </fileDesc>
+      </idsHeader>
+      <text>
+        <body><p>some text</p>
+        </body>     </text>
+    </idsText>
+  </idsDoc>
+</idsCorpus>
+XML
+  close($fh);
+
+  test_tei2korapxml(
+    file => $testfile,
+    tmp => 'script_closing_tags_out',
+    param => '-ti'
+  )
+    ->stderr_like(qr!tei2korapxml:.*? text_id=AAA_BBB\.00000!)
+    ->stderr_unlike(qr!line with closing text-body tag 'text' contains additional information!);
+};
+
 subtest 'Handling of whitespace at linebreaks' => sub {
   my $t = test_tei2korapxml(
     file => catfile($f, 'data', 'stadigmer.p5.xml'),

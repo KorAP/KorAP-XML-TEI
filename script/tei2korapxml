@@ -310,11 +310,20 @@ do {
 
           # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files
 
-          if ((substr($_, 0, $pos) . substr($_, length("</$_TEXT_BODY>") + $pos)) !~ /^\s*$/) {
+          my $before = substr($_, 0, $pos);
+          my $after  = substr($_, length("</$_TEXT_BODY>") + $pos);
+          my $before_check = $before;
+          $before_check =~ s/<[^>]+>//g;  # strip XML tags like </body>
+          if (($before_check . $after) !~ /^\s*$/) {
             die $log->fatal("input line number $.: " .
               "line with closing text-body tag '${_TEXT_BODY}'" .
               " contains additional information ... => Aborting (line=$_)");
           };
+
+          # Add any remaining content before </text> (e.g. </body>) to the buffer
+          $before =~ s/^\s+//;
+          $before =~ s/\s+$//;
+          $text_buffer .= $before if $before ne '';
 
           if ($dir eq '') {
             $log->warn(
