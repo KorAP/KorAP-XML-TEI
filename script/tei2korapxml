@@ -440,6 +440,14 @@ do {
         #   do testing with 2 different corpora
         #   (one with only one-line texts, the other with several lines per text)
 
+        # Check if the buffer currently ends inside an open XML tag
+        # (last '<' is after last '>'), meaning this line is a continuation of
+        # a multi-line element (e.g. attributes split across lines like <ref>).
+        # A space must be prepended to avoid "attributes construct error" in the
+        # XML parser when two attribute tokens are concatenated without separator.
+        my $in_open_tag = ($text_buffer ne '' &&
+          rindex($text_buffer, '<') > rindex($text_buffer, '>'));
+
         # line contains at least one non-tag character
         if (m/^[^<]*$/ || m/(?:<[^>]+>[^<])|(?:[^<]<[^>]+>)/) {
 
@@ -447,8 +455,14 @@ do {
           $text_line++;
 
           # insert blank before 1st character
-          # (for 2nd line and consecutive lines)
-          $_ = ' ' . $_ if $text_line > 1;
+          # (for 2nd line and consecutive lines, or when continuing an open tag)
+          $_ = ' ' . $_ if $text_line > 1 || $in_open_tag;
+        }
+
+        # Line is purely within an open tag (attribute continuation):
+        # prepend a space so attributes are properly separated.
+        elsif ($in_open_tag) {
+          $_ = ' ' . $_;
         }
 
         # add line to buffer
