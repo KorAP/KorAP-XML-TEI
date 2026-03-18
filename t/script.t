@@ -198,6 +198,72 @@ subtest 'Tokenize with external tokenizer and defined folder' => sub {
     ->element_count_is('spanList span', 227);
 };
 
+subtest 'Skip text after repeated external tokenizer crash' => sub {
+
+  my $cmd = catfile($f, 'cmd', 'tokenizer_faulty.pl');
+  my ($fh, $testfile) = korap_tempfile('script_exttok_skip');
+
+  print {$fh} <<'XML';
+<?xml version="1.0" encoding="UTF-8"?>
+<idsCorpus>
+  <idsHeader type="corpus">
+    <fileDesc>
+      <titleStmt>
+        <korpusSigle>CORP</korpusSigle>
+      </titleStmt>
+    </fileDesc>
+  </idsHeader>
+  <idsDoc version="1.0">
+    <idsHeader type="document">
+      <fileDesc>
+        <titleStmt>
+          <dokumentSigle>CORP/DOC</dokumentSigle>
+        </titleStmt>
+      </fileDesc>
+    </idsHeader>
+    <idsText version="1.0">
+      <idsHeader type="text">
+        <fileDesc>
+          <titleStmt>
+            <textSigle>CORP/DOC.00001</textSigle>
+          </titleStmt>
+        </fileDesc>
+      </idsHeader>
+      <text>
+        stable text
+      </text>
+    </idsText>
+    <idsText version="1.0">
+      <idsHeader type="text">
+        <fileDesc>
+          <titleStmt>
+            <textSigle>CORP/DOC.00002</textSigle>
+          </titleStmt>
+        </fileDesc>
+      </idsHeader>
+      <text>
+        __ALWAYS_CRASH__ text
+      </text>
+    </idsText>
+  </idsDoc>
+</idsCorpus>
+XML
+  close($fh);
+
+  test_tei2korapxml(
+    file => $testfile,
+    param => "-tc='perl $cmd'",
+    tmp => 'script_exttok_skip'
+  )
+    ->stderr_like(qr!tei2korapxml:.*? text_id=CORP_DOC\.00001!)
+    ->stderr_like(qr!tei2korapxml:.*? text_id=CORP_DOC\.00002!)
+    ->stderr_like(qr!External tokenizer failed for 'CORP_DOC\.00002' on attempt 1/2!)
+    ->stderr_like(qr!Skipping tokenization for 'CORP_DOC\.00002' after 2/2 attempts!)
+    ->file_readable('CORP/DOC/00001/base/tokens.xml')
+    ->file_exists_not('CORP/DOC/00002/base/tokens.xml')
+    ->file_readable('CORP/DOC/00002/data.xml');
+};
+
 subtest 'Check KorAP tokenizer for infinite loop bug' => sub {
 
   my $file = catfile($f, 'data', 'korap_tokenizer_challenge.xml');

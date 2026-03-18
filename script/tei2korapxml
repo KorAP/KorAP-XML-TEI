@@ -10,7 +10,7 @@ use KorAP::XML::TEI qw(increase_auto_textsigle);
 
 use File::Basename qw(dirname);
 
-use Encode qw(decode);
+use Encode qw(decode encode);
 
 use FindBin;
 BEGIN {
@@ -356,14 +356,22 @@ do {
           # Tokenize with external tokenizer
           if ($ext_tok) {
 
-            # Tokenize and output
-            $ext_tok->tokenize($data->data)->to_zip(
-              $zipper->new_stream("$dir/$base_dir/${tokens_file}.xml"),
-              $text_id_esc
-            );
+            my $tokens_output = eval {
+              $ext_tok->tokenize($data->data)->to_string($text_id_esc);
+            };
 
-            if ($use_tokenizer_sentence_splits) {
-              $ext_tok->sentencize_from_previous_input($inline->structures);
+            if (my $err = $@) {
+              $err =~ s/\s+$//;
+              $log->error("Skipping external tokenization for '$text_id_esc': $err");
+              $ext_tok->reset;
+            }
+            elsif (defined $tokens_output) {
+              $zipper->new_stream("$dir/$base_dir/${tokens_file}.xml")
+                ->print(encode('UTF-8', $tokens_output));
+
+              if ($use_tokenizer_sentence_splits) {
+                $ext_tok->sentencize_from_previous_input($inline->structures);
+              };
             };
           };
 
