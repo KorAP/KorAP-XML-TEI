@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use File::Share ':all';
 
-our $VERSION = '2.7.2';
+our $VERSION = '2.7.3';
 my $MIN_JAVA_VERSION = 21;
 
 use constant {
@@ -27,7 +27,7 @@ if ($java_version < $MIN_JAVA_VERSION) {
 
 my $tokenizer_jar = dist_file(
   'tei2korapxml',
-  'KorAP-Tokenizer-2.4.0-standalone.jar'
+  'KorAP-Tokenizer-2.4.1-standalone.jar'
 );
 
 unless (-f $tokenizer_jar) {

@@ -1,3 +1,10 @@
+2.7.3 2026-04-03
+        - Upgrade KorAP-Tokenizer to v2.4.1.
+        - KorAP-Tokenizer now fixes Unicode surrogate-pair handling in
+          German gender-sensitive forms to avoid crashes on unmatched
+          characters.
+        - Restart tokenizer on failure.
+
 2.7.2 2026-03-05
         - Fix XML parser error caused by elements (e.g. <ref>) whose
           attributes span multiple lines.
