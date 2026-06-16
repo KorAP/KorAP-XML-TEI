@@ -28,6 +28,7 @@ jobs:
       - name: Install dependencies
         run: |
           cpanm File::ShareDir::Install
+          cpanm --notest XML::Loy
           cpanm --installdeps .
       - name: Install
         run: |
