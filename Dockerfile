@@ -26,10 +26,10 @@ COPY . /tei2korapxml
 WORKDIR /tei2korapxml
 
 # Install build-time dependencies required by Makefile.PL
-RUN cpm install --test -g File::ShareDir::Install
+RUN cpm install --show-build-log-on-failure --test -g File::ShareDir::Install
 
-# Install all Perl module dependencies from Makefile.PL
-RUN cpm install --test -g \
+# Install runtime Perl module dependencies from Makefile.PL
+RUN cpm install --show-build-log-on-failure --test -g \
     File::ShareDir \
     File::Share \
     XML::CompactTree::XS \
@@ -37,8 +37,11 @@ RUN cpm install --test -g \
     IO::Compress::Zip \
     IO::Uncompress::Unzip \
     Log::Any \
-    Time::Progress \
-    XML::Loy
+    Time::Progress
+
+# XML::Loy is only needed by the bundled test helpers. Do not run its
+# upstream test suite during the production image build.
+RUN cpm install --show-build-log-on-failure -g XML::Loy
 
 # Run Makefile.PL and install (this will install share files properly)
 RUN perl Makefile.PL && make install
