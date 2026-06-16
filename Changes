@@ -1,3 +1,7 @@
+2.7.4 2026-06-16
+        - Upgrade KorAP-Tokenizer to v2.4.2 with fixes for gender-sensitive forms separated by a non-ASCII slash — division slash (U+2215 `∕`), fraction slash (U+2044 `⁄`) or fullwidth solidus (U+FF0F `／`) — which occured in DeLiKo-2026 EPUB input.
+        - Fixed XML::Loy install in docker build.
+
 2.7.3 2026-04-03
         - Upgrade KorAP-Tokenizer to v2.4.1.
         - KorAP-Tokenizer now fixes Unicode surrogate-pair handling in

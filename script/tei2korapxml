@@ -5,7 +5,7 @@ use warnings;
 use Log::Any '$log';
 use Log::Any::Adapter;
 use Pod::Usage;
-use Getopt::Long qw(GetOptions :config no_auto_abbrev);
+use Getopt::Long    qw(GetOptions :config no_auto_abbrev);
 use KorAP::XML::TEI qw(increase_auto_textsigle);
 
 use File::Basename qw(dirname);
@@ -13,9 +13,10 @@ use File::Basename qw(dirname);
 use Encode qw(decode encode);
 
 use FindBin;
+
 BEGIN {
   unshift @INC, "$FindBin::Bin/../lib";
-};
+}
 
 use KorAP::XML::TEI qw!remove_xml_comments replace_entities!;
 use KorAP::XML::TEI::Tokenizer::External;
@@ -25,18 +26,19 @@ use KorAP::XML::TEI::Zipper;
 use KorAP::XML::TEI::Header;
 use KorAP::XML::TEI::Inline;
 
-our $VERSION = '2.7.3';
+our $VERSION = '2.7.4';
 
 our $VERSION_MSG = "\ntei2korapxml - v$VERSION\n";
 
 use constant {
+
   # Set to 1 for minimal more debug output (no need to be parametrized)
   DEBUG => $ENV{KORAPXMLTEI_DEBUG} // 0
 };
 
-if ($ENV{KORAPXMLTEI_INLINE}) {
+if ( $ENV{KORAPXMLTEI_INLINE} ) {
   warn 'KORAPXMLTEI_INLINE is deprecated in favor of --skip-inline-token-annotations';
-};
+}
 
 # Inline tokens won't be stored in the structure file
 my $inline_tokens_exclusive = 0;
@@ -46,96 +48,105 @@ my $inline_deps_exclusive = 0;
 
 # Parse options from the command line
 GetOptions(
-  'auto-textsigle|A=s'    => \(my $auto_textsigle = ''),
-  'root|r=s'              => \(my $root_dir    = '.'),
-  'input|i=s'             => \(my $input_fname = ''),
-  'output|o=s'            => \(my $output_fname = ''),
-  'tokenizer-call|tc=s'   => \(my $tokenizer_call),
-  'tokenizer-korap|tk'    => \(my $tokenizer_korap),
-  'tokenizer-internal|ti' => \(my $tokenizer_intern),
-  'no-tokenizer'          => \(my $no_tokenizer),
-  'use-tokenizer-sentence-splits|s' => \(my $use_tokenizer_sentence_splits),
-  'inline-tokens=s'       => \(my $inline_tokens = 'tokens#morpho'),
-  'inline-structures=s'   => \(my $inline_structures = 'struct#structure'),
-  'inline-dependencies=s' => \(my $inline_dependencies),
-  'skip-inline-tokens'    => \(my $skip_inline_tokens = 0),
-  'skip-inline-token-annotations!' => \(
-    my $skip_inline_token_annotations = ($ENV{KORAPXMLTEI_INLINE} ? 0 : 1)),
-  'skip-inline-tags=s'    => \(my $skip_inline_tags_str = ''),
-  'base-foundry=s'        => \(my $base_dir    = 'base'),
-  'data-file=s'           => \(my $data_file   = 'data'),
-  'header-file=s'         => \(my $header_file = 'header'),
-  'tokens-file=s'         => \(my $tokens_file = 'tokens'),
-  'xmlid-to-textsigle|x=s'=> \(my $xmlid_to_textsigle = ''),
-  'log|l=s'               => \(my $log_level   = 'notice'),
-  'required-version|rv=s' => \(my $required_version),
-  'progress|p'            => \(my $progress),
-  ''                      => \(my $stdio),
-  'help|h' => sub {
+  'auto-textsigle|A=s'              => \( my $auto_textsigle = '' ),
+  'root|r=s'                        => \( my $root_dir       = '.' ),
+  'input|i=s'                       => \( my $input_fname    = '' ),
+  'output|o=s'                      => \( my $output_fname   = '' ),
+  'tokenizer-call|tc=s'             => \( my $tokenizer_call ),
+  'tokenizer-korap|tk'              => \( my $tokenizer_korap ),
+  'tokenizer-internal|ti'           => \( my $tokenizer_intern ),
+  'no-tokenizer'                    => \( my $no_tokenizer ),
+  'use-tokenizer-sentence-splits|s' => \( my $use_tokenizer_sentence_splits ),
+  'inline-tokens=s'                 => \( my $inline_tokens     = 'tokens#morpho' ),
+  'inline-structures=s'             => \( my $inline_structures = 'struct#structure' ),
+  'inline-dependencies=s'           => \( my $inline_dependencies ),
+  'skip-inline-tokens'              => \( my $skip_inline_tokens            = 0 ),
+  'skip-inline-token-annotations!'  => \( my $skip_inline_token_annotations = ( $ENV{KORAPXMLTEI_INLINE} ? 0 : 1 ) ),
+  'skip-inline-tags=s'              => \( my $skip_inline_tags_str          = '' ),
+  'base-foundry=s'                  => \( my $base_dir                      = 'base' ),
+  'data-file=s'                     => \( my $data_file                     = 'data' ),
+  'header-file=s'                   => \( my $header_file                   = 'header' ),
+  'tokens-file=s'                   => \( my $tokens_file                   = 'tokens' ),
+  'xmlid-to-textsigle|x=s'          => \( my $xmlid_to_textsigle            = '' ),
+  'log|l=s'                         => \( my $log_level                     = 'notice' ),
+  'required-version|rv=s'           => \( my $required_version ),
+  'progress|p'                      => \( my $progress ),
+  ''                                => \( my $stdio ),
+  'help|h'                          => sub {
     pod2usage(
-      -verbose => 99,
+      -verbose  => 99,
       -sections => 'NAME|DESCRIPTION|SYNOPSIS|ARGUMENTS|OPTIONS',
-      -msg => $VERSION_MSG,
-      -output => '-'
-    )
+      -msg      => $VERSION_MSG,
+      -output   => '-'
+    );
   },
   'version|v' => sub {
     pod2usage(
       -verbose => 0,
-      -msg => $VERSION_MSG,
-      -output => '-'
+      -msg     => $VERSION_MSG,
+      -output  => '-'
     );
   }
 );
 
-
 # Establish logger
-binmode(STDERR, ':encoding(UTF-8)');
-Log::Any::Adapter->set('Stderr', log_level => $log_level);
+binmode( STDERR, ':encoding(UTF-8)' );
+Log::Any::Adapter->set( 'Stderr', log_level => $log_level );
 $log->notice('Debugging is activated') if DEBUG;
-
 
 if ($required_version) {
   $required_version =~ /^\s*(\d+\.\d+\.\d+(-TRIAL)?)\s*$/;
-  if (!$1 || $1 ne $VERSION) {
+  if ( !$1 || $1 ne $VERSION ) {
     $log->error("Required version $required_version mismatches version $VERSION");
     exit(1);
+  }
+}
+
+my ( $what, $with );
+my $xmlid_to_textsigle_cb;
+if ( $xmlid_to_textsigle ne '' ) {
+  ( $what, $with ) = split( '@', $xmlid_to_textsigle );
+  $what                  = qr!$what!;
+  $xmlid_to_textsigle_cb = sub {
+    my $id    = shift;
+    my $sigle = $id;
+    if ($what) {
+      local $_ = $id;
+      eval "s|$what|$with|";
+      $sigle = $_;
+    }
+    $sigle =~ s/\./-/g;
+    return $sigle;
   };
-};
-
-
-my ($what, $with);
-if ($xmlid_to_textsigle ne '') {
-  ($what, $with) = split('@', $xmlid_to_textsigle);
-  $what = qr!$what!;
-};
+}
 
 my $progress_fh;
 if ($progress) {
   eval {
     require Time::Progress;
     my $tty = $^O eq 'MSWin32' ? 'CON' : '/dev/tty';
-    open($progress_fh, '>', $tty)
+    open( $progress_fh, '>', $tty )
       or die "Cannot open $tty";
     $progress_fh->autoflush(1);
     1;
   } or do {
-    $log->warn('Progress bar disabled: ' . ($@ =~ s/ at .*//sr));
+    $log->warn( 'Progress bar disabled: ' . ( $@ =~ s/ at .*//sr ) );
     $progress = 0;
   }
-};
+}
 
 # tag (without attributes), which contains the primary text
 my $_TEXT_BODY = 'text';
+
 # optional
 
 # Remember to skip certain inline tags
 my %skip_inline_tags = ();
 if ($skip_inline_tags_str) {
-  foreach (split /\s*,\s*/, $skip_inline_tags_str) {
+  foreach ( split /\s*,\s*/, $skip_inline_tags_str ) {
     $skip_inline_tags{$_} = 1;
-  };
-};
+  }
+}
 
 # External tokenization
 my $ext_tok;
@@ -152,57 +163,54 @@ elsif ($tokenizer_korap) {
   };
 
   my $korap_tok_ver = $KorAP::XML::TEI::Tokenizer::KorAP::VERSION;
-  if ($korap_tok_ver ne $VERSION) {
+  if ( $korap_tok_ver ne $VERSION ) {
     $log->error("KorAP-Tokenizer version ($korap_tok_ver) differs from the expected version ($VERSION)");
     exit(1);
-  };
+  }
 
   $ext_tok = KorAP::XML::TEI::Tokenizer::KorAP->new($use_tokenizer_sentence_splits);
 }
 
 # No internal tokenizer chosen
-elsif (!$tokenizer_intern && !$no_tokenizer) {
+elsif ( !$tokenizer_intern && !$no_tokenizer ) {
   $log->error("No tokenizer chosen. If only internal tokens should be used, pass the --no-tokenizer flag");
   exit(1);
-};
+}
 
-if (!$no_tokenizer && $use_tokenizer_sentence_splits) {
+if ( !$no_tokenizer && $use_tokenizer_sentence_splits ) {
   $skip_inline_tags{s} = 1;
-};
+}
 
 # Internal tokenization
 my $aggr_tok = KorAP::XML::TEI::Tokenizer::Aggressive->new;
 my $cons_tok = KorAP::XML::TEI::Tokenizer::Conservative->new;
 
-
 # Name of the directory and the file containing all inline structure informations
 # except for $_TOKENS_TAG information
-my ($_structure_dir, $_structure_file) = split '#', $inline_structures . '#structure';
+my ( $_structure_dir, $_structure_file ) = split '#', $inline_structures . '#structure';
 
 # Name of the directory and the file containing all inline token informations
 # i.e. tokens of the $_TOKENS_TAG, if $_TOKENS_PROC is set
-my ($_tokens_dir, $_tokens_file) = split '#', $inline_tokens . '#morpho';
+my ( $_tokens_dir, $_tokens_file ) = split '#', $inline_tokens . '#morpho';
 
-if (index($_tokens_dir, '!') == 0) {
-  $_tokens_dir = substr($_tokens_dir, 1);
+if ( index( $_tokens_dir, '!' ) == 0 ) {
+  $_tokens_dir             = substr( $_tokens_dir, 1 );
   $inline_tokens_exclusive = 1;
-};
+}
 
-
-my ($_dep_dir, $_dep_file);
+my ( $_dep_dir, $_dep_file );
 if ($inline_dependencies) {
-  ($_dep_dir, $_dep_file) = split '#', $inline_dependencies . '#dependency';
+  ( $_dep_dir, $_dep_file ) = split '#', $inline_dependencies . '#dependency';
   $inline_dependencies = 1;
 
-  if ($_dep_dir && index($_dep_dir, '!') == 0) {
-    $_dep_dir = substr($_dep_dir, 1);
+  if ( $_dep_dir && index( $_dep_dir, '!' ) == 0 ) {
+    $_dep_dir              = substr( $_dep_dir, 1 );
     $inline_deps_exclusive = 1;
-  };
-};
-
+  }
+}
 
 # Initialize zipper
-my $zipper = KorAP::XML::TEI::Zipper->new($root_dir, $output_fname);
+my $zipper = KorAP::XML::TEI::Zipper->new( $root_dir, $output_fname );
 
 # text directory (below $root_dir)
 my $dir = '';
@@ -216,7 +224,6 @@ my $input_enc = 'UTF-8';
 # text line (needed for whitespace handling)
 my $text_line = 0;
 
-
 # Input file handle (default: stdin)
 my $input_fh;
 
@@ -224,80 +231,76 @@ my $input_fh;
 if ($stdio) {
   $input_fh = *STDIN;
 }
+
 # Input flag was passed
-elsif (@ARGV || $input_fname ne '') {
-  unless ($input_fname ne '') {
+elsif ( @ARGV || $input_fname ne '' ) {
+  unless ( $input_fname ne '' ) {
     $input_fname = shift @ARGV;
-  };
-  unless (open($input_fh, '<', $input_fname)) {
+  }
+  unless ( open( $input_fh, '<', $input_fname ) ) {
     die $log->fatal("File '$input_fname' could not be opened.");
-  };
+  }
 }
 
 # No input to process
 else {
   pod2usage(
-    -verbose => 99,
+    -verbose  => 99,
     -sections => 'NAME|SYNOPSIS',
-    -msg => $VERSION_MSG,
-    -output => '-'
+    -msg      => $VERSION_MSG,
+    -output   => '-'
   );
   exit;
-};
+}
 
 # Prevents segfaulting (see notes on segfault prevention)
 binmode $input_fh;
 
-
 # Create inline parser object
-my $inline = KorAP::XML::TEI::Inline->new(
-  $skip_inline_tokens,
-  \%skip_inline_tags,
-  $inline_tokens_exclusive,
-  $inline_dependencies
-);
+my $inline = KorAP::XML::TEI::Inline->new( $skip_inline_tokens, \%skip_inline_tags, $inline_tokens_exclusive,
+  $inline_dependencies );
 
 do {
   my $p;
-  if ($progress && $input_fname ne '') {
+  if ( $progress && $input_fname ne '' ) {
     my $file_size = -s $input_fname;
     if ($file_size) {
-        $p = Time::Progress->new(min => 0, max => $file_size);
-        $log->notice("Reading input document $input_fname (Size: $file_size bytes)");
+      $p = Time::Progress->new( min => 0, max => $file_size );
+      $log->notice("Reading input document $input_fname (Size: $file_size bytes)");
     }
-  } elsif ($input_fname ne '') {
-      $log->notice("Reading input document $input_fname");
-  };
+  } elsif ( $input_fname ne '' ) {
+    $log->notice("Reading input document $input_fname");
+  }
 
   my $i = 0;
-  MAIN:
+MAIN:
   while (<$input_fh>) {
 
-    if ($p && ($i++ % 500 == 0)) {
-        print $progress_fh $p->report("\r%20b %p  ETA: %E", tell($input_fh));
-    };
+    if ( $p && ( $i++ % 500 == 0 ) ) {
+      print $progress_fh $p->report( "\r%20b %p  ETA: %E", tell($input_fh) );
+    }
 
     # remove HTML (multi-line) comments (<!--...-->)
-    $_ = remove_xml_comments($input_fh, $_);
+    $_ = remove_xml_comments( $input_fh, $_ );
 
     # Set input encoding
-    if (index($_, '<?xml') == 0 && $_ =~ /\sencoding=(['"])([^\1]+?)\1/) {
+    if ( index( $_, '<?xml' ) == 0 && $_ =~ /\sencoding=(['"])([^\1]+?)\1/ ) {
       $input_enc = $2;
       next;
-    };
+    }
 
-    $_ = decode($input_enc, $_);
+    $_ = decode( $input_enc, $_ );
     $_ = replace_entities($_);
 
     # Start of text body
-    if (index($_, $_TEXT_BODY) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$#) {
+    if ( index( $_, $_TEXT_BODY ) >= 0 && m#^(.*)<${_TEXT_BODY}(?: [^>]*)?>(.*)$# ) {
       my $suffix = $2;
 
-      if ($1 !~ /^\s*$/ || $suffix !~ /^\s*$/) {
-        die $log->fatal("input line number $.: " .
-          "line with opening text-body tag '${_TEXT_BODY}' " .
-          "contains additional information ... => Aborting (line=$_)");
-      };
+      if ( $1 !~ /^\s*$/ || $suffix !~ /^\s*$/ ) {
+        die $log->fatal( "input line number $.: "
+            . "line with opening text-body tag '${_TEXT_BODY}' "
+            . "contains additional information ... => Aborting (line=$_)" );
+      }
 
       # Text body data extracted from input document ($input_fh),
       # further processed by XML::LibXML::Reader
@@ -306,127 +309,115 @@ do {
       # Iterate over all lines in the text body
       while (<$input_fh>) {
 
-        $_ = remove_xml_comments($input_fh, $_);
-        $_ = decode($input_enc, $_);
+        $_ = remove_xml_comments( $input_fh, $_ );
+        $_ = decode( $input_enc, $_ );
         $_ = replace_entities($_);
 
         # End of text body
-        if ((my $pos = index($_, "</$_TEXT_BODY>")) >= 0) {
+        if ( ( my $pos = index( $_, "</$_TEXT_BODY>" ) ) >= 0 ) {
 
           # write data.xml, structure.xml and evtl. morpho.xml and/or tokenization files
 
-          my $before = substr($_, 0, $pos);
-          my $after  = substr($_, length("</$_TEXT_BODY>") + $pos);
+          my $before       = substr( $_, 0, $pos );
+          my $after        = substr( $_, length("</$_TEXT_BODY>") + $pos );
           my $before_check = $before;
-          $before_check =~ s/<[^>]+>//g;  # strip XML tags like </body>
-          if (($before_check . $after) !~ /^\s*$/) {
-            die $log->fatal("input line number $.: " .
-              "line with closing text-body tag '${_TEXT_BODY}'" .
-              " contains additional information ... => Aborting (line=$_)");
-          };
+          $before_check =~ s/<[^>]+>//g;    # strip XML tags like </body>
+          if ( ( $before_check . $after ) !~ /^\s*$/ ) {
+            die $log->fatal( "input line number $.: "
+                . "line with closing text-body tag '${_TEXT_BODY}'"
+                . " contains additional information ... => Aborting (line=$_)" );
+          }
 
           # Add any remaining content before </text> (e.g. </body>) to the buffer
           $before =~ s/^\s+//;
           $before =~ s/\s+$//;
           $text_buffer .= $before if $before ne '';
 
-          if ($dir eq '') {
+          if ( $dir eq '' ) {
             $log->warn(
-              "Maybe empty textSigle => skipping this text ...\n" .
-                'data=' . substr($inline->data->data, 0, 200)
-            );
+              "Maybe empty textSigle => skipping this text ...\n" . 'data=' . substr( $inline->data->data, 0, 200 ) );
             next MAIN;
-          };
+          }
 
           # Parse inline structure
-          $inline->parse($text_id_esc, \$text_buffer);
+          $inline->parse( $text_id_esc, \$text_buffer );
 
           if (DEBUG) {
             $log->debug("Writing (utf8-formatted) xml file $dir/${data_file}.xml");
-          };
+          }
 
           my $data = $inline->data;
 
           # Write data.xml
-          $data->to_zip(
-            $zipper->new_stream("$dir/${data_file}.xml"),
-            $text_id_esc
-          );
+          $data->to_zip( $zipper->new_stream("$dir/${data_file}.xml"), $text_id_esc );
 
           # Tokenize with external tokenizer
           if ($ext_tok) {
 
-            my $tokens_output = eval {
-              $ext_tok->tokenize($data->data)->to_string($text_id_esc);
-            };
+            my $tokens_output = eval { $ext_tok->tokenize( $data->data )->to_string($text_id_esc); };
 
-            if (my $err = $@) {
+            if ( my $err = $@ ) {
               $err =~ s/\s+$//;
               $log->error("Skipping external tokenization for '$text_id_esc': $err");
               $ext_tok->reset;
-            }
-            elsif (defined $tokens_output) {
-              $zipper->new_stream("$dir/$base_dir/${tokens_file}.xml")
-                ->print(encode('UTF-8', $tokens_output));
+            } elsif ( defined $tokens_output ) {
+              $zipper->new_stream("$dir/$base_dir/${tokens_file}.xml")->print( encode( 'UTF-8', $tokens_output ) );
 
               if ($use_tokenizer_sentence_splits) {
-                $ext_tok->sentencize_from_previous_input($inline->structures);
-              };
-            };
-          };
+                $ext_tok->sentencize_from_previous_input( $inline->structures );
+              }
+            }
+          }
 
           # Tokenize with internal tokenizer
           if ($tokenizer_intern) {
 
             # Tokenize and output
-            $cons_tok->tokenize($data->data)->to_zip(
-              $zipper->new_stream("$dir/$base_dir/" . $cons_tok->name . '.xml'),
-              $text_id_esc
-            )->reset;
+            $cons_tok->tokenize( $data->data )
+              ->to_zip( $zipper->new_stream( "$dir/$base_dir/" . $cons_tok->name . '.xml' ), $text_id_esc )
+              ->reset;
 
-            $aggr_tok->tokenize($data->data)->to_zip(
-              $zipper->new_stream("$dir/$base_dir/" . $aggr_tok->name . '.xml'),
-              $text_id_esc
-            )->reset;
-          };
+            $aggr_tok->tokenize( $data->data )
+              ->to_zip( $zipper->new_stream( "$dir/$base_dir/" . $aggr_tok->name . '.xml' ), $text_id_esc )
+              ->reset;
+          }
 
           # ~ write structures ~
-          unless ($inline->structures->empty) {
+          unless ( $inline->structures->empty ) {
             $inline->structures->to_zip(
               $zipper->new_stream("$dir/$_structure_dir/${_structure_file}.xml"),
               $text_id_esc,
-              2 # = structure serialization
+              2    # = structure serialization
             );
-          };
+          }
 
           # ~ write tokens ~
-          unless ($skip_inline_tokens || $inline->tokens->empty) {
+          unless ( $skip_inline_tokens || $inline->tokens->empty ) {
             $inline->tokens->to_zip(
               $zipper->new_stream("$dir/$_tokens_dir/${_tokens_file}.xml"),
               $text_id_esc,
+
               # Either 0 = tokens without inline or
               # 1 = tokens with inline
               # !$skip_inline_token_annotations
-              ($skip_inline_token_annotations ? 0 : ($inline_deps_exclusive ? 4 : 1))
+              ( $skip_inline_token_annotations ? 0 : ( $inline_deps_exclusive ? 4 : 1 ) )
             );
-          };
+          }
 
           # ~ write dependencies ~
-          unless ($inline->dependencies->empty) {
+          unless ( $inline->dependencies->empty ) {
             $inline->dependencies->to_zip(
               $zipper->new_stream("$dir/$_dep_dir/${_dep_file}.xml"),
               $text_id_esc,
-              3 # = dependency serialization
+              3    # = dependency serialization
             );
-          };
-
+          }
 
           # reinit.
           $dir = '';
 
           next MAIN;
-        };
-
+        }
 
         # ~ whitespace handling ~
 
@@ -458,11 +449,11 @@ do {
         # a multi-line element (e.g. attributes split across lines like <ref>).
         # A space must be prepended to avoid "attributes construct error" in the
         # XML parser when two attribute tokens are concatenated without separator.
-        my $in_open_tag = ($text_buffer ne '' &&
-          rindex($text_buffer, '<') > rindex($text_buffer, '>'));
+        my $in_open_tag =
+          ( $text_buffer ne '' && rindex( $text_buffer, '<' ) > rindex( $text_buffer, '>' ) );
 
         # line contains at least one non-tag character
-        if (m/^[^<]*$/ || m/(?:<[^>]+>[^<])|(?:[^<]<[^>]+>)/) {
+        if ( m/^[^<]*$/ || m/(?:<[^>]+>[^<])|(?:[^<]<[^>]+>)/ ) {
 
           # Increment counter for text lines
           $text_line++;
@@ -480,58 +471,57 @@ do {
 
         # add line to buffer
         $text_buffer .= $_;
-      };
-    }
-    elsif (m#^(.*)\<TEI\s+[^>]*?xml:id=(["'])(.+?)\2#) {
+      }
+    } elsif (m#^(.*)\<TEI\s+[^>]*?xml:id=(["'])(.+?)\2#) {
       my $leadin = $1;
-      my $id = $3;
-      my $sigle = $3;
+      my $id     = $3;
+      my $sigle;
 
-      if ($what) {
-        $_ = $id;
-        eval "s|$what|$with|"; # s@ICC.German\.([^.]+\.[^.]+)\.(.+)@ICCGER/$1/$2@;
-        $sigle = $_;
+      if ($xmlid_to_textsigle_cb) {
+        $sigle = $xmlid_to_textsigle_cb->($id);
         $log->debug("Converted text id `$id' to sigle `$sigle'");
-      };
-      $sigle =~ s/\./-/g;
+      } else {
+        $sigle = $id;
+        $sigle =~ s/\./-/g;
+      }
 
-      my @parts = split(/[\/_]/, $sigle);
-      if (@parts != 3) {
-        die $log->fatal(
-          "input line number $.: " .
-            "ids must have exactly three parts split by '/', but `$id` only has " . scalar(@parts) . " " .
-            "=> Aborting (line=$_)");
-      };
+      my @parts = split( /[\/_]/, $sigle );
+      if ( @parts != 3 ) {
+        die $log->fatal( "input line number $.: "
+            . "ids must have exactly three parts split by '/', but `$id` only has "
+            . scalar(@parts) . " "
+            . "=> Aborting (line=$_)" );
+      }
 
-      $dir = join("/", @parts);
+      $dir         = join( "/", @parts );
       $text_id_esc = "$parts[0]/$parts[1].$parts[2]";
       $log->notice("$0: text_id=$text_id_esc");
 
-      if ($leadin !~ /^\s*$/) {
-        die $log->fatal(
-          "input line number $.: " .
-            'line with opening header tag is not in expected format ... ' .
-            "=> Aborting (line=$_)");
-      };
+      if ( $leadin !~ /^\s*$/ ) {
+        die $log->fatal( "input line number $.: "
+            . 'line with opening header tag is not in expected format ... '
+            . "=> Aborting (line=$_)" );
+      }
     }
 
     # Start of header section
     elsif (m#^(.*)(\<(?:ids|tei)Header.*)$#) {
       my $content = "$2\n";
 
-      if ($1 !~ /^\s*$/) {
-        die $log->fatal(
-          "input line number $.: " .
-            'line with opening header tag is not in expected format ... ' .
-            "=> Aborting (line=$_)");
-      };
+      if ( $1 !~ /^\s*$/ ) {
+        die $log->fatal( "input line number $.: "
+            . 'line with opening header tag is not in expected format ... '
+            . "=> Aborting (line=$_)" );
+      }
 
       # Parse header
-      my $header = KorAP::XML::TEI::Header->new($content, $input_enc, $text_id_esc // $auto_textsigle)->parse($input_fh);
+      my $header =
+        KorAP::XML::TEI::Header->new( $content, $input_enc, $text_id_esc // $auto_textsigle, $xmlid_to_textsigle_cb )
+        ->parse($input_fh);
       if ($auto_textsigle) {
         $auto_textsigle = increase_auto_textsigle($auto_textsigle);
         $log->debug("Auto-incremented text sigle to $auto_textsigle");
-      };
+      }
 
       # Header was parseable
       if ($header) {
@@ -541,13 +531,13 @@ do {
 
         $log->debug("Writing file $file") if DEBUG;
 
-        $header->to_zip($zipper->new_stream($file));
+        $header->to_zip( $zipper->new_stream($file) );
 
         # Header is for text level
-        if ($header->type eq 'text') {
+        if ( $header->type eq 'text' ) {
 
           # Remember dir and sigles
-          $dir = $header->dir;
+          $dir         = $header->dir;
           $text_id_esc = $header->id_esc;
 
           # log output for seeing progression
@@ -556,22 +546,21 @@ do {
           # Reset counter for text lines
           # (needed for whitespace handling)
           $text_line = 0;
-        };
-      };
-    };
-  };
+        }
+      }
+    }
+  }
   $text_id_esc = $auto_textsigle if ($auto_textsigle);
 
   if ($p) {
-      print $progress_fh $p->report("\r%20b %p  ETA: %E\n", tell($input_fh));
-  };
-} while (($input_fname = shift(@ARGV)) && open($input_fh, '<', $input_fname));
+    print $progress_fh $p->report( "\r%20b %p  ETA: %E\n", tell($input_fh) );
+  }
+} while ( ( $input_fname = shift(@ARGV) ) && open( $input_fh, '<', $input_fname ) );
 $zipper->close;
 
 $ext_tok->close if $ext_tok;
 
 close $input_fh;
-
 
 __END__
 

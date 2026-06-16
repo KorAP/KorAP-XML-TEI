@@ -4,49 +4,44 @@ use strict;
 use warnings;
 use File::Share ':all';
 
-our $VERSION = '2.7.3';
+our $VERSION = '2.7.4';
 my $MIN_JAVA_VERSION = 21;
 
-use constant {
-  WAIT_SECS => 30
-};
+use constant { WAIT_SECS => 30 };
 
 my $java = `sh -c 'command -v java'`;
 chomp $java;
 
-if ($java eq '') {
-  warn('No java executable found in PATH. ' . __PACKAGE__ . " requires a JVM (minimum version $MIN_JAVA_VERSION).");
+if ( $java eq '' ) {
+  warn( 'No java executable found in PATH. ' . __PACKAGE__ . " requires a JVM (minimum version $MIN_JAVA_VERSION)." );
   return 0;
-};
+}
 
 my ($java_version) = `java -version 2>&1` =~ /version "(\d+)/;
-if ($java_version < $MIN_JAVA_VERSION) {
-  warn("Java (JRE) version $MIN_JAVA_VERSION or higher required, but only found version $java_version. " . __PACKAGE__ );
+if ( $java_version < $MIN_JAVA_VERSION ) {
+  warn(
+    "Java (JRE) version $MIN_JAVA_VERSION or higher required, but only found version $java_version. " . __PACKAGE__ );
   return 0;
-};
+}
 
-my $tokenizer_jar = dist_file(
-  'tei2korapxml',
-  'KorAP-Tokenizer-2.4.1-standalone.jar'
-);
+my $tokenizer_jar = dist_file( 'tei2korapxml', 'KorAP-Tokenizer-2.4.2-standalone.jar' );
 
-unless (-f $tokenizer_jar) {
+unless ( -f $tokenizer_jar ) {
   return 0;
-};
+}
 
 no warnings 'redefine';
 
 # Construct a new KorAP Tokenizer
 sub new {
-  my ($class, $sentence_split) = @_;
+  my ( $class, $sentence_split ) = @_;
   my $heap_size = $ENV{KORAPXMLTEI_TOKENIZER_HEAP_SIZE} // '512m';
-  my $self = $class->SUPER::new("$java -Xmx$heap_size -jar $tokenizer_jar --no-tokens --positions" .
-      ($sentence_split ? " --sentence-boundaries" : ""));
+  my $self      = $class->SUPER::new( "$java -Xmx$heap_size -jar $tokenizer_jar --no-tokens --positions"
+      . ( $sentence_split ? " --sentence-boundaries" : "" ) );
   $self->{sentence_split} = $sentence_split;
-  $self->{name} = 'korap';
-  $self->{sep} = "\n\x{04}\n";
+  $self->{name}           = 'korap';
+  $self->{sep}            = "\n\x{04}\n";
   return bless $self, $class;
-};
-
+}
 
 1;
